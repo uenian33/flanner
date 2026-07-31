@@ -65,7 +65,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
 /* A heavily blurred crop of the organiser's own poster, so the page sits on the
    festival's colour rather than a flat field. */
 body::before{content:"";position:fixed;inset:-10%;z-index:-2;pointer-events:none;
@@ -76,7 +76,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
              linear-gradient(var(--bg),transparent 16%,transparent 84%,var(--bg))}
 :root[data-theme=light] body::before{opacity:.32;filter:blur(20px) saturate(1.05)}
 body{background:var(--bg);color:var(--tx);font:14px/1.45 var(--sans);
-  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
 a{color:inherit}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
@@ -95,6 +95,7 @@ header{padding:clamp(20px,3vw,34px) 0 18px;position:relative}
 @keyframes o-bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-6px) rotate(4deg)}}
 @keyframes o-sway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
 @keyframes o-spin{to{transform:rotate(360deg)}}
+@keyframes o-twinkle{0%,100%{opacity:.2;transform:scale(.75) rotate(0)}50%{opacity:.8;transform:scale(1.1) rotate(45deg)}}
 @keyframes o-rise{
   0%{opacity:0;transform:translate(0,10px) rotate(-10deg)}
   22%{opacity:.7}
@@ -109,12 +110,16 @@ header{padding:clamp(20px,3vw,34px) 0 18px;position:relative}
 .dx.sway{animation-name:o-sway;animation-duration:4.1s;animation-timing-function:ease-in-out}
 .dx.spin{animation-name:o-spin;animation-duration:14s;animation-timing-function:linear}
 .dx.rise{animation-name:o-rise;animation-duration:5s;animation-timing-function:ease-out}
-:root[data-theme=light] .dx svg{opacity:.45}
+.dx.twinkle{animation-name:o-twinkle;animation-duration:3.8s;animation-timing-function:ease-in-out}
+:root[data-theme=light] .dx{color:color-mix(in srgb,var(--c) 58%,#0d1208)}
+:root[data-theme=light] .dx svg{opacity:.62;stroke-width:1.7}
 @media(prefers-reduced-motion:reduce){.dx{animation:none}.dx.rise svg{opacity:.4}}
-/* On a phone the margins are too tight for six — keep the two anchors. */
-@media(max-width:640px){.dx{display:none}
-  .dx.bob:first-of-type{display:block;--x:2%;--y:14%;--s:.8}
-  .dx.spin{display:block;--x:86%;--y:16%;--s:.7}}
+/* Phones get their own placement and a smaller scale, tucked into the margins
+   either side of the centred lockup rather than hidden. */
+@media(max-width:640px){
+  .dx{left:var(--mx,var(--x));top:var(--my,var(--y))}
+  .dx svg{width:calc(clamp(24px,7vw,34px) * var(--ms,var(--s,1)))}
+}
 .brandline{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
 .logo{display:block;line-height:0}
 .logo img{width:clamp(132px,20vw,208px);height:auto;display:block;transition:.25s var(--ease)}
@@ -189,13 +194,15 @@ input[type=search]::placeholder{color:var(--tx3)}
 /* The drawer hangs below the pinned rows rather than growing them, so the bar
    keeps sticking and the page below does not jump when it opens. */
 .filters{position:absolute;left:0;right:0;top:100%;z-index:1;
+  grid-template-columns:minmax(0,1fr);
   background:var(--bg);box-shadow:0 18px 34px -22px var(--shade);
   display:grid;grid-template-rows:0fr;opacity:0;pointer-events:none;
   transition:grid-template-rows .38s var(--ease),opacity .26s var(--ease);
   border-bottom:1px solid transparent}
 .filters.open{grid-template-rows:1fr;opacity:1;pointer-events:auto;border-bottom-color:var(--line)}
 .finner{min-height:0;overflow:hidden}
-.finner{padding:8px 0 18px}
+.filters>.wrap{min-width:0;width:100%;margin-inline:0}
+.finner{min-width:0;padding:8px 0 18px}
 .frow{display:flex;flex-wrap:wrap;align-items:center;margin-bottom:24px}
 .chipset{display:flex;flex-wrap:wrap;gap:11px 10px;width:100%}
 /* On a phone three wrapped chip fields run to most of a screen, so each group
@@ -203,6 +210,7 @@ input[type=search]::placeholder{color:var(--tx3)}
 @media(max-width:900px){
   .chipset{flex-wrap:nowrap;overflow-x:auto;gap:9px;padding:2px 22px 4px 0;
     scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    overscroll-behavior-inline:contain;overscroll-behavior-y:auto;
     scroll-snap-type:x proximity;
     -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);
     mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
@@ -329,7 +337,7 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 10px)}
 .arowin{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;
   background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px;
   position:relative;z-index:1;transition:transform .34s var(--ease),background .16s,border-color .16s}
-.arowin.drag{transition:none}
+.arowin.drag{transition:none;will-change:transform}
 .swipebg{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;
   padding:0 20px;color:var(--on-accent);font-weight:800;font-size:12.5px;font-family:var(--disp);
   letter-spacing:.02em;z-index:0}
@@ -423,7 +431,8 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 10px)}
   color:var(--tx3);min-height:32px}
 .maplayers button[aria-pressed=true]{background:var(--bg2);color:var(--tx)}
 @media(max-width:560px){
-  .maplayers{left:8px;right:8px;overflow-x:auto;scrollbar-width:none}
+  .maplayers{left:8px;right:8px;overflow-x:auto;scrollbar-width:none;
+    overscroll-behavior-inline:contain}
   .maplayers button{flex:1 0 auto}
 }
 .mapattr{position:absolute;right:9px;top:9px;z-index:4;font-size:9.5px;color:var(--tx3);
@@ -507,7 +516,7 @@ dialog.card.in .cardbox{opacity:1;transform:none}
 .chero{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--sheet2)}
 .grabber{display:none;position:absolute;left:50%;top:8px;transform:translateX(-50%);width:38px;
   height:5px;border-radius:99px;background:rgba(255,255,255,.42);z-index:4;pointer-events:none}
-.cardbox.dragging{transition:none}
+.cardbox.dragging{transition:none;will-change:transform}
 .chero>img,.chero>svg{width:100%;height:100%;object-fit:cover;display:block}
 .chero .scrim{position:absolute;inset:0;
   background:linear-gradient(180deg,transparent 22%,color-mix(in srgb,var(--sheet) 62%,transparent) 70%,var(--sheet) 100%)}
@@ -686,9 +695,14 @@ footer p{margin:0 0 9px}
 
 
   body{padding-bottom:calc(96px + var(--safe-b))}
+  /* Collapses on scroll-down and springs back on scroll-up, matching the
+     kinoon.fi bar: width and height on cubic-bezier(.34,1.56,.64,1) over 400ms. */
   .mnav{display:grid;grid-template-columns:repeat(3,1fr);position:fixed;left:50%;
     bottom:calc(18px + var(--safe-b));transform:translateX(-50%);
-    width:min(360px,calc(100vw - 40px));z-index:60;padding:4px;isolation:isolate;
+    width:min(87vw,360px);max-width:calc(100vw - 32px);height:67px;overflow:hidden;
+    contain:layout style;
+    transition:width .4s cubic-bezier(.34,1.56,.64,1),height .4s cubic-bezier(.34,1.56,.64,1);
+    z-index:60;padding:4px;isolation:isolate;
     border-radius:9999px;background:var(--glass);
     -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
     border:1px solid var(--glass-line);
@@ -698,15 +712,21 @@ footer p{margin:0 0 9px}
     box-shadow:inset 0 1px 0 var(--glass-line);
     transform:translateX(calc(var(--i,0) * 100%));
     transition:transform .42s cubic-bezier(.32,.72,0,1)}
-  .mnav button{display:grid;justify-items:center;align-content:center;gap:3px;
-    padding:7px 0;font-size:11px;font-weight:500;color:var(--glass-tx);
-    position:relative;min-height:54px;z-index:1;letter-spacing:-.003em;
-    transition:color .3s var(--ease);border-radius:9999px}
+  .mnav button{display:grid;place-content:center;padding:0;font-size:11px;
+    font-weight:500;color:var(--glass-tx);position:relative;height:100%;z-index:1;
+    letter-spacing:-.003em;transition:color .3s var(--ease);border-radius:9999px}
+  .mnav button svg{transform:translateY(-7px);
+    transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
+  .mnav .lbl{position:absolute;left:0;right:0;bottom:8px;text-align:center;
+    transition:opacity .2s var(--ease),transform .3s var(--ease)}
+  body.nav-min .mnav{width:min(58vw,210px);height:48px}
+  body.nav-min .mnav .lbl{opacity:0;transform:translateY(5px)}
+  body.nav-min .mnav button svg{transform:translateY(0) scale(.96)}
   .mnav button svg{width:24px;height:24px;font-size:24px;stroke-width:1.8;
     transition:transform .42s var(--ease)}
   .mnav button.on{color:var(--glass-on)}
   .mnav button:active svg{transform:scale(.9)}
-  .mnav .nb{position:absolute;top:7px;left:calc(50% + 9px);min-width:17px;height:17px;
+  .mnav .nb{position:absolute;top:6px;left:calc(50% + 9px);min-width:17px;height:17px;
     border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:10px;font-weight:800;
     display:grid;place-items:center;padding:0 4.5px;z-index:3;
     box-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -767,6 +787,14 @@ footer p{margin:0 0 9px}
 <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6h16M9 6V4h6v2M6 6l1 14h10l1-14"/></symbol>
 <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="m10 21 2-6-2.5-2.5 1-5.5 3 2 3 1"/><path d="m9.5 12.5-2 3.5"/><path d="M15 21l-1.5-5"/></symbol>
+<symbol id="i-wheel" viewBox="0 0 24 24"><circle cx="12" cy="10.4" r="7.4"/><circle cx="12" cy="10.4" r="1.5"/><path d="M12 3v5.9M12 11.9v5.9M4.6 10.4h5.9M13.5 10.4h5.9M6.8 5.2l3.1 3.1M14.1 12.5l3.1 3.1M17.2 5.2l-3.1 3.1M9.9 12.5l-3.1 3.1"/><path d="M8.6 21.2 12 17.8l3.4 3.4"/></symbol>
+<symbol id="i-drum" viewBox="0 0 24 24"><ellipse cx="12" cy="9.4" rx="8" ry="3.4"/><path d="M4 9.4v5.2c0 1.9 3.6 3.4 8 3.4s8-1.5 8-3.4V9.4"/><path d="M6.6 18.6 4 21.6M17.4 18.6 20 21.6M9 6.6 5.6 3.4M15 6.6 18.4 3.4"/></symbol>
+<symbol id="i-sax" viewBox="0 0 24 24"><path d="M9.6 2.6v7.6a5.4 5.4 0 0 0 5.4 5.4h.6a3.2 3.2 0 0 1 0 6.4h-4"/><path d="M7.4 2.6h4.4"/><circle cx="12.2" cy="7" r=".9"/><circle cx="12.2" cy="10.4" r=".9"/></symbol>
+<symbol id="i-star4" viewBox="0 0 24 24"><path d="M12 2.6c.7 5 3.7 8 8.8 8.7-5.1.7-8.1 3.7-8.8 8.7-.7-5-3.7-8-8.8-8.7 5.1-.7 8.1-3.7 8.8-8.7z"/></symbol>
+<symbol id="i-balloon" viewBox="0 0 24 24"><path d="M12 15.4c3.3 0 6-3 6-6.6A6 6 0 0 0 6 8.8c0 3.6 2.7 6.6 6 6.6z"/><path d="M12 15.4v1.6M10.8 17h2.4l-.6 1.4h-1.2z"/><path d="M12 18.4c0 1.6 1.8 1.6 1.8 3"/></symbol>
+<symbol id="i-headphones" viewBox="0 0 24 24"><path d="M4 15v-2.6a8 8 0 0 1 16 0V15"/><rect x="2.6" y="14.4" width="4.4" height="6.4" rx="2.2"/><rect x="17" y="14.4" width="4.4" height="6.4" rx="2.2"/></symbol>
+<symbol id="i-tram" viewBox="0 0 24 24"><rect x="5" y="4.4" width="14" height="13.2" rx="3"/><path d="M5 10.4h14M12 2.2v2.2M8.4 21.4l1.8-3.8M15.6 21.4l-1.8-3.8"/><circle cx="9.2" cy="14.4" r="1"/><circle cx="14.8" cy="14.4" r="1"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2.4" width="6" height="11.2" rx="3"/><path d="M5.4 11.4a6.6 6.6 0 0 0 13.2 0M12 18v3.4"/></symbol>
 <symbol id="i-synth" viewBox="0 0 24 24"><rect x="2.4" y="7.2" width="19.2" height="9.6" rx="2"/><path d="M6.6 7.2v5.6M10.2 7.2v5.6M13.8 7.2v5.6M17.4 7.2v5.6"/></symbol>
 <symbol id="i-speaker" viewBox="0 0 24 24"><rect x="5.4" y="2.8" width="13.2" height="18.4" rx="2.6"/><circle cx="12" cy="15" r="3.5"/><circle cx="12" cy="7.2" r="1.4"/></symbol>
 <symbol id="i-cathedral" viewBox="0 0 24 24"><path d="M12 1.8v2.4M10.9 3h2.2"/><path d="M8.6 10.4a3.4 3.4 0 0 1 6.8 0"/><path d="M6.2 20.6V13M17.8 20.6V13M6.2 13h11.6"/><path d="M9.4 20.6v-3.9a2.6 2.6 0 0 1 5.2 0v3.9"/><path d="M3.6 20.6h16.8"/></symbol>
@@ -784,12 +812,22 @@ footer p{margin:0 0 9px}
 <div class="wrap" id="top">
 <header>
   <div class="deco" aria-hidden="true">
-    <span class="dx bob"  style="--c:#b6fc46;--x:5%;--y:26%;--s:1.15;--d:0s"><svg class="i"><use href="#i-robot"/></svg></span>
-    <span class="dx sway" style="--c:#22d3ee;--x:13%;--y:62%;--s:.85;--d:.7s"><svg class="i"><use href="#i-synth"/></svg></span>
-    <span class="dx rise" style="--c:#fb7185;--x:22%;--y:40%;--s:.6;--d:1.1s"><svg class="i"><use href="#i-note"/></svg></span>
-    <span class="dx spin" style="--c:#60a5fa;--x:88%;--y:30%;--s:.95;--d:0s"><svg class="i"><use href="#i-disc"/></svg></span>
-    <span class="dx bob"  style="--c:#c084fc;--x:79%;--y:64%;--s:.9;--d:1.5s"><svg class="i"><use href="#i-cathedral"/></svg></span>
-    <span class="dx rise" style="--c:#2dd4bf;--x:73%;--y:34%;--s:.6;--d:2.4s"><svg class="i"><use href="#i-note"/></svg></span>
+    <span class="dx bob"  style="--c:#b6fc46;--x:4%;--y:20%;--mx:2%;--my:5%;--s:1.15;--ms:.72;--d:0s"><svg class="i"><use href="#i-robot"/></svg></span>
+    <span class="dx sway" style="--c:#22d3ee;--x:12%;--y:58%;--mx:11%;--my:60%;--s:.85;--ms:.58;--d:.7s"><svg class="i"><use href="#i-synth"/></svg></span>
+    <span class="dx rise" style="--c:#fb7185;--x:21%;--y:36%;--mx:22%;--my:28%;--s:.6;--ms:.48;--d:1.1s"><svg class="i"><use href="#i-note"/></svg></span>
+    <span class="dx bob"  style="--c:#f472b6;--x:17%;--y:10%;--mx:3%;--my:38%;--s:.72;--ms:.52;--d:2.1s"><svg class="i"><use href="#i-headphones"/></svg></span>
+    <span class="dx sway" style="--c:#fc8c46;--x:7%;--y:80%;--mx:15%;--my:84%;--s:.8;--ms:.54;--d:1.6s"><svg class="i"><use href="#i-tram"/></svg></span>
+    <span class="dx spin" style="--c:#a3e635;--x:26%;--y:74%;--mx:27%;--my:70%;--s:.7;--ms:.5;--d:.3s"><svg class="i"><use href="#i-wheel"/></svg></span>
+    <span class="dx bob"  style="--c:#2dd4bf;--x:2%;--y:46%;--mx:8%;--my:16%;--s:.66;--ms:.48;--d:3.1s"><svg class="i"><use href="#i-drum"/></svg></span>
+    <span class="dx twinkle" style="--c:#c084fc;--x:24%;--y:56%;--mx:26%;--my:48%;--s:.5;--ms:.42;--d:1.9s"><svg class="i"><use href="#i-star4"/></svg></span>
+    <span class="dx spin" style="--c:#60a5fa;--x:89%;--y:24%;--mx:91%;--my:7%;--s:.95;--ms:.64;--d:0s"><svg class="i"><use href="#i-disc"/></svg></span>
+    <span class="dx bob"  style="--c:#c084fc;--x:80%;--y:60%;--mx:86%;--my:58%;--s:.9;--ms:.6;--d:1.5s"><svg class="i"><use href="#i-cathedral"/></svg></span>
+    <span class="dx rise" style="--c:#2dd4bf;--x:74%;--y:30%;--mx:78%;--my:26%;--s:.6;--ms:.48;--d:2.4s"><svg class="i"><use href="#i-note"/></svg></span>
+    <span class="dx sway" style="--c:#a3e635;--x:93%;--y:74%;--mx:95%;--my:42%;--s:.72;--ms:.52;--d:.4s"><svg class="i"><use href="#i-mic"/></svg></span>
+    <span class="dx bob"  style="--c:#4ade80;--x:84%;--y:8%;--mx:71%;--my:82%;--s:.66;--ms:.48;--d:2.8s"><svg class="i"><use href="#i-speaker"/></svg></span>
+    <span class="dx sway" style="--c:#fb7185;--x:70%;--y:78%;--mx:96%;--my:74%;--s:.7;--ms:.5;--d:2.2s"><svg class="i"><use href="#i-sax"/></svg></span>
+    <span class="dx rise" style="--c:#fc8c46;--x:96%;--y:52%;--mx:69%;--my:36%;--s:.58;--ms:.46;--d:3.4s"><svg class="i"><use href="#i-balloon"/></svg></span>
+    <span class="dx twinkle" style="--c:#f472b6;--x:77%;--y:44%;--mx:82%;--my:20%;--s:.5;--ms:.42;--d:.9s"><svg class="i"><use href="#i-star4"/></svg></span>
   </div>
   <div class="brandline">
     <a class="logo" href="https://www.kallioblockparty.org/" target="_blank" rel="noopener">
@@ -927,9 +965,9 @@ footer p{margin:0 0 9px}
 
 <nav class="mnav" aria-label="Sections">
   <span class="pill" id="navPill" aria-hidden="true"></span>
-  <button id="nSched" class="on"><svg class="i"><use href="#i-rows"/></svg>Schedule</button>
-  <button id="nMap"><svg class="i"><use href="#i-pin"/></svg>Map</button>
-  <button id="nRoute"><svg class="i"><use href="#i-route"/></svg>Route<span class="nb" id="navBadge" hidden>0</span></button>
+  <button id="nSched" class="on"><svg class="i"><use href="#i-rows"/></svg><span class="lbl">Schedule</span></button>
+  <button id="nMap"><svg class="i"><use href="#i-pin"/></svg><span class="lbl">Map</span></button>
+  <button id="nRoute"><svg class="i"><use href="#i-route"/></svg><span class="lbl">Route</span><span class="nb" id="navBadge" hidden>0</span></button>
 </nav>
 
 <dialog class="consent" id="consent" aria-labelledby="consentTitle">
@@ -1474,8 +1512,27 @@ const TAP = 8;                       // px of slop before a drag owns an axis
 
 /* Sheet: swipe down to dismiss, with velocity so a flick works too. */
 (() => {
-  const box = () => $('#cardBox');
+  const BOX = $('#cardBox');                 // static node — no per-frame lookup
+  const box = () => BOX;
   let sx = 0, sy = 0, dy = 0, axis = null, live = false, t0 = 0;
+  let pending = null, raf = 0, lastDim = -1;
+  const paint = () => {
+    raf = 0;
+    if (pending === null) return;
+    BOX.style.transform = `translateY(${pending}px)`;
+    pending = null;
+  };
+  /* touchmove outruns the compositor, so writes are coalesced to one a frame
+     and the backdrop opacity only steps every 5% — its blur is the expensive
+     part and re-rasterising it 60x a second is what made the drag feel heavy. */
+  const push = (offset, dim) => {
+    pending = offset;
+    if (!raf) raf = requestAnimationFrame(paint);
+    if (dim !== null) {
+      const q = Math.round(dim * 20) / 20;
+      if (q !== lastDim) { lastDim = q; dlg.style.setProperty('--dim', String(q)); }
+    }
+  };
   const begin = (x, y) => {
     if (box().scrollTop > 0) return;
     live = true; axis = null; dy = 0; sx = x; sy = y; t0 = performance.now();
@@ -1500,13 +1557,13 @@ const TAP = 8;                       // px of slop before a drag owns an axis
     const base = narrowVP() ? (b.classList.contains('large') ? 0 : innerHeight * .30) : 0;
     // resist past the top detent instead of letting the sheet fly off
     const off = dy < -base ? -base - Math.pow(-(dy + base), .72) : dy;
-    b.style.transform = `translateY(${base + off}px)`;
-    if (dy > 0) dlg.style.setProperty('--dim', String(1 - Math.min(.7, dy / 520)));
-    else dlg.style.removeProperty('--dim');
+    push(base + off, dy > 0 ? 1 - Math.min(.7, dy / 520) : null);
   };
   const end = () => {
     if (!live) return;
     live = false;
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    pending = null; lastDim = -1;
     const b = box();
     b.classList.remove('dragging');
     const v = Math.abs(dy) / Math.max(1, performance.now() - t0);
@@ -1542,8 +1599,14 @@ const TAP = 8;                       // px of slop before a drag owns an axis
 /* List rows: swipe either way to add to or drop from the route. */
 (() => {
   let row = null, inner = null, sx = 0, sy = 0, dx = 0, axis = null;
+  let pending = null, raf = 0;
+  const paint = () => { raf = 0;
+    if (pending !== null && inner) inner.style.transform = `translateX(${pending}px)`;
+    pending = null; };
   const THRESH = 68;
   const reset = () => {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    pending = null;
     if (inner) { inner.classList.remove('drag'); inner.style.transform = ''; }
     row && row.classList.remove('rm');
     row = inner = null; axis = null; dx = 0;
@@ -1568,7 +1631,8 @@ const TAP = 8;                       // px of slop before a drag owns an axis
     const on = state.route.has(row.dataset.row);
     // right reveals "add", left reveals "remove" — but only the useful one
     row.classList.toggle('rm', dx < 0 ? on : false);
-    inner.style.transform = `translateX(${dx}px)`;
+    pending = dx;
+    if (!raf) raf = requestAnimationFrame(paint);
   }, {passive: false});
   const done = () => {
     if (!row) return;
@@ -1938,6 +2002,24 @@ if ('IntersectionObserver' in window) {
   }, {rootMargin:'-45% 0px -50% 0px'});
   Object.values(NAVMAP).forEach(s => io.observe($(s)));
 }
+
+/* The bottom bar collapses while reading down the page and springs back the
+   moment the reader scrolls up, or reaches either end. */
+(() => {
+  let lastY = scrollY, ticking = false;
+  const update = () => {
+    ticking = false;
+    const y = Math.max(0, scrollY);
+    const atEnd = y + innerHeight >= document.documentElement.scrollHeight - 40;
+    if (y < 90 || atEnd) document.body.classList.remove('nav-min');
+    else if (y > lastY + 6) document.body.classList.add('nav-min');
+    else if (y < lastY - 6) document.body.classList.remove('nav-min');
+    lastY = y;
+  };
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, {passive: true});
+})();
 
 /* ══ consent flow ══════════════════════════════════════ */
 const cdlg = $('#consent');
