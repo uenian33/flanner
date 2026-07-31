@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0c10">
+<meta name="theme-color" content="#e6e6e6">
 <title>Kallio Block Party 2026 — Stage Planner</title>
 <style>
 @font-face{font-family:"KBP Title";src:url(__FONT_TITLE__) format("woff2");
@@ -1962,8 +1962,7 @@ function applyTheme(mode) {
 }
 $('#themeBtn').onclick = () =>
   applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
-applyTheme(Store.get('theme') ||
-  (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'));
+applyTheme(Store.get('theme') || 'light');   // bright by default
 
 /* ══ mobile nav ════════════════════════════════════════ */
 const NAVMAP = {nSched:'#secSchedule', nMap:'#secMap', nRoute:'#secRoute'};
