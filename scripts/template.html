@@ -88,7 +88,32 @@ svg.i.fill{fill:currentColor;stroke:currentColor;stroke-width:1.2}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* ── header ───────────────────────────────────────────── */
-header{padding:clamp(20px,3vw,34px) 0 18px}
+header{padding:clamp(20px,3vw,34px) 0 18px;position:relative}
+/* Festival ornament: one bobbing robot and a few notes drifting off it. Kept
+   to transform/opacity, low contrast, and switched off for reduced motion. */
+@keyframes botbob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-5px) rotate(3deg)}}
+@keyframes antenna{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes drift{
+  0%{opacity:0;transform:translate(0,6px) scale(.7) rotate(-8deg)}
+  18%{opacity:.75}
+  70%{opacity:.5}
+  100%{opacity:0;transform:translate(var(--dx,10px),-34px) scale(1) rotate(10deg)}
+}
+.deco{position:absolute;inset:0;pointer-events:none;z-index:0;color:var(--accent-ink)}
+.bot,.notes{position:absolute;top:clamp(14px,4vw,44px)}
+.bot{left:clamp(4px,7vw,120px);animation:botbob 3.2s ease-in-out infinite}
+.bot svg{width:clamp(30px,4.4vw,44px);height:auto;stroke-width:1.5;opacity:.55}
+.notes{right:clamp(4px,7vw,120px);width:clamp(34px,5vw,50px);height:52px}
+.notes i{position:absolute;bottom:0;opacity:0;animation:drift 4.2s ease-out infinite}
+.notes i:nth-child(1){left:0;--dx:8px;animation-delay:0s}
+.notes i:nth-child(2){left:38%;--dx:-6px;animation-delay:1.4s}
+.notes i:nth-child(3){left:72%;--dx:11px;animation-delay:2.8s}
+.notes svg{width:clamp(14px,1.7vw,19px);height:auto;stroke-width:1.6}
+@media(prefers-reduced-motion:reduce){
+  .bot,.notes i{animation:none}
+  .notes i{opacity:.5}
+}
+@media(max-width:430px){.notes{display:none}.bot{left:2px}}
 .brandline{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
 .logo{display:block;line-height:0}
 .logo img{width:clamp(132px,20vw,208px);height:auto;display:block;transition:.25s var(--ease)}
@@ -741,6 +766,7 @@ footer p{margin:0 0 9px}
 <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6h16M9 6V4h6v2M6 6l1 14h10l1-14"/></symbol>
 <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="m10 21 2-6-2.5-2.5 1-5.5 3 2 3 1"/><path d="m9.5 12.5-2 3.5"/><path d="M15 21l-1.5-5"/></symbol>
+<symbol id="i-robot" viewBox="0 0 24 24"><rect x="4.2" y="8" width="15.6" height="11" rx="3.6"/><path d="M12 4.8V8"/><circle cx="12" cy="3.5" r="1.3"/><circle cx="9.2" cy="12.8" r="1.05"/><circle cx="14.8" cy="12.8" r="1.05"/><path d="M9.8 16.2h4.4"/><path d="M4.2 11.6H2.3M19.8 11.6h1.9"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.3M12 19.1v2.3M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.6 12h2.3M19.1 12h2.3M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.7 8.7 0 1 0 10.8 10.8z"/></symbol>
 <symbol id="i-spotify" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.4"/><path d="M7.1 9.3c3.3-.85 6.9-.5 9.8 1.05"/><path d="M7.7 12.5c2.7-.65 5.6-.35 8 .95"/><path d="M8.3 15.5c2.1-.45 4.3-.2 6.2.8"/></symbol>
@@ -753,6 +779,10 @@ footer p{margin:0 0 9px}
 
 <div class="wrap" id="top">
 <header>
+  <div class="deco" aria-hidden="true">
+    <span class="bot"><svg class="i"><use href="#i-robot"/></svg></span>
+    <span class="notes"><i><svg class="i"><use href="#i-note"/></svg></i><i><svg class="i"><use href="#i-note"/></svg></i><i><svg class="i"><use href="#i-note"/></svg></i></span>
+  </div>
   <div class="brandline">
     <a class="logo" href="https://www.kallioblockparty.org/" target="_blank" rel="noopener">
       <img src="__LOGO__" alt="Kallio Block Party 2026" width="339" height="245"></a>
