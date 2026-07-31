@@ -1,0 +1,1134 @@
+{
+  "event": {
+    "name": "Kallio Block Party 2026",
+    "date": "2026-08-01",
+    "city": "Helsinki (Alppila / Kallio)",
+    "hours": "12:00-22:00",
+    "edition": "15th",
+    "site": "https://www.kallioblockparty.org/"
+  },
+  "stages": [
+    {
+      "id": "alive",
+      "num": 1,
+      "name": "A Live Stage",
+      "location": "Tivolitie / Viipurinkatu (Linnanmaki car park end)",
+      "blurb": "Main live-band stage. Finnish indie, garage rock and pop, all full bands.",
+      "primary": "band",
+      "acts": [
+        {
+          "n": "Sondaag",
+          "display": "Söndaag",
+          "s": "13:15",
+          "e": "14:30",
+          "type": "band",
+          "genres": [
+            "indie",
+            "rock"
+          ]
+        },
+        {
+          "n": "Pleasant Flow",
+          "s": "14:30",
+          "e": "15:45",
+          "type": "band",
+          "genres": [
+            "indie",
+            "rock",
+            "garage"
+          ]
+        },
+        {
+          "n": "Atte Nordberg",
+          "s": "15:45",
+          "e": "17:00",
+          "type": "singer",
+          "genres": [
+            "indie",
+            "pop"
+          ]
+        },
+        {
+          "n": "Mammalian Alien",
+          "s": "17:00",
+          "e": "18:15",
+          "type": "band",
+          "genres": [
+            "indie",
+            "experimental"
+          ]
+        },
+        {
+          "n": "Nukkuvat Linnut",
+          "s": "18:15",
+          "e": "19:30",
+          "type": "band",
+          "genres": [
+            "indie",
+            "pop",
+            "rock"
+          ]
+        },
+        {
+          "n": "Falling Pyramids",
+          "s": "19:30",
+          "e": "20:45",
+          "type": "band",
+          "genres": [
+            "indie",
+            "rock"
+          ]
+        },
+        {
+          "n": "Hopeasiivet",
+          "s": "20:45",
+          "e": "22:00",
+          "type": "band",
+          "genres": [
+            "indie",
+            "rock"
+          ]
+        }
+      ],
+      "lat": 60.1905,
+      "lon": 24.940201
+    },
+    {
+      "id": "happyhour",
+      "num": 3,
+      "name": "Happy Hour",
+      "location": "Loviisankatu / Hangonkatu (north-west corner)",
+      "blurb": "Live art, theatre and alternative music. Family-friendly until 15:00, then live music and dancing into the evening.",
+      "primary": "live",
+      "acts": [
+        {
+          "n": "All Levels Dance Workshop with Elisa Kotilainen",
+          "short": "Dance Workshop · Elisa Kotilainen",
+          "s": "12:00",
+          "e": "13:00",
+          "type": "performance",
+          "genres": [
+            "workshop",
+            "family"
+          ],
+          "nomusic": true
+        },
+        {
+          "n": "Ilves Live Theatre: Varis ja ShyStella, Harmi xD Heihei, Hajottajat + More",
+          "short": "Ilves Live Theatre",
+          "s": "13:00",
+          "e": "14:30",
+          "type": "performance",
+          "genres": [
+            "theatre",
+            "family",
+            "experimental"
+          ],
+          "nomusic": true
+        },
+        {
+          "n": "Aerobics with the Golden Nuggets",
+          "short": "Aerobics · The Golden Nuggets",
+          "s": "14:30",
+          "e": "15:00",
+          "type": "performance",
+          "genres": [
+            "workshop",
+            "family"
+          ],
+          "nomusic": true
+        },
+        {
+          "n": "1961",
+          "display": "1961 (LIVE)",
+          "s": "15:00",
+          "e": "15:30",
+          "type": "band",
+          "genres": [
+            "alternative",
+            "rock"
+          ]
+        },
+        {
+          "n": "Jackson F",
+          "display": "Jackson F (LIVE)",
+          "s": "15:30",
+          "e": "16:00",
+          "type": "singer",
+          "genres": [
+            "alternative",
+            "pop"
+          ]
+        },
+        {
+          "n": "M LORE",
+          "display": "M LORE (LIVE)",
+          "s": "16:00",
+          "e": "16:50",
+          "type": "singer",
+          "genres": [
+            "alternative",
+            "pop"
+          ]
+        },
+        {
+          "n": "Mimi Veter",
+          "display": "Mimi Veter (LIVE)",
+          "s": "17:00",
+          "e": "17:50",
+          "type": "singer",
+          "genres": [
+            "alternative",
+            "pop"
+          ]
+        },
+        {
+          "n": "Agamwe",
+          "display": "Agamwe (LIVE)",
+          "s": "18:00",
+          "e": "18:50",
+          "type": "singer",
+          "genres": [
+            "alternative",
+            "rnb-soul"
+          ]
+        },
+        {
+          "n": "HASH",
+          "display": "HASH (LIVE)",
+          "s": "19:00",
+          "e": "19:50",
+          "type": "band",
+          "genres": [
+            "alternative",
+            "rock"
+          ]
+        },
+        {
+          "n": "DJ Artur Närvänen",
+          "s": "20:00",
+          "e": "21:30",
+          "type": "dj",
+          "genres": [
+            "alternative",
+            "eclectic"
+          ]
+        },
+        {
+          "n": "Happy Hour Crew",
+          "s": "21:30",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "eclectic"
+          ]
+        }
+      ],
+      "lat": 60.192858,
+      "lon": 24.940811
+    },
+    {
+      "id": "woj",
+      "num": 2,
+      "name": "What's on Joseysradios?",
+      "short": "WOJ?",
+      "location": "Viipurinkatu / Loviisankatu (west end)",
+      "blurb": "Global club sounds from the Joseysradios crew - amapiano, afro house, baile funk and diaspora club.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Bienvenu",
+          "display": "Bienvenu (Host)",
+          "s": "14:00",
+          "e": "22:00",
+          "type": "host",
+          "genres": [
+            "global-club"
+          ],
+          "allday": true
+        },
+        {
+          "n": "T Mountains",
+          "display": "T MOUNTAINS",
+          "s": "14:00",
+          "e": "15:20",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "afro"
+          ]
+        },
+        {
+          "n": "NOSLEEP",
+          "s": "15:20",
+          "e": "16:40",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "electronic"
+          ]
+        },
+        {
+          "n": "Zeze",
+          "s": "16:40",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "afro"
+          ]
+        },
+        {
+          "n": "Wekesa",
+          "s": "18:00",
+          "e": "19:20",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "afro"
+          ]
+        },
+        {
+          "n": "YEBO",
+          "display": "YEBO (DJ Set)",
+          "s": "19:20",
+          "e": "20:40",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "afro"
+          ]
+        },
+        {
+          "n": "Joseysradios",
+          "s": "20:40",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "global-club"
+          ]
+        }
+      ],
+      "lat": 60.192267,
+      "lon": 24.939825
+    },
+    {
+      "id": "ptnky",
+      "num": 4,
+      "name": "PTNKY",
+      "location": "Sturenkatu, north edge",
+      "blurb": "House and tech grooves, mostly back-to-back DJ pairs.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Turbo",
+          "s": "12:00",
+          "e": "13:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ]
+        },
+        {
+          "n": "savage10",
+          "s": "13:00",
+          "e": "14:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ]
+        },
+        {
+          "n": "nihilo & mea",
+          "s": "14:00",
+          "e": "15:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Nahka-Eki & Silkki-Iiris",
+          "s": "15:00",
+          "e": "16:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "disco"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "NikkeV & volavi",
+          "s": "16:00",
+          "e": "17:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "PAAVALI3OOO & EliXiiri",
+          "s": "17:00",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "sinedd & Basit Soomro",
+          "s": "18:00",
+          "e": "19:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Jeku",
+          "s": "19:00",
+          "e": "20:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ]
+        },
+        {
+          "n": "TOYOTACOROLLA91",
+          "s": "20:00",
+          "e": "21:00",
+          "type": "dj",
+          "genres": [
+            "techno",
+            "hard"
+          ]
+        },
+        {
+          "n": "Kilo Price & Joonas Petteri",
+          "s": "21:00",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true
+        }
+      ],
+      "lat": 60.192997,
+      "lon": 24.942999
+    },
+    {
+      "id": "dnb",
+      "num": 5,
+      "name": "DNB Finland",
+      "location": "Kolkankatu / Aleksis Kiven katu",
+      "blurb": "Drum and bass and jungle, run by the DNB Finland collective.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "DNB Finland b2b",
+          "s": "12:00",
+          "e": "13:30",
+          "type": "dj",
+          "genres": [
+            "dnb"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Salakollektiivi",
+          "s": "13:30",
+          "e": "15:00",
+          "type": "dj",
+          "genres": [
+            "dnb",
+            "jungle"
+          ]
+        },
+        {
+          "n": "BLU Crew",
+          "s": "15:00",
+          "e": "16:30",
+          "type": "dj",
+          "genres": [
+            "dnb"
+          ]
+        },
+        {
+          "n": "VAIHE",
+          "s": "16:30",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "dnb"
+          ]
+        },
+        {
+          "n": "Reivaajan Valinta",
+          "s": "18:00",
+          "e": "18:45",
+          "type": "dj",
+          "genres": [
+            "dnb",
+            "jungle"
+          ]
+        },
+        {
+          "n": "Spettbros",
+          "s": "18:45",
+          "e": "19:30",
+          "type": "dj",
+          "genres": [
+            "dnb"
+          ]
+        },
+        {
+          "n": "VOID",
+          "s": "19:30",
+          "e": "21:00",
+          "type": "dj",
+          "genres": [
+            "dnb",
+            "hard"
+          ]
+        },
+        {
+          "n": "b2b Mayhem",
+          "s": "21:00",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "dnb",
+            "hard"
+          ],
+          "b2b": true
+        }
+      ],
+      "lat": 60.19272,
+      "lon": 24.9441
+    },
+    {
+      "id": "katto",
+      "num": 6,
+      "name": "Katto",
+      "location": "Viipurinkatu east / Sturenkatu",
+      "blurb": "House and tech groove; opens with a live hybrid set.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Alek Santeri & Aqustiikka",
+          "display": "Alek Santeri & Aqustiikka LIVE",
+          "s": "12:00",
+          "e": "13:00",
+          "type": "live-electronic",
+          "genres": [
+            "house",
+            "electronic"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Son Of James",
+          "s": "13:00",
+          "e": "14:00",
+          "type": "dj",
+          "genres": [
+            "house"
+          ]
+        },
+        {
+          "n": "Annigato",
+          "s": "14:00",
+          "e": "15:00",
+          "type": "dj",
+          "genres": [
+            "house"
+          ]
+        },
+        {
+          "n": "Mundfreud",
+          "s": "15:00",
+          "e": "16:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ]
+        },
+        {
+          "n": "subvortex",
+          "s": "16:00",
+          "e": "17:00",
+          "type": "dj",
+          "genres": [
+            "techno"
+          ]
+        },
+        {
+          "n": "Lionize",
+          "s": "17:00",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "disco"
+          ]
+        },
+        {
+          "n": "Tsoniboy",
+          "s": "18:00",
+          "e": "19:00",
+          "type": "dj",
+          "genres": [
+            "house"
+          ]
+        },
+        {
+          "n": "Nikolucky",
+          "s": "19:00",
+          "e": "20:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ]
+        },
+        {
+          "n": "Rawbert",
+          "s": "20:00",
+          "e": "21:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ]
+        },
+        {
+          "n": "DJ Arkimies",
+          "s": "21:00",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ]
+        }
+      ],
+      "lat": 60.190792,
+      "lon": 24.948502
+    },
+    {
+      "id": "rap",
+      "num": 7,
+      "name": "Rap Stage",
+      "location": "Kirstinkatu / Sturenkatu",
+      "blurb": "Finnish rap end to end, from underground to headline names.",
+      "primary": "rap",
+      "acts": [
+        {
+          "n": "UG Tiikeri",
+          "s": "12:00",
+          "e": "13:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ]
+        },
+        {
+          "n": "Matinpoika & Helppo E",
+          "display": "Matinpoika & Helppo E + Special guests",
+          "s": "13:00",
+          "e": "14:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Stepa & Polarsoul",
+          "s": "14:00",
+          "e": "15:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Jeri-K",
+          "s": "15:00",
+          "e": "15:40",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ]
+        },
+        {
+          "n": "Wibe",
+          "s": "15:40",
+          "e": "16:20",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ]
+        },
+        {
+          "n": "paha silmä TAKEOVER",
+          "s": "16:20",
+          "e": "17:30",
+          "type": "rap",
+          "genres": [
+            "rap",
+            "eclectic"
+          ]
+        },
+        {
+          "n": "Are",
+          "s": "17:30",
+          "e": "18:20",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ]
+        },
+        {
+          "n": "Hukas & VBZ",
+          "s": "18:20",
+          "e": "19:20",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "RAP STAGE Showcase",
+          "s": "19:20",
+          "e": "20:30",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "nomusic": true
+        },
+        {
+          "n": "Nelikasi",
+          "s": "20:30",
+          "e": "21:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ]
+        },
+        {
+          "n": "Julma-Henri",
+          "s": "21:00",
+          "e": "22:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ]
+        }
+      ],
+      "lat": 60.190025,
+      "lon": 24.947193
+    },
+    {
+      "id": "power",
+      "num": 8,
+      "name": "Power",
+      "location": "Kirstinkatu, south of Rap Stage",
+      "blurb": "Hard dance: hardstyle, hard techno, rawstyle and uptempo. Half-hour slots all day.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Matinaro",
+          "s": "12:00",
+          "e": "12:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ]
+        },
+        {
+          "n": "DISTPREX",
+          "s": "12:30",
+          "e": "13:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ]
+        },
+        {
+          "n": "Ray",
+          "s": "13:00",
+          "e": "13:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ]
+        },
+        {
+          "n": "Hellähill",
+          "s": "13:30",
+          "e": "14:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ]
+        },
+        {
+          "n": "SEKA B2B Zaini & LUMO",
+          "s": "14:00",
+          "e": "14:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Chalalo",
+          "s": "14:30",
+          "e": "15:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ]
+        },
+        {
+          "n": "SUPERHEROELIAS",
+          "s": "15:00",
+          "e": "15:30",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ]
+        },
+        {
+          "n": "The Fvce",
+          "s": "15:30",
+          "e": "16:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ]
+        },
+        {
+          "n": "Aquarius",
+          "s": "16:00",
+          "e": "16:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ]
+        },
+        {
+          "n": "TENS B2B RUSTHOL",
+          "s": "16:30",
+          "e": "17:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Sensory Deprivation",
+          "s": "17:00",
+          "e": "17:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ]
+        },
+        {
+          "n": "DREAMER",
+          "s": "17:30",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ]
+        },
+        {
+          "n": "mil_k",
+          "s": "18:00",
+          "e": "18:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ]
+        },
+        {
+          "n": "Xornbane B2B Collapse Rita",
+          "s": "18:30",
+          "e": "19:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Rumbus",
+          "s": "19:00",
+          "e": "19:30",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ]
+        },
+        {
+          "n": "Artlius",
+          "s": "19:30",
+          "e": "20:00",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ]
+        },
+        {
+          "n": "Dr Decks",
+          "s": "20:00",
+          "e": "20:30",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ]
+        },
+        {
+          "n": "Aggressive Aesthetic",
+          "s": "20:30",
+          "e": "21:00",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ]
+        },
+        {
+          "n": "Digital Mindz",
+          "s": "21:00",
+          "e": "21:30",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ]
+        },
+        {
+          "n": "Temporados",
+          "s": "21:30",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ]
+        }
+      ],
+      "lat": 60.189701,
+      "lon": 24.945972
+    },
+    {
+      "id": "soundgarden",
+      "num": 9,
+      "name": "Soundgarden",
+      "location": "Lenininpuisto, west side",
+      "blurb": "Afro, house and Latin-leaning sounds in the park.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Friends & Family on Decks",
+          "s": "12:00",
+          "e": "14:20",
+          "type": "dj",
+          "genres": [
+            "house",
+            "eclectic"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Ali Fiero",
+          "s": "14:20",
+          "e": "14:40",
+          "type": "dj",
+          "genres": [
+            "latin",
+            "afro"
+          ]
+        },
+        {
+          "n": "Rakata",
+          "s": "14:40",
+          "e": "15:20",
+          "type": "dj",
+          "genres": [
+            "latin"
+          ]
+        },
+        {
+          "n": "Alte Cruise + ZION",
+          "s": "15:20",
+          "e": "16:00",
+          "type": "dj",
+          "genres": [
+            "afro",
+            "global-club"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Fasi & Chulo",
+          "s": "16:00",
+          "e": "16:20",
+          "type": "dj",
+          "genres": [
+            "latin",
+            "afro"
+          ],
+          "b2b": true
+        },
+        {
+          "n": "Prinssi",
+          "s": "16:20",
+          "e": "16:50",
+          "type": "dj",
+          "genres": [
+            "house"
+          ]
+        },
+        {
+          "n": "Clamo",
+          "s": "16:50",
+          "e": "17:30",
+          "type": "dj",
+          "genres": [
+            "house",
+            "afro"
+          ]
+        },
+        {
+          "n": "Mayela",
+          "s": "17:30",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "latin"
+          ]
+        },
+        {
+          "n": "Rony Rex",
+          "s": "18:00",
+          "e": "18:45",
+          "type": "dj",
+          "genres": [
+            "house",
+            "electronic"
+          ]
+        },
+        {
+          "n": "Saint Nia",
+          "s": "18:45",
+          "e": "19:30",
+          "type": "dj",
+          "genres": [
+            "house",
+            "afro"
+          ]
+        },
+        {
+          "n": "Wolve",
+          "display": "Wolve (GR)",
+          "s": "19:30",
+          "e": "20:15",
+          "type": "dj",
+          "genres": [
+            "house",
+            "afro"
+          ]
+        },
+        {
+          "n": "Oddacity",
+          "s": "20:15",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "electronic"
+          ]
+        }
+      ],
+      "lat": 60.189677,
+      "lon": 24.941994
+    },
+    {
+      "id": "activities",
+      "num": null,
+      "name": "Activities Area",
+      "location": "Lenininpuisto, basketball court",
+      "blurb": "Non-music programme: play club for kids, then night basketball.",
+      "primary": "other",
+      "acts": [
+        {
+          "n": "Leikkiklubi",
+          "s": "14:00",
+          "e": "16:30",
+          "type": "performance",
+          "genres": [
+            "family",
+            "workshop"
+          ],
+          "nomusic": true
+        },
+        {
+          "n": "Yökoris",
+          "s": "17:00",
+          "e": "22:00",
+          "type": "performance",
+          "genres": [
+            "family",
+            "workshop"
+          ],
+          "nomusic": true
+        }
+      ],
+      "lat": 60.189835,
+      "lon": 24.944136
+    }
+  ],
+  "poi": [
+    {
+      "name": "Alppilan Huone",
+      "kind": "bar",
+      "lat": 60.1909739,
+      "lon": 24.9458154,
+      "note": "Official partner bar inside the festival area"
+    }
+  ]
+}

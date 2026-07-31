@@ -1,0 +1,93 @@
+{
+  "_comment": "Hand-verified direct links only. Anything not listed here falls back to generated search links. 'sq' overrides the search query for names too generic to search bare.",
+  "Pleasant Flow": {
+    "spotify": "https://open.spotify.com/artist/7N2MrVVNI0qj7MrhfNXsaj",
+    "note": "Helsinki quintet, garage-rock friction with big hooks, early-2000s alt-rock roots."
+  },
+  "Nukkuvat Linnut": {
+    "spotify": "https://open.spotify.com/artist/0hDly8hOiZtaqCKXF8wMrH",
+    "instagram": "https://www.instagram.com/nukkuvatlinnut/",
+    "note": "Six-piece indie pop/rock band of music students; delicate sound, blunt lyrics."
+  },
+  "Falling Pyramids": {
+    "spotify": "https://open.spotify.com/artist/6PcvDGnypsN6fBxSBCkA3K",
+    "youtube": "https://www.youtube.com/@fallingpyramidsband"
+  },
+  "Hopeasiivet": {
+    "spotify": "https://open.spotify.com/artist/6zisCzs51KHat4Y2B9JVEO",
+    "deezer": "https://www.deezer.com/artist/184771417",
+    "note": "Finnish band; closes the live stage."
+  },
+  "Sondaag": {
+    "sq": "Söndaag band"
+  },
+  "Jeku": {
+    "spotify": "https://open.spotify.com/artist/0MAmlBljQL9Ch46khlSW0q",
+    "soundcloud": "https://soundcloud.com/jeku_fin",
+    "bandcamp": "https://jeku.bandcamp.com/",
+    "note": "Helsinki DJ and producer."
+  },
+  "Rony Rex": {
+    "spotify": "https://open.spotify.com/artist/61AudJPWNuYbLelVjkocZ4",
+    "soundcloud": "https://soundcloud.com/ronyrex",
+    "bandcamp": "https://ronyrex.bandcamp.com/",
+    "youtube": "https://www.youtube.com/channel/UCKcUHAhJTornMCH0RxfUoUg",
+    "wikipedia": "https://en.wikipedia.org/wiki/Rony_Rex",
+    "note": "Biggest name on Soundgarden. Helsinki house producer and YleX host; 'Milk It' charted on Billboard Dance. Known for sets from a floating unicorn and the Pasila radio tower."
+  },
+  "Julma-Henri": {
+    "spotify": "https://open.spotify.com/artist/3Ua7hkwc1gdzoUBx0fdt8o",
+    "deezer": "https://www.deezer.com/artist/863566",
+    "wikipedia": "https://en.wikipedia.org/wiki/Julma-Henri",
+    "note": "Rap Stage headliner. One of the longest-running and most distinctive voices in suomirap; album POLARIS out March 2026."
+  },
+  "Stepa & Polarsoul": {
+    "sq": "Stepa Polarsoul suomirap",
+    "note": "Stepa (Joni Stenberg) from Sodankylä, with DJ Polarsoul."
+  },
+  "UG Tiikeri": {
+    "deezer": "https://www.deezer.com/artist/153709742"
+  },
+  "Nelikasi": {
+    "sq": "Nelikasi suomirap"
+  },
+  "Turbo": {"sq": "Turbo DJ Helsinki"},
+  "Ray": {"sq": "Ray DJ hard techno"},
+  "Aquarius": {"sq": "Aquarius DJ hard techno"},
+  "DREAMER": {"sq": "DREAMER DJ hardstyle"},
+  "VOID": {"sq": "VOID drum and bass DJ"},
+  "Prinssi": {"sq": "Prinssi DJ Helsinki"},
+  "Are": {"sq": "Are suomirap"},
+  "Wibe": {"sq": "Wibe suomirap"},
+  "Lionize": {"sq": "Lionize DJ house"},
+  "Rakata": {"sq": "Rakata DJ Helsinki"},
+  "Clamo": {"sq": "Clamo DJ Helsinki"},
+  "Mayela": {"sq": "Mayela DJ Helsinki"},
+  "Zeze": {"sq": "Zeze DJ Helsinki"},
+  "1961": {"sq": "1961 band Finland"},
+  "HASH": {"sq": "HASH band Helsinki"},
+  "Dr Decks": {"sq": "Dr Decks DJ"},
+  "Digital Mindz": {"sq": "Digital Mindz hardstyle"},
+  "Temporados": {"sq": "Temporados DJ"},
+  "Matinaro": {"sq": "Matinaro DJ"},
+  "mil_k": {"sq": "mil_k DJ hard techno"},
+  "Wolve": {"sq": "Wolve DJ Greece house"},
+  "NOSLEEP": {"sq": "NOSLEEP DJ Helsinki"},
+  "YEBO": {"sq": "YEBO DJ afro"},
+  "Sensory Deprivation": {"sq": "Sensory Deprivation DJ hard techno"},
+  "Bienvenu": {"sq": "Bienvenu Joseysradios Helsinki"},
+  "Joseysradios": {
+    "instagram": "https://www.instagram.com/joseysradios/",
+    "sq": "Joseysradios"
+  },
+  "DNB Finland b2b": {
+    "instagram": "https://www.instagram.com/dnbfinland/",
+    "sq": "DNB Finland"
+  },
+  "Mimi Veter": {"sq": "Mimi Veter musician"},
+  "M LORE": {"sq": "M LORE artist Helsinki"},
+  "Jackson F": {"sq": "Jackson F artist Helsinki"},
+  "Agamwe": {"sq": "Agamwe artist Helsinki"},
+  "Atte Nordberg": {"sq": "Atte Nordberg muusikko"},
+  "Mammalian Alien": {"sq": "Mammalian Alien band Helsinki"}
+}

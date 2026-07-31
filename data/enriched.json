@@ -1,0 +1,1640 @@
+{
+  "event": {
+    "name": "Kallio Block Party 2026",
+    "date": "2026-08-01",
+    "city": "Helsinki (Alppila / Kallio)",
+    "hours": "12:00-22:00",
+    "edition": "15th",
+    "site": "https://www.kallioblockparty.org/"
+  },
+  "stages": [
+    {
+      "id": "alive",
+      "num": 1,
+      "name": "A Live Stage",
+      "location": "Tivolitie / Viipurinkatu (Linnanmaki car park end)",
+      "blurb": "Main live-band stage. Finnish indie, garage rock and pop, all full bands.",
+      "primary": "band",
+      "acts": [
+        {
+          "n": "Sondaag",
+          "display": "Söndaag",
+          "s": "13:15",
+          "e": "14:30",
+          "type": "band",
+          "genres": [
+            "indie",
+            "rock"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Pleasant Flow",
+          "s": "14:30",
+          "e": "15:45",
+          "type": "band",
+          "genres": [
+            "indie",
+            "rock",
+            "garage"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Pleasant Flow",
+              "url": "https://www.deezer.com/artist/179295057",
+              "fans": 2,
+              "img": "https://cdn-images.dzcdn.net/images/artist/f3d02ba65076126f6d6d8fdcd68d6ba7/250x250-000000-80-0-0.jpg",
+              "id": 179295057
+            }
+          }
+        },
+        {
+          "n": "Atte Nordberg",
+          "s": "15:45",
+          "e": "17:00",
+          "type": "singer",
+          "genres": [
+            "indie",
+            "pop"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Atte Nordberg",
+              "url": "https://www.deezer.com/artist/182220697",
+              "fans": 0,
+              "img": "https://cdn-images.dzcdn.net/images/artist/707194ad0b2cde3cda89def0de144905/250x250-000000-80-0-0.jpg",
+              "id": 182220697
+            }
+          }
+        },
+        {
+          "n": "Mammalian Alien",
+          "s": "17:00",
+          "e": "18:15",
+          "type": "band",
+          "genres": [
+            "indie",
+            "experimental"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Mammalian Alien",
+              "url": "https://www.deezer.com/artist/372706051",
+              "fans": 0,
+              "img": "https://cdn-images.dzcdn.net/images/artist//250x250-000000-80-0-0.jpg",
+              "id": 372706051
+            },
+            "musicbrainz": {
+              "mbid": "2a95a1ec-d453-4fd8-8cad-2e92c83a3df2",
+              "name": "Mammalian Alien",
+              "country": null,
+              "disambiguation": null,
+              "links": {},
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "Nukkuvat Linnut",
+          "s": "18:15",
+          "e": "19:30",
+          "type": "band",
+          "genres": [
+            "indie",
+            "pop",
+            "rock"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Nukkuvat Linnut",
+              "url": "https://www.deezer.com/artist/297161521",
+              "fans": 0,
+              "img": "https://cdn-images.dzcdn.net/images/artist/b3fca15a84e7353d3e6ffd184bc4ab86/250x250-000000-80-0-0.jpg",
+              "id": 297161521
+            },
+            "top_track": {
+              "title": "Prinsessa",
+              "url": "https://www.deezer.com/track/3656325982",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/0/7/e/0/07ea309b995a78ca9cf1fd943ec560e0.mp3?hdnea=exp=1785528504~acl=/api/1/1/0/7/e/0/07ea309b995a78ca9cf1fd943ec560e0.mp3*~data=user_id=0,application_id=42~hmac=822d413f1b9f029f255a38a585d81feae39911e4edec19b906f3a66a4354270e"
+            },
+            "musicbrainz": {
+              "mbid": "74c45d04-1d27-41ae-9dba-5eac888b9b88",
+              "name": "Nukkuvat Linnut",
+              "country": "FI",
+              "disambiguation": null,
+              "links": {},
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "Falling Pyramids",
+          "s": "19:30",
+          "e": "20:45",
+          "type": "band",
+          "genres": [
+            "indie",
+            "rock"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Falling Pyramids",
+              "url": "https://www.deezer.com/artist/266863882",
+              "fans": 0,
+              "img": "https://cdn-images.dzcdn.net/images/artist/3b8920027407e81ba73fd14d73a4da7f/250x250-000000-80-0-0.jpg",
+              "id": 266863882
+            },
+            "top_track": {
+              "title": "Zeros and Ones",
+              "url": "https://www.deezer.com/track/4134297471",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/d/d/5/0/dd5cfcf8b72b07311be3906b54ec9106.mp3?hdnea=exp=1785528510~acl=/api/1/1/d/d/5/0/dd5cfcf8b72b07311be3906b54ec9106.mp3*~data=user_id=0,application_id=42~hmac=f4e9fbcf3859a21b84e556682a23a1d5a4924a179c3d9648173a4a1a0885b543"
+            },
+            "musicbrainz": {
+              "mbid": "e97b5f47-e58f-48c7-8dca-50f1ab66e4e0",
+              "name": "Falling Pyramids",
+              "country": null,
+              "disambiguation": null,
+              "links": {
+                "spotify": "https://open.spotify.com/artist/6PcvDGnypsN6fBxSBCkA3K",
+                "youtube": "https://www.youtube.com/@fallingpyramidsband"
+              },
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "Hopeasiivet",
+          "s": "20:45",
+          "e": "22:00",
+          "type": "band",
+          "genres": [
+            "indie",
+            "rock"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Hopeasiivet",
+              "url": "https://www.deezer.com/artist/184771417",
+              "fans": 39,
+              "img": "https://cdn-images.dzcdn.net/images/artist/11bbc9d6a3a4137d67d9ba3522ed721b/250x250-000000-80-0-0.jpg",
+              "id": 184771417
+            },
+            "top_track": {
+              "title": "Vierelläs",
+              "url": "https://www.deezer.com/track/3761977122",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/5/d/4/0/5d4a4d915e1b7d365a87ee1b78da61ab.mp3?hdnea=exp=1785528514~acl=/api/1/1/5/d/4/0/5d4a4d915e1b7d365a87ee1b78da61ab.mp3*~data=user_id=0,application_id=42~hmac=0f59baed1f7e55df2a7ad38089271f3010f8c5312bc902ce2d3ca0e91d4e466d"
+            },
+            "musicbrainz": {
+              "mbid": "2c4e8f5f-7b8c-4fe6-b8b5-fd46a05768ef",
+              "name": "Hopeasiivet",
+              "country": "FI",
+              "disambiguation": "Finnish band",
+              "links": {
+                "spotify": "https://open.spotify.com/artist/6zisCzs51KHat4Y2B9JVEO"
+              },
+              "tags": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "happyhour",
+      "num": 3,
+      "name": "Happy Hour",
+      "location": "Loviisankatu / Hangonkatu (north-west corner)",
+      "blurb": "Live art, theatre and alternative music. Family-friendly until 15:00, then live music and dancing into the evening.",
+      "primary": "live",
+      "acts": [
+        {
+          "n": "All Levels Dance Workshop with Elisa Kotilainen",
+          "short": "Dance Workshop · Elisa Kotilainen",
+          "s": "12:00",
+          "e": "13:00",
+          "type": "performance",
+          "genres": [
+            "workshop",
+            "family"
+          ],
+          "nomusic": true,
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Ilves Live Theatre: Varis ja ShyStella, Harmi xD Heihei, Hajottajat + More",
+          "short": "Ilves Live Theatre",
+          "s": "13:00",
+          "e": "14:30",
+          "type": "performance",
+          "genres": [
+            "theatre",
+            "family",
+            "experimental"
+          ],
+          "nomusic": true,
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Aerobics with the Golden Nuggets",
+          "short": "Aerobics · The Golden Nuggets",
+          "s": "14:30",
+          "e": "15:00",
+          "type": "performance",
+          "genres": [
+            "workshop",
+            "family"
+          ],
+          "nomusic": true,
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "1961",
+          "display": "1961 (LIVE)",
+          "s": "15:00",
+          "e": "15:30",
+          "type": "band",
+          "genres": [
+            "alternative",
+            "rock"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Jackson F",
+          "display": "Jackson F (LIVE)",
+          "s": "15:30",
+          "e": "16:00",
+          "type": "singer",
+          "genres": [
+            "alternative",
+            "pop"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "M LORE",
+          "display": "M LORE (LIVE)",
+          "s": "16:00",
+          "e": "16:50",
+          "type": "singer",
+          "genres": [
+            "alternative",
+            "pop"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "M LORE",
+              "url": "https://www.deezer.com/artist/263031381",
+              "fans": 5,
+              "img": "https://cdn-images.dzcdn.net/images/artist/5eac0aa8e7ee9fca56d3df704db4fd75/250x250-000000-80-0-0.jpg",
+              "id": 263031381
+            },
+            "top_track": {
+              "title": "LAVA",
+              "url": "https://www.deezer.com/track/2317404225",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/0/a/7/0/0a74f176d5ad67cee477b77ac129e8e3.mp3?hdnea=exp=1785528519~acl=/api/1/1/0/a/7/0/0a74f176d5ad67cee477b77ac129e8e3.mp3*~data=user_id=0,application_id=42~hmac=720ed3f77b91e1a64465b89839a90375ba154f9981d6c706277cb795c23338e7"
+            }
+          }
+        },
+        {
+          "n": "Mimi Veter",
+          "display": "Mimi Veter (LIVE)",
+          "s": "17:00",
+          "e": "17:50",
+          "type": "singer",
+          "genres": [
+            "alternative",
+            "pop"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Agamwe",
+          "display": "Agamwe (LIVE)",
+          "s": "18:00",
+          "e": "18:50",
+          "type": "singer",
+          "genres": [
+            "alternative",
+            "rnb-soul"
+          ],
+          "lookup": {
+            "musicbrainz": {
+              "mbid": "fa1efdfd-0c70-4a52-ae51-a00ac3cf98e2",
+              "name": "Agamwe",
+              "country": null,
+              "disambiguation": null,
+              "links": {},
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "HASH",
+          "display": "HASH (LIVE)",
+          "s": "19:00",
+          "e": "19:50",
+          "type": "band",
+          "genres": [
+            "alternative",
+            "rock"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "DJ Artur Närvänen",
+          "s": "20:00",
+          "e": "21:30",
+          "type": "dj",
+          "genres": [
+            "alternative",
+            "eclectic"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Happy Hour Crew",
+          "s": "21:30",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "eclectic"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "woj",
+      "num": 2,
+      "name": "What's on Joseysradios?",
+      "short": "WOJ?",
+      "location": "Viipurinkatu / Loviisankatu (west end)",
+      "blurb": "Global club sounds from the Joseysradios crew - amapiano, afro house, baile funk and diaspora club.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Bienvenu",
+          "display": "Bienvenu (Host)",
+          "s": "14:00",
+          "e": "22:00",
+          "type": "host",
+          "genres": [
+            "global-club"
+          ],
+          "allday": true,
+          "lookup": {}
+        },
+        {
+          "n": "T Mountains",
+          "display": "T MOUNTAINS",
+          "s": "14:00",
+          "e": "15:20",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "afro"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "NOSLEEP",
+          "s": "15:20",
+          "e": "16:40",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "electronic"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "No Sleep",
+              "url": "https://www.deezer.com/artist/70626692",
+              "fans": 1,
+              "img": "https://cdn-images.dzcdn.net/images/artist/b948876bc00120a5c1acf1341c5b0855/250x250-000000-80-0-0.jpg",
+              "id": 70626692
+            },
+            "musicbrainz": {
+              "mbid": "d821b607-d661-446c-be3a-a4f92afb3905",
+              "name": "nosleep",
+              "country": null,
+              "disambiguation": "producer, songwriter, DJ from Pittsburgh, USA",
+              "links": {
+                "bandcamp": "https://nosleepsounds.bandcamp.com/",
+                "soundcloud": "https://soundcloud.com/nosleepmusic",
+                "youtube": "https://www.youtube.com/channel/UCj3Y2s9qD6te2z_3iU9307A"
+              },
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "Zeze",
+          "s": "16:40",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "afro"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Wekesa",
+          "s": "18:00",
+          "e": "19:20",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "afro"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "YEBO",
+          "display": "YEBO (DJ Set)",
+          "s": "19:20",
+          "e": "20:40",
+          "type": "dj",
+          "genres": [
+            "global-club",
+            "afro"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Yebo",
+              "url": "https://www.deezer.com/artist/180890",
+              "fans": 71,
+              "img": "https://cdn-images.dzcdn.net/images/artist/2f90c3f77af3092968ec5d5ba45714fe/250x250-000000-80-0-0.jpg",
+              "id": 180890
+            },
+            "musicbrainz": {
+              "mbid": "7b6d404d-1f6b-4c33-86ee-3ecc3eb35a00",
+              "name": "Yebo",
+              "country": "DE",
+              "disambiguation": "German ska",
+              "links": {
+                "homepage": "http://yebo.de/"
+              },
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "Joseysradios",
+          "s": "20:40",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "global-club"
+          ],
+          "lookup": {}
+        }
+      ]
+    },
+    {
+      "id": "ptnky",
+      "num": 4,
+      "name": "PTNKY",
+      "location": "Sturenkatu, north edge",
+      "blurb": "House and tech grooves, mostly back-to-back DJ pairs.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Turbo",
+          "s": "12:00",
+          "e": "13:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "savage10",
+          "s": "13:00",
+          "e": "14:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "nihilo & mea",
+          "s": "14:00",
+          "e": "15:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Nahka-Eki & Silkki-Iiris",
+          "s": "15:00",
+          "e": "16:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "disco"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "NikkeV & volavi",
+          "s": "16:00",
+          "e": "17:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "PAAVALI3OOO & EliXiiri",
+          "s": "17:00",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "sinedd & Basit Soomro",
+          "s": "18:00",
+          "e": "19:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Jeku",
+          "s": "19:00",
+          "e": "20:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Jeku",
+              "url": "https://www.deezer.com/artist/8694816",
+              "fans": 82,
+              "img": "https://cdn-images.dzcdn.net/images/artist/fae4174d87604693f55fc8648948c230/250x250-000000-80-0-0.jpg",
+              "id": 8694816
+            },
+            "top_track": {
+              "title": "Cirrostratus",
+              "url": "https://www.deezer.com/track/1695191287",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/d/b/4/0/db4a7105adff0fec038f0d0e7a05158d.mp3?hdnea=exp=1785528601~acl=/api/1/1/d/b/4/0/db4a7105adff0fec038f0d0e7a05158d.mp3*~data=user_id=0,application_id=42~hmac=70120e88f92bb259d6533808a5213bc4d21ff164df0d970a4136c00e6ca1d12f"
+            },
+            "musicbrainz": {
+              "mbid": "3eb6eb5f-6947-424e-a08c-b82bfd8d16cf",
+              "name": "Jeku",
+              "country": null,
+              "disambiguation": "DJ & producer from Helsinki, Finland",
+              "links": {
+                "bandcamp": "https://jeku.bandcamp.com/",
+                "spotify": "https://open.spotify.com/artist/0MAmlBljQL9Ch46khlSW0q",
+                "soundcloud": "https://soundcloud.com/jeku_fin"
+              },
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "TOYOTACOROLLA91",
+          "s": "20:00",
+          "e": "21:00",
+          "type": "dj",
+          "genres": [
+            "techno",
+            "hard"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Kilo Price & Joonas Petteri",
+          "s": "21:00",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "b2b": true,
+          "lookup": {}
+        }
+      ]
+    },
+    {
+      "id": "dnb",
+      "num": 5,
+      "name": "DNB Finland",
+      "location": "Kolkankatu / Aleksis Kiven katu",
+      "blurb": "Drum and bass and jungle, run by the DNB Finland collective.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "DNB Finland b2b",
+          "s": "12:00",
+          "e": "13:30",
+          "type": "dj",
+          "genres": [
+            "dnb"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Salakollektiivi",
+          "s": "13:30",
+          "e": "15:00",
+          "type": "dj",
+          "genres": [
+            "dnb",
+            "jungle"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "BLU Crew",
+          "s": "15:00",
+          "e": "16:30",
+          "type": "dj",
+          "genres": [
+            "dnb"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "VAIHE",
+          "s": "16:30",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "dnb"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Reivaajan Valinta",
+          "s": "18:00",
+          "e": "18:45",
+          "type": "dj",
+          "genres": [
+            "dnb",
+            "jungle"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "REIVAAJAN VALINTA",
+              "url": "https://www.deezer.com/artist/240970571",
+              "fans": 1,
+              "img": "https://cdn-images.dzcdn.net/images/artist/ec9df293cc879518ee6e548908f89b7d/250x250-000000-80-0-0.jpg",
+              "id": 240970571
+            },
+            "top_track": {
+              "title": "REIVAAJAN VALINTA #1",
+              "url": "https://www.deezer.com/track/2525645471",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/c/4/e/0/c4e21f22e7f858a75eaf903a82f11469.mp3?hdnea=exp=1785528634~acl=/api/1/1/c/4/e/0/c4e21f22e7f858a75eaf903a82f11469.mp3*~data=user_id=0,application_id=42~hmac=843818af9e335cbf7f431ee77370a83bb48f3fd54650237fae948d212b6ed06d"
+            }
+          }
+        },
+        {
+          "n": "Spettbros",
+          "s": "18:45",
+          "e": "19:30",
+          "type": "dj",
+          "genres": [
+            "dnb"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "SpettBros",
+              "url": "https://www.deezer.com/artist/66246312",
+              "fans": 12,
+              "img": "https://cdn-images.dzcdn.net/images/artist/724ad69474debf5eb68d5ef309e835d7/250x250-000000-80-0-0.jpg",
+              "id": 66246312
+            },
+            "top_track": {
+              "title": "Taksil Tultii Tupaa",
+              "url": "https://www.deezer.com/track/3183469511",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/4/0/3/0/4039248392aaaa437fa758a331e9d32b.mp3?hdnea=exp=1785528644~acl=/api/1/1/4/0/3/0/4039248392aaaa437fa758a331e9d32b.mp3*~data=user_id=0,application_id=42~hmac=44688aa48677638d360e13d2bb8e7ed59f23e095802b8681d29764e2501766ce"
+            }
+          }
+        },
+        {
+          "n": "VOID",
+          "s": "19:30",
+          "e": "21:00",
+          "type": "dj",
+          "genres": [
+            "dnb",
+            "hard"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "b2b Mayhem",
+          "s": "21:00",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "dnb",
+            "hard"
+          ],
+          "b2b": true,
+          "lookup": {}
+        }
+      ]
+    },
+    {
+      "id": "katto",
+      "num": 6,
+      "name": "Katto",
+      "location": "Viipurinkatu east / Sturenkatu",
+      "blurb": "House and tech groove; opens with a live hybrid set.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Alek Santeri & Aqustiikka",
+          "display": "Alek Santeri & Aqustiikka LIVE",
+          "s": "12:00",
+          "e": "13:00",
+          "type": "live-electronic",
+          "genres": [
+            "house",
+            "electronic"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Son Of James",
+          "s": "13:00",
+          "e": "14:00",
+          "type": "dj",
+          "genres": [
+            "house"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Son of James",
+              "url": "https://www.deezer.com/artist/13823087",
+              "fans": 2,
+              "img": "https://cdn-images.dzcdn.net/images/artist/b2c6a6723cfbe33d43f1277e55b1f148/250x250-000000-80-0-0.jpg",
+              "id": 13823087
+            }
+          }
+        },
+        {
+          "n": "Annigato",
+          "s": "14:00",
+          "e": "15:00",
+          "type": "dj",
+          "genres": [
+            "house"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Mundfreud",
+          "s": "15:00",
+          "e": "16:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "subvortex",
+          "s": "16:00",
+          "e": "17:00",
+          "type": "dj",
+          "genres": [
+            "techno"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "SubVortex",
+              "url": "https://www.deezer.com/artist/230271395",
+              "fans": 0,
+              "img": "https://cdn-images.dzcdn.net/images/artist//250x250-000000-80-0-0.jpg",
+              "id": 230271395
+            }
+          }
+        },
+        {
+          "n": "Lionize",
+          "s": "17:00",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "disco"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Tsoniboy",
+          "s": "18:00",
+          "e": "19:00",
+          "type": "dj",
+          "genres": [
+            "house"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Nikolucky",
+          "s": "19:00",
+          "e": "20:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Rawbert",
+          "s": "20:00",
+          "e": "21:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "lookup": {
+            "musicbrainz": {
+              "mbid": "fb943f1b-3a95-42a4-b361-551cd7a84353",
+              "name": "Rawbert",
+              "country": "CA",
+              "disambiguation": null,
+              "links": {},
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "DJ Arkimies",
+          "s": "21:00",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "techno"
+          ],
+          "lookup": {}
+        }
+      ]
+    },
+    {
+      "id": "rap",
+      "num": 7,
+      "name": "Rap Stage",
+      "location": "Kirstinkatu / Sturenkatu",
+      "blurb": "Finnish rap end to end, from underground to headline names.",
+      "primary": "rap",
+      "acts": [
+        {
+          "n": "UG Tiikeri",
+          "s": "12:00",
+          "e": "13:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "UG TIIKERI",
+              "url": "https://www.deezer.com/artist/153709742",
+              "fans": 42,
+              "img": "https://cdn-images.dzcdn.net/images/artist/e0b84c4fa54ae4b37a80b6682787bb3e/250x250-000000-80-0-0.jpg",
+              "id": 153709742
+            }
+          }
+        },
+        {
+          "n": "Matinpoika & Helppo E",
+          "display": "Matinpoika & Helppo E + Special guests",
+          "s": "13:00",
+          "e": "14:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Stepa & Polarsoul",
+          "s": "14:00",
+          "e": "15:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Jeri-K",
+          "s": "15:00",
+          "e": "15:40",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Jeri-K",
+              "url": "https://www.deezer.com/artist/169811127",
+              "fans": 1,
+              "img": "https://cdn-images.dzcdn.net/images/artist/8a3a08f70e132148ce3ef013e05192d4/250x250-000000-80-0-0.jpg",
+              "id": 169811127
+            },
+            "top_track": {
+              "title": "TEKO (feat. Noitatohtori)",
+              "url": "https://www.deezer.com/track/3213579161",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/5/1/5/0/5150ac5a5f24792be3ed7240b6500198.mp3?hdnea=exp=1785528682~acl=/api/1/1/5/1/5/0/5150ac5a5f24792be3ed7240b6500198.mp3*~data=user_id=0,application_id=42~hmac=2d12aa23ff57a154d60a132b3912ce7c3af67669de7d7c6659e8d8b8cf050598"
+            }
+          }
+        },
+        {
+          "n": "Wibe",
+          "s": "15:40",
+          "e": "16:20",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "paha silmä TAKEOVER",
+          "s": "16:20",
+          "e": "17:30",
+          "type": "rap",
+          "genres": [
+            "rap",
+            "eclectic"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Are",
+          "s": "17:30",
+          "e": "18:20",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Hukas & VBZ",
+          "s": "18:20",
+          "e": "19:20",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "RAP STAGE Showcase",
+          "s": "19:20",
+          "e": "20:30",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "nomusic": true,
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Nelikasi",
+          "s": "20:30",
+          "e": "21:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Nelikasi",
+              "url": "https://www.deezer.com/artist/254735322",
+              "fans": 8,
+              "img": "https://cdn-images.dzcdn.net/images/artist/9b3f3e5d1ff01d31f6d346ccae6fa06e/250x250-000000-80-0-0.jpg",
+              "id": 254735322
+            },
+            "top_track": {
+              "title": "Kyl sä näät",
+              "url": "https://www.deezer.com/track/3418493101",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/2/b/8/0/2b84d2e98095975f7bfbbb14f442fbcd.mp3?hdnea=exp=1785528694~acl=/api/1/1/2/b/8/0/2b84d2e98095975f7bfbbb14f442fbcd.mp3*~data=user_id=0,application_id=42~hmac=08b84fa0c2306d32bf6540abdb3536055316aec8016c5f6a9ee7df563058a9fb"
+            },
+            "musicbrainz": {
+              "mbid": "4d255e73-c35a-4c1c-8c35-04dd0fcd5c93",
+              "name": "Nelikasi",
+              "country": "FI",
+              "disambiguation": null,
+              "links": {},
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "Julma-Henri",
+          "s": "21:00",
+          "e": "22:00",
+          "type": "rap",
+          "genres": [
+            "rap"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Julma Henri",
+              "url": "https://www.deezer.com/artist/863566",
+              "fans": 1936,
+              "img": "https://cdn-images.dzcdn.net/images/artist/dd40e1c7c0233cc73a9d4ecdae481e28/250x250-000000-80-0-0.jpg",
+              "id": 863566
+            },
+            "top_track": {
+              "title": "Kesä tule taas (feat. Raappana)",
+              "url": "https://www.deezer.com/track/690008102",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/9/f/7/0/9f78d0919a72f974f8430e173bb11d93.mp3?hdnea=exp=1785528699~acl=/api/1/1/9/f/7/0/9f78d0919a72f974f8430e173bb11d93.mp3*~data=user_id=0,application_id=42~hmac=7b980f6b2a9b31dcce194044314c52cc31afe8c20cdd40b90e147119e411211d"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "power",
+      "num": 8,
+      "name": "Power",
+      "location": "Kirstinkatu, south of Rap Stage",
+      "blurb": "Hard dance: hardstyle, hard techno, rawstyle and uptempo. Half-hour slots all day.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Matinaro",
+          "s": "12:00",
+          "e": "12:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "DISTPREX",
+          "s": "12:30",
+          "e": "13:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Ray",
+          "s": "13:00",
+          "e": "13:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Hellähill",
+          "s": "13:30",
+          "e": "14:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "SEKA B2B Zaini & LUMO",
+          "s": "14:00",
+          "e": "14:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Chalalo",
+          "s": "14:30",
+          "e": "15:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "SUPERHEROELIAS",
+          "s": "15:00",
+          "e": "15:30",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "SUPERHEROELIAS",
+              "url": "https://www.deezer.com/artist/363512492",
+              "fans": 0,
+              "img": "https://cdn-images.dzcdn.net/images/artist//250x250-000000-80-0-0.jpg",
+              "id": 363512492
+            }
+          }
+        },
+        {
+          "n": "The Fvce",
+          "s": "15:30",
+          "e": "16:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Aquarius",
+          "s": "16:00",
+          "e": "16:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "TENS B2B RUSTHOL",
+          "s": "16:30",
+          "e": "17:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Sensory Deprivation",
+          "s": "17:00",
+          "e": "17:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Sensory Deprivation",
+              "url": "https://www.deezer.com/artist/101444792",
+              "fans": 4,
+              "img": "https://cdn-images.dzcdn.net/images/artist/4342494410490f74932a76ce1ea08c7c/250x250-000000-80-0-0.jpg",
+              "id": 101444792
+            },
+            "musicbrainz": {
+              "mbid": "562830a2-406e-4084-806b-6046c4d4180b",
+              "name": "Sensory Deprivation",
+              "country": "US",
+              "disambiguation": null,
+              "links": {
+                "spotify": "https://open.spotify.com/artist/6KunBPWEOr2qN4DWrt0nzJ"
+              },
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "DREAMER",
+          "s": "17:30",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "mil_k",
+          "s": "18:00",
+          "e": "18:30",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "M.I.L.K.",
+              "url": "https://www.deezer.com/artist/7981122",
+              "fans": 2529,
+              "img": "https://cdn-images.dzcdn.net/images/artist/cb21e2de9ff891f2dc68a2f749e251ed/250x250-000000-80-0-0.jpg",
+              "id": 7981122
+            },
+            "top_track": {
+              "title": "If We Want To",
+              "url": "https://www.deezer.com/track/357748941",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/3/e/5/0/3e54da6a40d0b88f9a74e0dc1cdc7163.mp3?hdnea=exp=1785528732~acl=/api/1/1/3/e/5/0/3e54da6a40d0b88f9a74e0dc1cdc7163.mp3*~data=user_id=0,application_id=42~hmac=4f86e57a2ce777d4546b30db23c5827c3d0ea5aeb49c831eba634de2bb31cc23"
+            }
+          }
+        },
+        {
+          "n": "Xornbane B2B Collapse Rita",
+          "s": "18:30",
+          "e": "19:00",
+          "type": "dj",
+          "genres": [
+            "hard",
+            "techno"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Rumbus",
+          "s": "19:00",
+          "e": "19:30",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Artlius",
+          "s": "19:30",
+          "e": "20:00",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Dr Decks",
+          "s": "20:00",
+          "e": "20:30",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Aggressive Aesthetic",
+          "s": "20:30",
+          "e": "21:00",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Digital Mindz",
+          "s": "21:00",
+          "e": "21:30",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Temporados",
+          "s": "21:30",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "hard"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "soundgarden",
+      "num": 9,
+      "name": "Soundgarden",
+      "location": "Lenininpuisto, west side",
+      "blurb": "Afro, house and Latin-leaning sounds in the park.",
+      "primary": "dj",
+      "acts": [
+        {
+          "n": "Friends & Family on Decks",
+          "s": "12:00",
+          "e": "14:20",
+          "type": "dj",
+          "genres": [
+            "house",
+            "eclectic"
+          ],
+          "b2b": true,
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Ali Fiero",
+          "s": "14:20",
+          "e": "14:40",
+          "type": "dj",
+          "genres": [
+            "latin",
+            "afro"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Rakata",
+          "s": "14:40",
+          "e": "15:20",
+          "type": "dj",
+          "genres": [
+            "latin"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Alte Cruise + ZION",
+          "s": "15:20",
+          "e": "16:00",
+          "type": "dj",
+          "genres": [
+            "afro",
+            "global-club"
+          ],
+          "b2b": true,
+          "lookup": {}
+        },
+        {
+          "n": "Fasi & Chulo",
+          "s": "16:00",
+          "e": "16:20",
+          "type": "dj",
+          "genres": [
+            "latin",
+            "afro"
+          ],
+          "b2b": true,
+          "lookup": {
+            "deezer": {
+              "name": "Fasi & Chulo",
+              "url": "https://www.deezer.com/artist/252303952",
+              "fans": 1,
+              "img": "https://cdn-images.dzcdn.net/images/artist/9391acc8644f7615b9a6c4f9c591a462/250x250-000000-80-0-0.jpg",
+              "id": 252303952
+            },
+            "top_track": {
+              "title": "Long shot",
+              "url": "https://www.deezer.com/track/2726362111",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/6/a/c/0/6ac29bfccc45e58792d4539a88d3773f.mp3?hdnea=exp=1785528752~acl=/api/1/1/6/a/c/0/6ac29bfccc45e58792d4539a88d3773f.mp3*~data=user_id=0,application_id=42~hmac=58e7459aca9cf2249cfb85411fe2687bc350e412f7f08ae9eac572332c3845f8"
+            }
+          }
+        },
+        {
+          "n": "Prinssi",
+          "s": "16:20",
+          "e": "16:50",
+          "type": "dj",
+          "genres": [
+            "house"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Clamo",
+          "s": "16:50",
+          "e": "17:30",
+          "type": "dj",
+          "genres": [
+            "house",
+            "afro"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Mayela",
+          "s": "17:30",
+          "e": "18:00",
+          "type": "dj",
+          "genres": [
+            "latin"
+          ],
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Rony Rex",
+          "s": "18:00",
+          "e": "18:45",
+          "type": "dj",
+          "genres": [
+            "house",
+            "electronic"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Rony Rex",
+              "url": "https://www.deezer.com/artist/12247830",
+              "fans": 153,
+              "img": "https://cdn-images.dzcdn.net/images/artist/579f805f1893d297dd8557a95d4a7247/250x250-000000-80-0-0.jpg",
+              "id": 12247830
+            },
+            "top_track": {
+              "title": "MANIMANI",
+              "url": "https://www.deezer.com/track/3069095291",
+              "preview": "https://cdnt-preview.dzcdn.net/api/1/1/f/5/7/0/f5788ef2aacffa0b396a42448fe8b544.mp3?hdnea=exp=1785528758~acl=/api/1/1/f/5/7/0/f5788ef2aacffa0b396a42448fe8b544.mp3*~data=user_id=0,application_id=42~hmac=14149d611cf6c1f87f2b06b238237fb7a096fa2b001cf5ce17486bc5911cdc0d"
+            },
+            "musicbrainz": {
+              "mbid": "c1f83a08-4ae7-412a-80d0-394aa5c52283",
+              "name": "Rony Rex",
+              "country": "FI",
+              "disambiguation": "house DJ & producer Rony Vartio",
+              "links": {
+                "spotify": "https://open.spotify.com/artist/61AudJPWNuYbLelVjkocZ4",
+                "youtube": "https://www.youtube.com/channel/UCKcUHAhJTornMCH0RxfUoUg"
+              },
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "Saint Nia",
+          "s": "18:45",
+          "e": "19:30",
+          "type": "dj",
+          "genres": [
+            "house",
+            "afro"
+          ],
+          "lookup": {}
+        },
+        {
+          "n": "Wolve",
+          "display": "Wolve (GR)",
+          "s": "19:30",
+          "e": "20:15",
+          "type": "dj",
+          "genres": [
+            "house",
+            "afro"
+          ],
+          "lookup": {
+            "deezer": {
+              "name": "Wolve",
+              "url": "https://www.deezer.com/artist/6553019",
+              "fans": 102,
+              "img": "https://cdn-images.dzcdn.net/images/artist/6c8fdf9fd118287a700fadef900718d3/250x250-000000-80-0-0.jpg",
+              "id": 6553019
+            },
+            "musicbrainz": {
+              "mbid": "409bd9f2-6724-4d84-8060-4c035bdc8439",
+              "name": "Wolve",
+              "country": null,
+              "disambiguation": "French Progressive Rock Group",
+              "links": {
+                "soundcloud": "https://soundcloud.com/wolvemusic"
+              },
+              "tags": []
+            }
+          }
+        },
+        {
+          "n": "Oddacity",
+          "s": "20:15",
+          "e": "22:00",
+          "type": "dj",
+          "genres": [
+            "house",
+            "electronic"
+          ],
+          "lookup": {}
+        }
+      ]
+    },
+    {
+      "id": "activities",
+      "num": null,
+      "name": "Activities Area",
+      "location": "Lenininpuisto, basketball court",
+      "blurb": "Non-music programme: play club for kids, then night basketball.",
+      "primary": "other",
+      "acts": [
+        {
+          "n": "Leikkiklubi",
+          "s": "14:00",
+          "e": "16:30",
+          "type": "performance",
+          "genres": [
+            "family",
+            "workshop"
+          ],
+          "nomusic": true,
+          "lookup": {
+            "skipped": true
+          }
+        },
+        {
+          "n": "Yökoris",
+          "s": "17:00",
+          "e": "22:00",
+          "type": "performance",
+          "genres": [
+            "family",
+            "workshop"
+          ],
+          "nomusic": true,
+          "lookup": {
+            "skipped": true
+          }
+        }
+      ]
+    }
+  ]
+}

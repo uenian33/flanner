@@ -1,0 +1,4 @@
+.DS_Store
+assets/_*.jpg
+assets/_*.png
+scripts/gmaps-key.txt
