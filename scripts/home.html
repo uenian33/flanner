@@ -299,11 +299,24 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .sheet .foot .lnk:hover{color:var(--tx)}
 .sheet .foot .go{background:var(--tx);color:var(--bg);border-radius:10rem;padding:11px 24px;
   font-size:var(--f-sub);font-weight:700;min-height:44px}
-/* Below this width a sheet anchored to its trigger hangs off the viewport, so
-   it spans the whole tools row instead. */
-@media(max-width:560px){
-  .tools{position:relative}
+.dropset{display:contents}
+/* On a phone the search box and two triggers will not share one row, and left
+   to wrap they produced three ragged ones. Two rows instead: the mark and the
+   search, then the filters side by side.
+
+   The sheets anchor to the bar rather than to their trigger here, because a
+   trigger-anchored sheet hangs off the viewport at this width. .tools keeps
+   position:sticky — an earlier version set position:relative for exactly this
+   anchoring, which silently cancelled the sticky and let the bar scroll away. */
+@media(max-width:620px){
+  .tools{display:grid;align-items:center;gap:8px 10px;
+    grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:"mark search" "filters filters"}
+  .toolmark{grid-area:mark}
+  .sbox{grid-area:search}
+  .dropset{grid-area:filters;display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .drop{position:static}
+  .trig{width:100%;justify-content:center}
   .sheet{left:0;right:0;width:auto;max-width:none}
 }
 .active{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
@@ -471,6 +484,7 @@ __FOOTER_CSS__
     <button class="clr" id="qClr" hidden aria-label="Clear search">
       <svg class="i"><use href="#i-close"/></svg></button>
   </div>
+  <div class="dropset">
   <div class="drop">
     <button class="trig" id="whenTrig" aria-expanded="false" aria-controls="whenSheet">
       <svg class="i"><use href="#i-cal"/></svg><span id="whenLabel">All festivals</span></button>
@@ -490,6 +504,7 @@ __FOOTER_CSS__
         <button class="go" id="catApply">Apply</button>
       </div>
     </div>
+  </div>
   </div>
 </div>
 <div class="active" id="activeTags"></div>

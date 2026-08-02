@@ -906,32 +906,6 @@ __THEME__
 <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
 </defs></svg>
 
-<div class="wrap" id="top">
-<header>
-
-  <div class="brandline">
-    <div class="lockup">
-__DECO__
-    <a class="logo" href="https://www.kallioblockparty.org/" target="_blank" rel="noopener">
-      <img src="__LOGO__" alt="Kallio Block Party 2026" width="339" height="245"></a>
-    <div>
-      <h1>Kallio&nbsp;Block&nbsp;Party Planner</h1>
-      <div class="meta">
-        <span class="g"><b id="statActs">—</b> acts <i>·</i> <b>9</b> stages</span>
-        <span class="g">Sat <b>1 August</b> <i>·</i> 12:00–22:00</span>
-        <span class="g">Alppila, Helsinki <i>·</i> free entry</span></div>
-    </div>
-    </div>
-    <div class="hdr-links">
-      <a class="ghost" href="https://www.kallioblockparty.org/program/" target="_blank" rel="noopener">
-        Official programme <svg class="i"><use href="#i-ext"/></svg></a>
-      <a class="ghost" href="https://www.kallioblockparty.org/" target="_blank" rel="noopener">
-        kallioblockparty.org <svg class="i"><use href="#i-ext"/></svg></a>
-    </div>
-  </div>
-</header>
-<div id="hSentinel" aria-hidden="true"></div>
-</div>
 
 <div class="toolbar">
   <div class="wrap">
@@ -971,6 +945,32 @@ __DECO__
   </div></div></div>
 </div>
 
+<div class="wrap" id="top">
+<header>
+
+  <div class="brandline">
+    <div class="lockup">
+__DECO__
+    <a class="logo" href="https://www.kallioblockparty.org/" target="_blank" rel="noopener">
+      <img src="__LOGO__" alt="Kallio Block Party 2026" width="339" height="245"></a>
+    <div>
+      <h1>Kallio&nbsp;Block&nbsp;Party Planner</h1>
+      <div class="meta">
+        <span class="g"><b id="statActs">—</b> acts <i>·</i> <b>9</b> stages</span>
+        <span class="g">Sat <b>1 August</b> <i>·</i> 12:00–22:00</span>
+        <span class="g">Alppila, Helsinki <i>·</i> free entry</span></div>
+    </div>
+    </div>
+    <div class="hdr-links">
+      <a class="ghost" href="https://www.kallioblockparty.org/program/" target="_blank" rel="noopener">
+        Official programme <svg class="i"><use href="#i-ext"/></svg></a>
+      <a class="ghost" href="https://www.kallioblockparty.org/" target="_blank" rel="noopener">
+        kallioblockparty.org <svg class="i"><use href="#i-ext"/></svg></a>
+    </div>
+  </div>
+</header>
+<div id="hSentinel" aria-hidden="true"></div>
+</div>
 <div class="wrap">
 
 <div class="deck">
@@ -1055,7 +1055,7 @@ __DECO__
   <a class="navhome-m" href="__HOME__"><svg class="i"><use href="#i-logo"/></svg><span class="lbl">Home</span></a>
   <button id="nSched" class="on"><svg class="i"><use href="#i-rows"/></svg><span class="lbl">Schedule</span></button>
   <button id="nMap"><svg class="i"><use href="#i-pin"/></svg><span class="lbl">Map</span></button>
-  <button id="nRoute"><svg class="i"><use href="#i-route"/></svg><span class="lbl">Route</span><span class="nb" id="navBadge" hidden>0</span></button>
+  <button id="nRoute"><svg class="i"><use href="#i-route"/></svg><span class="lbl">My plan</span><span class="nb" id="navBadge" hidden>0</span></button>
 </nav>
 
 <dialog class="consent" id="consent" aria-labelledby="consentTitle">
@@ -2096,6 +2096,7 @@ applyTheme(Store.get('theme') || 'light');   // bright by default
 const NAVMAP = {nSched:'#secSchedule', nMap:'#secMap', nRoute:'#secRoute'};
 function setActiveNav(id) {
   document.body.dataset.sec = id;
+  if (typeof window.holdNavOpen === 'function') window.holdNavOpen();
   const keys = Object.keys(NAVMAP);
   keys.forEach(k => $('#'+k).classList.toggle('on', k === id));
   $('#navPill').style.setProperty('--i', Math.max(0, keys.indexOf(id)));
@@ -2154,9 +2155,18 @@ if ('IntersectionObserver' in window) {
    moment the reader scrolls up, or reaches either end. */
 (() => {
   let lastY = scrollY, ticking = false;
+  /* Tapping a section scrolls the page, which would immediately read as
+     "scrolling down" and fold the bar the user just used. Hold it open until
+     that programmatic scroll has settled. */
+  let holdUntil = 0;
+  window.holdNavOpen = (ms = 900) => {
+    document.body.classList.remove('nav-min');
+    holdUntil = Date.now() + ms;
+  };
   const update = () => {
     ticking = false;
     const y = Math.max(0, scrollY);
+    if (Date.now() < holdUntil) { lastY = y; return; }
     const atEnd = y + innerHeight >= document.documentElement.scrollHeight - 40;
     if (y < 90 || atEnd) document.body.classList.remove('nav-min');
     else if (y > lastY + 6) document.body.classList.add('nav-min');
@@ -2166,6 +2176,8 @@ if ('IntersectionObserver' in window) {
   addEventListener('scroll', () => {
     if (!ticking) { ticking = true; requestAnimationFrame(update); }
   }, {passive: true});
+  /* open on arrival, whatever scroll position the browser restored */
+  document.body.classList.remove('nav-min');
 })();
 
 /* ══ consent flow ══════════════════════════════════════ */
