@@ -155,6 +155,9 @@ def main():
         ("__MAP_AR__", ar),
         ("__THEME__", ""),
         ("__HOME__", "../"),
+        ("__PAGETITLE__", 'Kallio Block Party 2026 timetable — set times, stages and map'),
+        ("__METADESC__", 'Kallio Block Party 2026 timetable: 98 acts on 9 stages in Alppila, Helsinki, 1 August. Set times, genre filters, artist previews and a stage map. Free.'),
+        ("__KEYWORDS__", 'Kallio Block Party 2026, Kallio Block Party aikataulu, KBP 2026 timetable, set times, Alppila Helsinki, free festival Helsinki, techno, stage map'),
         ("__OG__", (lambda _f: seo.head(
             f"{seo.BASE}/{_f['planner']}",
             f"{_f['name']} {_f['year']} timetable — set times, stages and map",

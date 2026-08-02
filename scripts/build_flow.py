@@ -139,6 +139,9 @@ def build():
         ("__MAP_AR__", f'{basemap["wPixels"]}/{basemap["hPixels"]}'),
         ("__THEME__", THEME),
         ("__HOME__", "../"),
+        ("__PAGETITLE__", 'Flow Festival 2026 timetable — set times, stages and map'),
+        ("__METADESC__", 'Flow Festival 2026 timetable: 156 sets on 10 stages at Suvilahti, Helsinki, 14–16 August. Day-by-day set times, artist previews and a site map.'),
+        ("__KEYWORDS__", 'Flow Festival 2026, Flow Festival timetable, Flow Festival set times, Suvilahti Helsinki, Florence + The Machine, Nick Cave, Turnstile, festival lineup'),
         ("__OG__", (lambda _f: seo.head(
             f"{seo.BASE}/{_f['planner']}",
             f"{_f['name']} {_f['year']} timetable — set times, stages and map",
@@ -162,7 +165,6 @@ def build():
               "156 ACTS", "10 STAGES", "3 DAYS")
     strip = "".join(f"<span>{t}</span>" for t in ticker * 2)
     html = html.replace("</header>", f'</header>\n<div class="ticker" aria-hidden="true"><div>{strip}</div></div>')
-    html = html.replace("Kallio Block Party 2026 — Stage Planner", "Flow Festival 2026 — Stage Planner")
     html = html.replace("Kallio&nbsp;Block&nbsp;Party Planner", "Flow Festival Planner")
     html = html.replace('alt="Kallio Block Party 2026"', 'alt="Flow Festival 2026"')
     html = html.replace("KBP<span class=\"pl\">&nbsp;planner</span>", "Flow<span class=\"pl\">&nbsp;planner</span>")
