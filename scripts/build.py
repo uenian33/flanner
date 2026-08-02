@@ -180,6 +180,7 @@ def main():
             kind="article",
             jsonld=seo.festival_event(_f),
         ))(next(x for x in json.loads((ROOT / "data" / "festivals.json").read_text())["festivals"] if x["id"] == "kbp"))),
+        ("__PAGEFX__", (ROOT / "scripts" / "_pagefx.html").read_text()),
         ("__CONTACT__", json.loads((ROOT / "data" / "festivals.json").read_text())["site"]["contact"]),
         ("__PROVENANCE__", '  <p>Timetable transcribed from the organiser\'s official “Full Schedule in One Picture” and\n  cross-checked against <a href="https://www.klangi.fi/uutiset/kallio-block-party-2026-ohjelma-aikataulu/" target="_blank" rel="noopener">klangi.fi</a>; where they disagreed the official image won.</p>\n  <p>Stage pins are the organiser\'s map badges snapped to the real street junctions they sit on, so\n  positions are accurate to the corner rather than the metre. Street map © OpenStreetMap\n  contributors, tiles © CARTO; satellite imagery © Esri. The “Official” layer is the organiser\'s\n  own map.</p>'),
         ("__DECO__", (ROOT / "scripts" / "deco-kbp.html").read_text()),

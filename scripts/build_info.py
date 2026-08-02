@@ -54,6 +54,7 @@ def main() -> None:
             ("__UPDATED__", info["updated"]),
             ("__ROOT__", "../"),
             ("__NOTE__", NOTE),
+            ("__PAGEFX__", (ROOT / "scripts" / "_pagefx.html").read_text()),
             ("__CONTACT__", site["contact"]),
             ("__BASE__", seo.BASE),
             ("__SLUG__", slug),

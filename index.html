@@ -575,7 +575,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
-<body id="top">
+<body id="top" class="fx-shell">
 
 <svg class="sr" aria-hidden="true"><defs>
 <symbol id="i-logo" viewBox="0 0 40 40">
@@ -1195,5 +1195,110 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   });
 }
 </script>
+<style>
+/* ── page transitions ──────────────────────────────────
+   Leaving a page it settles back and fades; arriving, it comes forward. The
+   loader only appears if the next page is slow enough to be worth explaining —
+   these are single self-contained files, so most navigations never show it.
+
+   Everything here is opt-out: with reduced motion the links behave like plain
+   links, and if navigation stalls the page restores itself rather than leaving
+   the reader on a faded screen. */
+.fx-shell{transition:opacity .22s var(--ease),transform .3s var(--ease);
+  transform-origin:50% 38%}
+html.fx-out .fx-shell{opacity:0;transform:scale(.972)}
+html.fx-in .fx-shell{opacity:0;transform:scale(1.014)}
+
+.fx{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
+  background:var(--bg);opacity:0;pointer-events:none;
+  transition:opacity .24s var(--ease)}
+.fx.on{opacity:1;pointer-events:auto}
+.fx svg{width:74px;height:74px;overflow:visible}
+/* The mark's two halves drift apart and settle back, which is the shape doing
+   what it already does rather than a spinner borrowed from somewhere else. */
+.fx .fx-a{animation:fxa 1.15s var(--ease) infinite}
+.fx .fx-b{animation:fxa 1.15s var(--ease) infinite reverse}
+@keyframes fxa{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(2.4px,-3.6px)}
+}
+.fx figcaption{position:absolute;bottom:calc(38% - 78px);font-size:12px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--tx3)}
+
+@media(prefers-reduced-motion:reduce){
+  .fx-shell,html.fx-out .fx-shell,html.fx-in .fx-shell{transition:none;opacity:1;transform:none}
+  .fx{transition:none}
+  .fx .fx-a,.fx .fx-b{animation:none}
+}
+</style>
+
+<div class="fx" id="fx" role="status" aria-live="polite">
+  <figure style="margin:0;display:grid;place-items:center">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <defs>
+        <linearGradient id="fxg" x1=".06" y1=".95" x2=".94" y2=".05">
+          <stop offset="0" stop-color="#b6fc46"/>
+          <stop offset=".55" stop-color="#e4fb27"/>
+          <stop offset="1" stop-color="#fff203"/>
+        </linearGradient>
+        <clipPath id="fxup"><path d="M-14 -14H54V20H-14Z" transform="rotate(-34 20 20)"/></clipPath>
+        <clipPath id="fxdn"><path d="M-14 20H54V54H-14Z" transform="rotate(-34 20 20)"/></clipPath>
+      </defs>
+      <g class="fx-a" clip-path="url(#fxup)"><circle cx="22.2" cy="16.7" r="18.4" fill="url(#fxg)"/></g>
+      <g class="fx-b" clip-path="url(#fxdn)"><circle cx="17.8" cy="23.3" r="18.4" fill="url(#fxg)"/></g>
+    </svg>
+    <figcaption>Loading</figcaption>
+  </figure>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const fx = document.getElementById('fx');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* Arrive: start slightly forward and settle. */
+  root.classList.add('fx-in');
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('fx-in')));
+  addEventListener('load', () => root.classList.remove('fx-in'));
+
+  /* Coming back through the bfcache restores a page that was mid-exit. */
+  addEventListener('pageshow', () => {
+    root.classList.remove('fx-out', 'fx-in');
+    fx.classList.remove('on');
+  });
+
+  const sameDoc = (a) => {
+    const u = new URL(a.href, location.href);
+    return u.origin === location.origin &&
+           u.pathname + u.search !== location.pathname + location.search;
+  };
+
+  document.addEventListener('click', e => {
+    if (calm.matches || e.defaultPrevented) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest('a[href]');
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    if (a.getAttribute('href').startsWith('#') || a.protocol === 'mailto:') return;
+    if (!sameDoc(a)) return;
+
+    e.preventDefault();
+    const url = a.href;
+    root.classList.add('fx-out');
+    /* Only explain a wait the reader would actually notice. */
+    const slow = setTimeout(() => fx.classList.add('on'), 320);
+    /* If the navigation never happens, put the page back rather than leaving
+       it faded out with nothing to click. */
+    const bail = setTimeout(() => {
+      clearTimeout(slow);
+      root.classList.remove('fx-out');
+      fx.classList.remove('on');
+    }, 4000);
+    addEventListener('pagehide', () => { clearTimeout(slow); clearTimeout(bail); }, {once: true});
+    setTimeout(() => { location.href = url; }, 190);
+  });
+})();
+</script>
+
 </body>
 </html>

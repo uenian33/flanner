@@ -224,10 +224,20 @@ body.bars-joined .toolbar::before{border-bottom-color:transparent}
 .navhome-m svg{stroke:none;fill:none}
 /* Always present, not revealed on scroll: the masthead is below the fold for
    most of the page, so the bar is the only place the festival is named. */
-.brandmini{display:flex;align-items:center;gap:9px;text-decoration:none;flex:none}
-.brandmini .fpmark{width:30px;height:30px;flex:none;stroke:none;fill:none}
-.brandmini b{font-family:"Planner Title",var(--sans);font-size:19px;font-weight:600;letter-spacing:.05em;
-  text-transform:uppercase;white-space:nowrap;color:var(--tx)}
+/* The same lockup as the home page's masthead, at the same sizes: mark, the
+   wordmark at display size, and the descriptor beneath it. The planner has no
+   place selector — there is only one festival on the page. */
+.brandmini{display:inline-flex;align-items:center;gap:clamp(11px,1.3vw,16px);
+  text-decoration:none;white-space:nowrap;flex:none}
+.wm{display:flex;flex-direction:column;gap:3px;min-width:0}
+.wm i{font-style:normal;font-size:clamp(10px,.95vw,12px);font-weight:400;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--tx2);line-height:1}
+
+.brandmini .fpmark{width:clamp(30px,3.6vw,44px);height:clamp(30px,3.6vw,44px);flex:none;
+  stroke:none;fill:none}
+.brandmini b{font-family:"Planner Title",var(--sans);font-weight:600;
+  font-size:clamp(34px,5.2vw,52px);letter-spacing:.008em;text-transform:uppercase;
+  line-height:1;white-space:nowrap;color:var(--tx)}
 @media(max-width:720px){.brandmini b{display:none}}
 /* On a phone the identity is not something to reveal on scroll — with the
    masthead far below the fold, the bar is the only place the festival is
@@ -239,8 +249,9 @@ body.bars-joined .toolbar::before{border-bottom-color:transparent}
 @media(max-width:620px){
   .toolbar .tbar:not(.tbar2){gap:8px}
   .brandmini{width:auto;margin:0;opacity:1;transform:none;overflow:visible;flex:none}
-  .brandmini b{display:block;font-size:15px;letter-spacing:.03em}
-  .brandmini .fpmark{width:26px;height:26px}
+  .brandmini b{display:block;font-size:22px;letter-spacing:.02em}
+  .brandmini .wm i{font-size:9.5px;letter-spacing:.15em}
+  .brandmini .fpmark{width:30px;height:30px}
   /* 44px here, matching the phone-sized buttons. Scoped through .toolbar
      because this block sits above the base rule in the sheet and would
      otherwise lose to it on equal specificity. */
@@ -1070,7 +1081,7 @@ h1{letter-spacing:.01em;line-height:.94}
 
 </style>
 </head>
-<body data-sec="nSched">
+<body data-sec="nSched" class="fx-shell">
 
 <svg class="sr" aria-hidden="true"><defs>
 <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
@@ -1138,7 +1149,8 @@ h1{letter-spacing:.01em;line-height:.94}
   <div class="wrap">
   <div class="tbar">
     <a class="brandmini" href="#top" aria-label="Flanner — back to the top">
-      <svg class="fpmark" aria-hidden="true"><use href="#i-logo"/></svg><b>Flanner</b></a>
+      <svg class="fpmark" aria-hidden="true"><use href="#i-logo"/></svg>
+      <span class="wm"><b>Flanner</b><i>Flow Festival</i></span></a>
     <label class="srch"><span class="sr">Search artists</span>
       <svg class="i"><use href="#i-search"/></svg>
       <input type="search" id="q" placeholder="Search artist, stage, genre…" autocomplete="off">
@@ -2754,5 +2766,110 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   });
 }
 </script>
+<style>
+/* ── page transitions ──────────────────────────────────
+   Leaving a page it settles back and fades; arriving, it comes forward. The
+   loader only appears if the next page is slow enough to be worth explaining —
+   these are single self-contained files, so most navigations never show it.
+
+   Everything here is opt-out: with reduced motion the links behave like plain
+   links, and if navigation stalls the page restores itself rather than leaving
+   the reader on a faded screen. */
+.fx-shell{transition:opacity .22s var(--ease),transform .3s var(--ease);
+  transform-origin:50% 38%}
+html.fx-out .fx-shell{opacity:0;transform:scale(.972)}
+html.fx-in .fx-shell{opacity:0;transform:scale(1.014)}
+
+.fx{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
+  background:var(--bg);opacity:0;pointer-events:none;
+  transition:opacity .24s var(--ease)}
+.fx.on{opacity:1;pointer-events:auto}
+.fx svg{width:74px;height:74px;overflow:visible}
+/* The mark's two halves drift apart and settle back, which is the shape doing
+   what it already does rather than a spinner borrowed from somewhere else. */
+.fx .fx-a{animation:fxa 1.15s var(--ease) infinite}
+.fx .fx-b{animation:fxa 1.15s var(--ease) infinite reverse}
+@keyframes fxa{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(2.4px,-3.6px)}
+}
+.fx figcaption{position:absolute;bottom:calc(38% - 78px);font-size:12px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--tx3)}
+
+@media(prefers-reduced-motion:reduce){
+  .fx-shell,html.fx-out .fx-shell,html.fx-in .fx-shell{transition:none;opacity:1;transform:none}
+  .fx{transition:none}
+  .fx .fx-a,.fx .fx-b{animation:none}
+}
+</style>
+
+<div class="fx" id="fx" role="status" aria-live="polite">
+  <figure style="margin:0;display:grid;place-items:center">
+    <svg viewBox="0 0 40 40" aria-hidden="true">
+      <defs>
+        <linearGradient id="fxg" x1=".06" y1=".95" x2=".94" y2=".05">
+          <stop offset="0" stop-color="#b6fc46"/>
+          <stop offset=".55" stop-color="#e4fb27"/>
+          <stop offset="1" stop-color="#fff203"/>
+        </linearGradient>
+        <clipPath id="fxup"><path d="M-14 -14H54V20H-14Z" transform="rotate(-34 20 20)"/></clipPath>
+        <clipPath id="fxdn"><path d="M-14 20H54V54H-14Z" transform="rotate(-34 20 20)"/></clipPath>
+      </defs>
+      <g class="fx-a" clip-path="url(#fxup)"><circle cx="22.2" cy="16.7" r="18.4" fill="url(#fxg)"/></g>
+      <g class="fx-b" clip-path="url(#fxdn)"><circle cx="17.8" cy="23.3" r="18.4" fill="url(#fxg)"/></g>
+    </svg>
+    <figcaption>Loading</figcaption>
+  </figure>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const fx = document.getElementById('fx');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* Arrive: start slightly forward and settle. */
+  root.classList.add('fx-in');
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('fx-in')));
+  addEventListener('load', () => root.classList.remove('fx-in'));
+
+  /* Coming back through the bfcache restores a page that was mid-exit. */
+  addEventListener('pageshow', () => {
+    root.classList.remove('fx-out', 'fx-in');
+    fx.classList.remove('on');
+  });
+
+  const sameDoc = (a) => {
+    const u = new URL(a.href, location.href);
+    return u.origin === location.origin &&
+           u.pathname + u.search !== location.pathname + location.search;
+  };
+
+  document.addEventListener('click', e => {
+    if (calm.matches || e.defaultPrevented) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest('a[href]');
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    if (a.getAttribute('href').startsWith('#') || a.protocol === 'mailto:') return;
+    if (!sameDoc(a)) return;
+
+    e.preventDefault();
+    const url = a.href;
+    root.classList.add('fx-out');
+    /* Only explain a wait the reader would actually notice. */
+    const slow = setTimeout(() => fx.classList.add('on'), 320);
+    /* If the navigation never happens, put the page back rather than leaving
+       it faded out with nothing to click. */
+    const bail = setTimeout(() => {
+      clearTimeout(slow);
+      root.classList.remove('fx-out');
+      fx.classList.remove('on');
+    }, 4000);
+    addEventListener('pagehide', () => { clearTimeout(slow); clearTimeout(bail); }, {once: true});
+    setTimeout(() => { location.href = url; }, 190);
+  });
+})();
+</script>
+
 </body>
 </html>

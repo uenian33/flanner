@@ -46,6 +46,7 @@ def main():
         ("__ROOT__", "./"),
         ("__NOTE__", NOTE),
         ("__CUR_PRIVACY__", ""), ("__CUR_TERMS__", ""), ("__CUR_ABOUT__", ""),
+        ("__PAGEFX__", (ROOT / "scripts" / "_pagefx.html").read_text()),
         ("__CONTACT__", cfg["site"]["contact"]),
     ]:
         html = html.replace(tok, val)
