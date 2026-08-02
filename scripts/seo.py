@@ -123,3 +123,43 @@ def write_robots_and_sitemap(pages: list[tuple[str, str]]) -> None:
         f"{urls}\n</urlset>\n"
     )
     print(f"  robots.txt · sitemap.xml ({len(pages)} urls)")
+
+
+def faq(f: dict) -> dict:
+    """The questions people type into a search box before a festival."""
+    n = f"{f['name']} {f['year']}"
+    qa = [
+        (f"When is {n}?",
+         f"{n} runs {f['dates']} at {f['city']}."),
+        (f"What time do {f['name']} set times start?",
+         f"Flanner lists every set time for all {f['stats']['stages']} stages — "
+         f"{f['stats']['acts']} acts across {f['stats']['days']} "
+         f"day{'s' if f['stats']['days'] > 1 else ''}. Open the planner to see the full grid."),
+        (f"Who is playing {f['name']} {f['year']}?",
+         "Headliners include " + ", ".join(f["stars"][:4]) +
+         f", plus {f['stats']['acts'] - 4} more acts."),
+        (f"Is there a {f['name']} timetable I can plan with?",
+         "Yes — Flanner turns the official schedule into a grid you can filter by genre, "
+         "search by artist, and save your own route from. It works offline once loaded."),
+    ]
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q,
+             "acceptedAnswer": {"@type": "Answer", "text": a}}
+            for q, a in qa
+        ],
+    }
+
+
+def breadcrumb(f: dict) -> dict:
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Flanner", "item": f"{BASE}/"},
+            {"@type": "ListItem", "position": 2,
+             "name": f"{f['name']} {f['year']}", "item": f"{BASE}/{f['planner']}"},
+        ],
+    }

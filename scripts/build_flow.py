@@ -162,7 +162,7 @@ def build():
             f"interactive stage map. Works offline once loaded.",
             f"{seo.BASE}/assets/og/flow.jpg",
             kind="article",
-            jsonld=seo.festival_event(_f),
+            jsonld=[seo.festival_event(_f), seo.faq(_f), seo.breadcrumb(_f)],
         ))(next(x for x in json.loads((ROOT / "data" / "festivals.json").read_text())["festivals"] if x["id"] == "flow"))),
         ("__OFFLINE__", (ROOT / "scripts" / "_offline.html").read_text()),
         ("__SETTINGS__", (ROOT / "scripts" / "_settings.html").read_text()),

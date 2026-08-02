@@ -2,6 +2,8 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#e9e9e9">
 <link rel="manifest" href="../manifest.webmanifest">
@@ -484,6 +486,11 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
   pointer-events:none}
 .nowline::before{content:"NOW";position:absolute;left:2px;top:-8px;font-size:9px;font-weight:800;
   color:#fff;background:var(--live);padding:2px 5px;border-radius:4px;font-family:var(--disp)}
+
+.lineup{columns:3 220px;column-gap:26px}
+.lineup p{margin:0 0 7px;font-size:13px;line-height:1.45;color:var(--tx2);break-inside:avoid}
+.lineup b{color:var(--tx);font-weight:650}
+.lineup i{font-style:normal;color:var(--tx3)}
 
 /* ── agenda ───────────────────────────────────────────── */
 .agenda{max-width:760px}
@@ -1067,6 +1074,11 @@ __TICKER__
 </section>
 </div>
 
+<section class="blk" id="secLineup">
+  <div class="shead"><h2>Line-up A–Z</h2></div>
+  <div class="lineup" id="lineup"></div>
+</section>
+
 <section class="blk" id="secRoute">
   <div class="shead">
     <h2>My plan <span id="routeCount" style="color:var(--tx3);font-weight:500"></span></h2>
@@ -1153,11 +1165,14 @@ const Store = (() => {
   const NS = 'kbp26';
   const KEYS = ['route', 'view', 'viewPinned', 'theme', 'day'];
   const YEAR = 60 * 60 * 24 * 400;
+  /* Secure is only valid over https; setting it on http would drop the cookie. */
+  const SEC = location.protocol === 'https:' ? ';Secure' : '';
   let granted = false, mem = {};
 
   const cookiesWork = (() => {
     try {
-      document.cookie = NS + '_probe=1;path=/;SameSite=Lax';
+      document.cookie = NS + '_probe=1;path=/;SameSite=Lax' +
+        (location.protocol === 'https:' ? ';Secure' : '');
       const ok = document.cookie.indexOf(NS + '_probe=1') !== -1;
       document.cookie = NS + '_probe=;Max-Age=0;path=/;SameSite=Lax';
       return ok;
@@ -1165,7 +1180,7 @@ const Store = (() => {
   })();
   const wc = (k, v) => { try {
     document.cookie = NS + '_' + k + '=' + encodeURIComponent(v) +
-      ';path=/;Max-Age=' + YEAR + ';SameSite=Lax';
+      ';path=/;Max-Age=' + YEAR + ';SameSite=Lax' + SEC;
   } catch (e) {} };
   const rc = k => {
     try {
@@ -1174,7 +1189,7 @@ const Store = (() => {
     } catch (e) { return null; }
   };
   const dc = k => { try {
-    document.cookie = NS + '_' + k + '=;Max-Age=0;path=/;SameSite=Lax';
+    document.cookie = NS + '_' + k + '=;Max-Age=0;path=/;SameSite=Lax' + SEC;
   } catch (e) {} };
   const ls = {
     get: k => { try { return localStorage.getItem(NS + k); } catch (e) { return null; } },
@@ -1402,6 +1417,26 @@ function scrollToNow(smooth) {
   return true;
 }
 $('#nowBtn').onclick = () => scrollToNow(true);
+
+/* ══ line-up ═══════════════════════════════════════════
+   Every act as plain crawlable text. The grid and the list are both built at
+   runtime from a JSON blob, so without this a search engine — and anyone
+   looking for one artist by name — finds a page with no performers on it. */
+function buildLineup() {
+  const seen = new Map();
+  everyAct.filter(a => !a.nomusic).forEach(a => {
+    if (!seen.has(a.name)) seen.set(a.name, []);
+    seen.get(a.name).push(a);
+  });
+  const names = [...seen.keys()].sort((x, y) => x.localeCompare(y, 'fi'));
+  $('#lineup').innerHTML = names.map(n => {
+    const where = seen.get(n).map(a => {
+      const d = DAYS.length > 1 ? `${DAYS.find(x => x.id === a.day)?.short || ''} ` : '';
+      return `${d}${a.s}, ${esc(a.stage.short)}`;
+    }).join(' · ');
+    return `<p><b>${esc(n)}</b> <i>${where}</i></p>`;
+  }).join('');
+}
 
 /* ══ agenda ════════════════════════════════════════════ */
 function buildAgenda() {
@@ -2481,7 +2516,7 @@ if (savedDay && DAYS.some(d => d.id === savedDay)) {
 }
 if (DATA.hasPoster) $('#layPoster').hidden = false;
 buildDayBar();
-buildTimeline(); buildAgenda(); buildMap(); measureTop(); applyMapT();
+buildTimeline(); buildAgenda(); buildMap(); buildLineup(); measureTop(); applyMapT();
 const pinned = Store.get('viewPinned') && Store.get('view');
 if (pinned) setView(pinned); else applyBreakpointDefaults();
 $('#fToggle').setAttribute('aria-pressed', 'false');   // drawer starts closed
