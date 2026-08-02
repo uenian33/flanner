@@ -139,6 +139,7 @@ def build():
         ("__MAP_AR__", f'{basemap["wPixels"]}/{basemap["hPixels"]}'),
         ("__THEME__", THEME),
         ("__HOME__", "../"),
+        ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__BRANDNAME__", 'Flow Festival'),
         ("__PAGETITLE__", 'Flow Festival 2026 timetable — set times, stages and map'),
         ("__METADESC__", 'Flow Festival 2026 timetable: 156 sets on 10 stages at Suvilahti, Helsinki, 14–16 August. Day-by-day set times, artist previews and a site map.'),

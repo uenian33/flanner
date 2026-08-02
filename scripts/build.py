@@ -155,6 +155,7 @@ def main():
         ("__MAP_AR__", ar),
         ("__THEME__", ""),
         ("__HOME__", "../"),
+        ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__BRANDNAME__", 'Kallio Block Party'),
         ("__PAGETITLE__", 'Kallio Block Party 2026 timetable — set times, stages and map'),
         ("__METADESC__", 'Kallio Block Party 2026 timetable: 98 acts on 9 stages in Alppila, Helsinki, 1 August. Set times, genre filters, artist previews and a stage map. Free.'),

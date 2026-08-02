@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#e6e6e6">
 <title>__PAGETITLE__</title>
 <meta name="description" content="__METADESC__">
+<style>__FONTCSS__</style>
 <meta name="keywords" content="__KEYWORDS__">
 __OG__
 <style>
@@ -46,8 +47,8 @@ __OG__
 /* Light theme after Flow Festival's bright style: warm grey paper, pure black
    ink, hard hairlines, one electric accent — here KBP's own neon green. */
 :root[data-theme=light]{
-  --bg:#e6e6e6; --bg2:#fff; --panel:#f2f2f2; --panel2:#eaeaea;
-  --line:rgba(0,0,0,.14); --line2:rgba(0,0,0,.82);
+  --bg:#e9e9e9; --bg2:#fff; --panel:#f2f2f2; --panel2:#eaeaea;
+  --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.8);
   --tx:#000; --tx2:#3a3a3a; --tx3:#5c5c5c;
   --accent-ink:#3f6800; --on-accent:#000; --shade:rgba(0,0,0,.16);
   --sheet:#fff; --sheet2:#ededed;
@@ -113,7 +114,7 @@ svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;
   stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.13em}
 svg.i.fill{fill:currentColor;stroke:currentColor;stroke-width:1.2}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
-.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(14px,3vw,40px)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* ── header ───────────────────────────────────────────── */
@@ -172,10 +173,14 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
 .ghost:hover{color:var(--tx);border-color:var(--tx3);background:var(--panel)}
 
 /* ── toolbar ──────────────────────────────────────────── */
-.toolbar{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 92%,transparent);
-  backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--line);
-  margin-bottom:2px}
-.tbar{display:flex;gap:10px;align-items:center;padding:10px 0;flex-wrap:nowrap}
+.toolbar{position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb,var(--bg) 86%,transparent);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);margin-bottom:2px}
+.tbar{display:flex;gap:10px;align-items:center;padding:13px 0;flex-wrap:nowrap}
+/* The bar borrows the home page's two faces so the two read as one product.
+   Scoped to the bar: the rest of the planner keeps its own typography. */
+.toolbar{font-family:"Planner Sans",var(--sans)}
 .tbar2{flex-wrap:nowrap}
 
 /* ── the Flanner mark, docked to the section nav ───────
@@ -198,7 +203,7 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
    most of the page, so the bar is the only place the festival is named. */
 .brandmini{display:flex;align-items:center;gap:9px;text-decoration:none;flex:none}
 .brandmini .fpmark{width:30px;height:30px;flex:none;stroke:none;fill:none}
-.brandmini b{font-family:var(--title);font-size:19px;font-weight:600;letter-spacing:.05em;
+.brandmini b{font-family:"Planner Title",var(--sans);font-size:19px;font-weight:600;letter-spacing:.05em;
   text-transform:uppercase;white-space:nowrap;color:var(--tx)}
 @media(max-width:720px){.brandmini b{display:none}}
 /* On a phone the identity is not something to reveal on scroll — with the
@@ -225,7 +230,7 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
 header{transition:none}
 .logo img{transform-origin:center center}
 body.scrolled .logo img{transform:scale(.72);opacity:.55}
-.seg{display:flex;flex:1 1 auto;background:var(--bg2);border:1px solid var(--ui-line);
+.seg{display:flex;flex:1 1 auto;background:var(--bg2);border:1px solid var(--line2);
   border-radius:10rem;padding:3px;gap:3px}
 .seg button{display:inline-flex;flex:1 1 0;align-items:center;justify-content:center;gap:8px;
   font-size:15px;font-weight:650;padding:0 16px;border-radius:10rem;color:var(--tx2);
@@ -250,22 +255,21 @@ body.sched-off .tbar2{display:none}
 .zoomwrap{display:inline-flex;gap:6px;flex:none}
 .srch{flex:1 1 80px;min-width:0}
 input[type=search]{width:100%}
-/* The toolbar borrows the home page's control shapes: 50px pills on a soft
-   hairline. It cannot use --line2 for that — on the planner's light theme that
-   token is near-black, which is right for the timetable's hard rules and much
-   too heavy here — so the bar carries its own line colour. */
-.toolbar{--ui-line:color-mix(in srgb,var(--tx) 24%,transparent)}
+/* Every measurement in this bar is taken from the home page's, so the two read
+   as one product: 13px vertical padding, a 10px gap, 50px pill controls on a
+   1px --line2 hairline, and a backdrop of --bg at 86% behind a 16px blur. */
 .seg button[aria-pressed=true]{background:var(--tx);color:var(--bg2);box-shadow:none}
 .seg button:hover{color:var(--tx)}
 .srch{position:relative;display:flex;align-items:center}
 .srch svg{position:absolute;left:17px;width:17px;height:17px;color:var(--tx3);
   pointer-events:none}
-input[type=search]{background:var(--bg2);border:1px solid var(--ui-line);border-radius:10rem;
+input[type=search]{font-family:inherit;background:var(--bg2);border:1px solid var(--line2);
+  border-radius:10rem;
   padding:0 44px;color:var(--tx);width:100%;font-size:16px;outline:none;height:50px}
 input[type=search]:focus{border-color:var(--tx)}
 input[type=search]::placeholder{color:var(--tx3)}
 .tspacer{flex:1 1 auto}
-.iconbtn{width:50px;height:50px;border:1px solid var(--ui-line);border-radius:10rem;color:var(--tx2);
+.iconbtn{width:50px;height:50px;padding:0;border:1px solid var(--line2);border-radius:10rem;color:var(--tx2);
   display:grid;place-items:center;font-size:17px;transition:.15s;background:var(--bg2)}
 .iconbtn:hover{color:var(--tx);border-color:var(--tx)}
 .zoomwrap .iconbtn{width:40px;height:40px}
