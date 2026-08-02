@@ -216,6 +216,10 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--line);pointer-events:none}
 .toolbar > *{position:relative;z-index:1}
+/* While a second bar is pinned directly beneath it, the rule between them is
+   a seam through what should read as one block, so it is dropped for as long
+   as they are touching. */
+body.bars-joined .toolbar::before{border-bottom-color:transparent}
 .tbar{display:flex;gap:10px;align-items:center;padding:13px 0;flex-wrap:nowrap}
 /* The bar borrows the home page's two faces so the two read as one product.
    Scoped to the bar: the rest of the planner keeps its own typography. */
@@ -269,8 +273,10 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
 header{transition:none}
 .logo img{transform-origin:center center}
 body.scrolled .logo img{transform:scale(.72);opacity:.55}
+/* 1px border + 2px padding + a 44px button = the 50px every other control in
+   these bars is, so the segment lines up with the filter button beside it. */
 .seg{display:flex;flex:1 1 auto;background:var(--bg2);border:1px solid var(--line2);
-  border-radius:10rem;padding:3px;gap:3px}
+  border-radius:10rem;padding:2px;gap:3px}
 .seg button{display:inline-flex;flex:1 1 0;align-items:center;justify-content:center;gap:8px;
   font-size:15px;font-weight:650;padding:0 16px;border-radius:10rem;color:var(--tx2);
   transition:.16s var(--ease);min-height:44px}
@@ -278,10 +284,13 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
    inside the schedule section. A sticky child only pins within its parent's
    box, which is exactly the behaviour wanted: they ride under the top bar
    while the schedule is on screen and leave with it. */
-.tbar2{position:sticky;top:var(--toph,104px);z-index:30;padding:8px 0 10px;margin:0 0 2px}
-.tbar2::before{content:"";position:absolute;inset:0 -50vw;z-index:0;background:var(--bg);
+.schedbar{position:sticky;top:var(--toph,104px);z-index:30;margin:0 0 2px}
+.schedbar::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
+  background:color-mix(in srgb,var(--bg) 86%,transparent);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
   box-shadow:0 1px 0 var(--line);pointer-events:none}
-.tbar2 > *{position:relative;z-index:1}
+.schedbar > *{position:relative;z-index:1}
+.tbar2{padding:8px 0 10px}
 .daybar{flex:1 1 auto}
 .daybar .dshort{display:none}
 @media(max-width:700px){
@@ -326,13 +335,11 @@ input[type=search]::placeholder{color:var(--tx3)}
 .toolbar>.wrap{position:relative;z-index:2}
 /* The drawer hangs below the pinned rows rather than growing them, so the bar
    keeps sticking and the page below does not jump when it opens. */
-.filters{position:absolute;left:0;right:0;top:100%;z-index:1;
-  grid-template-columns:minmax(0,1fr);
-  background:var(--bg);box-shadow:0 18px 34px -22px var(--shade);
+.filters{grid-template-columns:minmax(0,1fr);
   display:grid;grid-template-rows:0fr;opacity:0;pointer-events:none;
   transition:grid-template-rows .38s var(--ease),opacity .26s var(--ease);
   border-bottom:1px solid transparent}
-.filters.open{grid-template-rows:1fr;opacity:1;pointer-events:auto;border-bottom-color:var(--line)}
+.filters.open{grid-template-rows:1fr;opacity:1;pointer-events:auto}
 .finner{min-height:0;overflow:hidden}
 .filters>.wrap{min-width:0;width:100%;margin-inline:0}
 .finner{min-width:0;padding:8px 0 18px}
@@ -1073,18 +1080,8 @@ h1{letter-spacing:.01em;line-height:.94}
     </label>
     <button class="iconbtn" id="themeBtn" aria-label="Switch colour theme">
       <svg class="i"><use href="#i-moon"/></svg></button>
-    <span class="rel"><button class="iconbtn" id="fToggle" aria-pressed="false" aria-label="Filters">
-      <svg class="i"><use href="#i-sliders"/></svg></button>
-      <span class="fbadge" id="fBadge" hidden>0</span></span>
   </div>
   </div>
-  <div class="filters" id="filters"><div class="wrap"><div class="finner">
-    <div class="frow"><span class="flab">Type</span><span class="chipset" id="fType"></span></div>
-    <div class="frow"><span class="flab">Genre</span><span class="chipset" id="fGenre"></span></div>
-    <div class="frow"><span class="flab">Stage</span><span class="chipset" id="fStage"></span></div>
-    <div class="fstat"><span id="matchCount"></span>
-      <button class="linkbtn" id="reset">Clear all</button></div>
-  </div></div></div>
 </div>
 
 <div class="wrap" id="top">
@@ -1134,17 +1131,29 @@ h1{letter-spacing:.01em;line-height:.94}
 
 <div class="deck">
 <section class="blk" id="secSchedule">
+  <div class="schedbar">
   <div class="tbar tbar2">
     <div class="seg daybar" id="dayBar" role="group" aria-label="Festival day" hidden></div>
     <div class="seg" role="group" aria-label="Schedule view">
       <button id="vTimeline" aria-pressed="false"><svg class="i"><use href="#i-cols"/></svg>Timetable</button>
       <button id="vAgenda" aria-pressed="false"><svg class="i"><use href="#i-rows"/></svg>List</button>
     </div>
+    <span class="rel"><button class="iconbtn" id="fToggle" aria-pressed="false" aria-label="Filters">
+      <svg class="i"><use href="#i-sliders"/></svg></button>
+      <span class="fbadge" id="fBadge" hidden>0</span></span>
     <button class="nowbtn" id="nowBtn"><i></i>Now</button>
     <span id="zoomWrap" class="zoomwrap">
       <button class="iconbtn" id="zOut" aria-label="Zoom out"><svg class="i"><use href="#i-minus"/></svg></button>
       <button class="iconbtn" id="zIn" aria-label="Zoom in"><svg class="i"><use href="#i-plus"/></svg></button>
     </span>
+  </div>
+  <div class="filters" id="filters"><div class="wrap"><div class="finner">
+    <div class="frow"><span class="flab">Type</span><span class="chipset" id="fType"></span></div>
+    <div class="frow"><span class="flab">Genre</span><span class="chipset" id="fGenre"></span></div>
+    <div class="frow"><span class="flab">Stage</span><span class="chipset" id="fStage"></span></div>
+    <div class="fstat"><span id="matchCount"></span>
+      <button class="linkbtn" id="reset">Clear all</button></div>
+  </div></div></div>
   </div>
   <div class="rulerbar" id="rulerBar" hidden><div class="ruler" id="ruler"></div></div>
   <div class="board" id="board" hidden><div class="board-in" id="boardIn"></div></div>
@@ -2430,18 +2439,39 @@ document.addEventListener('keydown', e => {
   set();
 })();
 
+/* Whichever bar pins under the toolbar — the day row in the schedule, the
+   heading in the other sections — the two should read as one block while they
+   touch, so the rule between them is dropped for as long as they do. */
+(() => {
+  const joined = () => {
+    const toph = parseFloat(getComputedStyle(document.documentElement)
+      .getPropertyValue('--toph')) || 0;
+    /* "at or above the offset" would also match a bar that has scrolled far
+       out of sight, so this asks for one actually resting at the offset and
+       still on screen. */
+    const touching = [...document.querySelectorAll('.schedbar, .shead')].some(el => {
+      const r = el.getBoundingClientRect();
+      return r.height > 0 && r.bottom > toph + 1 && Math.abs(r.top - toph) <= 1.5;
+    });
+    document.body.classList.toggle('bars-joined', touching);
+  };
+  addEventListener('scroll', joined, {passive: true});
+  addEventListener('resize', joined, {passive: true});
+  joined();
+})();
+
 const measureTop = () => {
   const bar = $('.tbar').getBoundingClientRect().height;
   const border = parseFloat(getComputedStyle($('.toolbar')).borderBottomWidth) || 0;
   document.documentElement.style.setProperty('--toph', Math.round(bar + border) + 'px');
-  const t2 = $('.tbar2');
+  const t2 = $('.schedbar');
   const h2 = !t2 || getComputedStyle(t2).display === 'none'
     ? 0 : t2.getBoundingClientRect().height;
   document.documentElement.style.setProperty('--tb2h', Math.round(h2) + 'px');
 };
 if ('ResizeObserver' in window) {
   new ResizeObserver(measureTop).observe($('.toolbar'));
-  if ($('.tbar2')) new ResizeObserver(measureTop).observe($('.tbar2'));
+  if ($('.schedbar')) new ResizeObserver(measureTop).observe($('.schedbar'));
 }
 addEventListener('resize', measureTop);
 
