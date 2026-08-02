@@ -50,7 +50,7 @@ svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:
 /* ── masthead ─────────────────────────────────────────── */
 header{padding:clamp(22px,3vw,34px) 0 0}
 .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.mark{font-family:var(--title);font-size:clamp(23px,3.4vw,34px);letter-spacing:.008em;
+.mark{font-family:var(--title);font-size:var(--f-display);letter-spacing:var(--k-display);
   text-transform:uppercase;line-height:1;text-decoration:none}
 .mark b{font-weight:400}
 .mark i{font-style:normal;display:inline-block;background:var(--tx);color:var(--bg);
@@ -59,15 +59,35 @@ header{padding:clamp(22px,3vw,34px) 0 0}
 .tbtn{width:40px;height:40px;border:1px solid var(--line2);border-radius:10rem;
   display:grid;place-items:center;font-size:16px;transition:.16s var(--ease)}
 .tbtn:hover{background:var(--tx);color:var(--bg)}
-.lede{margin:16px 0 0;font-size:clamp(15px,1.5vw,17px);line-height:1.55;color:var(--tx2);
-  max-width:56ch;text-wrap:pretty}
+.lede{margin:14px 0 0;font-size:var(--f-title);line-height:var(--l-body);color:var(--tx2);
+  max-width:64ch;text-wrap:pretty}
+
+/* ── type scale ────────────────────────────────────────
+   Sizes and leading follow the Material 3 type scale, with the roles named
+   after Apple's HIG ramp where the two agree. Two rules drive the numbers:
+   body copy never drops below 16px, and tracking goes positive as size goes
+   down (small text needs air) and negative as it goes up (large text needs
+   none). Leading is 1.5 for body, 1.1–1.2 for display. */
+:root{
+  --f-display:clamp(30px,4.6vw,44px);   --l-display:1.06;  --k-display:-.012em;
+  --f-h2:clamp(22px,2.7vw,30px);        --l-h2:1.14;       --k-h2:-.006em;
+  --f-h3:clamp(20px,2.2vw,25px);        --l-h3:1.16;       --k-h3:-.004em;
+  --f-title:17px;                       --l-title:1.32;    /* HIG Headline    */
+  --f-body:16px;                        --l-body:1.5;      --k-body:.005em;
+  --f-sub:15px;                         --l-sub:1.47;      --k-sub:.008em;
+  --f-label:14px;                       --l-label:1.43;    --k-label:.01em;
+  --f-caption:13px;                     --l-caption:1.38;  --k-caption:.02em;
+  --f-over:12px;                        --l-over:1.33;     --k-over:.06em;
+}
 
 /* ── hero: the highlighted festivals ──────────────────── */
 .hero{margin:clamp(26px,4vw,44px) 0 0}
 .shead{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.shead h2{margin:0;font-family:var(--title);font-size:clamp(19px,2.4vw,26px);
+.shead h2{margin:0;font-family:var(--title);font-size:var(--f-h2);line-height:var(--l-h2);
+  letter-spacing:var(--k-h2);
   text-transform:uppercase;letter-spacing:.01em;line-height:1}
-.shead p{margin:0;color:var(--tx3);font-size:13px}
+.shead p{margin:0;color:var(--tx2);font-size:var(--f-label);line-height:var(--l-label);
+  letter-spacing:var(--k-label)}
 .rail{display:flex;gap:clamp(14px,2vw,22px);overflow-x:auto;padding:6px 0 18px;
   scroll-snap-type:x mandatory;overscroll-behavior-inline:contain;scrollbar-width:none}
 .rail::-webkit-scrollbar{display:none}
@@ -82,17 +102,18 @@ header{padding:clamp(22px,3vw,34px) 0 0}
 .big .veil{position:absolute;inset:0;
   background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.34) 62%,rgba(0,0,0,.88) 100%)}
 .big .badge{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:7px;
-  font-family:var(--title);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+  font-family:var(--title);font-size:var(--f-over);letter-spacing:var(--k-over);text-transform:uppercase;
   background:var(--fa,#fff);color:var(--fi,#000);padding:5px 12px 6px;border-radius:10rem}
 .big .lg{display:block;position:absolute;left:16px;bottom:14px;z-index:2}
 .big .lg img{height:clamp(30px,3.4vw,44px);width:auto;max-width:260px;
   display:block;filter:drop-shadow(0 2px 10px rgba(0,0,0,.65))}
 .big .meta{display:flex;position:relative;z-index:1;display:flex;gap:10px;align-items:baseline;
   margin-top:12px;flex-wrap:wrap}
-.big .meta b{font-family:var(--title);font-size:clamp(17px,2vw,22px);text-transform:uppercase;
+.big .meta b{font-family:var(--title);font-size:var(--f-h3);line-height:var(--l-h3);text-transform:uppercase;
   letter-spacing:.01em;font-weight:400}
-.big .meta span{color:var(--tx3);font-size:13px}
-.big .go{margin-left:auto;font-size:13px;font-weight:650;display:inline-flex;align-items:center;gap:6px}
+.big .meta span{color:var(--tx2);font-size:var(--f-sub);line-height:var(--l-sub);
+  letter-spacing:var(--k-sub)}
+.big .go{margin-left:auto;font-size:var(--f-label);font-weight:650;letter-spacing:var(--k-label);display:inline-flex;align-items:center;gap:6px}
 .big:hover .go{text-decoration:underline;text-underline-offset:3px}
 
 /* ── month-grouped cards ──────────────────────────────
@@ -100,9 +121,10 @@ header{padding:clamp(22px,3vw,34px) 0 0}
    flush to the edges, and a tag notched into the image corner. No borders, no
    shadows at rest — contrast does the work. */
 .filters{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:0 0 clamp(20px,3vw,30px)}
-.filters .lab{font-family:var(--title);font-size:13px;text-transform:uppercase;
+.filters .lab{font-family:var(--title);font-size:var(--f-caption);text-transform:uppercase;
   letter-spacing:.05em;margin-right:4px}
-.fchip{font-size:13.5px;font-weight:650;padding:8px 16px;border-radius:10rem;
+.fchip{font-size:var(--f-sub);line-height:var(--l-sub);letter-spacing:var(--k-label);
+  font-weight:650;padding:10px 18px;min-height:44px;border-radius:10rem;
   border:1.5px solid var(--tx);color:var(--tx);background:transparent;transition:.15s var(--ease)}
 .fchip:hover{background:var(--panel2)}
 .fchip[aria-pressed=true]{background:var(--tx);color:var(--bg2);border-color:var(--tx)}
@@ -110,56 +132,82 @@ header{padding:clamp(22px,3vw,34px) 0 0}
 .mgroup{margin-bottom:clamp(28px,4vw,46px)}
 .mgroup[hidden]{display:none}
 .mhead{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-.mhead h3{margin:0;font-family:var(--title);font-size:clamp(19px,2.4vw,26px);
+.mhead h3{margin:0;font-family:var(--title);font-size:var(--f-h2);letter-spacing:var(--k-h2);
   text-transform:uppercase;letter-spacing:.02em;line-height:1;white-space:nowrap}
-.mhead .ct{font-size:12.5px;color:var(--tx3);white-space:nowrap}
+.mhead .ct{font-size:var(--f-label);line-height:var(--l-label);letter-spacing:var(--k-label);
+  color:var(--tx2);white-space:nowrap}
 .mhead hr{flex:1;border:none;border-top:2px solid var(--tx);margin:0;opacity:.9}
+.card .figs b,.card .stars b{color:var(--tx)}
 .grid{display:grid;gap:clamp(16px,2vw,24px);
   grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))}
-.card{background:var(--bg2);border-radius:24px;overflow:hidden;display:flex;
+.card{background:color-mix(in srgb,var(--fa,#fff) 7%,var(--bg2));border-radius:24px;overflow:hidden;display:flex;
   flex-direction:column;transition:transform .28s var(--ease),box-shadow .28s var(--ease)}
 .card[hidden]{display:none}
 .card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -22px rgba(0,0,0,.5)}
 .card.past .shot img.pic{filter:grayscale(.8) contrast(.95)}
-.card.past .notch{background:var(--tx3)}
+
 .card .shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--fa,var(--panel))}
 .card .shot img.pic{width:100%;height:100%;object-fit:cover;display:block}
 .card .lg{position:absolute;left:16px;top:14px;width:max-content;max-width:52%;z-index:2}
 .card .lg img{height:30px;width:auto;max-width:100%;display:block;
   filter:drop-shadow(0 2px 8px rgba(0,0,0,.55))}
 /* the notched tag: a black block whose top-left corner curves back into the image */
-.notch{position:absolute;right:0;bottom:0;z-index:2;background:var(--tx);color:var(--bg2);
-  font-family:var(--title);font-size:13px;letter-spacing:.04em;text-transform:uppercase;
+.notch{position:absolute;right:0;bottom:0;z-index:2;background:var(--fa,var(--tx));color:var(--fi,var(--bg2));
+  font-family:var(--title);font-size:var(--f-caption);letter-spacing:var(--k-over);text-transform:uppercase;
   padding:11px 18px 12px;border-top-left-radius:22px}
 .notch::before,.notch::after{content:"";position:absolute;width:22px;height:22px;
-  background:transparent;box-shadow:0 0 0 40px var(--tx)}
-.notch::before{right:100%;bottom:0;border-bottom-right-radius:22px;
-  clip-path:polygon(0 100%,100% 100%,100% 0)}
-.notch::after{right:0;bottom:100%;border-bottom-right-radius:22px;
-  clip-path:polygon(0 100%,100% 100%,0 0)}
+  background:radial-gradient(circle at 0 0,transparent 22px,var(--fa,var(--tx)) 22px)}
+.notch::before{right:100%;bottom:0}
+.notch::after{right:0;bottom:100%}
 .body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
-.body h4{margin:0;font-family:var(--title);font-size:clamp(19px,2vw,23px);text-transform:uppercase;
-  letter-spacing:.012em;line-height:1.06;font-weight:400}
-.when{font-size:14px;color:var(--tx);font-weight:650;font-variant-numeric:tabular-nums}
-.where{font-size:13.5px;color:var(--tx2);margin-top:-6px}
-.desc{margin:0;font-size:13.5px;line-height:1.55;color:var(--tx2);text-wrap:pretty}
-.stars{font-size:13px;color:var(--tx2);line-height:1.5}
+.ttl{display:flex;align-items:flex-start;gap:12px}
+.ttl h4{flex:1;min-width:0}
+.offi{position:relative;flex:none;display:inline-flex;align-items:center;gap:5px;font-size:var(--f-caption);
+  letter-spacing:var(--k-caption);font-weight:700;
+  color:var(--tx2);text-decoration:none;border:1.5px solid var(--line2);border-radius:10rem;
+  padding:5px 11px;margin-top:1px;white-space:nowrap;transition:.16s var(--ease)}
+/* the pill stays visually light beside the title, but its hit area is
+   expanded to the 44pt minimum both HIG and Material ask for */
+.offi::after{content:'';position:absolute;inset:-5px -6px}
+.offi:hover{color:var(--tx);border-color:var(--tx);
+  background:color-mix(in srgb,var(--fa,var(--tx)) 26%,transparent)}
+.offi svg{width:12px;height:12px}
+.body h4{margin:0;font-family:var(--title);font-size:var(--f-h3);text-transform:uppercase;
+  letter-spacing:var(--k-h3);line-height:var(--l-h3);font-weight:400}
+.when{font-size:var(--f-title);line-height:var(--l-title);color:var(--tx);font-weight:650;
+  font-variant-numeric:tabular-nums}
+.where{font-size:var(--f-sub);line-height:var(--l-sub);letter-spacing:var(--k-sub);
+  color:var(--tx2);margin-top:-6px}
+.desc{margin:0;font-size:var(--f-body);line-height:var(--l-body);letter-spacing:var(--k-body);
+  color:var(--tx2);text-wrap:pretty;max-width:60ch}
+.stars{font-size:var(--f-sub);line-height:var(--l-sub);letter-spacing:var(--k-sub);color:var(--tx2)}
 .stars b{color:var(--tx);font-weight:700}
-.cats{font-size:13px;font-weight:700;color:var(--tx)}
-.figs{display:flex;gap:16px;font-size:12.5px;color:var(--tx3)}
+.cats{font-size:var(--f-label);line-height:var(--l-label);letter-spacing:var(--k-label);
+  font-weight:700;color:var(--tx)}
+.figs{display:flex;gap:18px;font-size:var(--f-label);line-height:var(--l-label);
+  letter-spacing:var(--k-label);color:var(--tx2)}
 .figs b{color:var(--tx);font-weight:700;font-variant-numeric:tabular-nums}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
-.btn{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;
-  padding:11px 18px;border-radius:10rem;border:1.5px solid var(--tx);text-decoration:none;
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  white-space:nowrap;font-size:var(--f-body);font-weight:650;
+  letter-spacing:var(--k-label);padding:12px 20px;border-radius:10rem;border:1.5px solid var(--tx);text-decoration:none;
   transition:.16s var(--ease);min-height:44px;color:var(--tx)}
-.btn:hover{background:var(--panel2)}
-.btn.primary{background:var(--tx);color:var(--bg2);flex:1 1 auto;justify-content:center}
-.btn.primary:hover{filter:brightness(1.25)}
+.btn:hover{background:color-mix(in srgb,var(--fa,var(--tx)) 26%,transparent)}
+.btn.primary{background:var(--fa,var(--tx));color:var(--fi,var(--bg2));
+  border-color:var(--fa,var(--tx));flex:1 1 auto}
+.btn.primary:hover{filter:brightness(1.06) saturate(1.15)}
+.acts .btn:not(.primary){flex:0 1 auto}
 .btn.free{border-style:dashed;color:var(--tx3);border-color:var(--line2)}
-.empty{padding:40px 0;text-align:center;color:var(--tx3);font-size:14px}
+/* below this width the two actions stop fitting side by side; a clean stack
+   beats one full-width button with an orphan beneath it */
+@media(max-width:430px){.acts{flex-direction:column;align-items:stretch}
+  .acts .btn{width:100%}}
+.empty{padding:40px 0;text-align:center;color:var(--tx2);font-size:var(--f-body);
+  line-height:var(--l-body)}
 
 footer{border-top:1px solid var(--line);margin-top:clamp(34px,5vw,60px);
-  padding:24px 0 calc(40px + var(--safe-b));color:var(--tx3);font-size:12.5px;line-height:1.65;
+  padding:24px 0 calc(40px + var(--safe-b));color:var(--tx2);font-size:var(--f-caption);
+  line-height:1.62;letter-spacing:var(--k-caption);
   max-width:76ch}
 footer a{color:var(--tx2)}
 footer p{margin:0 0 9px}
@@ -281,7 +329,11 @@ function card(f) {
       <span class="notch">${esc(st.past ? 'Finished' : st.label)}</span>
     </div>
     <div class="body">
-      <h4>${esc(f.name)} ${esc(f.year)}</h4>
+      <div class="ttl">
+        <h4>${esc(f.name)} ${esc(f.year)}</h4>
+        <a class="offi" href="${esc(f.official)}" target="_blank" rel="noopener"
+           title="Official site for ${esc(f.name)}">Official ${ico('ext')}</a>
+      </div>
       <div class="when">${esc(f.dates)}</div>
       <div class="where">${esc(f.city)} · ${esc(f.type)}</div>
       <p class="desc">${esc(f.description)}</p>
@@ -294,7 +346,6 @@ function card(f) {
       <div class="cats">${esc(f.tags.join(', '))}</div>
       <div class="acts">
         <a class="btn primary" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
-        <a class="btn" href="${esc(f.official)}" target="_blank" rel="noopener">Official ${ico('ext')}</a>
         ${f.free
           ? `<span class="btn free">Free entry</span>`
           : `<a class="btn" href="${esc(f.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
