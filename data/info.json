@@ -1,0 +1,268 @@
+{
+  "updated": "2 August 2026",
+  "pages": [
+    {
+      "slug": "privacy",
+      "title": "EU data policy",
+      "blurb": "How Festival Planner handles personal data under the GDPR: it does not collect any.",
+      "body": [
+        {
+          "t": "lead",
+          "v": "Festival Planner has no accounts, no analytics, no advertising and no tracking. It collects no personal data about you at all. This page explains what that means in practice and what little data still moves when you load a page."
+        },
+        {
+          "t": "h2",
+          "v": "Who is responsible"
+        },
+        {
+          "t": "p",
+          "v": "Festival Planner is a personal, non-commercial project run from Helsinki. For anything on this page, write to <a href=\"mailto:__CONTACT__?subject=Data%20protection\">__CONTACT__</a>."
+        },
+        {
+          "t": "h2",
+          "v": "What is stored on your device"
+        },
+        {
+          "t": "p",
+          "v": "When you add a set to your plan on a planner page, that choice is written to <strong>your own browser</strong> — as a cookie where the site is hosted, or as a localStorage entry when the page is opened from a file. It holds nothing but the identifiers of the sets you picked."
+        },
+        {
+          "t": "ul",
+          "v": [
+            "It is never transmitted anywhere. There is no server to send it to.",
+            "It is not readable by any other site.",
+            "It carries no identifier for you, your device or your browser.",
+            "Clearing your browser's site data for this domain removes it completely."
+          ]
+        },
+        {
+          "t": "p",
+          "v": "Under the ePrivacy rules this is storage strictly necessary for a feature you asked for. It is not used for analytics or advertising, which is why the notice on the planner pages explains what it does rather than asking you to consent to tracking."
+        },
+        {
+          "t": "h2",
+          "v": "What leaves your browser"
+        },
+        {
+          "t": "p",
+          "v": "Every page on this site is a single self-contained file. Fonts, maps, artwork and code are embedded in it, so <strong>once a page has loaded it makes no further network requests</strong> — no font CDN, no image host, no analytics endpoint. You can disconnect and it keeps working."
+        },
+        {
+          "t": "p",
+          "v": "Two things are unavoidable:"
+        },
+        {
+          "t": "ul",
+          "v": [
+            "<strong>Hosting.</strong> The site is served by GitHub Pages. To deliver a page, GitHub necessarily processes your IP address and request metadata, and may retain it briefly for security and abuse prevention. This is GitHub's processing, not ours, and is covered by the <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement\" target=\"_blank\" rel=\"noopener\">GitHub Privacy Statement</a>. We receive none of it and have no access to any log.",
+            "<strong>Links you choose to follow.</strong> Ticket sellers, festival sites, streaming services and map data sources are separate companies with their own policies. Following a link there is a visit to them, and nothing about your plan travels with you."
+          ]
+        },
+        {
+          "t": "h2",
+          "v": "Location"
+        },
+        {
+          "t": "p",
+          "v": "The place selector in the header reads <strong>Finland</strong> by default and does nothing on its own. If you press <em>Use my location</em>, your browser asks your permission and, if you grant it, hands the page a coordinate."
+        },
+        {
+          "t": "ul",
+          "v": [
+            "The coordinate is used once, immediately, to work out which of the places on that short list is nearest.",
+            "It is not stored. Only the name of the place you ended up on is kept, in your own browser.",
+            "It is not transmitted. There is no server to send it to, and the page makes no network requests.",
+            "Declining the permission prompt costs you nothing — pick a place from the list instead."
+          ]
+        },
+        {
+          "t": "h2",
+          "v": "Your rights"
+        },
+        {
+          "t": "p",
+          "v": "The GDPR gives you the right to access, rectify, erase, restrict and port your personal data, to object to processing, and to complain to a supervisory authority — in Finland, the <a href=\"https://tietosuoja.fi/en/home\" target=\"_blank\" rel=\"noopener\">Office of the Data Protection Ombudsman</a>."
+        },
+        {
+          "t": "callout",
+          "v": "<p>In practice there is nothing here to exercise those rights against. We hold no personal data, so there is no record to hand over, correct or delete. The only data connected to you sits in your own browser, under your own control, and you can erase it yourself at any time.</p>"
+        },
+        {
+          "t": "h2",
+          "v": "Children"
+        },
+        {
+          "t": "p",
+          "v": "The site is open to anyone and collects nothing from anyone, so it needs no age gate and holds no children's data."
+        },
+        {
+          "t": "h2",
+          "v": "Changes"
+        },
+        {
+          "t": "p",
+          "v": "If this ever stops being accurate — if anything is added that does collect data — this page will be updated before that change ships, and the date at the top will say so."
+        }
+      ]
+    },
+    {
+      "slug": "terms",
+      "title": "Terms and Conditions",
+      "blurb": "The terms covering use of the Festival Planner site, including its unofficial status and the limits of its accuracy.",
+      "body": [
+        {
+          "t": "lead",
+          "v": "Festival Planner is a free, unofficial tool. These terms describe what it is, what it is not, and what you can rely on it for."
+        },
+        {
+          "t": "h2",
+          "v": "1. Unofficial and unaffiliated"
+        },
+        {
+          "t": "p",
+          "v": "This site is <strong>not affiliated with, endorsed by, or connected to</strong> any of the festivals it covers, their organisers, promoters, venues or ticket sellers. It is an independent project that reads publicly published schedules and lays them out so they can be planned against."
+        },
+        {
+          "t": "h2",
+          "v": "2. Accuracy"
+        },
+        {
+          "t": "p",
+          "v": "Timetables are transcribed by hand from each organiser's own published schedule and checked against secondary sources where they exist. Care is taken, but errors are possible, and lineups change: sets get moved, stages get renamed, artists cancel."
+        },
+        {
+          "t": "callout",
+          "v": "<p><strong>Always check the organiser's official schedule before you travel.</strong> This site is a planning aid, not a source of truth. Where it disagrees with the organiser, the organiser is right.</p>"
+        },
+        {
+          "t": "p",
+          "v": "The site is provided as is, without warranty of any kind, express or implied, including any warranty of accuracy, completeness or fitness for a particular purpose."
+        },
+        {
+          "t": "h2",
+          "v": "3. Liability"
+        },
+        {
+          "t": "p",
+          "v": "To the fullest extent permitted by law, no liability is accepted for any loss arising from use of this site — including a set you missed, a ticket you bought, or a journey you made on the strength of something shown here. Nothing in these terms limits liability for death or personal injury caused by negligence, or for fraud, where such limits cannot lawfully be excluded."
+        },
+        {
+          "t": "h2",
+          "v": "4. Trade marks and artwork"
+        },
+        {
+          "t": "p",
+          "v": "Festival names, logos, posters and artist images belong to their respective owners. They appear here solely to identify the festival or artist a listing refers to, which is a descriptive use, and no claim of ownership or endorsement is made or implied."
+        },
+        {
+          "t": "p",
+          "v": "If you hold rights in material shown here and would like it removed or credited differently, write to <a href=\"mailto:__CONTACT__?subject=Content%20request\">__CONTACT__</a> and it will be dealt with promptly."
+        },
+        {
+          "t": "h2",
+          "v": "5. Links to other sites"
+        },
+        {
+          "t": "p",
+          "v": "Links to official festival sites, ticket sellers and streaming services are provided for convenience. Those sites are outside our control, and we are not responsible for their content, their availability, or anything you buy through them."
+        },
+        {
+          "t": "h2",
+          "v": "6. Acceptable use"
+        },
+        {
+          "t": "p",
+          "v": "You are welcome to use the site for personal planning, to share links to it, and to open it offline. Please do not present it as an official schedule, or republish it in a way that implies it is."
+        },
+        {
+          "t": "h2",
+          "v": "7. Changes"
+        },
+        {
+          "t": "p",
+          "v": "These terms may be updated as the site changes. The date at the top of this page reflects the current version. Continued use after a change means you accept the revised terms."
+        },
+        {
+          "t": "h2",
+          "v": "8. Governing law"
+        },
+        {
+          "t": "p",
+          "v": "These terms are governed by Finnish law. If any provision is found unenforceable, the rest continues to apply."
+        }
+      ]
+    },
+    {
+      "slug": "about",
+      "title": "About us",
+      "blurb": "Why Festival Planner exists, how it is built, and who is behind it.",
+      "body": [
+        {
+          "t": "lead",
+          "v": "Festival Planner turns Helsinki festival schedules into something you can actually plan against."
+        },
+        {
+          "t": "h2",
+          "v": "The problem"
+        },
+        {
+          "t": "p",
+          "v": "Most festivals publish their timetable as a poster — a single image, or a PDF laid out for print. It looks good and it is nearly useless on the day. You cannot search it, you cannot tell which of two sets you would have to give up, and you certainly cannot work out whether you can get from one stage to another in the eight minutes between them."
+        },
+        {
+          "t": "h2",
+          "v": "What this is"
+        },
+        {
+          "t": "p",
+          "v": "One page per festival, built around a real timetable grid: stages down the side, hours across the top, every set in its true position. From there you can:"
+        },
+        {
+          "t": "ul",
+          "v": [
+            "Filter by genre, or search for an artist by name.",
+            "Open any act to see who they are and hear them before you commit an hour to them.",
+            "Build a personal route, and see immediately where two picks collide.",
+            "Find the stage on an interactive map with pins placed against real streets."
+          ]
+        },
+        {
+          "t": "h2",
+          "v": "How it is built"
+        },
+        {
+          "t": "p",
+          "v": "Each planner is a <strong>single self-contained HTML file</strong>. Fonts, maps, artwork and code are all embedded in it. That has one consequence that matters at a festival: once the page has loaded, it keeps working with no signal at all — in a basement, in a field, or on a phone with a dead data plan."
+        },
+        {
+          "t": "p",
+          "v": "It also means nothing is watching you use it. There is no server, no account and no analytics. Your plan is saved on your own device and goes nowhere. The <a href=\"__ROOT__privacy/\">EU data policy</a> sets out exactly what that means."
+        },
+        {
+          "t": "h2",
+          "v": "Where the data comes from"
+        },
+        {
+          "t": "p",
+          "v": "Timetables are transcribed from each organiser's own published schedule and cross-checked against secondary listings; where sources disagree, the organiser's own material wins. Artist links and artwork come from public music catalogues and the artists' own pages. Maps are built from OpenStreetMap data, with stage positions checked by hand against the streets they actually sit on."
+        },
+        {
+          "t": "p",
+          "v": "This is an independent project and is not affiliated with any festival. See the <a href=\"__ROOT__terms/\">Terms and Conditions</a>."
+        },
+        {
+          "t": "h2",
+          "v": "Get in touch"
+        },
+        {
+          "t": "p",
+          "v": "Corrections are genuinely welcome — a wrong set time is worth reporting, and it will be fixed. Requests for a festival that is not covered yet are welcome too."
+        },
+        {
+          "t": "p",
+          "v": "Write to <a href=\"mailto:__CONTACT__?subject=Festival%20Planner\">__CONTACT__</a>."
+        }
+      ]
+    }
+  ]
+}

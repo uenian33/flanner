@@ -8,6 +8,13 @@ planners it links to.
 import json, pathlib
 from build import ROOT, data_uri
 
+NOTE = (
+    "<p>Unofficial planners, not affiliated with any of these festivals. Timetables come from "
+    "each organiser's own published schedule; artwork and links from their own sites.</p>"
+    "<p>Each planner is a single page that keeps working offline once loaded, stores your picks "
+    "on your own device, and collects nothing.</p>"
+)
+
 OUT = ROOT / "index.html"
 CFG = ROOT / "data" / "festivals.json"
 H = ROOT / "assets" / "home"
@@ -23,6 +30,11 @@ def main():
     for tok, val in [
         ("__DATA__", json.dumps(cfg, ensure_ascii=False, separators=(",", ":"))),
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
+        ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
+        ("__FOOTER__", (ROOT / "scripts" / "_footer.html").read_text()),
+        ("__ROOT__", "./"),
+        ("__NOTE__", NOTE),
+        ("__CUR_PRIVACY__", ""), ("__CUR_TERMS__", ""), ("__CUR_ABOUT__", ""),
         ("__CONTACT__", cfg["site"]["contact"]),
     ]:
         html = html.replace(tok, val)

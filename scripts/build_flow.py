@@ -137,6 +137,8 @@ def build():
         ("__MAP_AR__", f'{basemap["wPixels"]}/{basemap["hPixels"]}'),
         ("__THEME__", THEME),
         ("__HOME__", "../"),
+        ("__CONTACT__", json.loads((ROOT / "data" / "festivals.json").read_text())["site"]["contact"]),
+        ("__PROVENANCE__", "  <p>Set times transcribed from Flow Festival's own published timetable; where a listing and the\n  official schedule disagreed, the official schedule won.</p>\n  <p>Stage pins are placed from the organiser's site plan against the real Suvilahti geometry, so\n  positions are accurate to the yard rather than the metre. Street map © OpenStreetMap\n  contributors, tiles © CARTO; satellite imagery © Esri.</p>"),
         ("__DECO__", (ROOT / "scripts" / "deco-flow.html").read_text()),
         ("__SIBLING__", '<p>Also here: the '
                         '<a href="../kallio/">Kallio Block Party 2026 planner</a>, same engine.</p>'),

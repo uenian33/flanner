@@ -45,18 +45,42 @@ svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:
 header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .top{display:flex;align-items:center;gap:14px;
   padding-bottom:clamp(14px,1.8vw,18px);border-bottom:1px solid var(--line)}
-.mark{font-family:var(--title);font-weight:600;font-size:var(--f-display);letter-spacing:var(--k-display);
+.mark{display:inline-flex;align-items:center;gap:clamp(10px,1.2vw,15px);font-family:var(--title);font-weight:600;font-size:var(--f-display);letter-spacing:var(--k-display);
   text-transform:uppercase;line-height:1;text-decoration:none;white-space:nowrap}
+.logo{width:clamp(30px,3.6vw,44px);height:clamp(30px,3.6vw,44px);flex:none;
+  stroke:none;fill:none}
 .top .div{width:1px;height:clamp(20px,2.4vw,28px);background:var(--line2);flex:none}
-.loc{font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
-  color:var(--tx2);white-space:nowrap}
+.locwrap{position:relative;flex:none}
+.loc{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;
+  border-radius:10rem;font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
+  color:var(--tx2);white-space:nowrap;transition:.15s var(--ease)}
+.loc:hover{background:var(--panel2);color:var(--tx)}
+.loc[aria-expanded=true]{background:var(--tx);color:var(--bg)}
+.loc svg{width:14px;height:14px}
+.loc .cv{width:12px;height:12px;opacity:.7;transition:transform .18s var(--ease)}
+.loc[aria-expanded=true] .cv{transform:rotate(180deg)}
+.locsheet{left:0;right:auto;max-width:min(92vw,320px)}
+.locsheet .opts{flex-direction:column;align-items:stretch}
+.locsheet .opt{width:100%}
+.opt.find{display:flex;align-items:center;gap:9px;width:100%;margin-top:10px;
+  border-style:dashed;justify-content:center}
+.opt.find svg{width:15px;height:15px}
+.locnote{margin:12px 0 0;font-size:12px;line-height:17px;color:var(--tx3)}
 .top .sp{flex:1}
 .tbtn{width:40px;height:40px;flex:none;border:1px solid var(--line2);border-radius:10rem;
   display:grid;place-items:center;font-size:16px;transition:.16s var(--ease)}
 .tbtn:hover{background:var(--tx);color:var(--bg)}
-.lede{margin:clamp(14px,1.8vw,18px) 0 0;font-size:var(--f-title);line-height:var(--l-body);
-  color:var(--tx2);max-width:58ch;text-wrap:pretty}
-@media(max-width:560px){.top .div,.loc{display:none}}
+/* The place control stays on small screens — it is a control now, not a label —
+   but the wordmark, the control and the theme toggle will not share one row at
+   375px, so the control takes its own line. */
+@media(max-width:620px){
+  .top{flex-wrap:wrap;row-gap:10px}
+  .top .div{display:none}
+  .mark{flex:1 1 auto;font-size:clamp(26px,7.6vw,34px)}
+  .top .sp{order:2}
+  .tbtn{order:3}
+  .locwrap{order:4;flex-basis:100%}
+  .loc{margin-left:-12px}}
 
 /* ── type scale ────────────────────────────────────────
    Sizes and leading follow the Material 3 type scale, with the roles named
@@ -76,73 +100,95 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   --f-over:12px;                        --l-over:1.33;     --k-over:.06em;
 }
 
-/* ── hero: a carousel of the festivals worth a look ────
-   The active card sits centre stage at full size; its neighbours stay visible
-   but step back in scale and opacity, so it reads as a stack you move through
-   rather than a row that happens to be clipped. The facts live below the rail
-   and swap with the active card. */
+/* ── hero ──────────────────────────────────────────────
+   One festival at a time. The picture carries the left of the composition and
+   the facts panel breaks out over its top-right corner, so the two read as one
+   object rather than an image with a caption parked underneath. Below 900px
+   the overlap would crush the text, so the panel drops beneath the picture. */
 .hero{margin:0 0 clamp(30px,4vw,46px)}
 .shead{display:flex;align-items:baseline;gap:12px;margin-bottom:clamp(14px,1.8vw,20px);
   flex-wrap:wrap}
-.shead h2{margin:0;font-family:var(--title);font-weight:500;font-size:var(--f-h2);line-height:var(--l-h2);
-  letter-spacing:var(--k-h2);text-transform:uppercase}
+.shead h2{margin:0;font-family:var(--title);font-weight:500;font-size:var(--f-h2);
+  line-height:var(--l-h2);letter-spacing:var(--k-h2);text-transform:uppercase}
 .shead p{margin:0;color:var(--tx2);font-size:var(--f-label);line-height:var(--l-label);
   letter-spacing:var(--k-label)}
 
-.stage{position:relative;margin-inline:calc(clamp(16px,3vw,32px) * -1)}
-.rail{display:flex;gap:clamp(12px,1.6vw,20px);overflow-x:auto;scroll-snap-type:x mandatory;
-  overscroll-behavior-inline:contain;scrollbar-width:none;
-  padding:6px clamp(16px,3vw,32px) 10px;
-  scroll-padding-inline:clamp(16px,3vw,32px)}
-.rail::-webkit-scrollbar{display:none}
-.slide{position:relative;flex:0 0 min(78%,620px);scroll-snap-align:center;display:block;
-  border-radius:16px;overflow:hidden;aspect-ratio:3/2;background:var(--panel);
-  text-decoration:none;transform:scale(.93);opacity:.5;filter:saturate(.7);
-  transition:transform .42s var(--ease),opacity .42s var(--ease),filter .42s var(--ease)}
-.slide.on{transform:none;opacity:1;filter:none}
-.slide img.pic{width:100%;height:100%;object-fit:cover;display:block}
-.slide .veil{position:absolute;inset:0;background:linear-gradient(180deg,
-  transparent 34%,rgba(0,0,0,.30) 62%,rgba(0,0,0,.72) 82%,rgba(0,0,0,.9) 100%)}
-.slide .lg{display:block;position:absolute;left:18px;bottom:16px;z-index:2;width:max-content;
-  max-width:min(66%,240px)}
-.slide .lg img{height:clamp(26px,3vw,36px);width:auto;max-width:100%;display:block;
+.stage{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
+  column-gap:clamp(12px,1.6vw,22px);row-gap:clamp(14px,1.8vw,20px);align-items:start}
+.fig{grid-area:1/1/3/9;position:relative;display:block;border-radius:18px;overflow:hidden;
+  aspect-ratio:3/2;background:var(--panel);text-decoration:none;touch-action:pan-y}
+.fig img.pic{width:100%;height:100%;object-fit:cover;display:block}
+.fig .veil{position:absolute;inset:0;background:linear-gradient(180deg,
+  transparent 40%,rgba(0,0,0,.26) 66%,rgba(0,0,0,.7) 84%,rgba(0,0,0,.88) 100%)}
+.fig .lg{display:block;position:absolute;left:24px;bottom:22px;z-index:2;width:max-content;
+  max-width:min(72%,340px)}
+.fig .lg img{height:clamp(38px,4.4vw,56px);width:auto;max-width:100%;display:block;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.7))}
-.slide .badge{position:absolute;left:16px;top:16px;z-index:2;display:inline-flex;align-items:center;
-  font-family:var(--title);font-size:var(--f-over);letter-spacing:var(--k-over);
+.fig .badge{position:absolute;left:18px;top:18px;z-index:2;display:inline-flex;align-items:center;
+  font-family:var(--title);font-weight:500;font-size:var(--f-over);letter-spacing:var(--k-over);
   text-transform:uppercase;background:var(--fa,#fff);color:var(--fi,#000);
-  padding:6px 13px 7px;border-radius:10rem}
-@media(min-width:900px){.slide{flex:0 0 min(62%,640px)}}
+  padding:6px 14px 7px;border-radius:10rem}
 
-/* the facts for whichever card is centred */
-.fbody{margin-top:clamp(16px,2vw,22px);display:grid;gap:clamp(14px,2vw,28px);align-items:end;
-  grid-template-columns:minmax(0,1fr) auto}
-.fbody h3{margin:0;font-family:var(--title);font-size:clamp(27px,3.3vw,40px);
-  line-height:1.04;letter-spacing:.014em;text-transform:uppercase;font-weight:600}
-.fline{margin:0 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  font-size:var(--f-label);line-height:var(--l-label);letter-spacing:.05em;
-  text-transform:uppercase;font-weight:700;color:var(--tx2)}
-.fline .dot{width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.6}
-.fbody .fwhere{margin:8px 0 0;font-size:var(--f-body);line-height:var(--l-body);color:var(--tx2)}
-.fbody .fstars{margin:10px 0 0;font-size:var(--f-sub);line-height:var(--l-sub);
-  letter-spacing:var(--k-sub);color:var(--tx2);max-width:52ch}
-.fbody .fstars b{color:var(--tx);font-weight:700}
-.fside{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
-.nav{display:flex;align-items:center;gap:4px;border:1px solid var(--line2);border-radius:10rem;
-  padding:4px}
+.side{grid-area:1/9/3/13;z-index:3;align-self:center;
+  display:flex;flex-direction:column}
+.panel{--tuck:clamp(28px,5.5vw,96px);margin-left:calc(-1 * var(--tuck));
+  background:color-mix(in srgb,var(--fa,#fff) 8%,var(--bg2));
+  border-radius:16px;padding:clamp(20px,2.4vw,30px);
+  padding-left:calc(clamp(20px,2.4vw,30px) + var(--tuck));
+  box-shadow:0 24px 54px -30px rgba(0,0,0,.5)}
+.fline{margin:0 0 10px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+  font-family:var(--title);font-weight:500;font-size:var(--f-label);line-height:1.2;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--tx2)}
+.fline .dot{width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.55}
+.panel h3{margin:0;font-family:var(--title);font-weight:600;font-size:clamp(27px,3.2vw,40px);
+  line-height:1.02;letter-spacing:.014em;text-transform:uppercase}
+.panel .fwhere{margin:12px 0 0;font-size:var(--f-body);line-height:var(--l-body);color:var(--tx2)}
+.panel .fstars{margin:9px 0 0;font-size:var(--f-sub);line-height:var(--l-sub);
+  letter-spacing:var(--k-sub);color:var(--tx2)}
+.panel .fstars b{color:var(--tx);font-weight:700}
+
+.facts{display:flex;flex-direction:column;gap:10px;align-items:stretch;
+  margin:clamp(20px,2.4vw,26px) 0 0;
+  padding-top:clamp(18px,2.2vw,24px);
+  border-top:1px solid color-mix(in srgb,var(--tx) 12%,transparent)}
+.facts .btn{flex:none;width:100%}
+.nav{grid-area:3/1/4/13;margin-top:clamp(14px,1.8vw,20px);justify-self:center;display:flex;align-items:center;gap:4px;
+  border:1px solid var(--line2);border-radius:10rem;padding:4px;background:var(--bg2)}
 .nav button{width:44px;height:44px;border-radius:10rem;display:grid;place-items:center;
   font-size:17px;color:var(--tx2);transition:.15s var(--ease)}
 .nav button:hover:not(:disabled){background:var(--tx);color:var(--bg)}
 .nav button:disabled{opacity:.3;cursor:default}
 .nav .count{font-size:var(--f-caption);letter-spacing:.06em;color:var(--tx2);
-  padding:0 8px;font-variant-numeric:tabular-nums}
-.facts{display:flex;gap:10px;flex-wrap:wrap}
-@media(max-width:760px){
-  .fbody{grid-template-columns:minmax(0,1fr)}
-  .fside{align-items:stretch}
-  .nav{order:2;align-self:center;width:max-content}
-  .facts{order:1}
+  padding:0 10px;font-variant-numeric:tabular-nums}
+
+/* the swap: everything that carries festival identity leaves in the direction
+   of travel and the incoming one arrives from the far side */
+.fig img.pic,.side,.fig .lg,.fig .badge{
+  transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{opacity:0}
+.stage.out.back .fig img.pic{transform:scale(1.03) translateX(3%)}
+.stage.out.fwd  .fig img.pic{transform:scale(1.03) translateX(-3%)}
+.stage.out.back .side{transform:translateX(16px)}
+.stage.out.fwd  .side{transform:translateX(-16px)}
+
+@media(max-width:900px){
+  .stage{grid-template-columns:minmax(0,1fr);row-gap:0}
+  .fig{grid-area:auto;aspect-ratio:16/10;border-radius:16px 16px 0 0}
+  .side{grid-area:auto;align-self:auto}
+  .panel{border-radius:0 0 16px 16px;box-shadow:none;
+    border:1px solid var(--line2);border-top:none}
+  .panel{margin-left:0;padding-left:clamp(20px,2.4vw,30px)}
+  .facts .btn{width:100%}
+  .nav{grid-area:auto;margin-top:16px}
 }
-@media(max-width:430px){.facts{flex-direction:column;align-items:stretch}}
+@media(max-width:430px){
+  .facts{flex-direction:column;align-items:stretch}
+  .facts .btn{flex:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .fig img.pic,.side,.fig .lg,.fig .badge{transition:opacity .01ms}
+  .stage.out .fig img.pic{transform:none}
+}
 
 /* ── search and filters ────────────────────────────────
    Straight from the reference: one wide search pill, then two dropdown
@@ -236,8 +282,8 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 
 .card .shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--fa,var(--panel))}
 .card .shot img.pic{width:100%;height:100%;object-fit:cover;display:block}
-.card .lg{position:absolute;left:16px;top:14px;width:max-content;max-width:52%;z-index:2}
-.card .lg img{height:30px;width:auto;max-width:100%;display:block;
+.card .lg{position:absolute;left:18px;top:16px;width:max-content;max-width:66%;z-index:2}
+.card .lg img{height:clamp(34px,4vw,44px);width:auto;max-width:100%;display:block;
   filter:drop-shadow(0 2px 8px rgba(0,0,0,.55))}
 /* the notched tag: a black block whose top-left corner curves back into the image */
 .notch{position:absolute;right:0;bottom:0;z-index:2;background:var(--fa,var(--tx));color:var(--fi,var(--bg2));
@@ -291,46 +337,26 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .empty{padding:40px 0;text-align:center;color:var(--tx2);font-size:var(--f-body);
   line-height:var(--l-body)}
 
-/* ── footer ────────────────────────────────────────────
-   Three columns after festiplannr.com: identity and contact on the left, then
-   a column per link group. The disclaimer sits below a hairline rather than
-   inside a column, because it is prose and the columns are lists. */
-footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
-  padding:clamp(30px,4vw,46px) 0 calc(40px + var(--safe-b));color:var(--tx2)}
-.fgrid{display:grid;gap:clamp(26px,4vw,48px);
-  grid-template-columns:minmax(0,1.5fr) repeat(2,minmax(0,1fr))}
-.fbrand .fmark{display:flex;align-items:center;gap:11px;margin-bottom:14px}
-.fbrand .dot{width:22px;height:22px;border-radius:50%;flex:none;
-  background:conic-gradient(from 210deg,#b6fc46,#fff203,#b6fc46)}
-.fbrand .fmark span{font-family:var(--title);font-weight:600;font-size:21px;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--tx);line-height:1}
-.fbrand .tag{margin:0 0 18px;font-size:var(--f-body);line-height:var(--l-body);color:var(--tx2)}
-.flinks{display:flex;flex-direction:column;gap:2px;align-items:flex-start;margin-bottom:18px}
-.flinks a{display:inline-flex;align-items:center;gap:10px;font-size:var(--f-sub);
-  color:var(--tx2);text-decoration:none;padding:11px 0;transition:.15s var(--ease)}
-.flinks a:hover{color:var(--tx)}
-.flinks svg{width:16px;height:16px;flex:none;color:var(--tx3)}
-.fcopy{margin:0;font-size:var(--f-caption);color:var(--tx3);letter-spacing:var(--k-caption)}
-.fcol h5{margin:0 0 12px;font-family:var(--title);font-weight:500;font-size:var(--f-caption);
-  letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)}
-.fcol ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
-.fcol a{display:inline-flex;align-items:center;gap:7px;font-size:var(--f-body);color:var(--tx2);
-  text-decoration:none;padding:10px 0;transition:.15s var(--ease)}
-.fcol a:hover{color:var(--tx)}
-.fcol a svg{width:13px;height:13px;color:var(--tx3)}
-.fnote{margin:clamp(28px,4vw,42px) 0 0;padding-top:clamp(18px,2.4vw,24px);
-  border-top:1px solid var(--line);font-size:var(--f-caption);line-height:1.62;
-  letter-spacing:var(--k-caption);color:var(--tx3)}
-.fnote p{margin:0 0 8px;max-width:82ch}
-.fnote p:last-child{margin:0}
-@media(max-width:720px){.fgrid{grid-template-columns:minmax(0,1fr)}}
-
+__FOOTER_CSS__
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 
 <svg class="sr" aria-hidden="true"><defs>
+<symbol id="i-logo" viewBox="0 0 40 40">
+  <defs>
+    <linearGradient id="fpgrad" x1=".06" y1=".95" x2=".94" y2=".05">
+      <stop offset="0" stop-color="#b6fc46"/>
+      <stop offset=".55" stop-color="#e4fb27"/>
+      <stop offset="1" stop-color="#fff203"/>
+    </linearGradient>
+    <clipPath id="fpup"><path d="M-14 -14H54V20H-14Z" transform="rotate(-34 20 20)"/></clipPath>
+    <clipPath id="fpdn"><path d="M-14 20H54V54H-14Z" transform="rotate(-34 20 20)"/></clipPath>
+  </defs>
+  <g clip-path="url(#fpup)"><circle cx="22.2" cy="16.7" r="18.4" fill="url(#fpgrad)"/></g>
+  <g clip-path="url(#fpdn)"><circle cx="17.8" cy="23.3" r="18.4" fill="url(#fpgrad)"/></g>
+</symbol>
 <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
 <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
 <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M4 8.5V6.4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2.1a2.6 2.6 0 0 0 0 7v2.1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2.1a2.6 2.6 0 0 0 0-7Z"/><path d="M12 8.4v1.4M12 13.6V15"/></symbol>
@@ -341,6 +367,8 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 <symbol id="i-left" viewBox="0 0 24 24"><path d="m14.4 6-6 6 6 6"/></symbol>
 <symbol id="i-right" viewBox="0 0 24 24"><path d="m9.6 6 6 6-6 6"/></symbol>
 <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.4 6.4 11.2 11.2M17.6 6.4 6.4 17.6"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10.4c0 5-7 11-7 11s-7-6-7-11a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10.2" r="2.6"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9.6 6 6 6-6"/></symbol>
 <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.4" width="18" height="13.2" rx="2.2"/><path d="m3.6 6.6 8.4 6 8.4-6"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.3M12 19.1v2.3M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.6 12h2.3M19.1 12h2.3M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.7 8.7 0 1 0 10.8 10.8z"/></symbol>
@@ -349,22 +377,29 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 <div class="wrap">
 <header>
   <div class="top">
-    <a class="mark" href="./">Festival Planner</a>
+    <a class="mark" href="./"><svg class="logo" aria-hidden="true"><use href="#i-logo"/></svg>Festival Planner</a>
     <span class="div"></span>
-    <span class="loc">Helsinki</span>
+    <div class="drop locwrap">
+      <button class="loc" id="locTrig" aria-expanded="false" aria-controls="locSheet">
+        <svg class="i"><use href="#i-pin"/></svg><span id="locLabel">Finland</span>
+        <svg class="i cv"><use href="#i-down"/></svg></button>
+      <div class="sheet locsheet" id="locSheet" hidden role="dialog" aria-label="Choose a place">
+        <h4>Where are you?</h4>
+        <div class="opts" id="locOpts" role="radiogroup"></div>
+        <button class="opt find" id="locFind">
+          <svg class="i"><use href="#i-pin"/></svg>Use my location</button>
+        <p class="locnote" id="locNote">Your coordinates stay in this browser. Nothing is sent anywhere.</p>
+      </div>
+    </div>
     <span class="sp"></span>
     <button class="tbtn" id="themeBtn" aria-label="Switch colour theme">
       <svg class="i"><use href="#i-sun"/></svg></button>
   </div>
-  <p class="lede" id="lede"></p>
 </header>
 
 <section class="hero" id="hero" hidden>
   <div class="shead"><h2 id="heroHead"></h2><p id="heroNote"></p></div>
-  <div class="stage">
-    <div class="rail" id="rail"></div>
-  </div>
-  <div class="fbody" id="fbody"></div>
+  <div class="stage" id="stage"></div>
 </section>
 
 <div class="tools">
@@ -400,33 +435,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 <section class="months" id="months"></section>
 <p class="empty" id="empty" hidden>No festivals match that filter.</p>
 
-<footer>
-  <div class="fgrid">
-    <div class="fbrand">
-      <div class="fmark"><span class="dot"></span><span>Festival Planner</span></div>
-      <p class="tag">Plannable timetables for Helsinki festivals.</p>
-      <div class="flinks">
-        <a href="mailto:__CONTACT__?subject=Festival%20Planner">
-          <svg class="i"><use href="#i-mail"/></svg>__CONTACT__</a>
-      </div>
-      <p class="fcopy">© 2026 Festival Planner · Helsinki</p>
-    </div>
-    <div class="fcol">
-      <h5>Planners</h5>
-      <ul id="fPlanners"></ul>
-    </div>
-    <div class="fcol">
-      <h5>Official sites</h5>
-      <ul id="fOfficial"></ul>
-    </div>
-  </div>
-  <div class="fnote">
-    <p>Unofficial planners, not affiliated with any of these festivals. Timetables come from each
-    organiser's own published schedule; artwork and links from their own sites.</p>
-    <p>Each planner is a single page that keeps working offline once loaded, stores your picks on
-    your own device, and collects nothing.</p>
-  </div>
-</footer>
+__FOOTER__
 </div>
 
 <script>
@@ -435,7 +444,6 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ico = n => `<svg class="i"><use href="#i-${n}"/></svg>`;
 
-$('#lede').textContent = DATA.site.tagline;
 
 /* Days until a festival opens — drives the "on now / in N days" line. */
 const today = new Date(); today.setHours(0,0,0,0);
@@ -450,91 +458,107 @@ const status = f => {
 
 const fvars = f => `--fa:${f.accent};--fi:${f.ink}`;
 
-/* ── the carousel ──────────────────────────────────────
-   The soonest festivals, in date order. The centred slide is the active one;
-   the facts below it are re-rendered on every change rather than duplicated
-   per slide, so there is one description on the page at a time. */
+/* ── the hero ──────────────────────────────────────────
+   One festival on screen at a time. Every image is already a data URI in the
+   document, so swapping src is instant and the crossfade never shows a gap. */
 const byDate = DATA.festivals.slice().sort((a, b) => a.start.localeCompare(b.start));
 const reel = [...byDate.filter(f => !status(f).past), ...byDate.filter(f => status(f).past)];
 let cur = 0;
 
 if (reel.length) {
   $('#hero').hidden = false;
-  $('#rail').innerHTML = reel.map((f, i) => `
-    <a class="slide${i ? '' : ' on'}" href="${esc(f.planner)}" style="${fvars(f)}" data-i="${i}"
-       aria-label="Open the ${esc(f.name)} planner">
+  const stage = $('#stage');
+
+  const shell = f => {
+    const st = status(f);
+    return `
+    <a class="fig" href="${esc(f.planner)}" aria-label="Open the ${esc(f.name)} planner">
       <img class="pic" src="${f.promoSrc}" alt="">
       <span class="veil"></span>
-      <span class="badge">${esc(status(f).label)}</span>
+      <span class="badge">${esc(st.label)}</span>
       <span class="lg"><img src="${f.logoSrc}" alt="${esc(f.name)}"></span>
-    </a>`).join('');
+    </a>
+    <div class="side">
+    <div class="panel">
+      <p class="fline">
+        <span>${esc(f.free ? 'Free' : 'Ticketed')}</span><span class="dot"></span>
+        <span>${esc(f.dates)}</span><span class="dot"></span>
+        <span>${esc(st.label)}</span>
+      </p>
+      <h3>${esc(f.name)} ${esc(f.year)}</h3>
+      <p class="fwhere">${esc(f.city)} · ${esc(f.type)} · ${f.stats.acts} acts on ${f.stats.stages} stages</p>
+      <p class="fstars"><b>${st.past ? 'Played' : 'Headlining'}:</b> ${esc(f.stars.slice(0, 4).join(' · '))}</p>
+      <div class="facts">
+      <a class="btn primary" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
+      ${f.free
+        ? `<a class="btn" href="${esc(f.official)}" target="_blank" rel="noopener">Official ${ico('ext')}</a>`
+        : `<a class="btn" href="${esc(f.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
+      </div>
+    </div>
+    </div>
+    ${reel.length > 1 ? `<div class="nav">
+      <button id="prev" aria-label="Previous festival" ${cur ? '' : 'disabled'}>
+        <svg class="i"><use href="#i-left"/></svg></button>
+      <span class="count">${cur + 1} / ${reel.length}</span>
+      <button id="next" aria-label="Next festival" ${cur < reel.length - 1 ? '' : 'disabled'}>
+        <svg class="i"><use href="#i-right"/></svg></button>
+    </div>` : ''}`;
+  };
 
-  const paint = () => {
+  function paint() {
     const f = reel[cur], st = status(f);
     $('#heroHead').textContent = st.live ? 'On now' : st.past ? 'Recently' : 'Next up';
     $('#heroNote').textContent = `${DATA.festivals.length} planner${DATA.festivals.length > 1 ? 's' : ''}`;
-    $('#fbody').setAttribute('style', fvars(f));
-    $('#fbody').innerHTML = `
-      <div>
-        <p class="fline">
-          <span>${esc(f.free ? 'Free' : 'Ticketed')}</span><span class="dot"></span>
-          <span>${esc(f.dates)}</span><span class="dot"></span>
-          <span>${esc(st.label)}</span>
-        </p>
-        <h3>${esc(f.name)} ${esc(f.year)}</h3>
-        <p class="fwhere">${esc(f.city)} · ${esc(f.type)} · ${f.stats.acts} acts on ${f.stats.stages} stages</p>
-        <p class="fstars"><b>${st.past ? 'Played' : 'Headlining'}:</b> ${esc(f.stars.slice(0, 4).join(' · '))}</p>
-      </div>
-      <div class="fside">
-        ${reel.length > 1 ? `<div class="nav">
-          <button id="prev" aria-label="Previous festival" ${cur ? '' : 'disabled'}>
-            <svg class="i"><use href="#i-left"/></svg></button>
-          <span class="count">${cur + 1} / ${reel.length}</span>
-          <button id="next" aria-label="Next festival" ${cur < reel.length - 1 ? '' : 'disabled'}>
-            <svg class="i"><use href="#i-right"/></svg></button>
-        </div>` : ''}
-        <div class="facts">
-          <a class="btn primary" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
-          ${f.free
-            ? `<a class="btn" href="${esc(f.official)}" target="_blank" rel="noopener">Official ${ico('ext')}</a>`
-            : `<a class="btn" href="${esc(f.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
-        </div>
-      </div>`;
+    stage.setAttribute('style', fvars(f));
+    stage.innerHTML = shell(f);
     const pv = $('#prev'), nx = $('#next');
-    if (pv) pv.onclick = () => go(cur - 1);
-    if (nx) nx.onclick = () => go(cur + 1);
-  };
-
-  const mark = () => [...$('#rail').children].forEach((el, i) =>
-    el.classList.toggle('on', i === cur));
-
-  function go(i) {
-    cur = Math.max(0, Math.min(reel.length - 1, i));
-    mark();
-    paint();
-    $('#rail').children[cur].scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'center'});
+    if (pv) pv.onclick = e => { e.preventDefault(); go(cur - 1); };
+    if (nx) nx.onclick = e => { e.preventDefault(); go(cur + 1); };
   }
 
-  /* Scroll position decides the active slide, but only when the rail can
-     actually scroll — otherwise every slide is on screen at once and
-     nearest-to-centre would override whatever the arrows just chose. */
-  const settle = () => {
-    const rail = $('#rail');
-    if (rail.scrollWidth <= rail.clientWidth + 2) return;
-    const mid = rail.scrollLeft + rail.clientWidth / 2;
-    let best = 0, bd = Infinity;
-    [...rail.children].forEach((el, i) => {
-      const d = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
-      if (d < bd) { bd = d; best = i; }
-    });
-    if (best !== cur) { cur = best; mark(); paint(); }
-  };
-  let tick;
-  $('#rail').addEventListener('scroll', () => {
-    clearTimeout(tick);
-    tick = setTimeout(settle, 90);
+  const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let busy = false;
+
+  function go(i) {
+    const next = Math.max(0, Math.min(reel.length - 1, i));
+    if (next === cur || busy) return;
+    const dir = next > cur ? 'fwd' : 'back';
+    if (!motionOK) { cur = next; paint(); return; }
+    busy = true;
+    stage.classList.add('out', dir);
+    setTimeout(() => {
+      cur = next;
+      paint();
+      /* let the fresh nodes land in their offset state, then release */
+      stage.classList.remove(dir);
+      stage.classList.add(dir === 'fwd' ? 'back' : 'fwd');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        stage.classList.remove('out', 'fwd', 'back');
+        busy = false;
+      }));
+    }, 300);
+  }
+
+  /* a swipe across the picture moves between festivals; the threshold keeps a
+     vertical scroll that starts on the image from stealing the gesture */
+  let sx = 0, sy = 0, tracking = false;
+  stage.addEventListener('touchstart', e => {
+    if (!e.target.closest('.fig')) return;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
   }, {passive: true});
-  mark();
+  stage.addEventListener('touchend', e => {
+    if (!tracking) return;
+    tracking = false;
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.6) go(cur + (dx < 0 ? 1 : -1));
+  }, {passive: true});
+
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('input,textarea,[role=dialog]')) return;
+    if (e.key === 'ArrowLeft') go(cur - 1);
+    if (e.key === 'ArrowRight') go(cur + 1);
+  });
+
   paint();
 }
 
@@ -592,6 +616,68 @@ function card(f) {
     </div>
   </article>`;
 }
+
+/* ── place ─────────────────────────────────────────────
+   Finland by default, because that is everything the site covers. The browser
+   only asks for coordinates when someone presses the button, and the answer is
+   used once, here, to pick the nearest place on this list — it is never stored
+   and never leaves the page. */
+const PLACES = [
+  {k: 'fi',  label: 'Finland',  lat: 62.6, lon: 25.7},
+  {k: 'hel', label: 'Helsinki', lat: 60.17, lon: 24.94},
+];
+const PKEY = 'fp-place';
+let place = (() => { try { return localStorage.getItem(PKEY) || 'fi'; } catch (e) { return 'fi'; } })();
+
+const kmBetween = (a, b) => {
+  const R = 6371, rad = d => d * Math.PI / 180;
+  const dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
+  const h = Math.sin(dLat / 2) ** 2 +
+            Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+};
+
+function paintPlace() {
+  $('#locLabel').textContent = (PLACES.find(p => p.k === place) || PLACES[0]).label;
+  $('#locOpts').querySelectorAll('.opt').forEach(o =>
+    o.setAttribute('aria-checked', o.dataset.k === place));
+}
+$('#locOpts').innerHTML = PLACES.map(p =>
+  `<button class="opt" role="radio" data-k="${p.k}" aria-checked="false">${p.label}</button>`).join('');
+$('#locOpts').querySelectorAll('.opt').forEach(o => o.onclick = () => {
+  place = o.dataset.k;
+  try { localStorage.setItem(PKEY, place); } catch (e) {}
+  paintPlace();
+  openSheet(null);
+});
+$('#locFind').onclick = () => {
+  const note = $('#locNote');
+  if (!navigator.geolocation) {
+    note.textContent = 'This browser cannot report a location.';
+    return;
+  }
+  note.textContent = 'Asking your browser…';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const here = {lat: pos.coords.latitude, lon: pos.coords.longitude};
+      const near = PLACES.slice().sort((a, b) => kmBetween(here, a) - kmBetween(here, b))[0];
+      const away = Math.round(kmBetween(here, PLACES.find(p => p.k === 'hel')));
+      place = away < 120 ? 'hel' : 'fi';
+      try { localStorage.setItem(PKEY, place); } catch (e) {}
+      paintPlace();
+      note.textContent = away < 120
+        ? `You are about ${away} km from Helsinki — showing what is on there.`
+        : `Nearest covered place is Helsinki, about ${away} km away. Only Finnish festivals so far.`;
+    },
+    err => {
+      note.textContent = err.code === err.PERMISSION_DENIED
+        ? 'Location denied. Pick a place from the list instead.'
+        : 'Could not read a location. Pick a place from the list instead.';
+    },
+    {timeout: 8000, maximumAge: 600000}
+  );
+};
+paintPlace();
 
 /* ── search, date scope and categories ─────────────────
    Search and date apply as you touch them; categories commit on Apply, so
@@ -656,7 +742,8 @@ function apply() {
 }
 
 /* one open sheet at a time, and a click outside closes it */
-const sheets = [['#whenTrig', '#whenSheet'], ['#catTrig', '#catSheet']];
+const sheets = [['#whenTrig', '#whenSheet'], ['#catTrig', '#catSheet'],
+                ['#locTrig', '#locSheet']];
 function openSheet(which) {
   sheets.forEach(([t, sh]) => {
     const on = sh === which;
@@ -702,14 +789,6 @@ $('#qClr').onclick = () => { $('#q').value = ''; q = ''; $('#qClr').hidden = tru
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { openSheet(null); if (document.activeElement === $('#q')) $('#q').blur(); }
 });
-
-/* ── footer link columns ───────────────────────────────
-   Built from the same data as the cards, so a new festival never leaves a
-   stale footer behind. */
-$('#fPlanners').innerHTML = byDate.map(f =>
-  `<li><a href="${esc(f.planner)}">${esc(f.name)}</a></li>`).join('');
-$('#fOfficial').innerHTML = byDate.map(f =>
-  `<li><a href="${esc(f.official)}" target="_blank" rel="noopener">${esc(f.name)} ${ico('ext')}</a></li>`).join('');
 
 /* ── theme ─────────────────────────────────────────────── */
 const readTheme = () => {

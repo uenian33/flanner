@@ -2,7 +2,7 @@
   "site": {
     "name": "Festival Planner",
     "tagline": "Timetables you can actually plan with. One page per festival, works offline once loaded.",
-    "contact": "wenyany94@gmail.com"
+    "contact": "flanner47@gmail.com"
   },
   "festivals": [
     {
@@ -19,12 +19,27 @@
       "month": "2026-08",
       "city": "Suvilahti, Helsinki",
       "type": "City festival",
-      "tags": ["Pop", "Electronic", "Indie", "Jazz"],
+      "tags": [
+        "Pop",
+        "Electronic",
+        "Indie",
+        "Jazz"
+      ],
       "accent": "#fff203",
       "ink": "#000000",
       "description": "Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.",
-      "stats": {"acts": 156, "stages": 10, "days": 3},
-      "stars": ["Florence + The Machine", "Nick Cave & the Bad Seeds", "Turnstile", "Zara Larsson", "Lykke Li"],
+      "stats": {
+        "acts": 156,
+        "stages": 10,
+        "days": 3
+      },
+      "stars": [
+        "Florence + The Machine",
+        "Nick Cave & the Bad Seeds",
+        "Turnstile",
+        "Zara Larsson",
+        "Lykke Li"
+      ],
       "official": "https://www.flowfestival.com/en/",
       "tickets": "https://www.flowfestival.com/en/tickets/",
       "free": false,
@@ -44,12 +59,26 @@
       "month": "2026-08",
       "city": "Alppila, Helsinki",
       "type": "Street festival",
-      "tags": ["Techno", "Rap", "House", "Indie"],
+      "tags": [
+        "Techno",
+        "Rap",
+        "House",
+        "Indie"
+      ],
       "accent": "#b6fc46",
       "ink": "#0a1400",
       "description": "One free day across the streets of Alppila. Nine independently run stages, from a live band stage by Linnanmäki to hard techno on Kirstinkatu.",
-      "stats": {"acts": 98, "stages": 9, "days": 1},
-      "stars": ["Julma-Henri", "Rony Rex", "Nukkuvat Linnut", "Stepa & Polarsoul"],
+      "stats": {
+        "acts": 98,
+        "stages": 9,
+        "days": 1
+      },
+      "stars": [
+        "Julma-Henri",
+        "Rony Rex",
+        "Nukkuvat Linnut",
+        "Stepa & Polarsoul"
+      ],
       "official": "https://www.kallioblockparty.org/",
       "tickets": null,
       "free": true,
