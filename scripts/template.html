@@ -194,11 +194,9 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
    bar, so getting home costs the same tap as switching view. */
 .navhome-m{display:none}
 .navhome-m svg{stroke:none;fill:none}
-.brandmini{display:flex;align-items:center;gap:9px;text-decoration:none;overflow:hidden;
-  width:0;margin-right:-10px;opacity:0;transform:translateX(-12px) scale(.9);
-  transform-origin:left center;
-  transition:opacity .3s var(--ease),transform .44s var(--ease)}
-body.scrolled .brandmini{width:auto;margin-right:0;opacity:1;transform:none}
+/* Always present, not revealed on scroll: the masthead is below the fold for
+   most of the page, so the bar is the only place the festival is named. */
+.brandmini{display:flex;align-items:center;gap:9px;text-decoration:none;flex:none}
 .brandmini .fpmark{width:30px;height:30px;flex:none;stroke:none;fill:none}
 .brandmini b{font-family:var(--title);font-size:19px;font-weight:600;letter-spacing:.05em;
   text-transform:uppercase;white-space:nowrap;color:var(--tx)}
@@ -347,10 +345,19 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 #secSchedule{scroll-margin-top:calc(var(--toph,104px) + var(--tb2h,0px) + 18px)}
 /* The heading pins under the top bar for as long as its own section is on
    screen, so you always know which part of the planner you are reading. It is
-   a sticky child, so it arrives and leaves with the section by itself. */
+   a sticky child, so it arrives and leaves with the section by itself.
+
+   A pinned heading has to hide what slides beneath it, and a flat --bg plate
+   did that but read as a grey slab, because the page behind it carries a
+   gradient the flat colour cannot match. So it uses the same material as the
+   toolbar: mostly transparent, with a backdrop blur. It picks up whatever is
+   behind it, and content passing under is frosted rather than legible through
+   the type. */
 .shead{position:sticky;top:var(--toph,104px);z-index:26;
-  display:block;margin-bottom:14px;padding:10px 0 8px;background:var(--bg);
-  box-shadow:0 1px 0 var(--line)}
+  display:block;margin-bottom:12px;padding:9px 0 8px;
+  background:color-mix(in srgb,var(--bg) 62%,transparent);
+  -webkit-backdrop-filter:blur(15px) saturate(1.5);
+  backdrop-filter:blur(15px) saturate(1.5)}
 .shead h2{margin:0;font-family:var(--disp);font-size:19px;letter-spacing:-.02em;font-weight:700}
 .shead p{margin:4px 0 0;color:var(--tx3);font-size:12.5px}
 .shead .tspacer{flex:1}
@@ -1024,7 +1031,6 @@ __DECO__
 <section class="blk" id="secMap">
   <div class="shead">
     <h2>Map</h2>
-    <p>Tap a pin, or a stage name anywhere on this page.</p>
   </div>
   <div class="maplayout">
     <div>
@@ -1059,7 +1065,6 @@ __DECO__
 <section class="blk" id="secRoute">
   <div class="shead">
     <h2>My plan <span id="routeCount" style="color:var(--tx3);font-weight:500"></span></h2>
-    <p>Overlaps and tight walks are flagged.</p>
   </div>
   <div class="routebox">
     <div class="rlist" id="routeList"></div>

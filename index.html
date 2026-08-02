@@ -254,19 +254,23 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    Straight from the reference: one wide search pill, then two dropdown
    triggers. The category sheet holds chips and commits on Apply, so a
    multi-select does not re-render the list on every tap. */
-.tools{position:sticky;top:0;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
-  margin:0 0 clamp(18px,2.4vw,26px);padding:10px 0;
-  transition:padding .22s var(--ease)}
+/* The bar sits below the highlight in normal flow and pins to the top once the
+   highlight has scrolled past it, growing its backdrop and revealing the mark
+   as it does. */
+.tools{position:sticky;top:0;z-index:60;display:flex;gap:10px;align-items:center;
+  flex-wrap:wrap;margin:0 0 clamp(18px,2.4vw,26px);padding:10px 0;
+  transition:padding .26s var(--ease)}
 /* The bar lives inside a max-width column, so its backdrop is painted by a
    pseudo-element stretched past the gutters rather than by the bar itself. */
 .tools::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);border-bottom:1px solid transparent;
-  opacity:0;transition:opacity .22s var(--ease),border-color .22s var(--ease);
+  opacity:0;transition:opacity .24s var(--ease),border-color .24s var(--ease);
   pointer-events:none}
 .tools > *{position:relative;z-index:1}
-.tools.stuck{padding:12px 0}
+.tools.stuck{padding:13px 0}
 .tools.stuck::before{opacity:1;border-bottom-color:var(--line)}
+
 /* the mark only appears once the masthead has scrolled away */
 .toolmark{display:flex;align-items:center;gap:9px;flex:none;text-decoration:none;
   max-width:0;overflow:hidden;opacity:0;
@@ -513,6 +517,8 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 </defs></svg>
 
 <div class="wrap">
+
+
 <header>
   <div class="top">
     <a class="mark" href="./"><svg class="logo" aria-hidden="true"><use href="#i-logo"/></svg>
@@ -574,6 +580,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
   </div>
   </div>
 </div>
+
 <div class="active" id="activeTags"></div>
 <section class="months" id="months"></section>
 <p class="empty" id="empty" hidden>No festivals match that filter.</p>
@@ -798,6 +805,9 @@ function card(f) {
    requestAnimationFrame behind a guard flag, and anywhere frames are not being
    produced the guard latched and the bar froze in one state. */
 const tools = $('#tools');
+/* The bar sits below the highlight while that is on screen and pins once it
+   reaches the top — which is exactly when its own offset hits zero. Nothing
+   above it collapses, so the measurement cannot feed back into the layout. */
 function readStuck() {
   tools.classList.toggle('stuck', tools.getBoundingClientRect().top <= 0);
 }
