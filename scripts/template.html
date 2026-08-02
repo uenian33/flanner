@@ -355,7 +355,12 @@ input[type=search]::placeholder{color:var(--tx3)}
      beside it. The grid view already spans the full width. */
   body[data-view=agenda] .deck{display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,42%);
     gap:clamp(20px,2.4vw,34px);align-items:start}
-  body[data-view=agenda] .deck #secMap{position:sticky;top:calc(var(--toph,104px) + 18px);margin-top:26px}
+  /* The day row pins beneath the top bar, so the map column has to clear both
+     or its first rows sit behind them. This is the desktop side-by-side layout
+     only; on a phone the map is a normal block further down the page. */
+  body[data-view=agenda] .deck #secMap{position:sticky;
+    top:calc(var(--toph,104px) + var(--tb2h,0px) + 18px);
+    margin-top:calc(var(--tb2h,0px) + 26px)}
   body[data-view=agenda] .deck .maplayout{grid-template-columns:1fr}
   body[data-view=agenda] .deck .agenda{max-width:none}
 }
@@ -465,7 +470,6 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .ahour b{font-family:var(--disp);font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;
   letter-spacing:-.022em}
 .ahour span{font-size:11.5px;color:var(--tx3)}
-.ahour hr{flex:1;border:none;border-top:1px solid var(--line);margin:0}
 .arow{position:relative;overflow:hidden;border-radius:12px;margin-bottom:7px;
   touch-action:pan-y;background:var(--accent)}
 .arow.rm{background:var(--live)}
@@ -1011,24 +1015,25 @@ __THEME__
   <div class="brandline">
     <div class="lockup">
 __DECO__
-    <a class="logo" href="https://www.kallioblockparty.org/" target="_blank" rel="noopener">
-      <img src="__LOGO__" alt="Kallio Block Party 2026" width="339" height="245"></a>
+    <a class="logo" href="__SITE_URL__" target="_blank" rel="noopener">
+      <img src="__LOGO__" alt="__BRANDNAME__ __YEAR__" width="339" height="245"></a>
     <div>
       <h1 class="sr">__BRANDNAME__ Planner</h1>
       <div class="meta">
-        <span class="g"><b id="statActs">—</b> acts <i>·</i> <b>9</b> stages</span>
-        <span class="g">Sat <b>1 August</b> <i>·</i> 12:00–22:00</span>
-        <span class="g">Alppila, Helsinki <i>·</i> free entry</span></div>
+        <span class="g"><b id="statActs">—</b> acts <i>·</i> <b>__STAGES__</b> stages</span>
+        <span class="g">__WHEN__</span>
+        <span class="g">__WHERE__</span></div>
     </div>
     </div>
     <div class="hdr-links">
-      <a class="ghost" href="https://www.kallioblockparty.org/program/" target="_blank" rel="noopener">
-        Official programme <svg class="i"><use href="#i-ext"/></svg></a>
-      <a class="ghost" href="https://www.kallioblockparty.org/" target="_blank" rel="noopener">
-        kallioblockparty.org <svg class="i"><use href="#i-ext"/></svg></a>
+      <a class="ghost" href="__SCHEDULE_URL__" target="_blank" rel="noopener">
+        __SCHEDULE_LABEL__ <svg class="i"><use href="#i-ext"/></svg></a>
+      <a class="ghost" href="__SITE_URL__" target="_blank" rel="noopener">
+        __SITE_LABEL__ <svg class="i"><use href="#i-ext"/></svg></a>
     </div>
   </div>
 </header>
+__TICKER__
 <div id="hSentinel" aria-hidden="true"></div>
 </div>
 <div class="wrap">
@@ -1412,7 +1417,7 @@ function buildAgenda() {
       const n = allActs.filter(x => Math.floor(x.sm/60) === hr).length;
       h += `<section class="ahsec" data-sec="${hr}">
         <div class="ahour" data-hour="${hr}"><b>${String(hr%24).padStart(2,'0')}:00</b>
-        <span class="hcount">${n} start${n>1?'s':''}</span><span class="hlive"></span><hr></div>`;
+        <span class="hcount">${n} start${n>1?'s':''}</span><span class="hlive"></span></div>`;
     }
     const s = a.stage;
     const tags = `<i class="tg ty">${esc(DATA.typeLabels[a.type])}</i>` +
@@ -2142,7 +2147,7 @@ $('#pRap').onclick = () => setRoute(allActs.filter(a => a.stage.id === (DATA.pre
 $('#rClear').onclick = () => { [...state.route].forEach(k => toggleRoute(k, true)); renderRoute();
   showToast('Route cleared'); };
 $('#rCopy').onclick = () => {
-  const t = 'Kallio Block Party 2026 — my route\n' + routeActs()
+  const t = '__BRANDNAME__ __YEAR__ — my plan\n' + routeActs()
     .map(a => `${a.s}-${a.e}  ${a.name}  (${a.stage.name}${a.stage.num?', stage '+a.stage.num:''})`).join('\n');
   navigator.clipboard.writeText(t).then(() => showToast('Route copied to clipboard'));
 };

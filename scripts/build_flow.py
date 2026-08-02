@@ -140,6 +140,15 @@ def build():
         ("__THEME__", THEME),
         ("__HOME__", "../"),
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
+        ("__YEAR__", '2026'),
+        ("__STAGES__", '10'),
+        ("__WHEN__", '<b>14–16 August</b> <i>·</i> 3 days'),
+        ("__WHERE__", 'Suvilahti, Helsinki'),
+        ("__SITE_URL__", 'https://www.flowfestival.com/en/'),
+        ("__SITE_LABEL__", 'flowfestival.com'),
+        ("__SCHEDULE_URL__", 'https://www.flowfestival.com/en/schedule/'),
+        ("__SCHEDULE_LABEL__", 'Official schedule'),
+        ("__TICKER__", '<div class="ticker" aria-hidden="true"><div><span>14.–16.8.2026</span><span>FLOW FESTIVAL</span><span>SUVILAHTI</span><span>HELSINKI</span><span>156 ACTS</span><span>10 STAGES</span><span>3 DAYS</span><span>14.–16.8.2026</span><span>FLOW FESTIVAL</span><span>SUVILAHTI</span><span>HELSINKI</span><span>156 ACTS</span><span>10 STAGES</span><span>3 DAYS</span></div></div>'),
         ("__BRANDNAME__", 'Flow Festival'),
         ("__PAGETITLE__", 'Flow Festival 2026 timetable — set times, stages and map'),
         ("__METADESC__", 'Flow Festival 2026 timetable: 156 sets on 10 stages at Suvilahti, Helsinki, 14–16 August. Day-by-day set times, artist previews and a site map.'),
@@ -162,21 +171,6 @@ def build():
     ]:
         html = html.replace(tok, val)
 
-    # festival-specific copy
-    ticker = ("14.–16.8.2026", "FLOW FESTIVAL", "SUVILAHTI", "HELSINKI",
-              "156 ACTS", "10 STAGES", "3 DAYS")
-    strip = "".join(f"<span>{t}</span>" for t in ticker * 2)
-    html = html.replace("</header>", f'</header>\n<div class="ticker" aria-hidden="true"><div>{strip}</div></div>')
-    html = html.replace('alt="Kallio Block Party 2026"', 'alt="Flow Festival 2026"')
-    html = html.replace("KBP<span class=\"pl\">&nbsp;planner</span>", "Flow<span class=\"pl\">&nbsp;planner</span>")
-    html = html.replace("https://www.kallioblockparty.org/program/", "https://www.flowfestival.com/en/schedule/")
-    html = html.replace("https://www.kallioblockparty.org/", "https://www.flowfestival.com/en/")
-    html = html.replace("kallioblockparty.org", "flowfestival.com")
-    html = html.replace("Official programme", "Official schedule")
-    html = html.replace("<b>9</b> stages", "<b>10</b> stages")
-    html = html.replace("Sat <b>1 August</b> <i>·</i> 12:00–22:00",
-                        "<b>14–16 August</b> <i>·</i> 3 days")
-    html = html.replace("Alppila, Helsinki <i>·</i> free entry", "Suvilahti, Helsinki")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(html)
     n = sum(len(s["acts"]) for s in stages)
