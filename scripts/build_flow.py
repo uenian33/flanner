@@ -166,7 +166,6 @@ def build():
               "156 ACTS", "10 STAGES", "3 DAYS")
     strip = "".join(f"<span>{t}</span>" for t in ticker * 2)
     html = html.replace("</header>", f'</header>\n<div class="ticker" aria-hidden="true"><div>{strip}</div></div>')
-    html = html.replace("Kallio&nbsp;Block&nbsp;Party Planner", "Flow Festival Planner")
     html = html.replace('alt="Kallio Block Party 2026"', 'alt="Flow Festival 2026"')
     html = html.replace("KBP<span class=\"pl\">&nbsp;planner</span>", "Flow<span class=\"pl\">&nbsp;planner</span>")
     html = html.replace("https://www.kallioblockparty.org/program/", "https://www.flowfestival.com/en/schedule/")

@@ -221,15 +221,23 @@ body.scrolled .brandmini{width:auto;margin-right:0;opacity:1;transform:none}
 /* On a phone the identity is not something to reveal on scroll — with the
    masthead far below the fold, the bar is the only place the festival is
    named. It takes its own row so the search keeps its width. */
+/* On a phone the identity is not something to reveal on scroll — with the
+   masthead far below the fold, the bar is the only place the festival is
+   named. Everything stays on one row: the mark and the two buttons hold their
+   size and the search field absorbs whatever is left, down to a stub. */
 @media(max-width:620px){
-  .toolbar .tbar:not(.tbar2){display:grid;gap:8px;align-items:center;
-    grid-template-columns:minmax(0,1fr) auto auto;
-    grid-template-areas:"brand brand brand" "search theme filter"}
-  .brandmini{grid-area:brand;width:auto;margin:0;opacity:1;transform:none;overflow:visible}
-  .brandmini b{display:block;font-size:17px}
-  .srch{grid-area:search;flex:none}
-  #themeBtn{grid-area:theme}
-  .tbar .rel{grid-area:filter}
+  .toolbar .tbar:not(.tbar2){gap:8px}
+  .brandmini{width:auto;margin:0;opacity:1;transform:none;overflow:visible;flex:none}
+  .brandmini b{display:block;font-size:15px;letter-spacing:.03em}
+  .brandmini .fpmark{width:26px;height:26px}
+  .srch{flex:1 1 40px;min-width:0}
+  .toolbar input[type=search]{height:44px;padding:0 16px 0 38px;font-size:15px}
+  .srch svg{left:14px}
+  .toolbar .iconbtn{width:44px;height:44px}
+}
+@media(max-width:420px){
+  .brandmini b{font-size:13.5px}
+  .brandmini .fpmark{width:24px;height:24px}
 }
 header{transition:none}
 .logo img{transform-origin:center center}
@@ -346,16 +354,20 @@ input[type=search]::placeholder{color:var(--tx3)}
   body[data-view=agenda] .deck .maplayout{grid-template-columns:1fr}
   body[data-view=agenda] .deck .agenda{max-width:none}
 }
-section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 10px)}
-.shead{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+/* A jump has to clear everything pinned above the target. That is the top bar
+   for every section, plus the day row for the schedule, which pins inside it —
+   an offset that only counted the top bar left each heading tucked under the
+   bar it had just scrolled beneath. */
+section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
+#secSchedule{scroll-margin-top:calc(var(--toph,104px) + var(--tb2h,0px) + 18px)}
+/* The heading pins under the top bar for as long as its own section is on
+   screen, so you always know which part of the planner you are reading. It is
+   a sticky child, so it arrives and leaves with the section by itself. */
+.shead{position:sticky;top:var(--toph,104px);z-index:26;
+  display:block;margin-bottom:14px;padding:10px 0 8px;background:var(--bg);
+  box-shadow:0 1px 0 var(--line)}
 .shead h2{margin:0;font-family:var(--disp);font-size:19px;letter-spacing:-.02em;font-weight:700}
-/* The plan is worth naming: a route copied or screenshotted out of here should
-   say which festival it belongs to. Set in the festival's own display face, so
-   it reads as that festival's rather than as the site's chrome. */
-.festname{display:block;font-family:var(--title);font-weight:400;font-size:26px;
-  line-height:1.05;letter-spacing:.01em;text-transform:uppercase;color:var(--tx);
-  margin-bottom:3px}
-.shead p{margin:0;color:var(--tx3);font-size:12.5px}
+.shead p{margin:4px 0 0;color:var(--tx3);font-size:12.5px}
 .shead .tspacer{flex:1}
 
 /* ── timeline ─────────────────────────────────────────── */
@@ -1058,7 +1070,7 @@ h1{letter-spacing:.01em;line-height:.94}
     <a class="logo" href="https://www.flowfestival.com/en/" target="_blank" rel="noopener">
       <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDc0IDE4NCI+CiAgPGRlZnM+CiAgICA8c3R5bGU+CiAgICAgIC5jbHMtMSB7CiAgICAgICAgZmlsbDogI2U2ZTZlNjsKICAgICAgfQoKICAgICAgLmNscy0yIHsKICAgICAgICBmaWxsOiAjMWQxZDFiOwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iMTA3NCA2My40MSA4MjMuNyA2My40MSA4MjMuNyAzNi41NyA0MDkuMzEgMzYuNTcgNDA5LjMxIC0uMDcgMCAtLjA3IDAgMTgzLjgzIDQwOS4zMSAxODMuODMgNDA5LjMxIDE0OC44IDgyMy43IDE0OC44IDgyMy43IDEyMy41IDEwNzQgMTIzLjUgMTA3NCA2My40MSIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTM4MS4xLS4wMmwtMTIuNzEsMTI1LjE3TDM1Ny4xMy0uMDJoLTI1LjlsLTEzLjE5LDEzMi4zNkwzMDYuNTMtLjAyaC0yNC43bDE3Ljk4LDE4NC4xNWgzMC42OWwxNC42My0xMTYuMjksMTQuMzksMTE2LjI5aDI4LjU0TDQwNy40OC0uMDJoLTI2LjM4Wk0yMjguMTUsMTU0Ljg4Yy0xMC4wNywwLTE5LjktMjcuMDktMTkuOS02My4wNnM5LjgzLTYzLjA2LDE5LjktNjMuMDYsMTkuOSwyNy4wOSwxOS45LDYzLjA2LTkuODMsNjMuMDYtMTkuOSw2My4wNk0yMjguMTUsMTg2LjA1YzI1LjY2LDAsNDYuMjgtMzUuNzMsNDYuMjgtOTQuMjRTMjUzLjgtMi40MiwyMjguMTUtMi40MnMtNDYuMjgsMzUuNzMtNDYuMjgsOTQuMjMsMjAuNjIsOTQuMjQsNDYuMjgsOTQuMjRNMTc2LjQxLDE4NC4xM3YtMjguNzdoLTQxVi0uMDJoLTI2LjM4djE4NC4xNWg2Ny4zOFpNMzEuNDEtLjAybC0xNS41OSwxODQuMTVoMjYuNjJsNy4xOS04NS4zNmgzNy4xN2wzLjEyLTI2Ljg2aC0zNy44OWwzLjYtNDMuMTZoMzkuNTZMOTcuNTktLjAySDMxLjQxWiIvPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTgyMy42NywxNDkuNDN2LTE3LjY3aC0yNS4xN1YzNi4zNmgtMTYuMTl2MTEzLjA2aDQxLjM3Wk03NDAuOCwxMTIuOTJsNS44OS00NC42MSw2Ljc3LDQ0LjYxaC0xMi42NlpNNzU2LjQxLDM2LjM2aC0xOC45OWwtMTYuOTMsMTEzLjA2aDE0LjI4bDMuMjQtMjEuNjRoMTcuODFsMy4zOSwyMS42NGgxNS42bC0xOC40LTExMy4wNlpNNzA1LjEyLDM2LjM2bC0xMS43OCw3OC40Ny0xMS42My03OC40N2gtMTUuMTZsMTYuOTMsMTEzLjA2aDIwLjQ2bDE2Ljc4LTExMy4wNmgtMTUuNlpNNjYwLjA2LDM2LjM2aC0zMi4zOXYxNy4wOGg4LjF2NzguOTFoLTguMXYxNy4wOGgzMi4zOXYtMTcuMDhoLTguMVY1My40NGg4LjF2LTE3LjA4Wk02MDQuNzEsNTQuMDNoMTYuMTl2LTE3LjY3aC00OC41OHYxNy42N2gxNi4xOXY5NS40aDE2LjE5VjU0LjAzWk01NTUuNDgsNjUuMjJoMS4zM2w4LjY5LTE2Ljc4Yy0zLjUzLTcuMzYtMTAuNDUtMTMuNTQtMTkuMjktMTMuNTQtMTMuNCwwLTI0LjE0LDEyLjk2LTI0LjE0LDMxLjIxLDAsMTUuNDYsNS40NSwyNS43NiwxNS43NSwzMi42OGw1LjMsMy41M2M1LjE1LDMuNTMsOC41NCw4Ljk4LDguNTQsMTYuMTksMCw3Ljk1LTQuMTIsMTIuOTUtOC4zOSwxMi45NS01Ljc0LDAtOS44Ni00Ljg2LTEyLjY2LTE1LjMxaC0xLjMzbC04LjU0LDE3LjA4YzMuMzksMTAuNzUsMTIuMDcsMTcuMzcsMjIuNTIsMTcuMzcsMTMuNCwwLDIzLjg1LTEzLjQsMjMuODUtMzIuMDksMC0xNS45LTUuNDUtMjUuNjItMTYuMzQtMzIuOThsLTQuMTItMi44Yy01Ljc0LTMuODMtOS4xMy0xMC4xNi05LjEzLTE2LjY0LDAtNy4yMSw0LjI3LTEyLjA3LDguMzktMTIuMDdzNy44LDQuNTYsOS41NywxMS4xOU00ODYuNjQsODAuNjh2LTI2LjY1aDI2Ljc5di0xNy42N2gtNDIuOTl2MTEzLjA2aDQyLjk5di0xNy42N2gtMjYuNzl2LTM0Ljc0aDI1LjMydi0xNi4zNGgtMjUuMzJaTTQyMi42NCwzNi4zNmwtOS41NywxMTMuMDZoMTYuMzRsNC40Mi01Mi40MWgyMi44MmwxLjkxLTE2LjQ5aC0yMy4yNmwyLjIxLTI2LjVoMjQuMjlsMS40Ny0xNy42N2gtNDAuNjNaIi8+CiAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMTA2Ni43LDYzLjE0aC0xNy40djkuMTdoNC4zNXY0Mi4zOWgtNC4zNXY5LjE3aDE3LjR2LTkuMTdoLTQuMzV2LTQyLjM5aDQuMzV2LTkuMTdaTTEwMjIuOTMsMTIzLjg4di0yMy43M2wyLjQ1LTMuOTUsMTAuMTIsMjcuNjhoMTAuMjhsLTE0LjI0LTM3LjU3LDE0LTIyLjQ2di0uNzFoLTEwLjEybC0xMi41LDIxLjUxdi0yMS41MWgtOC43djYwLjc0aDguN1pNOTk5LjAyLDYzLjE0djQzLjQybC0xMC41Mi00My40MmgtMTEuMDd2NjAuNzRoNy45MXYtNDMuNDJsMTAuNTIsNDMuNDJoMTEuMDd2LTYwLjc0aC03LjkxWk05NzEuNzgsNjMuMTRoLTE3LjR2OS4xN2g0LjM1djQyLjM5aC00LjM1djkuMTdoMTcuNHYtOS4xN2gtNC4zNXYtNDIuMzloNC4zNXYtOS4xN1pNOTQ0LjI1LDc4LjY0aC43MWw0LjY3LTkuMDJjLTEuOS0zLjk1LTUuNjItNy4yOC0xMC4zNi03LjI4LTcuMiwwLTEyLjk3LDYuOTYtMTIuOTcsMTYuNzcsMCw4LjMsMi45MywxMy44NCw4LjQ2LDE3LjU2bDIuODUsMS45YzIuNzcsMS45LDQuNTksNC44Miw0LjU5LDguNywwLDQuMjctMi4yMSw2Ljk2LTQuNTEsNi45Ni0zLjA4LDAtNS4zLTIuNjEtNi44LTguMjNoLS43MWwtNC41OSw5LjE3YzEuODIsNS43Nyw2LjQ5LDkuMzMsMTIuMSw5LjMzLDcuMiwwLDEyLjgxLTcuMiwxMi44MS0xNy4yNCwwLTguNTQtMi45My0xMy43Ni04Ljc4LTE3LjcxbC0yLjIxLTEuNWMtMy4wOC0yLjA2LTQuOS01LjQ2LTQuOS04Ljk0LDAtMy44NywyLjI5LTYuNDksNC41MS02LjQ5czQuMTksMi40NSw1LjE0LDYuMDFNOTIxLjMxLDEyMy44OHYtOS40OWgtMTMuNTJ2LTUxLjI1aC04Ljd2NjAuNzRoMjIuMjJaTTg3OC44NCw4Ni45NHYtMTQuMzFoMTQuMzl2LTkuNDloLTIzLjA5djYwLjc0aDIzLjA5di05LjQ5aC0xNC4zOXYtMTguNjZoMTMuNnYtOC43OGgtMTMuNlpNODYyLjg4LDEyMy44OHYtNjAuNzRoLTguNDZ2MjMuNDloLTguNDZ2LTIzLjQ5aC04LjQ2djYwLjc0aDguNDZ2LTI3Ljc2aDguNDZ2MjcuNzZoOC40NloiLz4KPC9zdmc+" alt="Flow Festival 2026" width="339" height="245"></a>
     <div>
-      <h1>Flow Festival Planner</h1>
+      <h1 class="sr">Flow Festival Planner</h1>
       <div class="meta">
         <span class="g"><b id="statActs">—</b> acts <i>·</i> <b>10</b> stages</span>
         <span class="g"><b>14–16 August</b> <i>·</i> 3 days</span>
@@ -1099,7 +1111,7 @@ h1{letter-spacing:.01em;line-height:.94}
 
 <section class="blk" id="secMap">
   <div class="shead">
-    <h2>Where the stages are</h2>
+    <h2>Map</h2>
     <p>Tap a pin, or a stage name anywhere on this page.</p>
   </div>
   <div class="maplayout">
@@ -1134,8 +1146,7 @@ h1{letter-spacing:.01em;line-height:.94}
 
 <section class="blk" id="secRoute">
   <div class="shead">
-    <h2><span class="festname">Flow Festival</span> My plan
-      <span id="routeCount" style="color:var(--tx3);font-weight:500"></span></h2>
+    <h2>My plan <span id="routeCount" style="color:var(--tx3);font-weight:500"></span></h2>
     <p>Overlaps and tight walks are flagged.</p>
   </div>
   <div class="routebox">
@@ -1440,13 +1451,13 @@ function scrollToNow(smooth) {
   if (state.view === 'agenda') {
     const hr = Math.min(Math.floor(day.end / 60) - 1, Math.floor(m / 60));
     const el = $(`.ahour[data-hour="${hr}"]`);
-    if (el) el.scrollIntoView({behavior, block: 'start'});
+    if (el) scrollToSection('#' + el.id, behavior);
   } else {
     const b = $('#board');
     const labelW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--label-w'));
     const trackW = b.scrollWidth - labelW;
     b.scrollTo({left: Math.max(0, labelW + pct(m) / 100 * trackW - b.clientWidth * 0.35), behavior});
-    $('#secSchedule').scrollIntoView({behavior, block: 'start'});
+    scrollToSection('#secSchedule', behavior);
   }
   setActiveNav('nSched');
   return true;
@@ -2073,7 +2084,7 @@ function renderStageBar(id) {
         ${ico('ext')}Google Maps</a></span>`;
 }
 function gotoStage(id) {
-  $('#secMap').scrollIntoView({behavior:'smooth', block:'start'});
+  scrollToSection('#secMap');
   selectStage(id, true);
   setActiveNav('nMap');
 }
@@ -2166,7 +2177,7 @@ function setRoute(keys) {
   [...state.route].forEach(k => toggleRoute(k, true));
   keys.forEach(k => { if (!state.route.has(k)) toggleRoute(k, true); });
   renderRoute();
-  $('#secRoute').scrollIntoView({behavior:'smooth', block:'start'});
+  scrollToSection('#secRoute');
   showToast(`Route set · <b>${keys.length}</b> acts`);
 }
 function everyStageOnce() {
@@ -2215,6 +2226,17 @@ $('#themeBtn').onclick = () =>
 applyTheme(Store.get('theme') || 'light');   // bright by default
 
 /* ══ mobile nav ════════════════════════════════════════ */
+/* scroll-margin-top is not honoured on a section that is itself sticky — the
+   map is, in list view — so the offset is computed rather than declared. */
+function scrollToSection(sel, behavior = 'smooth') {
+  const el = typeof sel === 'string' ? $(sel) : sel;
+  if (!el) return;
+  const cs = getComputedStyle(document.documentElement);
+  const toph = parseFloat(cs.getPropertyValue('--toph')) || 0;
+  const y = el.getBoundingClientRect().top + scrollY - toph - 12;
+  scrollTo({top: Math.max(0, y), behavior});
+}
+
 const NAVMAP = {nSched:'#secSchedule', nMap:'#secMap', nRoute:'#secRoute'};
 function setActiveNav(id) {
   document.body.dataset.sec = id;
@@ -2238,7 +2260,7 @@ $('.brandmini').onclick = e => {
   window.scrollTo({top: 0, behavior: 'smooth'});
 };
 Object.entries(NAVMAP).forEach(([id, sel]) => $('#'+id).onclick = () => {
-  $(sel).scrollIntoView({behavior:'smooth', block:'start'}); setActiveNav(id);
+  scrollToSection(sel); setActiveNav(id);
 });
 if ('IntersectionObserver' in window) {
   new IntersectionObserver(([e]) =>
@@ -2357,6 +2379,17 @@ document.addEventListener('keydown', e => {
 
 /* Every sticky offset keys off the real toolbar height, which changes when the
    filter drawer opens or the controls wrap at a new breakpoint. */
+/* The field shrinks to fit the row, so the placeholder has to shrink with it
+   rather than be clipped mid-word. */
+(() => {
+  const q = $('#q');
+  const narrow = matchMedia('(max-width:620px)');
+  const set = () => { q.placeholder = narrow.matches ? 'Search artists…' : 'Search artist, stage, genre…'; };
+  narrow.addEventListener ? narrow.addEventListener('change', set) : narrow.addListener(set);
+  addEventListener('resize', set, {passive: true});
+  set();
+})();
+
 const measureTop = () => {
   const bar = $('.tbar').getBoundingClientRect().height;
   const border = parseFloat(getComputedStyle($('.toolbar')).borderBottomWidth) || 0;
