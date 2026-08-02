@@ -239,9 +239,9 @@ body.past-head .toolbar::before{opacity:1}
 @media(max-width:620px){
   .toolbar .tbar:not(.tbar2){gap:8px}
   .brandmini{width:auto;margin:0;opacity:1;transform:none;overflow:visible;flex:none}
-  .brandmini b{display:block;font-size:22px;letter-spacing:.02em}
-  .brandmini .wm i{font-size:9.5px;letter-spacing:.15em}
-  .brandmini .fpmark{width:30px;height:30px}
+  /* The home page's phone masthead, to the number. */
+  .brandmini b{display:block;font-size:clamp(26px,7.6vw,34px)}
+  .brandmini .wm i{letter-spacing:.18em}
   /* 44px here, matching the phone-sized buttons. Scoped through .toolbar
      because this block sits above the base rule in the sheet and would
      otherwise lose to it on equal specificity. */
@@ -250,10 +250,6 @@ body.past-head .toolbar::before{opacity:1}
   .toolbar input[type=search]{height:44px;padding:0 16px 0 38px;font-size:15px}
   .toolbar .srch.open svg{left:14px}
   .toolbar .iconbtn{width:44px;height:44px}
-}
-@media(max-width:420px){
-  .brandmini b{font-size:13.5px}
-  .brandmini .fpmark{width:24px;height:24px}
 }
 header{transition:none}
 .logo img{transform-origin:center center}
@@ -943,7 +939,7 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
   .mnav .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/var(--navcols,calc(var(--navn,4) + 1)));
       border-radius:9999px;background:var(--glass-pill);z-index:0;
       box-shadow:inset 0 1px 0 var(--glass-line);
-      transform:translateX(calc((var(--i,0) + 1) * 100%));
+      transform:translateX(calc((var(--i,0) + var(--pillbase,1)) * 100%));
       transition:transform .42s cubic-bezier(.32,.72,0,1)}
   .mnav button{display:grid;place-content:center;padding:0;font-size:11px;
       font-weight:500;color:var(--glass-tx);position:relative;height:100%;z-index:1;
@@ -959,7 +955,9 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
       transition:transform .42s var(--ease)}
   .mnav button.on{color:var(--glass-on)}
   .mnav button:active svg{transform:scale(.9)}
-  .navhome{left:50%;bottom:calc(18px + var(--safe-b));width:54px;height:54px;border-radius:9999px;
+  /* Desktop only — on a phone Home is a cell inside the bar, and leaving this
+     visible put a half-cut disc beside it. */
+  .navhome{display:none;left:50%;bottom:calc(18px + var(--safe-b));width:54px;height:54px;border-radius:9999px;
       transform:translate(calc(-50% - (var(--navw,360px) / 2) - 9px),var(--vvshift,0px))}
   body.nav-min .navhome{width:46px;height:46px}
   .mnav .nb{position:absolute;top:6px;left:calc(50% + 9px);min-width:17px;height:17px;
@@ -1364,6 +1362,10 @@ h1{letter-spacing:.01em;line-height:.94}
       day you were looking at, and this theme. Nothing is sent anywhere and no analytics run.
       With them off, your picks last until you close the tab.
       <a href="../privacy/">EU data policy</a></p>
+    <div class="setrow">
+      <div><b>Offline</b><i id="offlineState">—</i></div>
+      <button class="ghost" id="offlineBtn" disabled>Save</button>
+    </div>
     <div class="setrow">
       <div><b>Your plan</b><i id="planState">—</i></div>
       <button class="ghost" id="clearPlan">Clear plan</button>
@@ -2803,6 +2805,71 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   });
 }
 </script>
+<script>
+/* ── save for offline ──────────────────────────────────
+   The worker caches a page when you first open it, which is the wrong moment:
+   at a festival the signal has already gone. This fetches every page in one
+   go, on request, so "installed" means "works with no signal" rather than
+   "works for whatever you happened to visit".
+
+   It talks to the Cache API directly — the same store the worker reads from —
+   so a page saved here is served by the worker afterwards. */
+(() => {
+  const btn = document.getElementById('offlineBtn');
+  const state = document.getElementById('offlineState');
+  if (!btn || !state) return;
+
+  const ROOT = document.querySelector('link[rel=manifest]')
+    ? new URL(document.querySelector('link[rel=manifest]').getAttribute('href'), location.href)
+        .href.replace(/manifest\.webmanifest$/, '')
+    : './';
+  const PAGES = ['', 'kallio/', 'flow/', 'about/', 'terms/', 'privacy/'].map(p => ROOT + p);
+
+  /* Write into the worker's own cache, or the download is invisible to it.
+     Waiting for the registration to activate is the difference between saving
+     6MB usefully and saving it into a store nothing reads. */
+  const store = async () => {
+    if ('serviceWorker' in navigator) {
+      await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise(r => setTimeout(r, 3000)),
+      ]);
+    }
+    const names = (await caches.keys()).filter(n => n.startsWith('flanner-'));
+    return caches.open(names[0] || 'flanner-offline');
+  };
+
+  const report = async () => {
+    if (!('caches' in window)) { state.textContent = 'This browser cannot store pages.'; btn.hidden = true; return; }
+    const c = await store();
+    const have = (await Promise.all(PAGES.map(u => c.match(u, {ignoreSearch: true})))).filter(Boolean).length;
+    state.textContent = have >= PAGES.length
+      ? 'All pages saved — the app opens with no signal.'
+      : have
+        ? `${have} of ${PAGES.length} pages saved.`
+        : 'Not saved yet. About 6 MB.';
+    btn.textContent = have >= PAGES.length ? 'Refresh' : 'Save';
+    btn.disabled = false;
+  };
+
+  btn.onclick = async () => {
+    btn.disabled = true;
+    const c = await store();
+    let done = 0;
+    for (const url of PAGES) {
+      state.textContent = `Saving ${++done} of ${PAGES.length}…`;
+      try {
+        const res = await fetch(url, {cache: 'reload'});
+        if (res.ok) await c.put(url, res.clone());
+      } catch (e) { /* keep going; report() counts what actually landed */ }
+    }
+    await report();
+  };
+
+  report();
+})();
+</script>
+
 <style>
 /* ── page transitions ──────────────────────────────────
    Leaving a page it settles back and fades; arriving, it comes forward. The

@@ -1,0 +1,64 @@
+<script>
+/* ── save for offline ──────────────────────────────────
+   The worker caches a page when you first open it, which is the wrong moment:
+   at a festival the signal has already gone. This fetches every page in one
+   go, on request, so "installed" means "works with no signal" rather than
+   "works for whatever you happened to visit".
+
+   It talks to the Cache API directly — the same store the worker reads from —
+   so a page saved here is served by the worker afterwards. */
+(() => {
+  const btn = document.getElementById('offlineBtn');
+  const state = document.getElementById('offlineState');
+  if (!btn || !state) return;
+
+  const ROOT = document.querySelector('link[rel=manifest]')
+    ? new URL(document.querySelector('link[rel=manifest]').getAttribute('href'), location.href)
+        .href.replace(/manifest\.webmanifest$/, '')
+    : './';
+  const PAGES = ['', 'kallio/', 'flow/', 'about/', 'terms/', 'privacy/'].map(p => ROOT + p);
+
+  /* Write into the worker's own cache, or the download is invisible to it.
+     Waiting for the registration to activate is the difference between saving
+     6MB usefully and saving it into a store nothing reads. */
+  const store = async () => {
+    if ('serviceWorker' in navigator) {
+      await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise(r => setTimeout(r, 3000)),
+      ]);
+    }
+    const names = (await caches.keys()).filter(n => n.startsWith('flanner-'));
+    return caches.open(names[0] || 'flanner-offline');
+  };
+
+  const report = async () => {
+    if (!('caches' in window)) { state.textContent = 'This browser cannot store pages.'; btn.hidden = true; return; }
+    const c = await store();
+    const have = (await Promise.all(PAGES.map(u => c.match(u, {ignoreSearch: true})))).filter(Boolean).length;
+    state.textContent = have >= PAGES.length
+      ? 'All pages saved — the app opens with no signal.'
+      : have
+        ? `${have} of ${PAGES.length} pages saved.`
+        : 'Not saved yet. About 6 MB.';
+    btn.textContent = have >= PAGES.length ? 'Refresh' : 'Save';
+    btn.disabled = false;
+  };
+
+  btn.onclick = async () => {
+    btn.disabled = true;
+    const c = await store();
+    let done = 0;
+    for (const url of PAGES) {
+      state.textContent = `Saving ${++done} of ${PAGES.length}…`;
+      try {
+        const res = await fetch(url, {cache: 'reload'});
+        if (res.ok) await c.put(url, res.clone());
+      } catch (e) { /* keep going; report() counts what actually landed */ }
+    }
+    await report();
+  };
+
+  report();
+})();
+</script>

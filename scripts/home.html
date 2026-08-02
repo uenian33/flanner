@@ -28,7 +28,8 @@ __FONTCSS__
   --glass-pill:rgba(0,0,0,.09); --glass-tx:rgba(0,0,0,.55); --glass-on:#000;
   --shade:rgba(0,0,0,.16);
   --navn:4;      /* rail rows: Home, Festivals, My plan, Settings */
-  --navcols:4;   /* the phone bar holds the same four, Home included */
+  --navcols:4;   /* the phone bar holds the same four, Highlights included */
+  --pillbase:0;  /* Highlights is the first cell, not an extra beside it */
   --safe-b:env(safe-area-inset-bottom,0px);
   color-scheme:light;
 }
@@ -498,6 +499,7 @@ __FOOTER_CSS__
 <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.4 6.4 11.2 11.2M17.6 6.4 6.4 17.6"/></symbol>
 <symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10.4c0 5-7 11-7 11s-7-6-7-11a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10.2" r="2.6"/></symbol>
 <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9.6 6 6 6-6"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.4" y="3.4" width="7.2" height="7.2" rx="2"/><rect x="13.4" y="3.4" width="7.2" height="7.2" rx="2"/><rect x="3.4" y="13.4" width="7.2" height="7.2" rx="2"/><rect x="13.4" y="13.4" width="7.2" height="7.2" rx="2"/></symbol>
 <symbol id="i-rows" viewBox="0 0 24 24"><path d="M3.6 6.4h16.8M3.6 12h16.8M3.6 17.6h16.8"/></symbol>
 <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6.5" cy="6.5" r="2.6"/><circle cx="17.5" cy="17.5" r="2.6"/><path d="M9.1 6.5h5.4a3.4 3.4 0 0 1 0 6.8H9.5a3.4 3.4 0 0 0 0 6.8"/></symbol>
 <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></symbol>
@@ -575,8 +577,8 @@ __FOOTER_CSS__
 
 <nav class="mnav" aria-label="Sections">
   <span class="pill" id="navPill" aria-hidden="true"></span>
-  <a class="navhome-m" href="#top"><svg class="i"><use href="#i-logo"/></svg><span class="lbl">Home</span></a>
-  <button id="nFest"><svg class="i"><use href="#i-rows"/></svg><span class="lbl">Festivals</span></button>
+  <button id="nTop"><svg class="i"><use href="#i-logo"/></svg><span class="lbl">Highlights</span></button>
+  <button id="nFest"><svg class="i"><use href="#i-grid"/></svg><span class="lbl">Festivals</span></button>
   <button id="nPlan"><svg class="i"><use href="#i-route"/></svg><span class="lbl">My plan</span></button>
   <button id="nSet"><svg class="i"><use href="#i-gear"/></svg><span class="lbl">Settings</span></button>
 </nav>
@@ -594,6 +596,10 @@ __FOOTER_CSS__
         <button data-theme-set="light" aria-pressed="false">Light</button>
         <button data-theme-set="dark" aria-pressed="false">Dark</button>
       </div>
+    </div>
+    <div class="setrow">
+      <div><b>Offline</b><i id="offlineState">—</i></div>
+      <button class="btn" id="offlineBtn" disabled>Save</button>
     </div>
     <p class="setnote">Flanner keeps one cookie, for the choices you make here. No analytics
       run and nothing is sent anywhere. <a href="privacy/">EU data policy</a></p>
@@ -977,14 +983,37 @@ document.addEventListener('keydown', e => {
    the card, and My plan is reserved for a page that does not exist yet, so it
    says so rather than doing nothing. */
 (() => {
-  const toTop = e => { e.preventDefault(); scrollTo({top: 0, behavior: 'smooth'}); };
-  document.querySelectorAll('.navhome-m').forEach(a => a.addEventListener('click', toTop));
-  const fest = $('#nFest');
-  if (fest) fest.onclick = () => {
-    const el = document.querySelector('.months');
-    if (!el) return;
-    scrollTo({top: el.getBoundingClientRect().top + scrollY - 90, behavior: 'smooth'});
+  /* Two of these are places on the page, so the bar shows which one you are
+     reading rather than only what you last tapped. */
+  const SPOTS = [{id: 'nTop', sel: '.hero'}, {id: 'nFest', sel: '.months'}];
+  const pill = $('#navPill');
+  const setActive = id => {
+    const all = ['nTop', 'nFest', 'nPlan', 'nSet'];
+    all.forEach(k => $('#' + k) && $('#' + k).classList.toggle('on', k === id));
+    const i = all.indexOf(id);
+    if (i >= 0 && pill) pill.style.setProperty('--i', i);
   };
+  const goto = (sel, id) => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    setActive(id);
+    scrollTo({top: Math.max(0, el.getBoundingClientRect().top + scrollY - 90), behavior: 'smooth'});
+  };
+  $('#nTop').onclick = () => { setActive('nTop'); scrollTo({top: 0, behavior: 'smooth'}); };
+  $('#nFest').onclick = () => goto('.months', 'nFest');
+
+  /* Whichever section owns the middle of the screen is the one you are on. */
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => {
+      es.forEach(e => {
+        if (!e.isIntersecting) return;
+        const spot = SPOTS.find(s => document.querySelector(s.sel) === e.target);
+        if (spot) setActive(spot.id);
+      });
+    }, {rootMargin: '-45% 0px -50% 0px'});
+    SPOTS.forEach(s => { const el = document.querySelector(s.sel); if (el) io.observe(el); });
+  }
+  setActive('nTop');
   const plan = $('#nPlan');
   if (plan) plan.onclick = () => {
     plan.classList.add('on');
@@ -1059,6 +1088,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   });
 }
 </script>
+__OFFLINE__
 __PAGEFX__
 </body>
 </html>

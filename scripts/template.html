@@ -217,9 +217,9 @@ body.past-head .toolbar::before{opacity:1}
 @media(max-width:620px){
   .toolbar .tbar:not(.tbar2){gap:8px}
   .brandmini{width:auto;margin:0;opacity:1;transform:none;overflow:visible;flex:none}
-  .brandmini b{display:block;font-size:22px;letter-spacing:.02em}
-  .brandmini .wm i{font-size:9.5px;letter-spacing:.15em}
-  .brandmini .fpmark{width:30px;height:30px}
+  /* The home page's phone masthead, to the number. */
+  .brandmini b{display:block;font-size:clamp(26px,7.6vw,34px)}
+  .brandmini .wm i{letter-spacing:.18em}
   /* 44px here, matching the phone-sized buttons. Scoped through .toolbar
      because this block sits above the base rule in the sheet and would
      otherwise lose to it on equal specificity. */
@@ -228,10 +228,6 @@ body.past-head .toolbar::before{opacity:1}
   .toolbar input[type=search]{height:44px;padding:0 16px 0 38px;font-size:15px}
   .toolbar .srch.open svg{left:14px}
   .toolbar .iconbtn{width:44px;height:44px}
-}
-@media(max-width:420px){
-  .brandmini b{font-size:13.5px}
-  .brandmini .fpmark{width:24px;height:24px}
 }
 header{transition:none}
 .logo img{transform-origin:center center}
@@ -1180,6 +1176,10 @@ __TICKER__
       day you were looking at, and this theme. Nothing is sent anywhere and no analytics run.
       With them off, your picks last until you close the tab.
       <a href="__HOME__privacy/">EU data policy</a></p>
+    <div class="setrow">
+      <div><b>Offline</b><i id="offlineState">—</i></div>
+      <button class="ghost" id="offlineBtn" disabled>Save</button>
+    </div>
     <div class="setrow">
       <div><b>Your plan</b><i id="planState">—</i></div>
       <button class="ghost" id="clearPlan">Clear plan</button>
@@ -2619,6 +2619,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   });
 }
 </script>
+__OFFLINE__
 __PAGEFX__
 </body>
 </html>

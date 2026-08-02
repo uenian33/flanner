@@ -164,6 +164,7 @@ def build():
             kind="article",
             jsonld=seo.festival_event(_f),
         ))(next(x for x in json.loads((ROOT / "data" / "festivals.json").read_text())["festivals"] if x["id"] == "flow"))),
+        ("__OFFLINE__", (ROOT / "scripts" / "_offline.html").read_text()),
         ("__PAGEFX__", (ROOT / "scripts" / "_pagefx.html").read_text()),
         ("__CONTACT__", json.loads((ROOT / "data" / "festivals.json").read_text())["site"]["contact"]),
         ("__PROVENANCE__", "  <p>Set times transcribed from Flow Festival's own published timetable; where a listing and the\n  official schedule disagreed, the official schedule won.</p>\n  <p>Stage pins are placed from the organiser's site plan against the real Suvilahti geometry, so\n  positions are accurate to the yard rather than the metre. Street map © OpenStreetMap\n  contributors, tiles © CARTO; satellite imagery © Esri.</p>"),
