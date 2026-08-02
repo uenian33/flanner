@@ -7,6 +7,11 @@
 <meta name="description" content="How Festival Planner handles personal data under the GDPR: it does not collect any.">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#e9e9e9">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Flanner">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://uenian33.github.io/kallioblockpartyplanner/privacy/">
 <meta property="og:type" content="article">
@@ -332,6 +337,16 @@ function applyTheme(t) {
 document.querySelectorAll('#themeSeg button').forEach(b =>
   b.onclick = () => applyTheme(b.dataset.themeSet));
 applyTheme(jar.read() || 'light');
+</script>
+<script>
+/* Installable, and every page stays readable once it has been opened — which
+   is the point at a festival, where the signal goes and the timetable is the
+   thing you need. Skipped on file:// where workers cannot register. */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  addEventListener('load', () => {
+    navigator.serviceWorker.register('../sw.js', {scope: '../'}).catch(() => {});
+  });
+}
 </script>
 </body>
 </html>
