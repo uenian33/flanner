@@ -47,7 +47,7 @@
 :root{
   --kbp-green:#b6fc46; --kbp-sky:#a8c4ee; --kbp-red:#fc6238; --kbp-sand:#e07e62;
   --accent:var(--kbp-green); --live:var(--kbp-red);
-  --bg:#0a0c10; --bg2:#0f1218; --panel:#151a24; --panel2:#1b212d;
+  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
   --line:#232936; --line2:#333c4e;
   --tx:#e9edf5; --tx2:#9aa5ba; --tx3:#7b8799;
   --on-accent:#0a1400; --shade:rgba(0,0,0,.5);
@@ -96,7 +96,7 @@
    hours out of line with the columns. */
 :root[data-theme=light] .rulerbar,
 :root[data-theme=light] .board{
-  --bg:#0a0c10; --bg2:#0f1218; --panel:#151a24; --panel2:#1b212d;
+  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
   --line:#232936; --line2:#333c4e;
   --tx:#e9edf5; --tx2:#9aa5ba; --tx3:#7b8799;
   --on-accent:#0a1400; --shade:rgba(0,0,0,.5);
@@ -120,13 +120,23 @@ html,body{margin:0;padding:0}
 html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
 /* A heavily blurred crop of the organiser's own poster, so the page sits on the
    festival's colour rather than a flat field. */
-body::before{content:"";position:fixed;inset:-10%;z-index:-2;pointer-events:none;
-  background:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2ODApLCBxdWFsaXR5ID0gODIK/9sAQwANCQoLCggNCwoLDg4NDxMgFRMSEhMnHB4XIC4pMTAuKS0sMzpKPjM2RjcsLUBXQUZMTlJTUjI+WmFaUGBKUVJP/9sAQwEODg4TERMmFRUmTzUtNU9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09P/8AAEQgBWwIIAwEiAAIRAQMRAf/EABoAAAMBAQEBAAAAAAAAAAAAAAABAgMEBQb/xAAaEAEBAQEBAQEAAAAAAAAAAAAAARECEhMD/8QAGAEBAQEBAQAAAAAAAAAAAAAAAAECAwT/xAAWEQEBAQAAAAAAAAAAAAAAAAAAEQH/2gAMAwEAAhEDEQA/APszBu7ygAxQAaAAMAcI4imZGi4YARoEZIpUqqpoqaVVSoIpVVIE0lECSqiqoklVKoCAEIAlQwQUM0gRcOJhxBcVERURVRSYaNKNJooAJFFSdICqaqpqhVNVSoJJRAQMhAAFAAYAAkUwQAwQB1AG6OIAMAAABgIpmRgDI0UwAjQAApEYQTSqiwVNicXhYCCXhWAgqqlVRFKqqaCaR0qrJEKVVAepGgoJ09VFw4iVUqKuKjOLiC4aIpGlQ06EVQLS0UyGkAKggFIyAiMCERhQgAAAIACGgBpaWiq0I0A7zAbcgDAAA0CMAAYAAwEU4AEUAAUABFIlAVGDFFgIwrF4VgIqaupoIqauoqoipq6iqhVJ1NVANKkIrT1BqLhxMVEFRcRFRFVFIhoqtPU6NFVo1OlqCtLS0tBWkWlqiiLRoGCAAAgABACFK0BaVpWptBVqdTaVoK0M70AewDDTmRgAADAjAAAGigAwAAFMAIpGAgAAKRKJFSVUVBFTV1NURUVdTRGdRV1FaRNTVVFEKkdJUM4k4CoqJioCoqFDiKoyCKZaE2gelpWlaCtLUaNBejWenoL0ajT1RehOnohggKCBUBU2nU2gVqbRai0Bam0rU2gq0M7QD6EGBkgZAAAAAAAyMAZAUwAgDIwAAFAARQABSqaqlUE1FXUUE1FXUVUZ1FXUVURU1dRVQqR0lQHCVAOLiYqAqKKGimRkiiptOpoFam0WotA7S1NpaovT1np6I009ZyqlEXp6iU1F6CAGVBVFKpp1NBNrO1XTPqgVrO0+qztA7QztCj6sAMqQAEBGSgAAAAAYI0DBADBAUzSeoGE6NFURaNFBUaVqBVNO1NqhVFVUURFTVVFVE1NVU1USAFQKhQ4CouJioiqhlDRQVMUEVNVUdCotRarpFohWlpWlqorRqdEBpKqVnFxUXDiYqAoyhgCplQTUVdRQZ9M+mnTLoGfTPqr6Z9Am0JtAPsCMmGyAChAEIAQAwnRoK0aWjQVo1OjQVo1OjQVo1GjUFaNRo0VelqPQ9AvS1HovQqrU2lek3oDtTaVqbRBami1NqoVKi0rVQgAIaomKgKi4iKgq4aTRQVPU2opVn0u1n1QR0zq+mdUKkKSoZxJwRcVExUVFxUTFwDhlFARVRUEVHTSo6Bl0y6a9MugZdMumvTLoGdAoB9iQJzdAQJQFRSEBaKWqh6NTo0FaNRo0F6NRpaC9Gs/RXoGnovTO9JvQNfRemV7Te0G3ovTG9l7Fbex6Yey9g39JvTL2XsGt6TemfsvSo0vSbUei9AvS1HovSovT1n6GiNZVSsp0qUVrKqVlOjnSDXT1n6HoVpqbU+ivSKdrPqnaztAdVnadqLVBSLRohqiYqKi4uIi4qKi4mKgKhlDACmVBFR00qOgZdMum3TLoGHTPpr1GfUBlQdgB9aQ0tc3QENLVBSFpWiCp0WlaoNGlpaIejU6VqitK1Nqb0iKvSb0i9IvYNL0i9sr2i9g2vab2wv6Iv6A6L+ib+jmv6Ff0FdX0L6OX6F9AdX0H0cv0H0B1ey9ub6F9AdPse3N9B9BHT7L25/Z+1HR6Hpz+z9iOmdHOnNO1TsV0zpU6c07OdoOn0fpz+x7FdHpN6Y+y9g2vSL0zvab2C70m1F6L0C9Go05QaSqjOVcqo0jSMuWkVGkVERcBUMoYGVBUCqKuooM+mfTXpl0DLqMuo26Z9QGVgVYAfTaWlpa5uitLS0tUFpWi1Noh2ptFpaoNLS0rVQ7U2i1Foh2ovRWo66AddM+ui66ZddiK67Zddo67Y9dg16/Rnf0Y9dsuv0B0X9E39HNf0Tf0B1fUvo5PoPoLXX9B9HH9D+gOv6H9HH9B9Adn0H0cf0P6A6/of0cf0P6COz6HP0cf0VP0B1z9Dn6OSfoc/QHZP0VP0cc/Q5+grs+h/Rx/Q/oDr+he3N9C+grq9l7c30HsHR7L0w9nOgbzpUrCdLnQjeVpKw5rTmiN+a05rHmtOao1i4zlVKDSU9RKeiK0i0aoKmnamgms+mlZ0Vn0ixpUVBnYFUA93S1HoemHRelqPRehF6VqdLQVaWp0tVDtK0rU2qh2otFqLQHVZddH1WXXQhd9MO+ld9MO+lQu+mHfZ99MO+hB12y67T30y66Bd7Te2XXSL0LW3svowvZewdH0L6Of2PYrp+g+jl9j2Dq+h/Ry+x7B1/Q/o5PofsHX9Dn6OT2c7B1z9FT9HHO1TsHXP0Ofo5PZzsHX9D+jk9n9Adf0H0cvs/aDq+h+3LOznYrqnap05Z2udA6p0vnpzc9NeehHTzWvNc3Nbc1R0c1rzXPzWvNEbSrlZSqlUaynrOVWgrRqdGgelaVpWgKinam1FTU1VRQKgqAep6Hph7Htzbbeh6Y+x7VGvoemXovQNfQ1l6L0o11NqPSb0Iu1Fqb0m9Kg6rHqq6rHqiJ7rn7rTusO6qM+6w76ad1h3RGfVZdVfTLpRNqLTqKAtTaKmin6L0mlaCvQ9M7S1Faez9sfRegb+z9sPQ9A6PZztz+lToHROznbnnSp0Df2fth6P0o6PY9sPR+grf2qdOf0qdA3nSp0wlXKit50056c8rTmg6eemvNc3Na80HVzWvNc3Nbc0R081pzXPzWvNBvKuVhOlzpRtKesp0foGujWej0C9LUei0F2ptTpWoHam0WptFFoLQDb2fty+z9ubTp9j25vZ+wdHs/bm9n7VHR6L0w9n7Bt6L0y9F6VGl6TekXpN6UPqs+qOqz6oieqw7rTqseqqM+2PTXpl0qMumXTbqM7BGViLG1iLFGVia1sRYDKxNaWIsFRU1ViaiptLRSA9GpMFSqlRDgNJTlRFQFynqYaorT0jgVUpxMVICouIi4ir5a81lGnIrXmtuaw5a8oN+a15rDmteaDfmtea5+a0lUbzpc6YTpU6EbTo/TL0foGvoemXoehWvovTP0PSDT0V6Z+i9Au0rU6WoqtCNAMfoPo5fZ+3NXV7P25Z2qdqjp9n7c07Odg6fZ+3POz9KN/R+mHo/QNfRXpn6HpRVrO0WptVE9Vl00tZ9KjPpnY1qLFZ1lYixtYmxUY2JvLaxN5BjeUXl0XlF5Bz9cs+o6OuWfUFc9iLG3UZ2CsrE1pYmxBBngwBFQpFSAcVCkXIoJDkORUghSKkORUiomRUipyqcipkXIc5VIiiRcKRciKrlpyiRcRWnLTmsouA1lXKylXKDWVU6ZSnqjX0fplp6DT0PTPRoNPQ9M9GoNPRajRqKvS1GjQXoRoRXm+z9sPRzphG87VO2E6OdA6J0qdOedKnSjedKnTCdKlBtOlemMqpVGvoaz09UVpWlpaAqKqpqompsXU1plFhWLLFRGJsaYVgjOxFjWxFgMeoy6jo6jLqCsOoysb9Rn1BWNiLGtiLEEYMVgwUpFSHIqQQSLkKRcggkXIJFyKhSKnKpFSKJnKpyucqnKCJyqcqnKpBcTIcisORGikXBIciKcVExUFVKqVEVEFynqJT1RenqNGgvRqdGgrRqdGoK0anRoqtGp0agrQnQDx9OVBysDSVUrOVUoNJVSs5VSqNJVSs5VShGkqpWcqpQaSnqJT1RZFoUgIyVIVIyVIRGFSEmqKiRNRV1FUjPpn1GvTPpCMeoz6jbpn1BYxsTY1sRYixGDFYMCFIqQSKkCCRcgkVIJFSLkKRcipDkXIUi5FpBIqQSKkSkEh4ch4VYWHh4GasLDBiwGRosM4kyrFGkykUCBSGCBSGNIaEPRqQEVo1IRYrQnQEeQcSqMpFQ4mKlFioqIioEXKqVEOVSNJVSs5VShGkp6zlPQjTRqNPVIrRqdGiQwWjVqQAgtSAqCpUhVFVU1aRFRV1FSrGfTOtazpVjOxNjSpqERgxQCFIqQRUCHIqQouKQ5FyJi4VIqRcTFwpFRUTFQpFQyhpVgABVgACLAACkM0mlWGZApFAtGlWGC0aUh6C0aUg0aWjSkPS0tGlIehOgI8s4iVUoRUVESqlCLhxMOVFi4cqNPQi5VSs9PQjTT1no1SNNPWenokXo1GjQi9Gp0aJFaNLRq1IelaWgqQWotOpq0hWs6uoosRU1VTUImpVSFSeAwEhyCHBDkVCioEVFxEXBYqLiIqFIuKiIqJVioadPSkMFo1KQwNBSAECqZkEIZp0aKo9To0IrRqdGlIrS1OjSkPS0tLSkVpanS0F6GegHmyqlZSnK0kayqlZSrlRqNJTiJVQWKNJhFaNSNCL0aktEjTRqNPRF6NRp6IvT1EpygsanTEMEFQqmnU0CqKqooFU06mgQAAAGoIqQpFQBIqCHBTioUVEU4qJNFiocSaLFjU6eoRWjSBUUCMpAACgBAU9LQWgejU6NRVaWp0tBelqNLQXpekXor0ov0XpHovQi/QZ+gDzp0qVjKqVtMbyrlY81pKNY0lXGfK4jSjKKQAPBgER4MGSMAQxABDVEw4Io0mqGCLRBU06mgVRVVFAqQpKUAASmcKKipThyCRUgtEipBIcguDFCQ0awjAZawwAimCNBRphwRQEMADGARKwqCaVOpopaVoqbRTtK1NqbQVpekWlegXek3pF6K9Ki/RekXovQi/QZ+gqPPlXKx5rTmtrjfmtOWPNa8o1jblcRy05RrFRUgkVIgMGKkPBEYVjTCwRngxeDBnU4SsGDJGDVAABAAQhVNOpoFU06miFSFIKYhHFSqiomKjSVUVIUXAokVIJFSDWaUh4eHjOt4nAomW8IAIoEAiCocTFQRUVCioAw8Eh4CcKrwrAZ1FaVHQM6m1XTOilai07Wdop2ptK1Fqoq0r0m1NoirS9JtLVZXoZ6FRxc1pzWXLTlppty35YcNuEbxvw15ZcNuUXFyLkLlcRTkPDhoiMGLJURhYulRnUYWLSrJAwMkAFQiOkiFUVVTQTU06mohABWQqJVFxFRUTFxrEVFxMVFXFRWFFQbwYYhs63hEomdbxJKKsqQMICLiYqAqLiYqAqHhRQhYmxaaKis+mlZ9Ay6ZdNemXSqz6rO1fTOgm1Np1FEFqbRSqpo0tFJWdGggqP//Z) center/cover no-repeat;filter:blur(18px) saturate(1.25);
-  opacity:.22;transition:opacity .3s var(--ease)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:radial-gradient(125% 85% at 50% 0%,transparent 0%,var(--bg) 74%),
-             linear-gradient(var(--bg),transparent 16%,transparent 84%,var(--bg))}
-:root[data-theme=light] body::before{opacity:.32;filter:blur(20px) saturate(1.05)}
+/* ── ground ────────────────────────────────────────────
+   Verbatim from the home page so the two sit on the same paper: a 26px dot
+   grid, and three soft washes in the festivals' own two colours. The planner
+   used to lay a blurred festival photograph under here, which read as a
+   different surface on every page. */
+body::before,body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
+body::before{
+  background-image:radial-gradient(circle at 1px 1px,
+    color-mix(in srgb,var(--tx) 10%,transparent) 1px,transparent 0);
+  background-size:26px 26px}
+body::after{
+  background:
+    radial-gradient(56vw 38vw at 6% -10%,rgba(182,252,70,.26),transparent 66%),
+    radial-gradient(48vw 32vw at 97% 0%,rgba(255,242,3,.22),transparent 64%),
+    radial-gradient(40vw 30vw at 50% 108%,rgba(182,252,70,.14),transparent 70%)}
+:root[data-theme=dark] body::before{opacity:.45}
+:root[data-theme=dark] body::after{opacity:.3}
 body{background:var(--bg);color:var(--tx);font:14px/1.45 var(--sans);
   -webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
 a{color:inherit}
@@ -195,10 +205,17 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
 .ghost:hover{color:var(--tx);border-color:var(--tx3);background:var(--panel)}
 
 /* ── toolbar ──────────────────────────────────────────── */
-.toolbar{position:sticky;top:0;z-index:40;
+/* The desktop layout reserves 96px on the left for the section rail, so the
+   bar's own box starts there and its backdrop left a strip of bare page down
+   the side. Painting it on a pseudo-element stretched past both gutters makes
+   it full-bleed whatever the body padding is — the same trick the home page
+   uses for the same reason. */
+.toolbar{position:sticky;top:0;z-index:40;margin-bottom:2px}
+.toolbar::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 86%,transparent);
   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line);margin-bottom:2px}
+  border-bottom:1px solid var(--line);pointer-events:none}
+.toolbar > *{position:relative;z-index:1}
 .tbar{display:flex;gap:10px;align-items:center;padding:13px 0;flex-wrap:nowrap}
 /* The bar borrows the home page's two faces so the two read as one product.
    Scoped to the bar: the rest of the planner keeps its own typography. */
@@ -261,9 +278,10 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
    inside the schedule section. A sticky child only pins within its parent's
    box, which is exactly the behaviour wanted: they ride under the top bar
    while the schedule is on screen and leave with it. */
-.tbar2{position:sticky;top:var(--toph,104px);z-index:30;
-  background:var(--bg);padding:8px 0 10px;margin:0 0 2px;
-  box-shadow:0 1px 0 var(--line)}
+.tbar2{position:sticky;top:var(--toph,104px);z-index:30;padding:8px 0 10px;margin:0 0 2px}
+.tbar2::before{content:"";position:absolute;inset:0 -50vw;z-index:0;background:var(--bg);
+  box-shadow:0 1px 0 var(--line);pointer-events:none}
+.tbar2 > *{position:relative;z-index:1}
 .daybar{flex:1 1 auto}
 .daybar .dshort{display:none}
 @media(max-width:700px){
@@ -380,10 +398,12 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
    behind it, and content passing under is frosted rather than legible through
    the type. */
 .shead{position:sticky;top:var(--toph,104px);z-index:26;
-  display:block;margin-bottom:12px;padding:9px 0 8px;
+  display:block;margin-bottom:12px;padding:9px 0 8px}
+.shead::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 62%,transparent);
   -webkit-backdrop-filter:blur(15px) saturate(1.5);
-  backdrop-filter:blur(15px) saturate(1.5)}
+  backdrop-filter:blur(15px) saturate(1.5);pointer-events:none}
+.shead > *{position:relative;z-index:1}
 .shead h2{margin:0;font-family:var(--disp);font-size:19px;letter-spacing:-.02em;font-weight:700}
 .shead p{margin:4px 0 0;color:var(--tx3);font-size:12.5px}
 .shead .tspacer{flex:1}
@@ -919,7 +939,7 @@ footer p{margin:0 0 9px}
 
 :root{
   --kbp-green:#fff203; --kbp-sky:#bcbcbc; --kbp-red:#ff4a1c; --kbp-sand:#d9d9d9;
-  --bg:#0b0b0b; --bg2:#151515; --panel:#1b1b1b; --panel2:#242424;
+  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
   --line:#2a2a2a; --line2:#3d3d3d;
   --tx:#f4f4f4; --tx2:#a8a8a8; --tx3:#8a8a8a;
   --accent-ink:#fff203; --on-accent:#111000; --shade:rgba(0,0,0,.55);
@@ -929,8 +949,8 @@ footer p{margin:0 0 9px}
   --glass-pill:rgba(255,255,255,.11); --glass-tx:rgba(255,255,255,.58); --glass-on:#fff;
 }
 :root[data-theme=light]{
-  --bg:#e6e6e6; --bg2:#fff; --panel:#f2f2f2; --panel2:#eaeaea;
-  --line:rgba(0,0,0,.14); --line2:rgba(0,0,0,.82);
+  --bg:#e9e9e9; --bg2:#fff; --panel:#f2f2f2; --panel2:#eaeaea;
+  --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.8);
   --tx:#000; --tx2:#3a3a3a; --tx3:#5c5c5c;
   --accent-ink:#6f6800; --on-accent:#000; --shade:rgba(0,0,0,.16);
   --sheet:#fff; --sheet2:#ededed;

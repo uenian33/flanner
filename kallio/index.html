@@ -47,7 +47,7 @@
 :root{
   --kbp-green:#b6fc46; --kbp-sky:#a8c4ee; --kbp-red:#fc6238; --kbp-sand:#e07e62;
   --accent:var(--kbp-green); --live:var(--kbp-red);
-  --bg:#0a0c10; --bg2:#0f1218; --panel:#151a24; --panel2:#1b212d;
+  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
   --line:#232936; --line2:#333c4e;
   --tx:#e9edf5; --tx2:#9aa5ba; --tx3:#7b8799;
   --on-accent:#0a1400; --shade:rgba(0,0,0,.5);
@@ -96,7 +96,7 @@
    hours out of line with the columns. */
 :root[data-theme=light] .rulerbar,
 :root[data-theme=light] .board{
-  --bg:#0a0c10; --bg2:#0f1218; --panel:#151a24; --panel2:#1b212d;
+  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
   --line:#232936; --line2:#333c4e;
   --tx:#e9edf5; --tx2:#9aa5ba; --tx3:#7b8799;
   --on-accent:#0a1400; --shade:rgba(0,0,0,.5);
@@ -120,13 +120,23 @@ html,body{margin:0;padding:0}
 html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
 /* A heavily blurred crop of the organiser's own poster, so the page sits on the
    festival's colour rather than a flat field. */
-body::before{content:"";position:fixed;inset:-10%;z-index:-2;pointer-events:none;
-  background:url(data:image/jpeg;base64,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8RE7PGta1atWta1v4o1KlSpUqVKlSqSpWt5VZ8YiIieNWrVq1ata31E/DqVKlSoS8JUqVrW/OIiJ6q1a34RETufTWtalSpUqVCEJUvGtbzfcSJEieKqr43zERE859dSpUqVKlQhCcNa1rWM8RERPNVV+cRPx6lSpUqVKhCE9AYxjGJGIieKqry/GInvW+9bzea1qVKlQhCewGMYxiTkieaqqq/XWta1rWt8a1rWta1qVKlSpUqcNa1rWMYxjORPNq1atW/TWta1rWta1rWta1rWta1KlQlSpWta1rWsYxIxnJ3VWrVq1ata1rWta1rWta3wNa1rWta1rWt41vSVKlSpUqVrWtaxjGetatWqUpTWta1rWta1rW/ABrWta1vwAQhCEqVKlStb8tapSlKUvxAG/QAGta1rfIX0FCEISpUqVKla1vrWrVqlKUpfsAAb7A1rWta3pSl8hjGEIQhKlSpUrW+NatWqUpSla0v4QAAa1rWta1rWqUpSl8RGEITghCEJWta1q1atUvBStaVvxAENa3prWta1rUrWtapSlKXwEIQnkAQhCE4atWqUpehrSlKX5ABOGta1rWt7vNa1q1atWrVq3wIQhPACEIQhOilKUvgBSlLw1rWta1qVrWtSta34a3lq1atWrVq1rUITyAIQjGdFKUregpSlLWta1vN5rUrWpUqVORE8Z2qqqqqq1rUqVKnBCEIQhOilKUpSlqlq1W/TUqVKiIierO1VVVVV5qVKlSoQhCE8BStKUpapatX1jPjERERPdjFixYsWLEKq9iVKlSpUITwFKUpSlq1viIxjGMZ6iIiIiJ7xixYsWLFixYvYiJUqVK1vkKUpata1vYiRiRjGM9ypUSpUqXmt84xYsWLELELFnmIiJWta3jWrVrWtb4iJEjGMYsWedSpUqVKlSoStS+cWLFiFiFirF8RPG+Na1rWta3sREiRIxjFWKq81qVCVKhOEqEJUqJ2rxeKqr6nIzxrWta1vZURERE5iqqqta1rWoTwEIQhCVK1qrxeKqr8JyeNa31ERERE7VVVq1a1rfYMIQhCEJWtWrVq1V5fM7PW/CIiJxE5q1atUtWrWta1vkIQhCEITopatWrVv335RERKlStatWqWrVq1rW+wIQhOCEJ4ClLVq1a1Plv0iVKlSpWt4pS1atWrVrWta1rWpUIQhCM8ZSlq1q1rW+N5vN+sSpUqVL0pSlKUtWta1rWta1qVKhCEJ6wprWta1K1rWta1rW/OVrUvkKUpSlq1rWta1rWtahCEIT3A1rWtala1rWta1rfWeta3yVKUpatWta1rWta1rW8QhCfAA1rWtSta1rWta1vIjGMYzxrfYFKXo1rWta1rWta1rUIQnkGtb4EqVrWta1rWpURIkSMYsWKq1b8RDeNa1rfjrWtb8gBrWpUreNa1rekREJE6LEdKWrVL6A1rWtb89a1rWta1vkIStSta32BOIRwnCkI6UpatWta3jWta1qX4VVa1rWta1rWta1qVKlSta1rW+QlCEnFiEeNS1atWta1rWta1LycjOVVVata1rWta1rWtala1K1rWta1vSUoSMWIT49KWrWta1rWtaiIiJ2qqqvNa1rWta1rUqVqVrWta1rWv/Z) center/cover no-repeat;filter:blur(18px) saturate(1.25);
-  opacity:.22;transition:opacity .3s var(--ease)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:radial-gradient(125% 85% at 50% 0%,transparent 0%,var(--bg) 74%),
-             linear-gradient(var(--bg),transparent 16%,transparent 84%,var(--bg))}
-:root[data-theme=light] body::before{opacity:.32;filter:blur(20px) saturate(1.05)}
+/* ── ground ────────────────────────────────────────────
+   Verbatim from the home page so the two sit on the same paper: a 26px dot
+   grid, and three soft washes in the festivals' own two colours. The planner
+   used to lay a blurred festival photograph under here, which read as a
+   different surface on every page. */
+body::before,body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
+body::before{
+  background-image:radial-gradient(circle at 1px 1px,
+    color-mix(in srgb,var(--tx) 10%,transparent) 1px,transparent 0);
+  background-size:26px 26px}
+body::after{
+  background:
+    radial-gradient(56vw 38vw at 6% -10%,rgba(182,252,70,.26),transparent 66%),
+    radial-gradient(48vw 32vw at 97% 0%,rgba(255,242,3,.22),transparent 64%),
+    radial-gradient(40vw 30vw at 50% 108%,rgba(182,252,70,.14),transparent 70%)}
+:root[data-theme=dark] body::before{opacity:.45}
+:root[data-theme=dark] body::after{opacity:.3}
 body{background:var(--bg);color:var(--tx);font:14px/1.45 var(--sans);
   -webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
 a{color:inherit}
@@ -195,10 +205,17 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
 .ghost:hover{color:var(--tx);border-color:var(--tx3);background:var(--panel)}
 
 /* ── toolbar ──────────────────────────────────────────── */
-.toolbar{position:sticky;top:0;z-index:40;
+/* The desktop layout reserves 96px on the left for the section rail, so the
+   bar's own box starts there and its backdrop left a strip of bare page down
+   the side. Painting it on a pseudo-element stretched past both gutters makes
+   it full-bleed whatever the body padding is — the same trick the home page
+   uses for the same reason. */
+.toolbar{position:sticky;top:0;z-index:40;margin-bottom:2px}
+.toolbar::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 86%,transparent);
   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line);margin-bottom:2px}
+  border-bottom:1px solid var(--line);pointer-events:none}
+.toolbar > *{position:relative;z-index:1}
 .tbar{display:flex;gap:10px;align-items:center;padding:13px 0;flex-wrap:nowrap}
 /* The bar borrows the home page's two faces so the two read as one product.
    Scoped to the bar: the rest of the planner keeps its own typography. */
@@ -261,9 +278,10 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
    inside the schedule section. A sticky child only pins within its parent's
    box, which is exactly the behaviour wanted: they ride under the top bar
    while the schedule is on screen and leave with it. */
-.tbar2{position:sticky;top:var(--toph,104px);z-index:30;
-  background:var(--bg);padding:8px 0 10px;margin:0 0 2px;
-  box-shadow:0 1px 0 var(--line)}
+.tbar2{position:sticky;top:var(--toph,104px);z-index:30;padding:8px 0 10px;margin:0 0 2px}
+.tbar2::before{content:"";position:absolute;inset:0 -50vw;z-index:0;background:var(--bg);
+  box-shadow:0 1px 0 var(--line);pointer-events:none}
+.tbar2 > *{position:relative;z-index:1}
 .daybar{flex:1 1 auto}
 .daybar .dshort{display:none}
 @media(max-width:700px){
@@ -380,10 +398,12 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
    behind it, and content passing under is frosted rather than legible through
    the type. */
 .shead{position:sticky;top:var(--toph,104px);z-index:26;
-  display:block;margin-bottom:12px;padding:9px 0 8px;
+  display:block;margin-bottom:12px;padding:9px 0 8px}
+.shead::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 62%,transparent);
   -webkit-backdrop-filter:blur(15px) saturate(1.5);
-  backdrop-filter:blur(15px) saturate(1.5)}
+  backdrop-filter:blur(15px) saturate(1.5);pointer-events:none}
+.shead > *{position:relative;z-index:1}
 .shead h2{margin:0;font-family:var(--disp);font-size:19px;letter-spacing:-.02em;font-weight:700}
 .shead p{margin:4px 0 0;color:var(--tx3);font-size:12.5px}
 .shead .tspacer{flex:1}

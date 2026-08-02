@@ -17,7 +17,7 @@ OUT = ROOT / "flow" / "index.html"
 THEME = """
 :root{
   --kbp-green:#fff203; --kbp-sky:#bcbcbc; --kbp-red:#ff4a1c; --kbp-sand:#d9d9d9;
-  --bg:#0b0b0b; --bg2:#151515; --panel:#1b1b1b; --panel2:#242424;
+  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
   --line:#2a2a2a; --line2:#3d3d3d;
   --tx:#f4f4f4; --tx2:#a8a8a8; --tx3:#8a8a8a;
   --accent-ink:#fff203; --on-accent:#111000; --shade:rgba(0,0,0,.55);
@@ -27,8 +27,8 @@ THEME = """
   --glass-pill:rgba(255,255,255,.11); --glass-tx:rgba(255,255,255,.58); --glass-on:#fff;
 }
 :root[data-theme=light]{
-  --bg:#e6e6e6; --bg2:#fff; --panel:#f2f2f2; --panel2:#eaeaea;
-  --line:rgba(0,0,0,.14); --line2:rgba(0,0,0,.82);
+  --bg:#e9e9e9; --bg2:#fff; --panel:#f2f2f2; --panel2:#eaeaea;
+  --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.8);
   --tx:#000; --tx2:#3a3a3a; --tx3:#5c5c5c;
   --accent-ink:#6f6800; --on-accent:#000; --shade:rgba(0,0,0,.16);
   --sheet:#fff; --sheet2:#ededed;

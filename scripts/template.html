@@ -25,7 +25,7 @@ __OG__
 :root{
   --kbp-green:#b6fc46; --kbp-sky:#a8c4ee; --kbp-red:#fc6238; --kbp-sand:#e07e62;
   --accent:var(--kbp-green); --live:var(--kbp-red);
-  --bg:#0a0c10; --bg2:#0f1218; --panel:#151a24; --panel2:#1b212d;
+  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
   --line:#232936; --line2:#333c4e;
   --tx:#e9edf5; --tx2:#9aa5ba; --tx3:#7b8799;
   --on-accent:#0a1400; --shade:rgba(0,0,0,.5);
@@ -74,7 +74,7 @@ __OG__
    hours out of line with the columns. */
 :root[data-theme=light] .rulerbar,
 :root[data-theme=light] .board{
-  --bg:#0a0c10; --bg2:#0f1218; --panel:#151a24; --panel2:#1b212d;
+  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
   --line:#232936; --line2:#333c4e;
   --tx:#e9edf5; --tx2:#9aa5ba; --tx3:#7b8799;
   --on-accent:#0a1400; --shade:rgba(0,0,0,.5);
@@ -98,13 +98,23 @@ html,body{margin:0;padding:0}
 html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
 /* A heavily blurred crop of the organiser's own poster, so the page sits on the
    festival's colour rather than a flat field. */
-body::before{content:"";position:fixed;inset:-10%;z-index:-2;pointer-events:none;
-  background:url(__TEXTURE__) center/cover no-repeat;filter:blur(18px) saturate(1.25);
-  opacity:.22;transition:opacity .3s var(--ease)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:radial-gradient(125% 85% at 50% 0%,transparent 0%,var(--bg) 74%),
-             linear-gradient(var(--bg),transparent 16%,transparent 84%,var(--bg))}
-:root[data-theme=light] body::before{opacity:.32;filter:blur(20px) saturate(1.05)}
+/* ── ground ────────────────────────────────────────────
+   Verbatim from the home page so the two sit on the same paper: a 26px dot
+   grid, and three soft washes in the festivals' own two colours. The planner
+   used to lay a blurred festival photograph under here, which read as a
+   different surface on every page. */
+body::before,body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
+body::before{
+  background-image:radial-gradient(circle at 1px 1px,
+    color-mix(in srgb,var(--tx) 10%,transparent) 1px,transparent 0);
+  background-size:26px 26px}
+body::after{
+  background:
+    radial-gradient(56vw 38vw at 6% -10%,rgba(182,252,70,.26),transparent 66%),
+    radial-gradient(48vw 32vw at 97% 0%,rgba(255,242,3,.22),transparent 64%),
+    radial-gradient(40vw 30vw at 50% 108%,rgba(182,252,70,.14),transparent 70%)}
+:root[data-theme=dark] body::before{opacity:.45}
+:root[data-theme=dark] body::after{opacity:.3}
 body{background:var(--bg);color:var(--tx);font:14px/1.45 var(--sans);
   -webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
 a{color:inherit}
@@ -173,10 +183,17 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
 .ghost:hover{color:var(--tx);border-color:var(--tx3);background:var(--panel)}
 
 /* ── toolbar ──────────────────────────────────────────── */
-.toolbar{position:sticky;top:0;z-index:40;
+/* The desktop layout reserves 96px on the left for the section rail, so the
+   bar's own box starts there and its backdrop left a strip of bare page down
+   the side. Painting it on a pseudo-element stretched past both gutters makes
+   it full-bleed whatever the body padding is — the same trick the home page
+   uses for the same reason. */
+.toolbar{position:sticky;top:0;z-index:40;margin-bottom:2px}
+.toolbar::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 86%,transparent);
   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line);margin-bottom:2px}
+  border-bottom:1px solid var(--line);pointer-events:none}
+.toolbar > *{position:relative;z-index:1}
 .tbar{display:flex;gap:10px;align-items:center;padding:13px 0;flex-wrap:nowrap}
 /* The bar borrows the home page's two faces so the two read as one product.
    Scoped to the bar: the rest of the planner keeps its own typography. */
@@ -239,9 +256,10 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
    inside the schedule section. A sticky child only pins within its parent's
    box, which is exactly the behaviour wanted: they ride under the top bar
    while the schedule is on screen and leave with it. */
-.tbar2{position:sticky;top:var(--toph,104px);z-index:30;
-  background:var(--bg);padding:8px 0 10px;margin:0 0 2px;
-  box-shadow:0 1px 0 var(--line)}
+.tbar2{position:sticky;top:var(--toph,104px);z-index:30;padding:8px 0 10px;margin:0 0 2px}
+.tbar2::before{content:"";position:absolute;inset:0 -50vw;z-index:0;background:var(--bg);
+  box-shadow:0 1px 0 var(--line);pointer-events:none}
+.tbar2 > *{position:relative;z-index:1}
 .daybar{flex:1 1 auto}
 .daybar .dshort{display:none}
 @media(max-width:700px){
@@ -358,10 +376,12 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
    behind it, and content passing under is frosted rather than legible through
    the type. */
 .shead{position:sticky;top:var(--toph,104px);z-index:26;
-  display:block;margin-bottom:12px;padding:9px 0 8px;
+  display:block;margin-bottom:12px;padding:9px 0 8px}
+.shead::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 62%,transparent);
   -webkit-backdrop-filter:blur(15px) saturate(1.5);
-  backdrop-filter:blur(15px) saturate(1.5)}
+  backdrop-filter:blur(15px) saturate(1.5);pointer-events:none}
+.shead > *{position:relative;z-index:1}
 .shead h2{margin:0;font-family:var(--disp);font-size:19px;letter-spacing:-.02em;font-weight:700}
 .shead p{margin:4px 0 0;color:var(--tx3);font-size:12.5px}
 .shead .tspacer{flex:1}
