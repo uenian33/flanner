@@ -22,13 +22,11 @@ def main():
     html = (ROOT / "scripts" / "home.html").read_text()
     for tok, val in [
         ("__DATA__", json.dumps(cfg, ensure_ascii=False, separators=(",", ":"))),
-        ("__FONT_TITLE__", data_uri(ROOT / "assets" / "font" / "title-latin.woff2")),
-        ("__FONT_LATIN__", data_uri(ROOT / "assets" / "font" / "disp-latin.woff2")),
-        ("__FONT_EXT__", data_uri(ROOT / "assets" / "font" / "disp-latin-ext.woff2")),
+        ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__CONTACT__", cfg["site"]["contact"]),
     ]:
         html = html.replace(tok, val)
-    left = [t for t in ("__DATA__", "__FONT_TITLE__", "__CONTACT__") if t in html]
+    left = [t for t in ("__DATA__", "__FONTCSS__", "__CONTACT__") if t in html]
     if left:
         raise SystemExit(f"unreplaced tokens: {left}")
     OUT.write_text(html)

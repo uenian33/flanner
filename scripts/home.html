@@ -7,16 +7,7 @@
 <title>Festival Planner — Helsinki festival timetables</title>
 <meta name="description" content="Plannable timetables for Helsinki festivals. One page per festival, works offline once loaded.">
 <style>
-@font-face{font-family:"Planner Title";src:url(__FONT_TITLE__) format("woff2");
-  font-weight:400;font-style:normal;font-display:swap;
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2122}
-@font-face{font-family:"Planner Sans";src:url(__FONT_LATIN__) format("woff2");
-  font-weight:500 700;font-style:normal;font-display:swap;
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2122,U+2212}
-@font-face{font-family:"Planner Sans";src:url(__FONT_EXT__) format("woff2");
-  font-weight:500 700;font-style:normal;font-display:swap;
-  unicode-range:U+0100-02BA,U+02BD-02C5,U+1E00-1E9F,U+2C60-2C7F,U+A720-A7FF}
-
+__FONTCSS__
 :root{
   --bg:#e9e9e9; --bg2:#fff; --panel:#f3f3f3; --panel2:#e2e2e2;
   --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.8);
@@ -54,7 +45,7 @@ svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:
 header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .top{display:flex;align-items:center;gap:14px;
   padding-bottom:clamp(14px,1.8vw,18px);border-bottom:1px solid var(--line)}
-.mark{font-family:var(--title);font-size:var(--f-display);letter-spacing:var(--k-display);
+.mark{font-family:var(--title);font-weight:600;font-size:var(--f-display);letter-spacing:var(--k-display);
   text-transform:uppercase;line-height:1;text-decoration:none;white-space:nowrap}
 .top .div{width:1px;height:clamp(20px,2.4vw,28px);background:var(--line2);flex:none}
 .loc{font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
@@ -74,9 +65,9 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    down (small text needs air) and negative as it goes up (large text needs
    none). Leading is 1.5 for body, 1.1–1.2 for display. */
 :root{
-  --f-display:clamp(30px,4.6vw,44px);   --l-display:1.06;  --k-display:-.012em;
-  --f-h2:clamp(22px,2.7vw,30px);        --l-h2:1.14;       --k-h2:-.006em;
-  --f-h3:clamp(20px,2.2vw,25px);        --l-h3:1.16;       --k-h3:-.004em;
+  --f-display:clamp(34px,5.2vw,52px);   --l-display:1;     --k-display:.008em;
+  --f-h2:clamp(25px,3vw,34px);          --l-h2:1.05;       --k-h2:.03em;
+  --f-h3:clamp(22px,2.4vw,28px);        --l-h3:1.08;       --k-h3:.02em;
   --f-title:17px;                       --l-title:1.32;    /* HIG Headline    */
   --f-body:16px;                        --l-body:1.5;      --k-body:.005em;
   --f-sub:15px;                         --l-sub:1.47;      --k-sub:.008em;
@@ -93,7 +84,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .hero{margin:0 0 clamp(30px,4vw,46px)}
 .shead{display:flex;align-items:baseline;gap:12px;margin-bottom:clamp(14px,1.8vw,20px);
   flex-wrap:wrap}
-.shead h2{margin:0;font-family:var(--title);font-size:var(--f-h2);line-height:var(--l-h2);
+.shead h2{margin:0;font-family:var(--title);font-weight:500;font-size:var(--f-h2);line-height:var(--l-h2);
   letter-spacing:var(--k-h2);text-transform:uppercase}
 .shead p{margin:0;color:var(--tx2);font-size:var(--f-label);line-height:var(--l-label);
   letter-spacing:var(--k-label)}
@@ -125,8 +116,8 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* the facts for whichever card is centred */
 .fbody{margin-top:clamp(16px,2vw,22px);display:grid;gap:clamp(14px,2vw,28px);align-items:end;
   grid-template-columns:minmax(0,1fr) auto}
-.fbody h3{margin:0;font-family:var(--title);font-size:clamp(24px,2.9vw,34px);
-  line-height:1.08;letter-spacing:-.008em;text-transform:uppercase;font-weight:400}
+.fbody h3{margin:0;font-family:var(--title);font-size:clamp(27px,3.3vw,40px);
+  line-height:1.04;letter-spacing:.014em;text-transform:uppercase;font-weight:600}
 .fline{margin:0 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   font-size:var(--f-label);line-height:var(--l-label);letter-spacing:.05em;
   text-transform:uppercase;font-weight:700;color:var(--tx2)}
@@ -148,7 +139,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 @media(max-width:760px){
   .fbody{grid-template-columns:minmax(0,1fr)}
   .fside{align-items:stretch}
-  .nav{order:2;justify-content:center}
+  .nav{order:2;align-self:center;width:max-content}
   .facts{order:1}
 }
 @media(max-width:430px){.facts{flex-direction:column;align-items:stretch}}
@@ -229,7 +220,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .mgroup{margin-bottom:clamp(28px,4vw,46px)}
 .mgroup[hidden]{display:none}
 .mhead{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-.mhead h3{margin:0;font-family:var(--title);font-size:var(--f-h2);letter-spacing:var(--k-h2);
+.mhead h3{margin:0;font-family:var(--title);font-weight:500;font-size:var(--f-h2);letter-spacing:var(--k-h2);
   text-transform:uppercase;letter-spacing:.02em;line-height:1;white-space:nowrap}
 .mhead .ct{font-size:var(--f-label);line-height:var(--l-label);letter-spacing:var(--k-label);
   color:var(--tx2);white-space:nowrap}
@@ -270,13 +261,11 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   background:color-mix(in srgb,var(--fa,var(--tx)) 26%,transparent)}
 .offi svg{width:12px;height:12px}
 .body h4{margin:0;font-family:var(--title);font-size:var(--f-h3);text-transform:uppercase;
-  letter-spacing:var(--k-h3);line-height:var(--l-h3);font-weight:400}
+  letter-spacing:var(--k-h3);line-height:var(--l-h3);font-weight:600}
 .when{font-size:var(--f-title);line-height:var(--l-title);color:var(--tx);font-weight:650;
   font-variant-numeric:tabular-nums}
 .where{font-size:var(--f-sub);line-height:var(--l-sub);letter-spacing:var(--k-sub);
   color:var(--tx2);margin-top:-6px}
-.desc{margin:0;font-size:var(--f-body);line-height:var(--l-body);letter-spacing:var(--k-body);
-  color:var(--tx2);text-wrap:pretty;max-width:60ch}
 .stars{font-size:var(--f-sub);line-height:var(--l-sub);letter-spacing:var(--k-sub);color:var(--tx2)}
 .stars b{color:var(--tx);font-weight:700}
 .cats{font-size:var(--f-label);line-height:var(--l-label);letter-spacing:var(--k-label);
@@ -538,7 +527,6 @@ function card(f) {
       </div>
       <div class="when">${esc(f.dates)}</div>
       <div class="where">${esc(f.city)} · ${esc(f.type)}</div>
-      <p class="desc">${esc(f.description)}</p>
       <div class="figs">
         <span><b>${f.stats.acts}</b> acts</span>
         <span><b>${f.stats.stages}</b> stages</span>
