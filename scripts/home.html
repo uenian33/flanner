@@ -232,23 +232,24 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    Straight from the reference: one wide search pill, then two dropdown
    triggers. The category sheet holds chips and commits on Apply, so a
    multi-select does not re-render the list on every tap. */
-.stickypoint{position:relative;height:1px;margin-bottom:-1px;pointer-events:none}
 .tools{position:sticky;top:0;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
   margin:0 0 clamp(18px,2.4vw,26px);padding:10px 0;
   transition:padding .22s var(--ease)}
 /* The bar lives inside a max-width column, so its backdrop is painted by a
    pseudo-element stretched past the gutters rather than by the bar itself. */
-.tools::before{content:"";position:absolute;inset:0 -50vw;z-index:-1;
+.tools::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);border-bottom:1px solid transparent;
   opacity:0;transition:opacity .22s var(--ease),border-color .22s var(--ease);
   pointer-events:none}
+.tools > *{position:relative;z-index:1}
 .tools.stuck{padding:12px 0}
 .tools.stuck::before{opacity:1;border-bottom-color:var(--line)}
 /* the mark only appears once the masthead has scrolled away */
 .toolmark{display:flex;align-items:center;gap:9px;flex:none;text-decoration:none;
-  width:0;overflow:hidden;opacity:0;transition:width .24s var(--ease),opacity .18s var(--ease)}
-.tools.stuck .toolmark{width:auto;opacity:1}
+  max-width:0;overflow:hidden;opacity:0;
+  transition:max-width .3s var(--ease),opacity .2s var(--ease),margin .3s var(--ease)}
+.tools.stuck .toolmark{max-width:220px;opacity:1;margin-right:2px}
 .toolmark svg{width:30px;height:30px;flex:none;stroke:none;fill:none}
 .toolmark b{font-family:var(--title);font-weight:600;font-size:19px;letter-spacing:.05em;
   text-transform:uppercase;line-height:1;color:var(--tx)}
@@ -460,7 +461,6 @@ __FOOTER_CSS__
   <div class="stage" id="stage"></div>
 </section>
 
-<div class="stickypoint" id="stickypoint" aria-hidden="true"></div>
 <div class="tools" id="tools">
   <a class="toolmark" href="#top" aria-label="Back to the top">
     <svg aria-hidden="true"><use href="#i-logo"/></svg><b>Flanner</b></a>
@@ -679,17 +679,18 @@ function card(f) {
 }
 
 /* ── the toolbar sticks ────────────────────────────────
-   Detected with the standard sentinel trick: the bar stops being fully
-   intersecting the moment it pins, which is exactly when the mark should
-   appear in place of the masthead that has just scrolled away. */
+   A pinned sticky element sits at exactly top:0 and an unpinned one sits below
+   it, so the bar's own offset is the signal — no sentinel to fall out of step
+   with it. Read synchronously on scroll: an earlier version deferred to
+   requestAnimationFrame behind a guard flag, and anywhere frames are not being
+   produced the guard latched and the bar froze in one state. */
 const tools = $('#tools');
-/* Watching the bar itself would report "stuck" while it is merely scrolling up
-   into view from below. A zero-height marker at its resting position only
-   leaves the viewport when the bar has actually pinned. */
-new IntersectionObserver(
-  ([e]) => tools.classList.toggle('stuck', !e.isIntersecting && e.boundingClientRect.top < 0),
-  {threshold: [0]}
-).observe($('#stickypoint'));
+function readStuck() {
+  tools.classList.toggle('stuck', tools.getBoundingClientRect().top <= 0);
+}
+addEventListener('scroll', readStuck, {passive: true});
+addEventListener('resize', readStuck, {passive: true});
+readStuck();
 
 /* ── place ─────────────────────────────────────────────
    Finland by default, because that is everything the site covers. The browser
