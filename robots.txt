@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://uenian33.github.io/kallioblockpartyplanner/sitemap.xml
+Sitemap: https://uenian33.github.io/flanner/sitemap.xml

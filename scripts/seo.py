@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BASE = "https://uenian33.github.io/kallioblockpartyplanner"
+BASE = "https://uenian33.github.io/flanner"
 SITE = "Flanner"
 
 

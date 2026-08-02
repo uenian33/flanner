@@ -75,7 +75,7 @@ def main() -> None:
     print(f"  icons → {len(list(ICONS.glob('*.png')))} files")
 
     manifest = {
-        "id": "/kallioblockpartyplanner/",
+        "id": "/flanner/",
         "name": "Flanner — Helsinki festival planner",
         "short_name": "Flanner",
         "description": "Plannable timetables for Helsinki festivals. Works offline.",
