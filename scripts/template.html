@@ -203,6 +203,19 @@ body.scrolled .brandmini{width:auto;margin-right:0;opacity:1;transform:none}
 .brandmini b{font-family:var(--title);font-size:19px;font-weight:600;letter-spacing:.05em;
   text-transform:uppercase;white-space:nowrap;color:var(--tx)}
 @media(max-width:720px){.brandmini b{display:none}}
+/* On a phone the identity is not something to reveal on scroll — with the
+   masthead far below the fold, the bar is the only place the festival is
+   named. It takes its own row so the search keeps its width. */
+@media(max-width:620px){
+  .toolbar .tbar:not(.tbar2){display:grid;gap:8px;align-items:center;
+    grid-template-columns:minmax(0,1fr) auto auto;
+    grid-template-areas:"brand brand brand" "search theme filter"}
+  .brandmini{grid-area:brand;width:auto;margin:0;opacity:1;transform:none;overflow:visible}
+  .brandmini b{display:block;font-size:17px}
+  .srch{grid-area:search;flex:none}
+  #themeBtn{grid-area:theme}
+  .tbar .rel{grid-area:filter}
+}
 header{transition:none}
 .logo img{transform-origin:center center}
 body.scrolled .logo img{transform:scale(.72);opacity:.55}
@@ -211,7 +224,13 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
 .seg button{display:inline-flex;flex:1 1 0;align-items:center;justify-content:center;gap:8px;
   font-size:15px;font-weight:650;padding:0 16px;border-radius:10rem;color:var(--tx2);
   transition:.16s var(--ease);min-height:44px}
-.tbar2{padding-top:0}
+/* Day and view belong to the timetable, not to the whole page, so they live
+   inside the schedule section. A sticky child only pins within its parent's
+   box, which is exactly the behaviour wanted: they ride under the top bar
+   while the schedule is on screen and leave with it. */
+.tbar2{position:sticky;top:var(--toph,104px);z-index:30;
+  background:var(--bg);padding:8px 0 10px;margin:0 0 2px;
+  box-shadow:0 1px 0 var(--line)}
 .daybar{flex:1 1 auto}
 .daybar .dshort{display:none}
 @media(max-width:700px){
@@ -329,7 +348,7 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 10px)}
 .board-in{width:max-content;min-width:100%;position:relative}
 /* A horizontally scrolling container traps position:sticky on its children, so
    the time ruler lives outside .board and mirrors its scrollLeft instead. */
-.rulerbar{position:sticky;top:var(--toph,104px);z-index:24;background:var(--bg);overflow:hidden;
+.rulerbar{position:sticky;top:calc(var(--toph,104px) + var(--tb2h,0px));z-index:24;background:var(--bg);overflow:hidden;
   box-shadow:0 1px 0 var(--line2)}
 .rulerbar[hidden]{display:none}
 .ruler{display:grid;grid-template-columns:var(--label-w) 1fr;will-change:transform}
@@ -393,7 +412,8 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 10px)}
 /* ── agenda ───────────────────────────────────────────── */
 .agenda{max-width:760px}
 .ahsec{position:relative}
-.ahour{display:flex;align-items:center;gap:11px;position:sticky;top:var(--toph,104px);
+.ahour{display:flex;align-items:center;gap:11px;position:sticky;
+  top:calc(var(--toph,104px) + var(--tb2h,0px));
   z-index:14;background:var(--bg);padding:14px 0 8px;margin:0}
 .ahsec:first-child .ahour{padding-top:6px}
 .ahour::after{content:"";position:absolute;left:0;right:0;top:100%;height:10px;
@@ -932,18 +952,6 @@ __THEME__
       <svg class="i"><use href="#i-sliders"/></svg></button>
       <span class="fbadge" id="fBadge" hidden>0</span></span>
   </div>
-  <div class="tbar tbar2">
-    <div class="seg daybar" id="dayBar" role="group" aria-label="Festival day" hidden></div>
-    <div class="seg" role="group" aria-label="Schedule view">
-      <button id="vTimeline" aria-pressed="false"><svg class="i"><use href="#i-cols"/></svg>Timetable</button>
-      <button id="vAgenda" aria-pressed="false"><svg class="i"><use href="#i-rows"/></svg>List</button>
-    </div>
-    <button class="nowbtn" id="nowBtn"><i></i>Now</button>
-    <span id="zoomWrap" class="zoomwrap">
-      <button class="iconbtn" id="zOut" aria-label="Zoom out"><svg class="i"><use href="#i-minus"/></svg></button>
-      <button class="iconbtn" id="zIn" aria-label="Zoom in"><svg class="i"><use href="#i-plus"/></svg></button>
-    </span>
-  </div>
   </div>
   <div class="filters" id="filters"><div class="wrap"><div class="finner">
     <div class="frow"><span class="flab">Type</span><span class="chipset" id="fType"></span></div>
@@ -984,6 +992,18 @@ __DECO__
 
 <div class="deck">
 <section class="blk" id="secSchedule">
+  <div class="tbar tbar2">
+    <div class="seg daybar" id="dayBar" role="group" aria-label="Festival day" hidden></div>
+    <div class="seg" role="group" aria-label="Schedule view">
+      <button id="vTimeline" aria-pressed="false"><svg class="i"><use href="#i-cols"/></svg>Timetable</button>
+      <button id="vAgenda" aria-pressed="false"><svg class="i"><use href="#i-rows"/></svg>List</button>
+    </div>
+    <button class="nowbtn" id="nowBtn"><i></i>Now</button>
+    <span id="zoomWrap" class="zoomwrap">
+      <button class="iconbtn" id="zOut" aria-label="Zoom out"><svg class="i"><use href="#i-minus"/></svg></button>
+      <button class="iconbtn" id="zIn" aria-label="Zoom in"><svg class="i"><use href="#i-plus"/></svg></button>
+    </span>
+  </div>
   <div class="rulerbar" id="rulerBar" hidden><div class="ruler" id="ruler"></div></div>
   <div class="board" id="board" hidden><div class="board-in" id="boardIn"></div></div>
   <div class="agenda" id="agenda" hidden></div>
@@ -2246,13 +2266,18 @@ document.addEventListener('keydown', e => {
 /* Every sticky offset keys off the real toolbar height, which changes when the
    filter drawer opens or the controls wrap at a new breakpoint. */
 const measureTop = () => {
-  const r1 = $('.tbar').getBoundingClientRect().height;
-  const t2 = $('.tbar2');
-  const r2 = getComputedStyle(t2).display === 'none' ? 0 : t2.getBoundingClientRect().height;
+  const bar = $('.tbar').getBoundingClientRect().height;
   const border = parseFloat(getComputedStyle($('.toolbar')).borderBottomWidth) || 0;
-  document.documentElement.style.setProperty('--toph', Math.round(r1 + r2 + border) + 'px');
+  document.documentElement.style.setProperty('--toph', Math.round(bar + border) + 'px');
+  const t2 = $('.tbar2');
+  const h2 = !t2 || getComputedStyle(t2).display === 'none'
+    ? 0 : t2.getBoundingClientRect().height;
+  document.documentElement.style.setProperty('--tb2h', Math.round(h2) + 'px');
 };
-if ('ResizeObserver' in window) new ResizeObserver(measureTop).observe($('.toolbar'));
+if ('ResizeObserver' in window) {
+  new ResizeObserver(measureTop).observe($('.toolbar'));
+  if ($('.tbar2')) new ResizeObserver(measureTop).observe($('.tbar2'));
+}
 addEventListener('resize', measureTop);
 
 const consentAnswer = Store.readConsent();
