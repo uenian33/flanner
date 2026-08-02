@@ -42,11 +42,13 @@ def main():
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
+        ("__SETTINGS__", (ROOT / "scripts" / "_settings.html").read_text()),
         ("__FOOTER__", (ROOT / "scripts" / "_footer.html").read_text()),
         ("__ROOT__", "./"),
         ("__NOTE__", NOTE),
         ("__CUR_PRIVACY__", ""), ("__CUR_TERMS__", ""), ("__CUR_ABOUT__", ""),
         ("__OFFLINE__", (ROOT / "scripts" / "_offline.html").read_text()),
+        ("__SETTINGS_CSS__", (ROOT / "scripts" / "_settings.css").read_text()),
         ("__PAGEFX__", (ROOT / "scripts" / "_pagefx.html").read_text()),
         ("__CONTACT__", cfg["site"]["contact"]),
     ]:

@@ -306,44 +306,7 @@ input[type=search]::placeholder{color:var(--tx3)}
 .toolbar>.wrap{position:relative;z-index:2}
 /* The drawer hangs below the pinned rows rather than growing them, so the bar
    keeps sticking and the page below does not jump when it opens. */
-/* ── settings ─────────────────────────────────────────
-   A card in the middle of the screen on a pointer device and a sheet off the
-   bottom edge on a phone — the same shape the artist card uses, so the planner
-   has one way of presenting a panel rather than two. */
-dialog.setdlg{border:none;padding:0;background:transparent;max-width:none;max-height:none;
-  width:100%;height:100%;overflow:visible;color:var(--tx)}
-dialog.setdlg::backdrop{background:rgba(4,6,9,.6);
-  -webkit-backdrop-filter:blur(9px) saturate(140%);backdrop-filter:blur(9px) saturate(140%);
-  opacity:0;transition:opacity .3s var(--ease)}
-dialog.setdlg.in::backdrop{opacity:1}
-.setbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
-  transform:translate(-50%,16px);opacity:0;
-  width:min(460px,calc(100vw - 24px));max-height:min(84svh,720px);overflow:auto;
-  overscroll-behavior:contain;
-  background:var(--sheet);border:1px solid var(--line2);border-radius:22px;
-  padding:0 clamp(16px,2.4vw,22px) 18px;
-  box-shadow:0 26px 70px -18px rgba(0,0,0,.7);
-  transition:opacity .28s var(--ease),transform .36s var(--ease)}
-dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
-@media(min-width:700px){
-  .setbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
-  dialog.setdlg.in .setbox{transform:translate(-50%,-50%)}
-}
-.sethead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;padding:14px 0 10px;background:var(--sheet)}
-.sethead h2{margin:0;font-family:var(--disp);font-size:20px;letter-spacing:-.022em}
-.setclose{width:40px;height:40px;flex:none}
-.setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.setrow:last-child{border-bottom:none;padding-bottom:2px}
-.setrow:first-child{padding-top:2px}
-.setrow b{display:block;font-size:15px;font-weight:700}
-.setrow i{display:block;font-style:normal;font-size:12.5px;color:var(--tx3);margin-top:3px}
-.setrow .seg{flex:0 0 auto;min-width:190px}
-.setnote{margin:14px 0 0;font-size:12.5px;line-height:1.6;color:var(--tx3);max-width:70ch}
-.setnote a{color:var(--tx2);text-underline-offset:3px}
-@media(max-width:520px){.setrow .seg{flex:1 1 100%;min-width:0}}
-
+__SETTINGS_CSS__
 .filters{grid-template-columns:minmax(0,1fr);
   display:grid;grid-template-rows:0fr;opacity:0;pointer-events:none;
   transition:grid-template-rows .38s var(--ease),opacity .26s var(--ease);
@@ -857,10 +820,8 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
 /* ── mobile bottom nav ────────────────────────────────── */
 __NAV_CSS__
 
-footer{border-top:1px solid var(--line);margin-top:34px;padding:22px 0 46px;color:var(--tx3);
-  font-size:12px;line-height:1.65;max-width:78ch}
-footer a{color:var(--tx2)}
-footer p{margin:0 0 9px}
+__FOOTER_CSS__
+
 
 /* ── responsive ───────────────────────────────────────── */
 @media (max-width:1100px){
@@ -1125,16 +1086,7 @@ __TICKER__
   </div>
 </section>
 
-<footer>
-  __PROVENANCE__
-  <p><button class="linkbtn" id="privacyBtn">Cookies &amp; privacy</button> ·
-  <span id="storeState"></span></p>
-  __SIBLING__
-  <p>An unofficial planner, not affiliated with the organisers. Corrections and requests
-  welcome — <a href="mailto:__CONTACT__?subject=Festival%20Planner">__CONTACT__</a>.</p>
-  <p><a href="__HOME__privacy/">EU data policy</a> · <a href="__HOME__terms/">Terms and Conditions</a> ·
-  <a href="__HOME__about/">About us</a></p>
-</footer>
+__FOOTER__
 </div>
 
 <a class="navhome" href="__HOME__" aria-label="Flanner — all festival planners"
@@ -1149,43 +1101,7 @@ __TICKER__
   <button id="nSet"><svg class="i"><use href="#i-gear"/></svg><span class="lbl">Settings</span></button>
 </nav>
 
-<dialog class="setdlg" id="setDlg" aria-labelledby="setTitle">
-  <div class="setbox">
-    <div class="sethead">
-      <h2 id="setTitle">Settings</h2>
-      <button class="iconbtn setclose" id="setClose" aria-label="Close settings">
-        <svg class="i"><use href="#i-close"/></svg></button>
-    </div>
-    <div class="setrow">
-      <div><b>Appearance</b><i>Applies to every Flanner page on this device.</i></div>
-      <div class="seg" id="themeSeg" role="group" aria-label="Colour theme">
-        <button data-theme-set="light" aria-pressed="false">
-          <svg class="i"><use href="#i-sun"/></svg>Light</button>
-        <button data-theme-set="dark" aria-pressed="false">
-          <svg class="i"><use href="#i-moon"/></svg>Dark</button>
-      </div>
-    </div>
-    <div class="setrow">
-      <div><b>Cookies</b><i id="cookieState">—</i></div>
-      <div class="seg" id="cookieSeg" role="group" aria-label="Cookie storage">
-        <button data-consent="1" aria-pressed="false">Allow</button>
-        <button data-consent="0" aria-pressed="false">Off</button>
-      </div>
-    </div>
-    <p class="setnote">Cookies here only remember your own choices — the plan you build, the
-      day you were looking at, and this theme. Nothing is sent anywhere and no analytics run.
-      With them off, your picks last until you close the tab.
-      <a href="__HOME__privacy/">EU data policy</a></p>
-    <div class="setrow">
-      <div><b>Offline</b><i id="offlineState">—</i></div>
-      <button class="ghost" id="offlineBtn" disabled>Save</button>
-    </div>
-    <div class="setrow">
-      <div><b>Your plan</b><i id="planState">—</i></div>
-      <button class="ghost" id="clearPlan">Clear plan</button>
-    </div>
-  </div>
-</dialog>
+__SETTINGS__
 
 <dialog class="consent" id="consent" aria-labelledby="consentTitle">
   <div class="consentbox">
@@ -2303,10 +2219,6 @@ function paintSettings() {
     : answered === '1' ? 'On — your choices are remembered on this device.'
     : answered === '0' ? 'Off — your choices last until you close the tab.'
     : 'Not set yet.';
-  const pl = $('#planState');
-  if (pl) pl.textContent = state.route.size
-    ? state.route.size + (state.route.size === 1 ? ' act picked' : ' acts picked')
-    : 'Nothing picked yet.';
 }
 document.querySelectorAll('#themeSeg button').forEach(b =>
   b.onclick = () => { applyTheme(b.dataset.themeSet); });
@@ -2325,13 +2237,6 @@ function closeSettings() {
 $('#setClose').onclick = closeSettings;
 setDlg.addEventListener('click', e => { if (e.target === setDlg) closeSettings(); });
 setDlg.addEventListener('cancel', e => { e.preventDefault(); closeSettings(); });
-
-const clearBtn = $('#clearPlan');
-if (clearBtn) clearBtn.onclick = () => {
-  [...state.route].forEach(k => state.route.delete(k));
-  saveRoute(); renderRoute(); syncStars(); paintSettings();
-  showToast('Plan cleared');
-};
 
 function applyTheme(mode) {
   const dark = mode === 'dark';
@@ -2490,7 +2395,11 @@ function answerConsent(yes) {
 $('#cAllow').onclick = () => answerConsent(true);
 $('#cDeny').onclick  = () => answerConsent(false);
 cdlg.addEventListener('cancel', e => { e.preventDefault(); answerConsent(false); });
-$('#privacyBtn').onclick = openConsent;
+/* The footer button that used to open this moved into the settings card, so
+   the hook is optional now. Dereferencing it unguarded threw before boot and
+   took the whole planner down with it. */
+const privacyBtn = $('#privacyBtn');
+if (privacyBtn) privacyBtn.onclick = openConsent;
 
 /* ══ global stage-name clicks + boot ═══════════════════ */
 document.addEventListener('click', e => {

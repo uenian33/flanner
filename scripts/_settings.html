@@ -1,0 +1,36 @@
+<dialog class="setdlg" id="setDlg" aria-labelledby="setTitle">
+  <div class="setbox">
+    <div class="sethead">
+      <h2 id="setTitle">Settings</h2>
+      <button class="setclose" id="setClose" aria-label="Close settings">
+        <svg class="i"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="setrow">
+      <div><b>Appearance</b><i>Applies to every Flanner page on this device.</i></div>
+      <div class="fseg" id="themeSeg" role="group" aria-label="Colour theme">
+        <button data-theme-set="light" aria-pressed="false">Light</button>
+        <button data-theme-set="dark" aria-pressed="false">Dark</button>
+      </div>
+    </div>
+    <div class="setrow">
+      <div><b>Cookies</b><i id="cookieState">—</i></div>
+      <div class="fseg" id="cookieSeg" role="group" aria-label="Cookie storage">
+        <button data-consent="1" aria-pressed="false">Allow</button>
+        <button data-consent="0" aria-pressed="false">Off</button>
+      </div>
+    </div>
+    <div class="setrow">
+      <div><b>Offline</b><i id="offlineState">—</i></div>
+      <button class="setbtn" id="offlineBtn" disabled>Save</button>
+    </div>
+    <p class="setnote">Cookies here only remember your own choices — the plan you build, the
+      day you were looking at, and this theme. Nothing is sent anywhere and no analytics run.
+      <a href="__ROOT__privacy/">EU data policy</a> ·
+      <a href="__ROOT__terms/">Terms</a> ·
+      <a href="__ROOT__about/">About</a></p>
+    <!-- On a phone the page footer is hidden so the app reads as an app, so
+         everything it carries — sources, map credits, the disclaimer, contact —
+         appears here instead. Same markup, one source. -->
+    <div class="setfoot">__FOOTER__</div>
+  </div>
+</dialog>

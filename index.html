@@ -260,6 +260,9 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   .facts{flex-direction:column;align-items:stretch}
   .facts .btn{flex:none}
 }
+/* ── settings card ─────────────────────────────────────
+   One card, one stylesheet, every page. Centred on a pointer device, a sheet
+   off the bottom edge on a phone. */
 dialog.setdlg{border:none;padding:0;background:transparent;max-width:none;max-height:none;
   width:100%;height:100%;overflow:visible;color:var(--tx)}
 dialog.setdlg::backdrop{background:rgba(4,6,9,.55);
@@ -267,28 +270,54 @@ dialog.setdlg::backdrop{background:rgba(4,6,9,.55);
   opacity:0;transition:opacity .3s var(--ease)}
 dialog.setdlg.in::backdrop{opacity:1}
 .setbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
-  transform:translate(-50%,16px);opacity:0;width:min(440px,calc(100vw - 24px));
+  transform:translate(-50%,16px);opacity:0;width:min(460px,calc(100vw - 24px));
+  max-height:min(84svh,720px);overflow:auto;overscroll-behavior:contain;
   background:var(--bg2);border:1px solid var(--line2);border-radius:22px;
-  padding:0 22px 20px;box-shadow:0 26px 70px -18px rgba(0,0,0,.5);
+  padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:0 26px 70px -18px rgba(0,0,0,.5);
   transition:opacity .28s var(--ease),transform .36s var(--ease)}
 dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 @media(min-width:700px){
   .setbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
   dialog.setdlg.in .setbox{transform:translate(-50%,-50%)}
 }
-.sethead{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:16px 0 12px}
+.sethead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--bg2)}
 .sethead h2{margin:0;font-family:var(--title);font-weight:600;font-size:22px;
   letter-spacing:.02em;text-transform:uppercase}
-.setclose{width:40px;height:40px;border:1px solid var(--line2);border-radius:10rem;
-  display:grid;place-items:center;color:var(--tx2)}
+.setclose{width:40px;height:40px;flex:none;border:1px solid var(--line2);border-radius:10rem;
+  display:grid;place-items:center;color:var(--tx2);transition:.15s var(--ease)}
 .setclose:hover{background:var(--tx);color:var(--bg2)}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:14px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+  padding:15px 0;border-top:1px solid var(--line);flex-wrap:wrap}
 .setrow b{display:block;font-size:15px;font-weight:700}
-.setrow i{display:block;font-style:normal;font-size:12.5px;color:var(--tx3);margin-top:3px}
-.setnote{margin:12px 0 0;font-size:12.5px;line-height:1.6;color:var(--tx3)}
+.setrow i{display:block;font-style:normal;font-size:12.5px;color:var(--tx3);margin-top:3px;
+  max-width:42ch}
+.setbtn{min-height:38px;padding:0 18px;border-radius:10rem;border:1px solid var(--line2);
+  font-size:14px;font-weight:650;color:var(--tx);transition:.15s var(--ease)}
+.setbtn:hover:not(:disabled){background:var(--tx);color:var(--bg2)}
+.setbtn:disabled{opacity:.5}
+.fseg{display:flex;background:var(--bg2);border:1px solid var(--line2);
+  border-radius:10rem;padding:2px;gap:3px;flex:none}
+.fseg button{font-size:13.5px;font-weight:650;padding:0 16px;min-height:34px;
+  border-radius:10rem;color:var(--tx2);transition:.15s var(--ease)}
+.fseg button[aria-pressed=true]{background:var(--tx);color:var(--bg2)}
+.setnote{margin:15px 0 0;font-size:12.5px;line-height:1.6;color:var(--tx3)}
 .setnote a{color:var(--tx2)}
+@media(max-width:520px){.setrow .fseg{flex:1 1 100%}}
+
+/* The footer lives at the end of the page on a pointer device and at the
+   bottom of this card on a phone — never both. */
+.setfoot{display:none}
+.setfoot footer{display:block;border-top:1px solid var(--line);margin-top:16px;
+  padding:16px 0 0}
+.setfoot .fgrid{grid-template-columns:minmax(0,1fr);gap:20px}
+.setfoot .fbrand{grid-column:auto}
+@media(max-width:820px){
+  .setfoot{display:block}
+  /* The planner's footer is nested, so a child selector missed it. */
+  footer{display:none}
+  .setfoot footer{display:block}
+}
 
 .navhome{position:fixed;z-index:61;display:grid;place-items:center;text-decoration:none;
   isolation:isolate;background:var(--glass);border:1px solid var(--glass-line);
@@ -420,9 +449,11 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   transition:max-width .3s var(--ease),opacity .2s var(--ease),margin .3s var(--ease)}
 .tools.stuck .toolmark{max-width:220px;opacity:1;margin-right:2px}
 .toolmark svg{width:30px;height:30px;flex:none;stroke:none;fill:none}
+.toolmark .wm{display:flex;flex-direction:column;gap:2px;min-width:0}
+.toolmark .wm i{font-style:normal;font-size:10px;font-weight:400;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--tx2);line-height:1;white-space:nowrap}
 .toolmark b{font-family:var(--title);font-weight:600;font-size:19px;letter-spacing:.05em;
   text-transform:uppercase;line-height:1;color:var(--tx)}
-@media(max-width:720px){.toolmark b{display:none}}
 .sbox{position:relative;flex:1 1 280px;min-width:0}
 .sbox svg.i{position:absolute;left:17px;top:50%;transform:translateY(-50%);
   width:17px;height:17px;color:var(--tx3);pointer-events:none}
@@ -478,11 +509,24 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
    position:sticky — an earlier version set position:relative for exactly this
    anchoring, which silently cancelled the sticky and let the bar scroll away. */
 @media(max-width:620px){
+  /* Same shape as a planner's bar: the lockup holds the left, the field is a
+     circle on the right until it is asked for, and the filters take the row
+     underneath. */
   .tools{display:grid;align-items:center;gap:8px 10px;
-    grid-template-columns:auto minmax(0,1fr);
+    grid-template-columns:minmax(0,1fr) auto;
     grid-template-areas:"mark search" "filters filters"}
-  .toolmark{grid-area:mark}
-  .sbox{grid-area:search}
+  .toolmark{grid-area:mark;max-width:none;opacity:1}
+  .tools.stuck .toolmark{max-width:none}
+  .sbox{grid-area:search;flex:none;width:44px;justify-self:end;
+    transition:width .38s cubic-bezier(.22,1,.36,1)}
+  .sbox.open{width:min(100%,calc(100vw - 96px))}
+  .sbox input{height:44px;padding:0 16px 0 38px;font-size:15px}
+  .sbox:not(.open) input{padding:0;color:transparent;cursor:pointer}
+  .sbox:not(.open) input::placeholder{color:transparent}
+  .sbox svg.i{left:50%;transform:translate(-50%,-50%);
+    transition:left .3s var(--ease),transform .3s var(--ease)}
+  .sbox.open svg.i{left:14px;transform:translate(0,-50%)}
+  .sbox .clr{display:none}
   .dropset{grid-area:filters;display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
@@ -702,7 +746,8 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 
 <div class="tools" id="tools">
   <a class="toolmark" href="#top" aria-label="Back to the top">
-    <svg aria-hidden="true"><use href="#i-logo"/></svg><b>Flanner</b></a>
+    <svg aria-hidden="true"><use href="#i-logo"/></svg>
+    <span class="wm"><b>Flanner</b><i>Festival planner</i></span></a>
   <div class="sbox">
     <svg class="i"><use href="#i-search"/></svg>
     <input id="q" type="search" placeholder="Search festivals, artists, venues…"
@@ -761,13 +806,59 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
       </div>
     </div>
     <div class="setrow">
-      <div><b>Offline</b><i id="offlineState">—</i></div>
-      <button class="btn" id="offlineBtn" disabled>Save</button>
+      <div><b>Cookies</b><i id="cookieState">—</i></div>
+      <div class="fseg" id="cookieSeg" role="group" aria-label="Cookie storage">
+        <button data-consent="1" aria-pressed="false">Allow</button>
+        <button data-consent="0" aria-pressed="false">Off</button>
+      </div>
     </div>
-    <p class="setnote">Flanner keeps one cookie, for the choices you make here. No analytics
-      run and nothing is sent anywhere. <a href="privacy/">EU data policy</a></p>
+    <div class="setrow">
+      <div><b>Offline</b><i id="offlineState">—</i></div>
+      <button class="setbtn" id="offlineBtn" disabled>Save</button>
+    </div>
+    <p class="setnote">Cookies here only remember your own choices — the plan you build, the
+      day you were looking at, and this theme. Nothing is sent anywhere and no analytics run.
+      <a href="./privacy/">EU data policy</a> ·
+      <a href="./terms/">Terms</a> ·
+      <a href="./about/">About</a></p>
+    <!-- On a phone the page footer is hidden so the app reads as an app, so
+         everything it carries — sources, map credits, the disclaimer, contact —
+         appears here instead. Same markup, one source. -->
+    <div class="setfoot"><footer>
+  <div class="fgrid">
+    <div class="fbrand">
+      <div class="fmark"><svg class="dot" aria-hidden="true"><use href="#i-logo"/></svg><span>Flanner</span></div>
+      <p class="tag">Plannable timetables for Helsinki festivals.</p>
+      <div class="flinks">
+        <a href="mailto:flanner47@gmail.com?subject=Flanner">
+          <svg class="i"><use href="#i-mail"/></svg>flanner47@gmail.com</a>
+      </div>
+      <p class="fcopy">© 2026 Flanner · Helsinki</p>
+    </div>
+    <div class="fcol">
+      <h5>Pages</h5>
+      <ul>
+        <li><a href="./">Festivals</a></li>
+        <li><a href="./kallio/">Kallio Block Party</a></li>
+        <li><a href="./flow/">Flow Festival</a></li>
+      </ul>
+    </div>
+    <div class="fcol">
+      <h5>Info</h5>
+      <ul>
+        <li><a href="./privacy/">EU data policy</a></li>
+        <li><a href="./terms/">Terms and Conditions</a></li>
+        <li><a href="./about/">About us</a></li>
+        <li><a href="mailto:flanner47@gmail.com?subject=Flanner">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="fnote"><p>Unofficial planners, not affiliated with any of these festivals. Timetables come from each organiser's own published schedule; artwork and links from their own sites.</p><p>Each planner is a single page that keeps working offline once loaded, stores your picks on your own device, and collects nothing.</p></div>
+</footer>
+</div>
   </div>
 </dialog>
+
 
 <footer>
   <div class="fgrid">
@@ -1168,6 +1259,19 @@ $('#q').addEventListener('input', e => {
   apply();
 });
 $('#qClr').onclick = () => { $('#q').value = ''; q = ''; $('#qClr').hidden = true; apply(); };
+
+/* On a phone the field folds away when empty, the same as on a planner. */
+(() => {
+  const box = document.querySelector('.sbox'), input = $('#q');
+  const narrow = matchMedia('(max-width:620px)');
+  const open = () => { box.classList.add('open'); input.focus(); };
+  box.addEventListener('click', () => {
+    if (narrow.matches && !box.classList.contains('open')) open();
+  });
+  input.addEventListener('blur', () => { if (!input.value) box.classList.remove('open'); });
+  input.addEventListener('input', () => { if (input.value) box.classList.add('open'); });
+  if (input.value) box.classList.add('open');
+})();
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { openSheet(null); if (document.activeElement === $('#q')) $('#q').blur(); }
 });
