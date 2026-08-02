@@ -138,10 +138,10 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 
 .side{grid-area:1/9/3/13;z-index:3;align-self:center;
   display:flex;flex-direction:column}
-.panel{--tuck:clamp(28px,5.5vw,96px);margin-left:calc(-1 * var(--tuck));
+.panel{--tuck:clamp(26px,5vw,64px);
+  margin-left:calc(-1 * var(--tuck));
   background:color-mix(in srgb,var(--fa,#fff) 8%,var(--bg2));
-  border-radius:16px;padding:clamp(20px,2.4vw,30px);
-  padding-left:calc(clamp(20px,2.4vw,30px) + var(--tuck));
+  border-radius:16px;padding:clamp(22px,2.6vw,34px) var(--tuck);
   box-shadow:0 24px 54px -30px rgba(0,0,0,.5)}
 .fline{margin:0 0 10px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;
   font-family:var(--title);font-weight:500;font-size:var(--f-label);line-height:1.2;
@@ -184,7 +184,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   .side{grid-area:auto;align-self:auto}
   .panel{border-radius:0 0 16px 16px;box-shadow:none;
     border:1px solid var(--line2);border-top:none}
-  .panel{margin-left:0;padding-left:clamp(20px,2.4vw,30px)}
+  .panel{--tuck:clamp(20px,4vw,28px);margin-left:0}
   .facts .btn{width:100%}
   .nav{grid-area:auto;margin-top:16px}
 }
