@@ -63,7 +63,7 @@
   --glass:rgba(22,22,25,.7); --glass-line:rgba(255,255,255,.06);
   --glass-pill:rgba(255,255,255,.1); --glass-tx:rgba(255,255,255,.55); --glass-on:#fff;
   --cText:var(--tx); --bgc:var(--panel); --accent-ink:var(--kbp-green);
-  --label-w:172px; --radius:10px;
+  --gutter:58px; --colw:172px; --radius:10px;
   --sans:ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
   --disp:"Bricolage Grotesque",var(--sans);
   --title:"KBP Title","Bricolage Grotesque",var(--sans);
@@ -89,32 +89,6 @@
 /* Stage hue is scoped to the element that sets --c, so the derived tokens must
    be too: defining them on :root would resolve against an absent --c. */
 [style*="--c:"]{--cText:var(--c);--bgc:color-mix(in srgb,var(--c) 15%,var(--bg2))}
-/* ── the timetable grid is always dark ────────────────
-   Set blocks carry a stage hue as a translucent fill. That was tuned against a
-   dark ground; on the light paper the same fills wash out to pastel and the
-   stage colours stop being distinguishable. So the ruler and the grid restate
-   the dark tokens locally. The agenda list has no such fills and follows the
-   page theme.
-
-   Neither gets padding: the ruler is a separate element that mirrors the
-   grid's scrollLeft, so any inset on one and not the other would slide the
-   hours out of line with the columns. */
-:root[data-theme=light] .rulerbar,
-:root[data-theme=light] .board{
-  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
-  --line:#232936; --line2:#333c4e;
-  --tx:#e9edf5; --tx2:#9aa5ba; --tx3:#7b8799;
-  --on-accent:#0a1400; --shade:rgba(0,0,0,.5);
-  --lab:#fff; --lab2:rgba(235,235,245,.62); --lab3:rgba(235,235,245,.36);
-  --fill:rgba(118,118,128,.26); --fill2:rgba(118,118,128,.17);
-  --chip-line:var(--line2); --accent-ink:var(--accent);
-  color-scheme:dark;
-  background:var(--bg); color:var(--tx);
-}
-:root[data-theme=light] .board [style*="--c:"]{
-  --cText:var(--c);
-  --bgc:color-mix(in srgb,var(--c) 15%,var(--bg2));
-}
 :root[data-theme=light] [style*="--c:"]{
   --cText:color-mix(in srgb,var(--c) 45%,#0a0a0a);
   --bgc:color-mix(in srgb,var(--c) 24%,#fff);
@@ -314,10 +288,7 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
 }
 /* the view switch only means something over the schedule itself */
 body.sched-off .schedbar{display:none}
-.zoomwrap{display:inline-flex;gap:6px;flex:none;overflow:hidden;max-width:92px;opacity:1;
-  transition:max-width .34s var(--ease),opacity .22s var(--ease),margin-left .34s var(--ease)}
-body[data-view=agenda] .zoomwrap{max-width:0;opacity:0;margin-left:-10px;pointer-events:none}
-/* The field is a 50px circle at the end of the bar until it is asked for, then
+body[data-view=agenda] /* The field is a 50px circle at the end of the bar until it is asked for, then
    it opens leftwards into a full search box. Collapsed it is the same shape as
    every other control here, so the bar stays a row of pills either way. */
 .srch{position:relative;flex:0 0 auto;margin-left:auto;width:50px;min-width:0;
@@ -345,7 +316,6 @@ input[type=search]::placeholder{color:var(--tx3)}
 .iconbtn{width:50px;height:50px;padding:0;border:1px solid var(--line2);border-radius:10rem;color:var(--tx2);
   display:grid;place-items:center;font-size:17px;transition:.15s;background:var(--bg2)}
 .iconbtn:hover{color:var(--tx);border-color:var(--tx)}
-.zoomwrap .iconbtn{width:40px;height:40px}
 .iconbtn[aria-pressed=true]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .iconbtn[aria-pressed=true]:hover{filter:brightness(1.06);color:var(--on-accent)}
 .rel:has(.iconbtn[aria-pressed=true]) .fbadge{background:var(--on-accent);color:var(--accent);
@@ -495,39 +465,54 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .board-in{width:max-content;min-width:100%;position:relative}
 /* A horizontally scrolling container traps position:sticky on its children, so
    the time ruler lives outside .board and mirrors its scrollLeft instead. */
-.rulerbar{position:sticky;top:calc(var(--toph,104px) + var(--tb2h,0px));z-index:24;background:var(--bg);overflow:hidden;
+/* ── timetable ─────────────────────────────────────────
+   Time runs down and stages run across, which is how a festival day is
+   actually read. Both headers are position:sticky inside the one scroller, so
+   the hours stay on the left and the stage names on top without any of the
+   scroll-mirroring the horizontal version needed.
+
+   The vertical axis is pixels-per-minute rather than a percentage, so zoom is
+   one number and a set's height is honestly proportional to its length. */
+.board{position:relative;overflow:auto;overscroll-behavior:contain;
+  height:clamp(420px,66svh,860px);border:1px solid var(--line);border-radius:14px;
+  background:var(--bg)}
+.board[hidden]{display:none}
+.board-in{position:relative;width:max-content;min-width:100%}
+.vhead{position:sticky;top:0;z-index:20;display:flex;background:var(--bg);
   box-shadow:0 1px 0 var(--line2)}
-.rulerbar[hidden]{display:none}
-.ruler{display:grid;grid-template-columns:var(--label-w) 1fr;will-change:transform}
-.ruler .pad{position:sticky;left:0;z-index:2;background:var(--bg);
-  border-right:1px solid var(--line)}
-.ticks{position:relative;height:32px;background:var(--bg)}
-.tick{position:absolute;top:0;bottom:0;border-left:1px solid var(--line);padding-left:8px;
-  font-size:13px;color:var(--tx);font-variant-numeric:tabular-nums;display:flex;align-items:center;
-  font-weight:700;letter-spacing:-.01em}
-.tick.half{border-left-style:dotted;opacity:.45}
-.trow{display:grid;grid-template-columns:var(--label-w) 1fr;border-top:1px solid var(--line)}
-.trow[hidden]{display:none}
-.slab{position:sticky;left:0;z-index:12;background:var(--bg);border-right:1px solid var(--line);
-  padding:12px 12px 12px 14px;display:flex;flex-direction:column;justify-content:center}
-.stagebtn{display:flex;align-items:center;gap:9px;text-align:left;width:100%;padding:5px 0;
-  border-radius:7px;transition:.14s;min-height:34px}
-.stagebtn:hover .snm{color:var(--cText)}
-.snum{font-size:10px;color:#0a0c10;background:var(--c);border-radius:7px;width:19px;height:19px;
-  display:grid;place-items:center;font-weight:800;flex:none;font-family:var(--disp)}
-.snm{font-family:var(--disp);font-weight:700;font-size:14px;letter-spacing:-.015em;
-  transition:.14s;line-height:1.15}
-.sloc{font-size:11px;color:var(--tx3);margin-top:4px;padding-left:28px;line-height:1.35;
-  display:flex;align-items:flex-start;gap:5px}
-.sloc svg{margin-top:2px;flex:none}
-.sloc button{color:var(--tx3);text-align:left;text-decoration:underline;
-  text-underline-offset:2px;font-size:11px}
-.sloc button:hover{color:var(--cText)}
-.track{position:relative}
+.vcorner{position:sticky;left:0;z-index:22;flex:none;width:var(--gutter);
+  background:var(--bg);border-right:1px solid var(--line)}
+.vstage{flex:none;width:var(--colw);min-width:0;display:flex;align-items:center;gap:8px;
+  padding:11px 10px;border-right:1px solid var(--line);text-align:left;
+  transition:background .14s}
+.vstage:last-child{border-right:none}
+.vstage:hover{background:var(--panel)}
+.vstage:hover .snm{color:var(--cText)}
+.vstage .snm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vstage > svg.i{flex:none;font-size:13px;color:var(--tx3)}
+.vstage:hover > svg.i{color:var(--cText)}
+/* The stage number is a filled chip in that stage's own colour — it is the key
+   to the map pins, so it has to be recognisable at a glance. */
+.snum{flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:7px;
+  background:var(--c);color:#0a0c10;font-size:11px;font-weight:800;font-style:normal;
+  font-variant-numeric:tabular-nums;line-height:1}
+.snm{font-size:13px;font-weight:650;color:var(--tx);font-family:var(--disp);
+  letter-spacing:-.012em}
+.vbody{display:flex;position:relative}
+.vgutter{position:sticky;left:0;z-index:15;flex:none;width:var(--gutter);
+  background:var(--bg);border-right:1px solid var(--line)}
+.vhour{position:absolute;left:0;right:0;padding:0 8px 0 10px;font-size:12px;font-weight:700;
+  color:var(--tx);font-variant-numeric:tabular-nums;transform:translateY(-50%);
+  letter-spacing:-.01em}
+.vhour.half{font-size:10.5px;font-weight:600;color:var(--tx3)}
+.vcol{position:relative;flex:none;width:var(--colw);border-right:1px solid var(--line)}
+.vcol:last-child{border-right:none}
+.vcol[hidden]{display:none}
+.vstage[hidden]{display:none}
 .glines{position:absolute;inset:0;pointer-events:none}
-.glines i{position:absolute;top:0;bottom:0;border-left:1px solid var(--line);opacity:.55}
-.glines i.half{border-left-style:dotted;opacity:.26}
-.blk-act{position:absolute;border-radius:var(--radius);padding:6px 9px;overflow:hidden;
+.glines i{position:absolute;left:0;right:0;border-top:1px solid var(--line);opacity:.55}
+.glines i.half{border-top-style:dotted;opacity:.26}
+.blk-act{position:absolute;border-radius:var(--radius);padding:5px 8px;overflow:hidden;
   border:1px solid var(--c);background:var(--bgc);cursor:pointer;text-align:left;display:block;
   transition:filter .14s,opacity .18s,transform .14s var(--ease),box-shadow .14s}
 .blk-act:hover{filter:brightness(1.3);transform:translateY(-1px);z-index:6}
@@ -536,24 +521,26 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .blk-act .bt{display:block;font-size:10.5px;line-height:1.25;color:var(--cText);
   font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:.015em}
 .blk-act .bn{display:block;font-size:12.5px;font-weight:650;line-height:1.2;margin-top:1px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--disp);
-  letter-spacing:-.012em}
-.blk-act .btags{display:flex;gap:3px;margin-top:4px;overflow:hidden;height:15px}
+  overflow:hidden;font-family:var(--disp);letter-spacing:-.012em}
+.blk-act .btags{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;overflow:hidden}
 .tg{font-size:9.5px;padding:1.5px 6px;border-radius:99px;background:var(--fill2);
   color:var(--tx2);white-space:nowrap;line-height:1.35}
 .tg.ty{background:var(--c);color:#0a0c10;font-weight:750}
+/* A short set has room for a name and nothing else. */
+.blk-act.narrow{padding:3px 7px}
 .blk-act.narrow .btags{display:none}
-.blk-act.narrow .bn{font-size:11px}
-.starbtn{position:absolute;top:3px;right:3px;width:26px;height:26px;border-radius:7px;
-  display:grid;place-items:center;font-size:13px;color:var(--tx3);opacity:0;transition:.14s;
+.blk-act.narrow .bn{font-size:11px;white-space:nowrap;text-overflow:ellipsis}
+.blk-act.tiny .bt{display:none}
+.starbtn{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:7px;
+  display:grid;place-items:center;font-size:12px;color:var(--tx3);opacity:0;transition:.14s;
   background:color-mix(in srgb,var(--bg) 55%,transparent)}
 .blk-act:hover .starbtn{opacity:1}
 .starbtn:hover{background:var(--fill);color:var(--tx);transform:scale(1.08)}
 .blk-act.pick{box-shadow:0 0 0 1.5px var(--c),0 6px 20px -6px var(--c)}
 .blk-act.pick .starbtn{opacity:1;color:var(--c)}
-.nowline{position:absolute;top:0;bottom:0;width:2px;background:var(--live);z-index:9;
+.nowline{position:absolute;left:0;right:0;height:2px;background:var(--live);z-index:9;
   pointer-events:none}
-.nowline::before{content:"NOW";position:absolute;top:-25px;left:-15px;font-size:9px;font-weight:800;
+.nowline::before{content:"NOW";position:absolute;left:2px;top:-8px;font-size:9px;font-weight:800;
   color:#fff;background:var(--live);padding:2px 5px;border-radius:4px;font-family:var(--disp)}
 
 /* ── agenda ───────────────────────────────────────────── */
@@ -928,14 +915,14 @@ footer p{margin:0 0 9px}
   .maplayout{grid-template-columns:1fr}
 }
 @media (max-width:820px){
-  :root{--label-w:100px}
+  :root{--gutter:46px; --colw:148px}
   header{padding:18px 0 16px}
   .brandline{gap:14px}
   .lockup{gap:10px}
   h1{line-height:1.06}
   .meta{font-size:12.5px;gap:5px 18px;line-height:1.7;margin:18px auto 0;max-width:34ch}
   .hdr-links{margin-top:4px}
-  .slab{padding:10px 8px 10px 10px}
+  .vstage{padding:8px 8px}
   .sloc{display:none}
   .snm{font-size:12.5px}
   input[type=search]{width:100%}
@@ -1007,7 +994,7 @@ footer p{margin:0 0 9px}
 @media (hover:none){
   .stagebtn{min-height:44px}
   .starbtn{opacity:1;width:34px;height:34px;font-size:15px;top:2px;right:2px}
-  .blk-act{padding-right:36px}
+  .blk-act{padding-right:30px}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;transition-duration:.01ms!important}
@@ -1209,10 +1196,6 @@ h1{letter-spacing:.01em;line-height:.94}
       <svg class="i"><use href="#i-sliders"/></svg></button>
       <span class="fbadge" id="fBadge" hidden>0</span></span>
     <button class="nowbtn" id="nowBtn"><i></i>Now</button>
-    <span id="zoomWrap" class="zoomwrap">
-      <button class="iconbtn" id="zOut" aria-label="Zoom out"><svg class="i"><use href="#i-minus"/></svg></button>
-      <button class="iconbtn" id="zIn" aria-label="Zoom in"><svg class="i"><use href="#i-plus"/></svg></button>
-    </span>
   </div>
   <div class="filters" id="filters"><div class="wrap"><div class="finner">
     <div class="frow"><span class="flab">Type</span><span class="chipset" id="fType"></span></div>
@@ -1223,7 +1206,6 @@ h1{letter-spacing:.01em;line-height:.94}
   </div></div></div>
   </div>
 <section class="blk" id="secSchedule">
-  <div class="rulerbar" id="rulerBar" hidden><div class="ruler" id="ruler"></div></div>
   <div class="board" id="board" hidden><div class="board-in" id="boardIn"></div></div>
   <div class="agenda" id="agenda" hidden></div>
 </section>
@@ -1494,42 +1476,64 @@ chips($('#fStage'), DATA.stages.map(s => [s.id, s.short, s.acts.length]), state.
       k => DATA.stages.find(s => s.id === k).color);
 
 /* ══ timeline ══════════════════════════════════════════ */
-const LANE = 74, BH = 64;
+/* Pixels per minute. Zoom scales this one number, so a set's height stays
+   honestly proportional to how long it runs at every zoom level. */
+let ppm = 1.9;
+const yOf = m => (m - D0) * ppm;
+
 function buildTimeline() {
-  let r = '<div class="pad"></div><div class="ticks">';
+  const stages = DATA.stages;
+  const bodyH = Math.round(yOf(day.end)) + 16;
+
+  let head = '<div class="vcorner"></div>';
+  stages.forEach(s => {
+    /* The whole cell is the affordance: it takes you to the stage on the map
+       and starts the walking directions, so the address does not need
+       spelling out here as well. */
+    head += `<button class="vstage" data-stage="${s.id}" data-goto="${s.id}" style="${svar(s)}"
+        title="${esc(s.name)} — show on the map">
+      ${s.num ? `<i class="snum">${s.num}</i>` : '<i class="snum">·</i>'}<span class="snm">${esc(s.short)}</span>
+      ${ico('pin')}</button>`;
+  });
+
+  let hours = '';
   for (let m = D0; m <= day.end; m += 30) {
     const full = m % 60 === 0;
-    r += `<div class="tick${full?'':' half'}" style="left:${pct(m)}%">${full?String((m/60|0)%24).padStart(2,'0')+':00':''}</div>`;
+    hours += `<div class="vhour${full ? '' : ' half'}" style="top:${yOf(m)}px">` +
+      `${String((m / 60 | 0) % 24).padStart(2, '0')}:${full ? '00' : '30'}</div>`;
   }
-  $('#ruler').innerHTML = r + '</div>';
 
-  let h = '';
-  DATA.stages.forEach(s => {
-    let gl = '';
-    for (let m = D0; m <= day.end; m += 30)
-      gl += `<i class="${m%60?'half':''}" style="left:${pct(m)}%"></i>`;
+  let gl = '';
+  for (let m = D0; m <= day.end; m += 30)
+    gl += `<i class="${m % 60 ? 'half' : ''}" style="top:${yOf(m)}px"></i>`;
+
+  let cols = '';
+  stages.forEach(s => {
+    const lanes = s.lanes[day.id] || 1;
     const blocks = s.acts.filter(a => a.day === day.id).map(a => {
-      const w = pct(a.em) - pct(a.sm), narrow = (a.em - a.sm) < 45;
+      const h = Math.max(22, yOf(a.em) - yOf(a.sm) - 3);
+      const cls = h < 34 ? ' narrow tiny' : h < 62 ? ' narrow' : '';
       const tags = `<i class="tg ty">${esc(DATA.typeLabels[a.type])}</i>` +
         a.genres.map(g => `<i class="tg">${esc(DATA.genreLabels[g])}</i>`).join('');
-      return `<button class="blk-act${narrow?' narrow':''}${state.route.has(a.key)?' pick':''}"
+      return `<button class="blk-act${cls}${state.route.has(a.key) ? ' pick' : ''}"
         data-key="${esc(a.key)}" title="${esc(a.name)} · ${a.s}–${a.e} · ${esc(s.name)}"
-        style="left:${pct(a.sm)}%;width:calc(${w}% - 4px);top:${a.lane*LANE+6}px;height:${BH}px">
+        style="top:${yOf(a.sm)}px;height:${h}px;
+               left:calc(${a.lane / lanes * 100}% + 3px);
+               width:calc(${100 / lanes}% - 6px)">
         <span class="bt">${a.s}</span><span class="bn">${esc(a.name)}</span>
-        <span class="btags">${tags}</span>${a.nomusic?'':
-        `<span class="starbtn" data-star="${esc(a.key)}" role="button" aria-label="Add to route">
-          <svg class="i${state.route.has(a.key)?' fill':''}"><use href="#i-star"/></svg></span>`}</button>`;
+        <span class="btags">${tags}</span>${a.nomusic ? '' :
+        `<span class="starbtn" data-star="${esc(a.key)}" role="button" aria-label="Add to plan">
+          <svg class="i${state.route.has(a.key) ? ' fill' : ''}"><use href="#i-star"/></svg></span>`}</button>`;
     }).join('');
-    h += `<div class="trow" data-stage="${s.id}" style="${svar(s)}">
-      <div class="slab">
-        <button class="stagebtn" data-goto="${s.id}">
-          ${s.num?`<i class="snum">${s.num}</i>`:'<i class="snum">·</i>'}<span class="snm">${esc(s.short)}</span></button>
-        ${s.location ? `<div class="sloc">${ico('pin')}<button data-goto="${s.id}">${esc(s.location)}</button></div>` : ''}
-      </div>
-      <div class="track" style="height:${(s.lanes[day.id]||1)*LANE+12}px">
-        <div class="glines">${gl}</div>${blocks}</div></div>`;
+    cols += `<div class="vcol" data-stage="${s.id}" style="${svar(s)}">
+      <div class="glines">${gl}</div>${blocks}</div>`;
   });
-  $('#boardIn').innerHTML = h;
+
+  $('#boardIn').innerHTML =
+    `<div class="vhead">${head}</div>
+     <div class="vbody" style="height:${bodyH}px">
+       <div class="vgutter">${hours}</div>${cols}
+     </div>`;
   addNowLine($('#boardIn'));
   $('#boardIn').querySelectorAll('.blk-act').forEach(b => b.onclick = e => {
     const st = e.target.closest('[data-star]');
@@ -1557,9 +1561,9 @@ const LIVE_PILL = '<span class="live"><i></i>LIVE</span>';
 function addNowLine(root) {
   const m = nowMinutes();
   if (m == null) return;
-  root.querySelectorAll('.track').forEach(t => {
+  root.querySelectorAll('.vcol').forEach(c => {
     const d = document.createElement('div');
-    d.className = 'nowline'; d.style.left = pct(m) + '%'; t.appendChild(d);
+    d.className = 'nowline'; d.style.top = yOf(m) + 'px'; c.appendChild(d);
   });
 }
 
@@ -1586,7 +1590,7 @@ function markLive() {
       if (has && !on) has.remove();
     }
   });
-  document.querySelectorAll('.nowline').forEach(l => { if (m != null) l.style.left = pct(m) + '%'; });
+  document.querySelectorAll('.nowline').forEach(l => { if (m != null) l.style.top = yOf(m) + 'px'; });
   const hr = m == null ? null : Math.floor(m / 60);
   document.querySelectorAll('.ahour').forEach(hd => {
     const on = hd.dataset.hour === String(hr);
@@ -1605,10 +1609,12 @@ function scrollToNow(smooth) {
     const el = $(`.ahour[data-hour="${hr}"]`);
     if (el) scrollToSection('#' + el.id, behavior);
   } else {
+    /* Time is the vertical axis now, so "go to now" scrolls the board down and
+       leaves a little of the preceding hour visible for context. */
     const b = $('#board');
-    const labelW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--label-w'));
-    const trackW = b.scrollWidth - labelW;
-    b.scrollTo({left: Math.max(0, labelW + pct(m) / 100 * trackW - b.clientWidth * 0.35), behavior});
+    const head = b.querySelector('.vhead');
+    const headH = head ? head.getBoundingClientRect().height : 0;
+    b.scrollTo({top: Math.max(0, yOf(m) - b.clientHeight * 0.3 + headH), behavior});
     scrollToSection('#secSchedule', behavior);
   }
   setActiveNav('nSched');
@@ -1659,7 +1665,6 @@ function setView(v, byUser) {
   document.body.dataset.view = v;      // drives the desktop deck layout
   if (byUser) Store.set('viewPinned', '1');
   $('#board').hidden = v !== 'timeline';
-  $('#rulerBar').hidden = v !== 'timeline';
   $('#agenda').hidden = v !== 'agenda';
   $('#vTimeline').setAttribute('aria-pressed', v === 'timeline');
   $('#vAgenda').setAttribute('aria-pressed', v === 'agenda');
@@ -1674,7 +1679,7 @@ function setDay(id) {
   allActs = everyAct.filter(a => a.day === day.id);
   $('#dayBar').querySelectorAll('[data-day]').forEach(b =>
     b.setAttribute('aria-pressed', b.dataset.day === day.id));
-  buildTimeline(); buildAgenda(); setZoom(pph);
+  buildTimeline(); buildAgenda();
   renderRoute(); apply(); markLive();
   Store.set('day', day.id);
 }
@@ -1702,20 +1707,57 @@ function applyBreakpointDefaults() {
 }
 matchMedia('(max-width:820px)').addEventListener('change', applyBreakpointDefaults);
 
-let pph = 190;
+
+/* Zoom stretches the time axis. Rebuilding is cheap and keeps every block,
+   grid line and hour label in agreement rather than scaling them separately. */
 const setZoom = v => {
-  pph = Math.max(90, Math.min(420, v));
-  const w = `calc(var(--label-w) + ${Math.round(pph*10)}px)`;
-  $('#boardIn').style.width = w;
-  $('#ruler').style.width = w;
-  syncRuler();
+  const next = Math.max(0.9, Math.min(6, v));
+  if (Math.abs(next - ppm) < 0.001) return;
+  const b = $('#board');
+  const anchor = b ? (b.scrollTop / Math.max(1, ppm)) : 0;
+  ppm = next;
+  buildTimeline();
+  markLive();
+  if (b) b.scrollTop = anchor * ppm;
 };
-function syncRuler() {
-  $('#ruler').style.transform = `translateX(${-$('#board').scrollLeft}px)`;
-}
-$('#board').addEventListener('scroll', syncRuler, {passive:true});
-$('#zIn').onclick = () => setZoom(pph * 1.3);
-$('#zOut').onclick = () => setZoom(pph / 1.3);
+/* Pinch on the board stretches the time axis, and a trackpad pinch (which the
+   browser reports as ctrl+wheel) does the same on a laptop. Rebuilding on each
+   frame keeps the type crisp, where scaling the whole grid would blur it. */
+(() => {
+  const board = $('#board');
+  if (!board) return;
+  const gap = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  let start = null, queued = false, want = ppm;
+
+  const commit = () => {
+    queued = false;
+    setZoom(want);
+  };
+  const ask = v => {
+    want = v;
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(commit);
+  };
+
+  board.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) start = {d: gap(e.touches), ppm: ppm};
+  }, {passive: true});
+  board.addEventListener('touchmove', e => {
+    if (!start || e.touches.length !== 2) return;
+    e.preventDefault();
+    ask(start.ppm * (gap(e.touches) / start.d));
+  }, {passive: false});
+  const end = () => { start = null; };
+  board.addEventListener('touchend', end, {passive: true});
+  board.addEventListener('touchcancel', end, {passive: true});
+
+  board.addEventListener('wheel', e => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    ask(ppm * (1 - e.deltaY * 0.01));
+  }, {passive: false});
+})();
 
 /* ══ filtering ═════════════════════════════════════════ */
 function matches(a) {
@@ -1742,8 +1784,9 @@ function apply() {
     if (row) row.hidden = active && !ok;
   });
   DATA.stages.forEach(s => {
-    const r = $(`.trow[data-stage="${s.id}"]`);
-    if (r) r.hidden = active && !perStage[s.id];
+    const off = active && !perStage[s.id];
+    document.querySelectorAll(`.vcol[data-stage="${s.id}"],.vstage[data-stage="${s.id}"]`)
+      .forEach(el => { el.hidden = off; });
   });
   $('#agenda').querySelectorAll('.ahsec').forEach(sec =>
     sec.hidden = !sec.querySelector('.arow:not([hidden])'));
@@ -2653,7 +2696,7 @@ if (savedDay && DAYS.some(d => d.id === savedDay)) {
 }
 if (DATA.hasPoster) $('#layPoster').hidden = false;
 buildDayBar();
-buildTimeline(); buildAgenda(); buildMap(); measureTop(); setZoom(190); applyMapT();
+buildTimeline(); buildAgenda(); buildMap(); measureTop(); applyMapT();
 const pinned = Store.get('viewPinned') && Store.get('view');
 if (pinned) setView(pinned); else applyBreakpointDefaults();
 $('#fToggle').setAttribute('aria-pressed', 'false');   // drawer starts closed
