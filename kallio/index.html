@@ -330,6 +330,12 @@ input[type=search]::placeholder{color:var(--tx3)}
 section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 10px)}
 .shead{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .shead h2{margin:0;font-family:var(--disp);font-size:19px;letter-spacing:-.02em;font-weight:700}
+/* The plan is worth naming: a route copied or screenshotted out of here should
+   say which festival it belongs to. Set in the festival's own display face, so
+   it reads as that festival's rather than as the site's chrome. */
+.festname{display:block;font-family:var(--title);font-weight:400;font-size:26px;
+  line-height:1.05;letter-spacing:.01em;text-transform:uppercase;color:var(--tx);
+  margin-bottom:3px}
 .shead p{margin:0;color:var(--tx3);font-size:12.5px}
 .shead .tspacer{flex:1}
 
@@ -1053,7 +1059,8 @@ footer p{margin:0 0 9px}
 
 <section class="blk" id="secRoute">
   <div class="shead">
-    <h2>My route <span id="routeCount" style="color:var(--tx3);font-weight:500"></span></h2>
+    <h2><span class="festname">Kallio Block Party</span> My plan
+      <span id="routeCount" style="color:var(--tx3);font-weight:500"></span></h2>
     <p>Overlaps and tight walks are flagged.</p>
   </div>
   <div class="routebox">
