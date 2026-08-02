@@ -1,7 +1,15 @@
 # Kallio Block Party 2026 — stage planner
 
-An unofficial planner for the 1 Aug 2026 street festival in Alppila, Helsinki.
-Live at **https://uenian33.github.io/kallioblockpartyplanner/**
+Unofficial festival planners built from one engine.
+
+| Festival | Live | Source |
+|---|---|---|
+| Kallio Block Party, 1 Aug 2026 | <https://uenian33.github.io/kallioblockpartyplanner/> | `index.html` |
+| Flow Festival, 14–16 Aug 2026 | <https://uenian33.github.io/kallioblockpartyplanner/flow/> | `flow/index.html` |
+
+Both share `scripts/template.html`; each festival supplies its own data, palette
+and assets. The template is day-aware, so a one-day festival hides the day
+switcher and a three-day one shows it.
 
 One self-contained page: font, both basemaps, the official map, the logo and every
 artwork are inlined as data URIs, so it works with no signal once loaded. Picks are
@@ -16,8 +24,30 @@ Not affiliated with the organisers. Corrections welcome: wenyany94@gmail.com
 processing it. Rebuild and push:
 
 ```bash
-python3 scripts/build.py && git commit -am "Update" && git push
+python3 scripts/build.py        # Kallio Block Party  -> index.html
+python3 scripts/build_flow.py   # Flow Festival       -> flow/index.html
+git commit -am "Update" && git push
 ```
+
+## Flow data pipeline
+
+Flow publishes a server-rendered timetable and a page per artist, so nothing is
+transcribed by hand:
+
+| Script | What it does |
+|---|---|
+| `flow_schedule.py` | Scrapes the three-day timetable (156 sets, 10 stages). |
+| `flow_artists.py` | Pulls each act's Spotify/YouTube/Instagram link, portrait and blurb. |
+| `flow_images.py` | Square-crops the portraits. |
+| `flow_maps.py` | Builds the Suvilahti street, light and satellite basemaps. |
+| `flow_build_data.py` | Assembles `data/flow/acts.json`, deriving genres from the blurbs. |
+
+Sets after midnight belong to the previous festival day — a 00:00 start billed
+on Friday is minute 1440 of Friday, not minute 0 of a new day.
+
+Flow's stage pins are approximate: no 2026 area map has been published, and only
+Tiivistämö is confirmed (from OpenStreetMap). Use `tools/calibrate-flow.html`
+to correct them, then paste the coordinates into `COORD` in `flow_build_data.py`.
 
 - **`index.html`** — the planner. Timetable and list views, filters, artist cards
   with artwork and streaming links, a live map with stage pins, and a route planner.

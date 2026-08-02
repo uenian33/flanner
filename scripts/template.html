@@ -168,6 +168,14 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
   font-size:13px;font-weight:600;padding:7px 13px;border-radius:8px;color:var(--tx3);
   transition:.16s var(--ease);min-height:38px}
 .tbar2{padding-top:0}
+.daybar{flex:1 1 auto}
+.daybar .dshort{display:none}
+@media(max-width:700px){
+  .tbar2{flex-wrap:wrap}
+  .daybar{flex:1 1 100%;margin-bottom:8px}
+  .daybar .dlong{display:none}
+  .daybar .dshort{display:inline}
+}
 /* the view switch only means something over the schedule itself */
 body.sched-off .tbar2{display:none}
 .zoomwrap{display:inline-flex;gap:6px;flex:none}
@@ -481,6 +489,9 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 10px)}
 .ri{display:grid;grid-template-columns:74px 1fr auto;gap:12px;align-items:center;padding:11px 0;
   border-top:1px solid var(--line)}
 .ri:first-child{border-top:none}
+.rday{font-family:var(--disp);font-size:12px;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--tx3);padding:14px 0 6px;border-top:1px solid var(--line)}
+.rday:first-child{border-top:none;padding-top:2px}
 .ri .tm{font-size:12px;color:var(--tx2);font-variant-numeric:tabular-nums;font-weight:650}
 .ri .nm{font-family:var(--disp);font-size:14px;font-weight:650;letter-spacing:-.012em;
   text-align:left;padding:2px 0;color:var(--tx)}
@@ -771,6 +782,7 @@ footer p{margin:0 0 9px}
   .toolbar,.filters,.mnav,.ract,.mapctl,.maplayers,.starbtn{display:none!important}
   body{background:#fff;color:#000}
 }
+__THEME__
 </style>
 </head>
 <body data-sec="nSched">
@@ -883,6 +895,7 @@ footer p{margin:0 0 9px}
       <span class="fbadge" id="fBadge" hidden>0</span></span>
   </div>
   <div class="tbar tbar2">
+    <div class="seg daybar" id="dayBar" role="group" aria-label="Festival day" hidden></div>
     <div class="seg" role="group" aria-label="Schedule view">
       <button id="vTimeline" aria-pressed="false"><svg class="i"><use href="#i-cols"/></svg>Timetable</button>
       <button id="vAgenda" aria-pressed="false"><svg class="i"><use href="#i-rows"/></svg>List</button>
@@ -930,7 +943,7 @@ footer p{margin:0 0 9px}
         <div class="maplayers" role="group" aria-label="Map layer">
           <button id="layStreet" aria-pressed="true">Street</button>
           <button id="laySat" aria-pressed="false">Satellite</button>
-          <button id="layPoster" aria-pressed="false">Official</button>
+          <button id="layPoster" aria-pressed="false" hidden>Official</button>
         </div>
         <div class="mapattr" id="mapAttr">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a></div>
         <div class="mapctl">
@@ -976,6 +989,7 @@ footer p{margin:0 0 9px}
   own map.</p>
   <p><button class="linkbtn" id="privacyBtn">Cookies &amp; privacy</button> ·
   <span id="storeState"></span></p>
+  __SIBLING__
   <p>An unofficial planner, not affiliated with the organisers. Corrections and requests
   welcome — <a href="mailto:wenyany94@gmail.com?subject=Kallio%20Block%20Party%20Planner">wenyany94@gmail.com</a>.</p>
 </footer>
@@ -1007,7 +1021,10 @@ footer p{margin:0 0 9px}
 <script>
 const DATA = __DATA__;
 const ART = __ART__;
-const D0 = DATA.dayStart, DSPAN = DATA.dayEnd - D0, B = DATA.basemap;
+const B = DATA.basemap;
+const DAYS = DATA.days;
+let day = DAYS[0];                       // active festival day
+let D0 = day.start, DSPAN = day.end - day.start;
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pct = m => (m - D0) / DSPAN * 100;
@@ -1015,12 +1032,15 @@ const ico = n => `<svg class="i"><use href="#i-${n}"/></svg>`;
 const isTouch = matchMedia('(hover:none)').matches;
 const narrowVP = () => matchMedia('(max-width:820px)').matches;
 
-const allActs = [];
+const everyAct = [];
 DATA.stages.forEach(s => s.acts.forEach(a => {
-  a.stage = s; a.key = s.id + '|' + a.q + '|' + a.s; allActs.push(a);
+  a.stage = s; a.key = s.id + '|' + a.day + '|' + a.q + '|' + a.s; everyAct.push(a);
 }));
-allActs.sort((x, y) => x.sm - y.sm);
-$('#statActs').textContent = allActs.length;
+everyAct.sort((x, y) => x.sm - y.sm);
+/* Only the active day is rendered; the route may still span the whole weekend. */
+let allActs = everyAct.filter(a => a.day === day.id);
+const actByKey = k => everyAct.find(a => a.key === k);
+$('#statActs').textContent = everyAct.length;
 
 
 /* ══ storage & consent ═════════════════════════════════
@@ -1030,7 +1050,7 @@ $('#statActs').textContent = allActs.length;
    file:// URLs, so localStorage is the fallback for the offline copy. */
 const Store = (() => {
   const NS = 'kbp26';
-  const KEYS = ['route', 'view', 'viewPinned', 'theme'];
+  const KEYS = ['route', 'view', 'viewPinned', 'theme', 'day'];
   const YEAR = 60 * 60 * 24 * 400;
   let granted = false, mem = {};
 
@@ -1095,11 +1115,11 @@ const Store = (() => {
 /* The route is stored as indices into the act list rather than names, so a full
    day of picks stays comfortably inside one cookie. */
 const routeToStore = keys => 'v1:' + keys
-  .map(k => allActs.findIndex(a => a.key === k)).filter(i => i >= 0).join(',');
+  .map(k => everyAct.findIndex(a => a.key === k)).filter(i => i >= 0).join(',');
 const routeFromStore = raw => {
   if (!raw) return [];
   if (raw.indexOf('v1:') === 0) return raw.slice(3).split(',').filter(Boolean)
-    .map(n => allActs[+n]).filter(Boolean).map(a => a.key);
+    .map(n => everyAct[+n]).filter(Boolean).map(a => a.key);
   try { return JSON.parse(raw); } catch (e) { return []; }
 };
 
@@ -1136,18 +1156,18 @@ chips($('#fStage'), DATA.stages.map(s => [s.id, s.short, s.acts.length]), state.
 const LANE = 74, BH = 64;
 function buildTimeline() {
   let r = '<div class="pad"></div><div class="ticks">';
-  for (let m = D0; m <= DATA.dayEnd; m += 30) {
+  for (let m = D0; m <= day.end; m += 30) {
     const full = m % 60 === 0;
-    r += `<div class="tick${full?'':' half'}" style="left:${pct(m)}%">${full?String(m/60|0).padStart(2,'0')+':00':''}</div>`;
+    r += `<div class="tick${full?'':' half'}" style="left:${pct(m)}%">${full?String((m/60|0)%24).padStart(2,'0')+':00':''}</div>`;
   }
   $('#ruler').innerHTML = r + '</div>';
 
   let h = '';
   DATA.stages.forEach(s => {
     let gl = '';
-    for (let m = D0; m <= DATA.dayEnd; m += 30)
+    for (let m = D0; m <= day.end; m += 30)
       gl += `<i class="${m%60?'half':''}" style="left:${pct(m)}%"></i>`;
-    const blocks = s.acts.map(a => {
+    const blocks = s.acts.filter(a => a.day === day.id).map(a => {
       const w = pct(a.em) - pct(a.sm), narrow = (a.em - a.sm) < 45;
       const tags = `<i class="tg ty">${esc(DATA.typeLabels[a.type])}</i>` +
         a.genres.map(g => `<i class="tg">${esc(DATA.genreLabels[g])}</i>`).join('');
@@ -1163,9 +1183,9 @@ function buildTimeline() {
       <div class="slab">
         <button class="stagebtn" data-goto="${s.id}">
           ${s.num?`<i class="snum">${s.num}</i>`:'<i class="snum">·</i>'}<span class="snm">${esc(s.short)}</span></button>
-        <div class="sloc">${ico('pin')}<button data-goto="${s.id}">${esc(s.location)}</button></div>
+        ${s.location ? `<div class="sloc">${ico('pin')}<button data-goto="${s.id}">${esc(s.location)}</button></div>` : ''}
       </div>
-      <div class="track" style="height:${s.lanes*LANE+12}px">
+      <div class="track" style="height:${(s.lanes[day.id]||1)*LANE+12}px">
         <div class="glines">${gl}</div>${blocks}</div></div>`;
   });
   $('#boardIn').innerHTML = h;
@@ -1180,10 +1200,16 @@ function buildTimeline() {
    otherwise null, so every live affordance has a single source of truth. */
 function nowMinutes() {
   const n = new Date();
-  const [y, mo, d] = DATA.event.date.split('-').map(Number);
-  if (n.getFullYear() !== y || n.getMonth() !== mo - 1 || n.getDate() !== d) return null;
-  const m = n.getHours() * 60 + n.getMinutes();
-  return (m >= D0 && m <= DATA.dayEnd) ? m : null;
+  const [y, mo, d] = (day.date || '').split('-').map(Number);
+  if (!y) return null;
+  let m = n.getHours() * 60 + n.getMinutes();
+  const sameDay = n.getFullYear() === y && n.getMonth() === mo - 1 && n.getDate() === d;
+  // a day that runs past midnight is still "today" until it ends
+  const nextDay = new Date(y, mo - 1, d + 1);
+  const isNext = n.getFullYear() === nextDay.getFullYear() &&
+                 n.getMonth() === nextDay.getMonth() && n.getDate() === nextDay.getDate();
+  if (isNext) m += 1440; else if (!sameDay) return null;
+  return (m >= D0 && m <= day.end) ? m : null;
 }
 const LIVE_PILL = '<span class="live"><i></i>LIVE</span>';
 
@@ -1234,7 +1260,7 @@ function scrollToNow(smooth) {
   if (m == null) return false;
   const behavior = smooth ? 'smooth' : 'auto';
   if (state.view === 'agenda') {
-    const hr = Math.min(Math.floor(DATA.dayEnd / 60) - 1, Math.floor(m / 60));
+    const hr = Math.min(Math.floor(day.end / 60) - 1, Math.floor(m / 60));
     const el = $(`.ahour[data-hour="${hr}"]`);
     if (el) el.scrollIntoView({behavior, block: 'start'});
   } else {
@@ -1259,7 +1285,7 @@ function buildAgenda() {
       lastHour = hr;
       const n = allActs.filter(x => Math.floor(x.sm/60) === hr).length;
       h += `<section class="ahsec" data-sec="${hr}">
-        <div class="ahour" data-hour="${hr}"><b>${String(hr).padStart(2,'0')}:00</b>
+        <div class="ahour" data-hour="${hr}"><b>${String(hr%24).padStart(2,'0')}:00</b>
         <span class="hcount">${n} start${n>1?'s':''}</span><span class="hlive"></span><hr></div>`;
     }
     const s = a.stage;
@@ -1301,6 +1327,28 @@ function setView(v, byUser) {
   apply();
   if (typeof markLive === 'function') markLive();
 }
+function setDay(id) {
+  if (id === day.id) return;
+  day = DAYS.find(d => d.id === id) || DAYS[0];
+  D0 = day.start; DSPAN = day.end - day.start;
+  allActs = everyAct.filter(a => a.day === day.id);
+  $('#dayBar').querySelectorAll('[data-day]').forEach(b =>
+    b.setAttribute('aria-pressed', b.dataset.day === day.id));
+  buildTimeline(); buildAgenda(); setZoom(pph);
+  renderRoute(); apply(); markLive();
+  Store.set('day', day.id);
+}
+function buildDayBar() {
+  const bar = $('#dayBar');
+  if (DAYS.length < 2) { bar.hidden = true; return; }
+  bar.hidden = false;
+  bar.innerHTML = DAYS.map(d =>
+    `<button data-day="${esc(d.id)}" aria-pressed="${d.id === day.id}">
+       <span class="dlong">${esc(d.label)}</span><span class="dshort">${esc(d.short || d.label)}</span>
+     </button>`).join('');
+  bar.querySelectorAll('[data-day]').forEach(b => b.onclick = () => setDay(b.dataset.day));
+}
+
 $('#vTimeline').onclick = () => setView('timeline', true);
 $('#vAgenda').onclick = () => setView('agenda', true);
 
@@ -1425,7 +1473,7 @@ const dlg = $('#card');
 let cardKey = null, cardSeq = 0;   // cardSeq invalidates a pending close
 
 function openCard(key) {
-  const a = allActs.find(x => x.key === key); if (!a) return;
+  const a = actByKey(key); if (!a) return;
   cardKey = key;
   const s = a.stage, art = ART[a.q];
   const links = [];
@@ -1453,7 +1501,7 @@ function openCard(key) {
       <button class="cstagerow" data-goto="${s.id}">
         <span class="csnum">${s.num || '·'}</span>
         <span class="csbody"><span class="csname">${esc(s.name)}</span>
-          <span class="cswhere">${esc(s.location)}</span></span>
+          ${s.location ? `<span class="cswhere">${esc(s.location)}</span>` : ''}</span>
         <span class="csgo">${ico('pin')}Map</span></button>
       <div class="gacts" style="margin-top:11px">
         <a class="gbtn" href="${gWalk(s)}" target="_blank" rel="noopener">${ico('nav')}Walk here</a>
@@ -1861,7 +1909,7 @@ function toggleRoute(key, quiet) {
   syncOne(key);
   renderRoute();
   if (!quiet) {
-    const a = allActs.find(x => x.key === key);
+    const a = actByKey(key);
     lastToggle = key;
     showToast(`${on ? 'Added' : 'Removed'} <b>${esc(a.name)}</b> · ${state.route.size} in route`);
   }
@@ -1892,7 +1940,9 @@ $('#toastUndo').onclick = () => {
   if (lastToggle) toggleRoute(lastToggle, true);
   $('#toast').classList.remove('on');
 };
-const routeActs = () => allActs.filter(a => state.route.has(a.key)).sort((x,y) => x.sm - y.sm || x.em - y.em);
+const dayIndex = id => DAYS.findIndex(d => d.id === id);
+const routeActs = () => everyAct.filter(a => state.route.has(a.key))
+  .sort((x, y) => dayIndex(x.day) - dayIndex(y.day) || x.sm - y.sm || x.em - y.em);
 function renderRoute() {
   const r = routeActs(), n = r.length;
   $('#routeCount').textContent = n ? `· ${n} picked` : '';
@@ -1903,10 +1953,14 @@ function renderRoute() {
       Tap the ${'★'} on any act — or start from one of the presets below.</div>`;
     return;
   }
-  let h = '';
+  let h = '', lastDay = null;
   r.forEach((a, i) => {
-    const prev = r[i-1], clash = prev && a.sm < prev.em;
-    if (prev && !clash && prev.stage.id !== a.stage.id) {
+    const prev = r[i-1], clash = prev && prev.day === a.day && a.sm < prev.em;
+    if (DAYS.length > 1 && a.day !== lastDay) {
+      lastDay = a.day;
+      h += `<div class="rday">${esc((DAYS.find(d => d.id === a.day) || {}).label || '')}</div>`;
+    }
+    if (prev && prev.day === a.day && !clash && prev.stage.id !== a.stage.id) {
       const gap = a.sm - prev.em;
       h += `<div class="move${gap<10?' tight':''}">${ico('walk')} ${esc(prev.stage.short)} →
         ${esc(a.stage.short)} · ${gap} min${gap<10?' — tight':''}</div>`;
@@ -1957,8 +2011,8 @@ function everyStageOnce() {
   return best.map(a => a.key);
 }
 $('#pTour').onclick = () => setRoute(everyStageOnce());
-$('#pLive').onclick = () => setRoute(allActs.filter(a => a.stage.id === 'alive').map(a => a.key));
-$('#pRap').onclick = () => setRoute(allActs.filter(a => a.stage.id === 'rap' && !a.nomusic).map(a => a.key));
+$('#pLive').onclick = () => setRoute(allActs.filter(a => a.stage.id === (DATA.presets?.live || 'alive')).map(a => a.key));
+$('#pRap').onclick = () => setRoute(allActs.filter(a => a.stage.id === (DATA.presets?.second || 'rap') && !a.nomusic).map(a => a.key));
 $('#rClear').onclick = () => { [...state.route].forEach(k => toggleRoute(k, true)); renderRoute();
   showToast('Route cleared'); };
 $('#rCopy').onclick = () => {
@@ -2126,6 +2180,14 @@ addEventListener('resize', measureTop);
 const consentAnswer = Store.readConsent();
 routeFromStore(Store.get('route')).forEach(k => state.route.add(k));
 
+const savedDay = Store.get('day');
+if (savedDay && DAYS.some(d => d.id === savedDay)) {
+  day = DAYS.find(d => d.id === savedDay);
+  D0 = day.start; DSPAN = day.end - day.start;
+  allActs = everyAct.filter(a => a.day === day.id);
+}
+if (DATA.hasPoster) $('#layPoster').hidden = false;
+buildDayBar();
 buildTimeline(); buildAgenda(); buildMap(); measureTop(); setZoom(190); applyMapT();
 const pinned = Store.get('viewPinned') && Store.get('view');
 if (pinned) setView(pinned); else applyBreakpointDefaults();

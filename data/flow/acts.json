@@ -1,0 +1,3333 @@
+{
+ "event": {
+  "name": "Flow Festival 2026",
+  "city": "Suvilahti, Helsinki",
+  "site": "https://www.flowfestival.com/en/"
+ },
+ "days": [
+  {
+   "id": "fri",
+   "label": "Fri 14 Aug",
+   "short": "Fri",
+   "date": "2026-08-14",
+   "start": 900,
+   "end": 1500
+  },
+  {
+   "id": "sat",
+   "label": "Sat 15 Aug",
+   "short": "Sat",
+   "date": "2026-08-15",
+   "start": 840,
+   "end": 1500
+  },
+  {
+   "id": "sun",
+   "label": "Sun 16 Aug",
+   "short": "Sun",
+   "date": "2026-08-16",
+   "start": 780,
+   "end": 1380
+  }
+ ],
+ "stages": [
+  {
+   "id": "main",
+   "num": 1,
+   "name": "Main Stage",
+   "lat": 60.18618,
+   "lon": 24.97258,
+   "short": "Main Stage",
+   "location": "",
+   "blurb": "The big one, by the gasholders. Headliners and the largest crowds.",
+   "color": "#fff203",
+   "acts": [
+    {
+     "n": "Emilia Sisco & The Northern Lights",
+     "day": "fri",
+     "s": "15:45",
+     "e": "16:45",
+     "sm": 945,
+     "em": 1005,
+     "slug": "emilia-sisco-the-northern-lights",
+     "type": "live",
+     "genres": [
+      "pop"
+     ],
+     "note": "Sisco’s music is not a retro exercise. She writes songs where old-school warmth, gospel-rooted weight and Finnish melancholy share the same space. Timmion’s recognisable analogue aesthetic is evident in the sound, but Sisco does not rely solely on style. Her songs carry a sense of longing, restrained force and melodies that linger without grand gestures.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/4RE2veIqf9YBlKqVTDKpV4",
+      "instagram": "https://www.instagram.com/emiliasiscoofficial"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/emilia-sisco-flow-website-portrait-1-768x960.jpg"
+    },
+    {
+     "n": "ibe",
+     "day": "fri",
+     "s": "18:15",
+     "e": "19:15",
+     "sm": 1095,
+     "em": 1155,
+     "slug": "ibe",
+     "type": "live",
+     "genres": [
+      "rap"
+     ],
+     "note": "Ibe is one of the most significant innovators in Finnish music over the past decade. Often described as the voice of his generation, he has built his career deliberately: appearing rarely, but with lasting impact. His songs are personal, open and occasionally unpredictable. They are like diary entries where private experience becomes something shared. At the 2024 Emma Gala, ibe received the award for Rap Album of the Year, but more important than accolades have been his role as a mirror for his audience.  ",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2Pn8JMNrnRnSpNRPPgtiWA",
+      "youtube": "https://www.youtube.com/@ibe1999",
+      "instagram": "https://www.instagram.com/ibe1999"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/12/ibe-kalle-nieminen-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "MARINA",
+     "day": "fri",
+     "s": "20:45",
+     "e": "21:45",
+     "sm": 1245,
+     "em": 1305,
+     "slug": "marina",
+     "type": "live",
+     "genres": [
+      "latin"
+     ],
+     "note": "MARINA returned in 2025, transformed on PRINCESS OF POWER — a euphoric, high-energy exploration of healing, empowerment, and self-reclamation. Written during a period of deep personal reflection, the album marks a turning point for the platinum-selling artist. Where 2021’s Ancient Dreams in a Modern Land looked outward at a fractured world, PRINCESS OF POWER turns inward, embracing vulnerability as strength, turning pain into power and the radical optimism of love.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6CwfuxIqcltXDGjfZsMd9A",
+      "youtube": "https://www.youtube.com/@marinadiamandis",
+      "instagram": "https://www.instagram.com/marinadiamandis"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/marina-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Zara Larsson",
+     "day": "fri",
+     "s": "22:45",
+     "e": "00:00",
+     "sm": 1365,
+     "em": 1440,
+     "slug": "zara-larsson",
+     "type": "live",
+     "genres": [
+      "pop",
+      "world"
+     ],
+     "note": "Raised in Solna near Stockholm, Zara Larsson is one of Sweden’s most internationally successful pop artists of the past decade. While her latest album, Midnight Sun , cemented her status as a global superstar, that ascent had been years in the making. Larsson belongs to the generation that emerged through YouTube and talent competitions, yet built a career far more enduring than the format itself ever promised. She knows the rules of mainstream pop and how to bend them.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1Xylc3o4UrD53lo9CvFvVg",
+      "instagram": "https://www.instagram.com/zaralarsson"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/zara-larsson-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Arthur Verocai with AUKSO Orchestra",
+     "day": "sat",
+     "s": "15:30",
+     "e": "16:30",
+     "sm": 930,
+     "em": 990,
+     "slug": "arthur-verocai-with-aukso-orchestra",
+     "type": "band",
+     "genres": [
+      "electronic",
+      "classical",
+      "rap"
+     ],
+     "note": "Then came the long, deserved return. In the mid-2000s, the album resurfaced as producers and hip-hop sampling culture pulled its harmonies and textures back into circulation, and it finally received the acclaim it always deserved. Verocai re-emerged in 2016 with No Voo do Urubu , and his influence kept expanding through high-profile modern collaborations, touching worlds as different as BadBadNotGood, Hiatus Kaiyote, and Marisa Monte, as well as work connected to Tyler, the Creator and a Louis Vuitton show honouring Virgil Abloh.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1tP3R35TdPW8BMwmTPOoVZ",
+      "instagram": "https://www.instagram.com/arthurverocai_"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/02/arthur-verocai-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Olga",
+     "day": "sat",
+     "s": "18:00",
+     "e": "19:00",
+     "sm": 1080,
+     "em": 1140,
+     "slug": "olga",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "pop",
+      "latin"
+     ],
+     "note": "Olga quickly rose to the front of Finnish pop music in spring 2024, streaming platinum with her first two songs, Uus bitch and Stadi , the latter featuring Isac Elliot. Her acclaimed debut album, Saint Olga, was released in May 2025, and during the year, she also performed at festivals and toured the country. Olga makes bold and multifaceted electronic pop that works in clubs as well as in intimate home listening. Her artistic identity is confident and flamboyant, yet dreamy and sensitive, and she is inspired by the boundless digital world as well as a deep connection to nature.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/5lrrAnWHek9LEQgB3MCfub",
+      "instagram": "https://www.instagram.com/_saintolga"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/12/olga-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Turnstile",
+     "day": "sat",
+     "s": "20:30",
+     "e": "21:30",
+     "sm": 1230,
+     "em": 1290,
+     "slug": "turnstile",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "rock",
+      "punk"
+     ],
+     "note": "Glow On (2021) was the album that stopped the rock world in its tracks and established Turnstile as one of the most important forces of the 2020s. It wasn’t just acclaimed by critics; it pulled entirely different audiences into the same current — hardcore devotees, indie listeners, fans of electronic music and followers of mainstream rock. Turnstile managed something that had felt impossible for years: bringing back a kind of simplicity to rock, a directness that feels both immediate and radical.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2qnpHrOzdmOo1S4ox3j17x",
+      "instagram": "https://www.instagram.com/turnstileluvconnection"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_Turnstile_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Florence + The Machine",
+     "day": "sat",
+     "s": "22:30",
+     "e": "00:00",
+     "sm": 1350,
+     "em": 1440,
+     "slug": "florence-the-machine",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "pop"
+     ],
+     "note": "Released in October 2025, Everybody Scream marked a new chapter for Florence + The Machine. The album grew from two years of work with three influential contemporary collaborators: Mark Bowen of Idles, producer and composer Aaron Dessner of The National, and American pop artist Mitski. Their perspectives fed into a record that dives into symbolism, bodily memory, fear and recovery — themes that have long shaped Welch’s writing, but here approached with a sharper physicality and stripped-back intensity.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1moxjboGR7GNWYIMWsRjgG",
+      "instagram": "https://www.instagram.com/florenceandthemachine"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/florence-and-the-machine-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Aili Järvelä: VUORI",
+     "day": "sun",
+     "s": "14:30",
+     "e": "15:30",
+     "sm": 870,
+     "em": 930,
+     "slug": "aili-jarvela-vuori",
+     "type": "live",
+     "genres": [
+      "classical",
+      "pop"
+     ],
+     "note": "On Vuori, Järvelä composed, wrote, arranged and produced the entire album herself, drawing together pop, singer-songwriter writing and orchestral sound with unusual precision. At Flow, the work will be performed in full by Aili Järvelä, harpist Laura Hynninen , percussionist Sami Koskela , the Ostrobothnian Chamber Orchestra and conductor Kaapo Ijas .",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6r1mVyGnnq60IThQV3Is8j",
+      "youtube": "https://www.youtube.com/@aili_jarvela",
+      "instagram": "https://www.instagram.com/ailieelin"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/aili-jarvela-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "J. Karjalainen",
+     "day": "sun",
+     "s": "16:30",
+     "e": "17:30",
+     "sm": 990,
+     "em": 1050,
+     "slug": "j-karjalainen",
+     "type": "live",
+     "genres": [
+      "rnb-soul",
+      "rock",
+      "pop"
+     ],
+     "note": "J. Karjalainen is one of the most iconic and loved Finnish pop-rock artists. With a career of more than 40 years, he has a unique position in Finnish music as a singer-songwriter and an artist on his own terms. His music is known for catchy melodies, storytelling lyrics, and influences from the history of American music mixed with the Finnish musical heritage. During his career, Karjalainen has turned his attention to blues, soul, and the traditional songs of Finnish immigrants in America in the early 20th century, but his style, voice, and songs are instantly recognisable.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/03WFRA66hsZpJ5rqylE0vQ",
+      "youtube": "https://www.youtube.com/@jkarjalainenkanava",
+      "instagram": "https://www.instagram.com/jkarjalainenvirallinen"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_JKarjalainen_Portrait-768x960.jpg"
+    },
+    {
+     "n": "SOMBR",
+     "day": "sun",
+     "s": "19:00",
+     "e": "20:00",
+     "sm": 1140,
+     "em": 1200,
+     "slug": "sombr",
+     "type": "live",
+     "genres": [
+      "classical",
+      "pop",
+      "world"
+     ],
+     "note": "​​Hailing from New York’s Lower East Side, Sombr ( Shane Boose ) has swiftly risen into one of the most visible voices in the new wave of alt-pop – an artist who feels at once like a mirror of his generation and a subtle contradiction to it. Classically trained, he began recording music in his bedroom and first entered broader awareness with the track Caroline . His debut album, I Barely Know Her , surged to the top of Spotify’s Global Albums Chart and produced three Billboard Hot 100 hits. Among them, back to friends became a global phenomenon, surpassing 1 billion streams on Spotify.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/4G9NDjRyZFDlJKMRL8hx3S",
+      "instagram": "https://www.instagram.com/sombr"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_SOMBR_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Nick Cave & the Bad Seeds",
+     "day": "sun",
+     "s": "21:00",
+     "e": "23:00",
+     "sm": 1260,
+     "em": 1380,
+     "slug": "nick-cave-the-bad-seeds",
+     "type": "live",
+     "genres": [
+      "rock",
+      "indie"
+     ],
+     "note": "Nick Cave & the Bad Seeds are one of the longest-standing and most influential forces in modern rock – a band whose intensity, storytelling and unmistakable sound have shaped the landscape of alternative music for over four decades. Their 2024 album Wild God reaffirmed Cave’s position as one of his generation’s most remarkable songwriters: the critically acclaimed record entered the Top 10 in several European countries. It launched a sold-out world tour widely regarded as one of the standout live experiences of the year.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/4UXJsSlnKd7ltsrHebV79Q",
+      "instagram": "https://www.instagram.com/nickcaveofficial"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/nick-cave-and-the-bad-seeds-website-portrait-768x960.jpg"
+    }
+   ]
+  },
+  {
+   "id": "silver",
+   "num": 2,
+   "name": "Silver Arena",
+   "lat": 60.18692,
+   "lon": 24.97052,
+   "short": "Silver Arena",
+   "location": "",
+   "blurb": "Covered arena stage — the second-biggest bookings of the weekend.",
+   "color": "#9aa7b8",
+   "acts": [
+    {
+     "n": "F Experience",
+     "day": "fri",
+     "s": "17:00",
+     "e": "18:00",
+     "sm": 1020,
+     "em": 1080,
+     "slug": "f-experience",
+     "type": "live",
+     "genres": [
+      "rap",
+      "rnb-soul",
+      "pop"
+     ],
+     "note": "F (Fanni Sjöholm) is a Finnish artist who blends R&B, pop and hip hop in her music. Debuting in 2017, the rapper-singer has released four strongly thematic full-length albums. A charismatic live performer, F is also known as an active and outspoken participant in societal discussions. She is currently working on her fifth album, set for release in autumn 2026.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/38wI9qgPMb7FoMu2IrzXht",
+      "youtube": "https://www.youtube.com/@fvevo5984",
+      "instagram": "https://www.instagram.com/f_virallinen"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/f-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Bizi",
+     "day": "fri",
+     "s": "19:30",
+     "e": "20:30",
+     "sm": 1170,
+     "em": 1230,
+     "slug": "bizi",
+     "type": "live",
+     "genres": [
+      "latin"
+     ],
+     "note": "His debut album Pitäiskö mun soittaa sille, released in early 2025, further pushed that language. Standout singles En tunne mitään featuring Vesta and Päivä joka meidät pilaa have surpassed platinum-level streaming in Finland, but the numbers are secondary to how these songs linger. In Bizi’s writing, relationships sound the way they often feel in real life: misread messages, late decisions, and moments when you want to call and absolutely do not want to.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/3sMD9js59UX6gYODxbg1VV",
+      "instagram": "https://www.instagram.com/bettarecognize"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/02/bizi-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Oklou",
+     "day": "fri",
+     "s": "21:45",
+     "e": "22:45",
+     "sm": 1305,
+     "em": 1365,
+     "slug": "oklou",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "ambient",
+      "experimental"
+     ],
+     "note": "Oklou is a French singer, DJ, and producer, releasing dreamy, futuristic electronic pop influenced by experimental ambient and club music. She made her mark with her debut mixtape, Galore , released in Autumn 2020, and achieved major success with the album Choke Enough , released in February 2025, which reached the album charts in France, Belgium, and the UK. Oklou is the opening act on Lorde’s world tour that began in September 2025, performing in the US, Australia, and Europe. Recently, she released the track Viscus with FKA twigs and featured on PinkPantheress’ song Girl Like Me .",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6fFcUOFcbjeIuEomuUthkw",
+      "instagram": "https://www.instagram.com/oklou_"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_Oklou_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Disclosure (DJ set)",
+     "day": "fri",
+     "s": "00:00",
+     "e": "01:00",
+     "sm": 1440,
+     "em": 1500,
+     "slug": "disclosure-dj-set",
+     "type": "dj",
+     "genres": [
+      "pop"
+     ],
+     "note": "Disclosure , formed by English brothers  Howard  and  Guy Lawrence , made a breakthrough in 2013 when their debut album  Settle  reached #1 on the British album chart. The album’s biggest hit was  Latch , featuring Sam Smith, which now has more than 1.5 billion listens on Spotify. With more than a decade of career behind them, Disclosure have released four acclaimed albums, received 10 Grammy nominations, and performed at the world’s biggest festivals. This year, they are touring in Europe and the US, and their recent live performance at the Coachella festival in April was considered one of th",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6nS5roXSAGhTGr34W6n7Et",
+      "instagram": "https://www.instagram.com/disclosure",
+      "soundcloud": "https://soundcloud.com/disclosuremusic"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/disclosure-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Antti Autio + Jouset",
+     "day": "sat",
+     "s": "14:30",
+     "e": "15:30",
+     "sm": 870,
+     "em": 930,
+     "slug": "antti-autio-jouset",
+     "type": "live",
+     "genres": [
+      "rock",
+      "indie"
+     ],
+     "note": "Finnish singer-songwriter Antti Autio began his career as an indie rock favourite and has since grown to perform on some of Finland’s biggest stages. His third album, Kaikki talot huojuu (2022), achieved gold record status, and in recent years Autio has appeared at major Finnish festivals, including as the headlining artist in the iconic Huvila tent at Helsingin Juhlaviikot. Following his critically acclaimed fourth album, Täällä sinua kaivataan (2024), Autio released the duet Tänä iltana with Ellinoora and the single Viimeiseen virtaan in October 2025. His fifth album is set for release in ea",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/3KUc1iwMflU36B2qtCnt6n",
+      "instagram": "https://www.instagram.com/anttiautioyhtye"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/12/anttiautio-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Olavi Uusivirta",
+     "day": "sat",
+     "s": "16:45",
+     "e": "17:45",
+     "sm": 1005,
+     "em": 1065,
+     "slug": "olavi-uusivirta",
+     "type": "live",
+     "genres": [
+      "pop"
+     ],
+     "note": "Uusivirta is known as an energetic and entertaining live performer. He has been backed by the same live band for years, playing together with intensity and seamless precision. His new songs vary from ballads to danceable rhythms and singalong choruses, and his catalogue has a row of hits that work well live: Kultaa hiuksissa, Me ei kuolla koskaan, Kesäyön uni, Ollaanko tämä kesä näin? and On niin helppoo olla onnellinen , to name a few. The artist is also known for his duet with Behm, Viimeinen tanssi, which has nearly 25 million listens on Spotify, and for his several roles as an actor in mov",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/5LbUBFEG2qciScT9kwFqmV",
+      "instagram": "https://www.instagram.com/olaviuusivirta"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/02/olavi-uusivirta-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Vesta",
+     "day": "sat",
+     "s": "19:15",
+     "e": "20:15",
+     "sm": 1155,
+     "em": 1215,
+     "slug": "vesta",
+     "type": "live",
+     "genres": [
+      "pop"
+     ],
+     "note": "Her debut album Lohtulauseita (2018) arrived as a quiet phenomenon: intimate, sharp-edged and emotionally precise, it went straight to the top of the charts. It established Vesta as an artist with a rare ability to turn vulnerability into presence. The follow-up Uskon tulevaan (2022) widened the frame, pulling social unease, climate anxiety and personal dislocation into her songwriting without losing the fragile core that defines her expression.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/0KzoK9bz1M6R9cDBLAOF4q",
+      "instagram": "https://www.instagram.com/veshtu"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_Vesta_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Nu Genea Live Band",
+     "day": "sat",
+     "s": "21:30",
+     "e": "22:30",
+     "sm": 1290,
+     "em": 1350,
+     "slug": "nu-genea-live-band",
+     "type": "band",
+     "genres": [
+      "electronic"
+     ],
+     "note": "Their key works include The Tony Allen Experiments (2016), the Naples-dedicated Nuova Napoli (2018), and the Mediterranean-infused Bar Mediterraneo (2022), which cemented their reputation as innovative voices in contemporary world-groove music. The Nu Genea Live Band has performed at major festivals and clubs worldwide, captivating audiences with vibrant live shows and uniquely curated sets.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/77J3V0V7sEOf5ifCDBSNaJ",
+      "youtube": "https://www.youtube.com/@nugeneaofficial",
+      "instagram": "https://www.instagram.com/nu_genea"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/12/nugenea-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Clipse",
+     "day": "sat",
+     "s": "00:00",
+     "e": "01:00",
+     "sm": 1440,
+     "em": 1500,
+     "slug": "clipse",
+     "type": "live",
+     "genres": [
+      "rap"
+     ],
+     "note": "Their debut album, Lord Willin’ (2002), delivered some of The Neptunes’ most iconic work and brought Clipse to worldwide attention, with tracks like Grindin’ still regarded as one of the defining rap songs of its decade. The follow-up Hell Hath No Fury (2006) was hailed as a masterpiece — praised by outlets such as Pitchfork and Rolling Stone and frequently listed among the best rap albums of the 2000s. Its tense, stripped-down atmosphere continues to echo through modern hip-hop, from Kendrick Lamar to Griselda and the UK scene.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2J257euzcjnDLipsyJH3F2",
+      "youtube": "https://www.youtube.com/@ClipseVEVO",
+      "instagram": "https://www.instagram.com/clipse"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_Clipse_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Jaakko Kulta",
+     "day": "sun",
+     "s": "13:30",
+     "e": "14:30",
+     "sm": 810,
+     "em": 870,
+     "slug": "jaakko-kulta",
+     "type": "live",
+     "genres": [
+      "rap",
+      "rock",
+      "pop"
+     ],
+     "note": "The artists’ debut album, Ihminen , released in 2025, brought together the core of Jaakko Kulta’s world: happiness and uncertainty, dreams and everyday realism, romanticising and its rapid deconstruction. The album carried a radio-friendly but recognisable sound — pop in which the legacy of Finnish rock appears in gestures rather than mannerisms.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/3yKaJcys5vfZv2nE2IURyO",
+      "instagram": "https://www.instagram.com/jaakkokulta"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_JaakkoKulta_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Arppa 8-pack",
+     "day": "sun",
+     "s": "15:30",
+     "e": "16:30",
+     "sm": 930,
+     "em": 990,
+     "slug": "arppa-8-pack",
+     "type": "live",
+     "genres": [
+      "rap",
+      "indie"
+     ],
+     "note": "Arppa’s story has been one of constant motion. The self-released debut Laavalamppuja (2020) shot Arppa into the Finnish indie spotlight. The follow-up Kinovalon alla (2021) sold out its first pressing within weeks, garnered four Emma Award nominations and achieved a national breakthrough. Subsequent albums Valeria (2023) and Muovipussi kummittelee (2024) expanded his sound, and the fifth album Peppuni kanssa (2025) returned to independent release as a hip-hop-tinged record that sounds entirely new—and unmistakably Arppa.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7BLe6O1Q3UbUsAUh5x6wuv",
+      "instagram": "https://www.instagram.com/arppamusic"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_Arppa_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Geese",
+     "day": "sun",
+     "s": "17:45",
+     "e": "18:45",
+     "sm": 1065,
+     "em": 1125,
+     "slug": "geese",
+     "type": "live",
+     "genres": [
+      "electronic"
+     ],
+     "note": "Each member of the lineup, Cameron Winter, Emily Green, Dominic DiGesu , and Max Bassin , brings a distinct element to the band, especially evident in their live shows. From free street performances in New York to extensive club tours, Geese’s live energy is undeniable. Ahead of their August performance at Flow Festival, their From the Basement session, hosted by Nigel Godrich, offers a compelling preview of their live prowess.  ",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/0WCo84qtCKfbyIf1lqQWB4",
+      "instagram": "https://www.instagram.com/geesebandnyc"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/12/geese-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Lykke Li",
+     "day": "sun",
+     "s": "20:00",
+     "e": "21:00",
+     "sm": 1200,
+     "em": 1260,
+     "slug": "lykke-li",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "pop"
+     ],
+     "note": "She broke through with her debut album Youth Novels in 2008, in which the echoes of 60s girl-group pop took on a new kind of electric solitude. Her second album, Wounded Rhymes , tightened the rhythm and the shadow until it started to glow. In that era, I Follow Rivers became an international breakthrough moment. This song escaped into clubs, festivals, and headphones as a shared language and found a second life through remixes.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6oBm8HB0yfrIc9IHbxs6in",
+      "instagram": "https://www.instagram.com/lykkeli"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/02/lykkeli-flow-website-portrait-768x960.jpg"
+    }
+   ]
+  },
+  {
+   "id": "black",
+   "num": 3,
+   "name": "Black Tent",
+   "lat": 60.18658,
+   "lon": 24.96982,
+   "short": "Black Tent",
+   "location": "",
+   "blurb": "Tented stage for rising names, rap and left-field pop.",
+   "color": "#c084fc",
+   "acts": [
+    {
+     "n": "Efka Crush",
+     "day": "fri",
+     "s": "15:30",
+     "e": "16:30",
+     "sm": 930,
+     "em": 990,
+     "slug": "efka-crush",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "pop"
+     ],
+     "note": "Originally from Riihimäki, Efka Crush has been making music since childhood, but her own voice has gradually begun to take shape through production. In her songs, electronic textures, melancholy melodies and strange everyday phrases meet in the same charged space. Her influences can be traced to hyperpop, film music, and the euphoric edges of club music.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7F5rSmDXew3j6VX4e60dJF",
+      "youtube": "https://www.youtube.com/@EfkaCrush",
+      "instagram": "https://www.instagram.com/efkacrush"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/efka-crush-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Louna0nline",
+     "day": "fri",
+     "s": "17:30",
+     "e": "18:30",
+     "sm": 1050,
+     "em": 1110,
+     "slug": "louna0nline",
+     "type": "live",
+     "genres": [
+      "indie"
+     ],
+     "note": "In Louna0nline’s music, online aesthetics, diary-like writing and the fast, fragmented rhythm of the present moment are shaped into songs that feel born directly from the time they inhabit. Finnish media have quickly noticed the work, and the releases have drawn attention precisely because they don’t aim to blow up the field, but instead carve out their own line within it.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/363l8KbAMnNgWeNfH9m6Jy",
+      "instagram": "https://www.instagram.com/louna0nline"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_Louna_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Pearly Drops",
+     "day": "fri",
+     "s": "19:30",
+     "e": "20:30",
+     "sm": 1170,
+     "em": 1230,
+     "slug": "pearly-drops",
+     "type": "live",
+     "genres": [
+      "rap",
+      "pop"
+     ],
+     "note": "Both Tervonen and Malin have lengthy music careers. They have made music as electro-pop duo Femme En Fourrure, produced songs for Finnish hip-hop favourite Paperi T’s first two albums, and performed at the artist’s concerts for years. Pearly Drops is a project that represents the inner world of the two from beginning to end. Tervonen and Malin write, produce and perform the duo’s music, but also create the music videos and style themselves. Tervonen paints their record covers. Every release and performance is an authentic expression of what the two can do.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2eMb96S1ZJ1YQ7FhWAzWJL",
+      "youtube": "https://www.youtube.com/@PearlyDropsOfficial",
+      "instagram": "https://www.instagram.com/pearly_drops",
+      "soundcloud": "https://soundcloud.com/pearlydropsofficial"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/12/pearlydrops-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Bricknasty",
+     "day": "fri",
+     "s": "22:00",
+     "e": "23:00",
+     "sm": 1320,
+     "em": 1380,
+     "slug": "bricknasty",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "folk",
+      "reggae"
+     ],
+     "note": "The core of the band first came together on SoundCloud, where singer-guitarist Fatboy and producer Cillian McCauley found each other by chance. The current line-up also includes drummer Korey Thomas . You can hear traces of influences ranging from D’Angelo to MF DOOM and Timbaland, but Bricknasty never sound like the sum of their references. In their music, proud folk elements add a distinct softness and warmth, and the whole expression feels as though it has grown directly out of rhythms lived and felt in Dublin itself.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/3BcbwxzJm5f0yppgo2Vatd",
+      "instagram": "https://www.instagram.com/bricknxsty"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/bricknasty-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Cabaret Voltaire",
+     "day": "fri",
+     "s": "00:00",
+     "e": "01:00",
+     "sm": 1440,
+     "em": 1500,
+     "slug": "cabaret-voltaire",
+     "type": "live",
+     "genres": [
+      "electronic"
+     ],
+     "note": "More than 50 years have passed since the band’s live birth. Their first show took place at Sheffield Students’ Union Refectory on 13 May 1975. The anniversary live project is curated by original members Stephen Mallinder and Chris Watson, tracing the essential Cabaret Voltaire arc from the earliest experiments through the Rough Trade and Factory years, the Doublevision video label era, and later phases that also intersected with producers such as Adrian Sherwood and Marshall Jefferson.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2kS4yz85MaZlxp2VaS3BEe",
+      "instagram": "https://www.instagram.com/cabaretvoltaireband"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/02/cabaret-voltaire-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Keiju",
+     "day": "sat",
+     "s": "14:30",
+     "e": "15:30",
+     "sm": 870,
+     "em": 930,
+     "slug": "keiju",
+     "type": "live",
+     "genres": [
+      "rap",
+      "indie",
+      "pop"
+     ],
+     "note": "Keiju has become an exciting name in Finnish indie-pop and rap over the last year. With versatility and a unique take on music, the artist moves in different musical territories, combining rapping, singing, and unique soundscapes. Coming from the capital of Finnish Lapland, Rovaniemi, the artist moved to Helsinki to study literature. Keiju’s lyrics are therefore exceptionally sharp-eyed and rich in language, and the artist also has a versatile flow as a rapper.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/78Q5OnbgoyHMj5aHlGljK5",
+      "youtube": "https://www.youtube.com/@oikeakeiju",
+      "instagram": "https://www.instagram.com/oikeakeiju"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/02/keiju-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Ares",
+     "day": "sat",
+     "s": "17:00",
+     "e": "18:00",
+     "sm": 1020,
+     "em": 1080,
+     "slug": "ares",
+     "type": "live",
+     "genres": [
+      "pop"
+     ],
+     "note": "Released in January 2025, the album APATHIA gained gold in streams even before its official release and debuted straight at the top of Finland’s official album chart. Every track from the album entered the national charts. The biggest hits from the record include Menestys on paras tapa kostaa and Iha miten vaa (feat. Turisti & Averagekidluke). Guest appearances on the album include Jore & Zpoppa, Bizi and william.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1iRlPYW9AnnyLTPfy53Mj9",
+      "instagram": "https://www.instagram.com/arestiaris"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_Ares_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Louie Blue",
+     "day": "sat",
+     "s": "19:30",
+     "e": "20:30",
+     "sm": 1170,
+     "em": 1230,
+     "slug": "louie-blue",
+     "type": "live",
+     "genres": [
+      "pop"
+     ],
+     "note": "That process reached a turning point with the album Blood & Bones (2025). Inspired by artists like Dijon and Mk gee, the record leans into analogue warmth, live musicianship and a production philosophy far from polished pop. Louie Blue wrote, produced, mixed and mastered the album himself — a bold, unapologetic statement of intent.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/06AJvANXmsNIEFFA00yhYf",
+      "instagram": "https://www.instagram.com/louieblu.e"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_LouieBlue_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Malla",
+     "day": "sat",
+     "s": "21:30",
+     "e": "22:30",
+     "sm": 1290,
+     "em": 1350,
+     "slug": "malla",
+     "type": "live",
+     "genres": [
+      "house",
+      "disco",
+      "electronic"
+     ],
+     "note": "Helsinki-based Malla has carved out her own place in Finnish electronic music with her house- and disco-influenced electronic pop. Her debut album Malla was released in 2021, presenting the artist and her music, which combines visionary use of analogue synthesisers and drum machines, Finnish lyrics, and soft, dream-like electronic sound. Her second album, Fresko (2023), further developed her unique sound, and the much-awaited third album, Pieni exit, was released in February 2026 after two years in the making. The first single from the new album, Toista tilaisuutta ei ehkä tuu, was one of the ",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/0dHaPMHXrg3x8J6ucqNoPj",
+      "instagram": "https://www.instagram.com/mallamalmivaara",
+      "soundcloud": "https://soundcloud.com/user-871565769"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/02/malla-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Rochelle Jordan",
+     "day": "sat",
+     "s": "00:00",
+     "e": "01:00",
+     "sm": 1440,
+     "em": 1500,
+     "slug": "rochelle-jordan",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "pop"
+     ],
+     "note": "The 2021 album Play With the Changes brought Jordan to wider attention, and 2025’s Through the Wall takes her music more clearly toward the club. Across the album, Jordan’s voice, pop hooks and dancefloor pull occupy the same space without the artist disappearing beneath the production. She belongs to that group of artists whose influence has long been felt first among close listeners and other musicians. Now that influence is beginning to take on a wider shape.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/3MM3uKNdJbvefUael12dl3",
+      "instagram": "https://www.instagram.com/Rochelle_Jordan"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/rochelle-jordan-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "fibi",
+     "day": "sun",
+     "s": "13:30",
+     "e": "14:30",
+     "sm": 810,
+     "em": 870,
+     "slug": "fibi",
+     "type": "live",
+     "genres": [
+      "indie"
+     ],
+     "note": "In 2025 fibi released her debut EP, followed by a string of singles and featured collaborations. She has also gained recognition opening for emma & matilda and Vesta, and in 2026 launched her own headline shows with a sold-out night at Semifinal. Now she is setting her sights on her debut album, preceded by autumn gigs, a support tour with helmi marleena, and her first ever festival season.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/3ZzkX4rxGFuxbIaavXhWoo",
+      "youtube": "https://www.youtube.com/@oonfibi",
+      "instagram": "https://www.instagram.com/oonfibi",
+      "soundcloud": "https://on.soundcloud.com/2iHVJQYBlyxjZ5KUpo"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/fibi-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Asla Jo",
+     "day": "sun",
+     "s": "15:45",
+     "e": "16:45",
+     "sm": 945,
+     "em": 1005,
+     "slug": "asla-jo",
+     "type": "live",
+     "genres": [
+      "indie"
+     ],
+     "note": "Coming from the coastal town of Vaasa in Ostrobothnia, Asla Jo was signed to the major label Kaiku Recordings early in their career, and in summer 2025, they performed at several Finnish festivals. The debut EP featured several strong tracks, such as Poltan mun kotikaupungin and Dementia , and the single released in May 2025, Pussailen tyttöjen kaa , became Asla Jo’s most-streamed song to date. The much-awaited debut album Papin tytär will be released in early 2026 and is likely to make the artist an ever more prominent name in Finland.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/5z6VH7BWb3QDIAhdMILyG4",
+      "instagram": "https://www.instagram.com/asla.jo",
+      "soundcloud": "https://soundcloud.com/aslajo"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_AslaJo_Portrait-768x960.jpg"
+    },
+    {
+     "n": "james K",
+     "day": "sun",
+     "s": "18:30",
+     "e": "19:30",
+     "sm": 1110,
+     "em": 1170,
+     "slug": "james-k",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "rock"
+     ],
+     "note": "She has released with labels such as AD 93, Incienso, PAN and iDEAL, among others, and started her label She Rocks! in 2015. Her collaboration with hoodie, a record titled Scorpio , was released in summer 2023, landing on numerous year-end lists. She followed up with another single, trip-hop gem, Blinkmoth (July Mix) , which has garnered similar attention, landing at number 2 on Resident Advisor’s Best Tracks of 2024, with the publication also naming her producer of the year. K has been a resident on NTS Radio with her show Trip Lick since 2019, and she has provided mixes for Dekmantel, Crack ",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/25BObiRSDCMwVrBGIVaLIf",
+      "youtube": "https://www.youtube.com/@jj__a__m__e__s___________K",
+      "instagram": "https://www.instagram.com/___pet___",
+      "soundcloud": "https://on.soundcloud.com/LgxAdhcMIKoWDtnT0B"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/jamesk-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Lambrini Girls",
+     "day": "sun",
+     "s": "20:30",
+     "e": "21:30",
+     "sm": 1230,
+     "em": 1290,
+     "slug": "lambrini-girls",
+     "type": "live",
+     "genres": [
+      "indie"
+     ],
+     "note": "With Phoebe Lunny (vocals/guitar) and Selin Macieira (bass) at the helm, the pair sharpened their lyrical focus on topics such as class, privilege, trans rights and toxic masculinity. Still, the backbone of their sound is equally hard and dance-informed. Their music isn’t didactic; it’s kinetic and exacting, using minimalism and raw textures to drive both critique and catharsis.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6VR4TJ20WGiho2xZWMuuWb",
+      "youtube": "https://www.youtube.com/@lambrinigirlsband",
+      "instagram": "https://www.instagram.com/lambrinigirlz"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_LambriniGirls_Portrait-768x960.jpg"
+    }
+   ]
+  },
+  {
+   "id": "balloon",
+   "num": 4,
+   "name": "Balloon 360°",
+   "lat": 60.18701,
+   "lon": 24.97181,
+   "short": "Balloon 360°",
+   "location": "",
+   "blurb": "In the round, under the balloon. Jazz, folk and world music.",
+   "color": "#fb7185",
+   "acts": [
+    {
+     "n": "Eero Koivistoinen Quartet feat. Nina Mya",
+     "day": "fri",
+     "s": "15:30",
+     "e": "16:30",
+     "sm": 930,
+     "em": 990,
+     "slug": "eero-koivistoinen-quartet-feat-nina-mya",
+     "type": "band",
+     "genres": [
+      "disco",
+      "jazz",
+      "rap"
+     ],
+     "note": "His discography includes several albums that remain part of the core conversation around Finnish jazz. Odysseus from 1969, Wahoo! and 3rd Version from the early 1970s, and the later Ultima Thule trace the work of a musician who has been, at once, a modern-minded composer, a commanding bandleader, and a tenor saxophonist with an unmistakable sound. The labels matter, too. Love Records, his own Pro Records, and later Svart’s reissues all point to the same thing: Koivistoinen’s work has not been left behind in its own era, but has remained part of the living canon of Finnish jazz.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7q1zywOL5kaYleRWJORLGo"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/Eero-Koivistoinen-Quartet-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Rosettes",
+     "day": "fri",
+     "s": "17:15",
+     "e": "18:15",
+     "sm": 1035,
+     "em": 1095,
+     "slug": "rosettes",
+     "type": "live",
+     "genres": [
+      "jazz",
+      "rnb-soul",
+      "punk"
+     ],
+     "note": "Rosettes consists of Tytti Roto, Rosita Halonen, Jaakko Hietakangas, Tatu Kuisma, Markus Hietamies, Eero Tarmio, Eero Koski, and Ami Vuorinen, whose backgrounds reach across different corners of Finland’s alternative and DIY scenes. Tytti Roto is also known for her solo project Ty Roxy and the bands Modem and Tamara Luonto, while the line-up also includes musicians with roots in hardcore bands such as Foreseen and Kohti Tuhoa, as well as the wider We Jazz sphere. You can hear it in the way Rosettes plays soul. This groove has not been smoothed down too much.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/5IGpCYZ0wnD5WPtLZZZry4",
+      "instagram": "https://www.instagram.com/rosettesonly"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/rosettes-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Kridlokk: Hai",
+     "day": "fri",
+     "s": "19:00",
+     "e": "20:00",
+     "sm": 1140,
+     "em": 1200,
+     "slug": "dj-kridlokk-hai",
+     "type": "dj",
+     "genres": [
+      "rap"
+     ],
+     "note": "With more than two decades of releasing music, DJ Kridlokk has built a steady cult following. The artist released his fourth studio album Hai in April 2024, and the record was instantly recognised as a classic in Finnish hip-hop. The album won the most significant Finnish music prize, the Teosto-palkinto, and received several five-star reviews in the media. Hai was the result of four years of work, and the album showcases the artist’s personal skills, as he composed, produced, and wrote the lyrics himself. Inspired by long walks on the beaches of eastern Helsinki, Hai’s central themes are the ",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/40S3a8Beijh7mZ7vTV5TmJ",
+      "instagram": "https://www.instagram.com/krdlkk",
+      "soundcloud": "https://soundcloud.com/djkridlokk"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_Kridlokk_Portrait-768x960.jpg"
+    },
+    {
+     "n": "Tyler Ballgame",
+     "day": "fri",
+     "s": "21:00",
+     "e": "22:00",
+     "sm": 1260,
+     "em": 1320,
+     "slug": "tyler-ballgame",
+     "type": "live",
+     "genres": [
+      "jazz",
+      "world"
+     ],
+     "note": "Ballgame released his debut album, For the First Time, Again, at the start of this year. His music draws on the singer-songwriter tradition of the 1960s and 70s, but the sound never collapses into mere retro reference. There is timelessness, melodic assurance and a freshness that turns old materials into something distinctly his own. The Guardian caught the essential point in its review, writing that Ballgame has an exceptionally beautiful voice, even if his influences can at times be heard quite openly.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1pQ0Axx7UF8LDDOqSgdVmK",
+      "youtube": "https://www.youtube.com/@TylerBallgame.Official",
+      "instagram": "https://www.instagram.com/tyler.ballgame"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/tyler-ballgame-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Ana Frango Elétrico",
+     "day": "fri",
+     "s": "23:00",
+     "e": "00:00",
+     "sm": 1380,
+     "em": 1440,
+     "slug": "ana-frango-eletrico",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "latin"
+     ],
+     "note": "The artist’s debut album, Mormaço Queima , was released in 2018. Their second album, Little Electric Chicken Heart, earned a Latin Grammy nomination in 2020, and the third album, Me Chama de Gato Que Eu Sou Sua, received another nomination in 2024. The latter was also awarded Album of the Year by the São Paulo Association of Art Critics, and the successful tour that followed took the artist to 11 countries across three continents. Frango Elétrico is also a highly regarded producer and a Latin Grammy winner.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7uvxsk688pwnBNA62cTKS1",
+      "instagram": "https://instagram.com/anafrangoeletrico"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/AnaFrangoEletrico-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Finding Jens Hortling",
+     "day": "sat",
+     "s": "14:30",
+     "e": "15:15",
+     "sm": 870,
+     "em": 915,
+     "slug": "finding-jens-hortling",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "rock",
+      "indie"
+     ],
+     "note": "Finding Jens Hortling plays dark, dramatic guitar music shaped by the weight of 1990s alternative rock, the open melodic sweep of Britpop, and a trace of the shadowed grandeur associated with Nick Cave. The collaboration between singer Jens Hortling and musician-producer Lauri Eloranta has a deliberate sense of scale and an old-school approach to songwriting that lets the songs unfold at their own pace.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/3aRxLNvujLLL0NhREb3Ik1",
+      "instagram": "https://www.instagram.com/findingjenshortling"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/FindingJensHortling-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Juhani Aaltonen Quartet",
+     "day": "sat",
+     "s": "16:00",
+     "e": "16:45",
+     "sm": 960,
+     "em": 1005,
+     "slug": "juhani-aaltonen-quartet",
+     "type": "band",
+     "genres": [
+      "jazz"
+     ],
+     "note": "His career stretches from key Finnish jazz recordings on Love Records to work with Tasavallan Presidentti and the singular albums he made for Leo Records in the 1970s, including Prana and Springbird . In recent years, his work has also found renewed attention among younger listeners, as the history of spiritual jazz has been heard with fresh ears. His collaboration with the free jazz group PLOP also brought him an Emma Award in 2024.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/4iyTLMsbe5KllOq7kkoAUP"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/juhani-aaltonen-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Jimi Tenor Band",
+     "day": "sat",
+     "s": "17:15",
+     "e": "18:15",
+     "sm": 1035,
+     "em": 1095,
+     "slug": "jimi-tenor-band",
+     "type": "band",
+     "genres": [
+      "electronic",
+      "experimental"
+     ],
+     "note": "Jimi Tenor is one of the true outliers in Finnish music and one of the artists who helped open international space for Finnish experimental music in the 1990s. In the early years of Sähkö Recordings, Tenor, alongside Pan Sonic, helped shape the direction that made Finnish electronic music internationally compelling. He later joined Warp Records at a time when the label was reshaping the future of electronic music alongside names like Aphex Twin and Autechre.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/69H6uUTI29XBzQXV1d3A7D",
+      "youtube": "https://www.youtube.com/@jimitenor1",
+      "instagram": "https://www.instagram.com/jimitenor"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/jimitenor-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Múm",
+     "day": "sat",
+     "s": "19:00",
+     "e": "20:00",
+     "sm": 1140,
+     "em": 1200,
+     "slug": "mum",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "classical"
+     ],
+     "note": "Icelandic band múm belongs among the artists who turned the post-Björk Icelandic wave into an international phenomenon. Alongside Sigur Rós, múm was one of its most recognisable names, but moved in a slightly different direction from the start. Instead of vast landscapes, múm built something smaller, stranger and closer to the ear. In their music, glitch, soft vocals, electronics, chamber-like textures and toy-like sounds arrange themselves into a world that still feels entirely their own.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/4mw86zm4QZIL8SksdyE6OU",
+      "instagram": "https://www.instagram.com/mumtheband"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/mum-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Dina Ögon",
+     "day": "sat",
+     "s": "21:00",
+     "e": "22:00",
+     "sm": 1260,
+     "em": 1320,
+     "slug": "dina-ogon",
+     "type": "live",
+     "genres": [
+      "jazz",
+      "rap",
+      "rnb-soul"
+     ],
+     "note": "Dina Ögon’s music is built on lightly flowing, organic interplay. The band’s members Anna Ahnlund, Christopher Cantillo, Daniel Ögren and Love Örsan have long moved across the worlds of Swedish rock, jazz, soul and pop, and in this group those backgrounds come together with remarkable ease. Folk rock, indie, soul, bossa nova, jazz and the rhythmic feel of hip-hop are all present, but what matters most is the unified movement of the playing.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/55Juru3AZOT8GrCxOaV3EI",
+      "instagram": "https://www.instagram.com/dinaogon"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/dinaogon-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "The Zawose Queens",
+     "day": "sat",
+     "s": "23:00",
+     "e": "00:00",
+     "sm": 1380,
+     "em": 1440,
+     "slug": "the-zawose-queens",
+     "type": "live",
+     "genres": [
+      "folk"
+     ],
+     "note": "The Zawose Queens bring Tanzanian Gogo musical tradition to the stage in a form where polyrhythms, multi-part vocals, and the organic sound of traditional instruments feel at once ancient and fully present. Leah Zawose and Pendo Zawose build their music around the chizeze fiddle, the illimba thumb piano, drums, and layered vocal interplay. There is a strong connection to nature, ritual, and dance in their music, along with a clear commitment to carrying the tradition forward.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/5e8d20rB9aHyqFJLHlu4QI",
+      "instagram": "https://www.instagram.com/zawosequeens"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/Zawose-Queens-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Pekko Käppi & K:H:H:L",
+     "day": "sun",
+     "s": "14:00",
+     "e": "15:00",
+     "sm": 840,
+     "em": 900,
+     "slug": "pekko-kappi-khhl",
+     "type": "live",
+     "genres": [
+      "folk"
+     ],
+     "note": "For years, Pekko Käppi has been one of the most distinctive figures in Finnish music, a bowed lyre player, songwriter, and bandleader whose work has brought elements of folk music into darker and more abrasive territory. K:H:H:L was formed in the wake of the album Rammat jumalat , and has since built a strong presence on stages in Finland and abroad. Along the way, Käppi has appeared as the opening act at WOMEX, supported Robert Plant, and been nominated for the Nordic Council Music Prize.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/0UMDxlQeIQO1ObwZ2cHrWd",
+      "instagram": "https://www.instagram.com/pekkokappi"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/pekko-kappi-khhl-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Eskola & Mäkynen with The Guards Brass Collective: Drum’n’Brass",
+     "day": "sun",
+     "s": "16:00",
+     "e": "17:00",
+     "sm": 960,
+     "em": 1020,
+     "slug": "eskola-makynen-with-the-guards-brass-collective-drumnbrass",
+     "type": "live",
+     "genres": [
+      "classical",
+      "jazz"
+     ],
+     "note": "The music is composed and arranged by Eskola and Mäkynen, two long-standing figures in Finnish jazz whose collaboration combines a deep sense of groove, stylistic confidence, and an ability to shape large-scale music without unnecessary weight. They are joined by the nine-piece Guards Brass Collective , assembled from the Finnish Guards Band, whose sound brings both orchestral force and agility to the performance.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/57FD9r6h3aedT0FEt31fhO",
+      "instagram": "https://www.instagram.com/jukkaeskolatrumpet"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/eskola-makynen-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Hannah Cohen",
+     "day": "sun",
+     "s": "18:00",
+     "e": "19:00",
+     "sm": 1080,
+     "em": 1140,
+     "slug": "hannah-cohen",
+     "type": "live",
+     "genres": [
+      "rnb-soul",
+      "rock",
+      "folk"
+     ],
+     "note": "American singer-songwriter Hannah Cohen is an artist whose music resists being neatly filed into a single category. Folk, soul, soft psychedelia, soft rock and the singer-songwriter tradition of the 1970s are all there, but what matters even more is the way Cohen arranges those elements into something distinctly her own. There is melodic precision in her music, a subtle sense of groove and a control of tone that quickly sets her apart from others working in a similar field.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7ovXNdlB2DNSC16TbKgros",
+      "youtube": "https://www.youtube.com/@hannahcohenmusic",
+      "instagram": "https://www.instagram.com/misshannahcohen"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/hannahcohen-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "The Congos",
+     "day": "sun",
+     "s": "20:00",
+     "e": "21:00",
+     "sm": 1200,
+     "em": 1260,
+     "slug": "the-congos",
+     "type": "live",
+     "genres": [
+      "reggae"
+     ],
+     "note": "The group’s legend is crystallised in the 1977 album Heart of the Congos, widely regarded as one of the greatest reggae records ever made. Recorded at Lee Scratch Perry’s Black Ark studio, it is more than a classic. It is one of those rare albums around which an entire genre’s mythology seems to gather. Its vocal harmonies, Rastafarian conviction, and Perry’s hazy, deep production have made it a benchmark against which roots reggae is still measured. Later albums, such as Swinging Bridge and Back in the Black Ark, have shown that The Congos were never simply preserved as a monument to the past",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/0nGxKkhmIzyu6bvuXrko1e"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/thecongos-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Sailor Honeymoon",
+     "day": "sun",
+     "s": "22:00",
+     "e": "23:00",
+     "sm": 1320,
+     "em": 1380,
+     "slug": "sailor-honeymoon",
+     "type": "live",
+     "genres": [
+      "bass",
+      "rap",
+      "rock"
+     ],
+     "note": "Sailor Honeymoon folds punk, garage rock, riot grrrl attitude and a strain of art-rock cool into something lean and immediate. The band emerged from a rehearsal room in Seoul, where photographer Abi Raymaker and DJ Zaeeun Shin began playing together, later joined by bassist Yelim Kim. The trio released its debut EP, Sailor Honeymoon , in 2024.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6qzA8cgwfUtv4M5BHgCK7C",
+      "youtube": "https://www.youtube.com/@sailorhoneymoon",
+      "instagram": "https://www.instagram.com/sailorhoneymoon.kr"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/sailor-honeymoon-flow-website-portrait-768x960.jpg"
+    }
+   ]
+  },
+  {
+   "id": "other",
+   "num": 5,
+   "name": "The Other Sound",
+   "lat": 60.18722,
+   "lon": 24.97298,
+   "short": "The Other Sound",
+   "location": "",
+   "blurb": "Experimental, contemporary classical and sound art.",
+   "color": "#2dd4bf",
+   "acts": [
+    {
+     "n": "fourest",
+     "day": "fri",
+     "s": "16:00",
+     "e": "17:00",
+     "sm": 960,
+     "em": 1020,
+     "slug": "fourest",
+     "type": "live",
+     "genres": [
+      "techno",
+      "electronic",
+      "ambient"
+     ],
+     "note": "Together, they explore the dynamic between classical instrumentation and electronic sound design. Acoustic warmth meets electronic precision in a sound that moves between cinematic atmosphere, techno, and minimalist ambient. Their live sets are built on real-time looping and sampling, making each performance unique.",
+     "links": {
+      "instagram": "https://www.instagram.com/fourestlive",
+      "soundcloud": "https://soundcloud.com/fourest-188838528"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/fourest-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Hallintohimmeli",
+     "day": "fri",
+     "s": "18:00",
+     "e": "19:00",
+     "sm": 1080,
+     "em": 1140,
+     "slug": "hallintohimmeli",
+     "type": "live",
+     "genres": [
+      "experimental"
+     ],
+     "note": "Hallintohimmeli is a duo from Kuopio exploring the outer edges of what two instruments — guitar and drums — can say to each other. Mikko Siirola  and Mikko Rautiainen play unheard music, built on a wordless communication that goes beyond arrangement or rehearsal. Hallintohimmeli put on their official suits and embark on expeditions into sound, where the destination is unknown, and the listening is the point.",
+     "links": {
+      "instagram": "https://www.instagram.com/hallintohimmeli_"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/hallintohimmeli-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "AHO",
+     "day": "fri",
+     "s": "20:00",
+     "e": "21:00",
+     "sm": 1200,
+     "em": 1260,
+     "slug": "aho",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "ambient"
+     ],
+     "note": "With a career spanning far and wide, AHO is the alias of Ahopelto, a musician who crafts majestic, multilayered ambient soundscapes and vast, pulsating surges of sound. The debut album NOWINTER NOSUMMER , released in 2020, and the following album Odyssey , from 2022, hint at how organic instruments and synthetic soundwaves collide with a cinematic, perhaps imaginary world.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2A2jCODLLDdV7IZv93r2OG",
+      "youtube": "https://www.youtube.com/@aho2375",
+      "instagram": "https://www.instagram.com/aho4eva"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/aho-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "More Ohr Less Trio (Roedelius, Von Hausswolff & Chaplin)",
+     "day": "fri",
+     "s": "22:00",
+     "e": "23:00",
+     "sm": 1320,
+     "em": 1380,
+     "slug": "more-ohr-less-trio-roedelius-von-hausswolff-chaplin",
+     "type": "band",
+     "genres": [
+      "electronic",
+      "ambient",
+      "experimental"
+     ],
+     "note": "More Ohr Less Trio , formed by Hans-Joachim Roedelius , Carl Michael von Hausswolff and Christopher James Chaplin brings together three distinct artistic trajectories within experimental music. Born in Berlin-Steglitz in 1934, Hans-Joachim Roedelius emerged as a central figure of West Germany’s late-1960s creative explosion. As a member of Cluster and Harmonia, he became one of the key representatives of progressive rock, later labeled “Krautrock,” known for his meditative, piano- and synthesizer-based soundscapes and an extensive body of solo, collaborative, and multidisciplinary work.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7v5E9zviGMsOGHRdMVmhDc",
+      "instagram": "https://www.instagram.com/hansjoachimroedelius",
+      "soundcloud": "https://soundcloud.com/hans-joachim-roedelius"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/hans-joachim-roedelius-co-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Atonauer",
+     "day": "fri",
+     "s": "00:00",
+     "e": "01:00",
+     "sm": 1440,
+     "em": 1500,
+     "slug": "atonauer",
+     "type": "live",
+     "genres": [
+      "experimental",
+      "rap"
+     ],
+     "note": "The project began with a dream and a jar of blue pigment scraped from abandoned paintings. In New York, a broken Roland Space Echo opened a new way of listening, transforming city noise into harmonic blur, blue into sound. That transformation became Ocean in A , Atonauer’s debut album: seven movements built around breath, overtone, and the note A, asking not how to capture something vast, but how to remain near it.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6rUlpVzs9FrWgi4G0ZBwVe",
+      "instagram": "https://www.instagram.com/atonauer",
+      "soundcloud": "https://soundcloud.com/kumea"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/atonauer-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Aki Rissanen: Omniwerk",
+     "day": "sat",
+     "s": "16:00",
+     "e": "17:00",
+     "sm": 960,
+     "em": 1020,
+     "slug": "aki-rissanen-omniwerk",
+     "type": "live",
+     "genres": [
+      "jazz"
+     ],
+     "note": "Aki Rissanen is one of the most internationally recognised Finnish jazz pianists of his generation, with albums on Edition Records and a reputation built across European stages. At Flow, he steps away from the piano to perform solo with the Omniwerk, a unique instrument combining two historical keyboard inventions: Leonardo da Vinci’s viola organista and the baroque lautenwerk, built by Finnish craftsmen Jukka Ollikka and Jonte Knif.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1nlJUHlmuvSRMGPMsulgGX",
+      "instagram": "https://www.instagram.com/aki_rissanen",
+      "soundcloud": "https://soundcloud.com/akiriki"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/aki-rissanen-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Minna Koskenlahti",
+     "day": "sat",
+     "s": "18:00",
+     "e": "19:00",
+     "sm": 1080,
+     "em": 1140,
+     "slug": "minna-koskenlahti",
+     "type": "live",
+     "genres": [
+      "experimental"
+     ],
+     "note": "Minna Koskenlahti is a percussionist working at the intersection of experimental music, sound art, and performing arts. Her practice centres on the melodic and quietly sensitive dimensions of percussion instruments she pushes toward their limits and beyond. Through her music, Koskenlahti explores questions of power and otherness: colonialism, post-colonialism, and the use of fear as a political tool.",
+     "links": {
+      "youtube": "https://www.youtube.com/@minnakoskenlahti4058"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/minna-koskenlahti-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Ensemble Gamut!",
+     "day": "sat",
+     "s": "20:00",
+     "e": "21:00",
+     "sm": 1200,
+     "em": 1260,
+     "slug": "ensemble-gamut",
+     "type": "band",
+     "genres": [
+      "experimental",
+      "folk"
+     ],
+     "note": "Visual artist Vappu Rossi draws large-scale works on stage as the music unfolds, while sound artist Tuomas Norvio captures and transforms the sounds of her drawing tools in real time — giving the emerging flowers an audible presence. Medieval melodies, Hildegard von Bingen, folk songs, and Peltomaa’s own compositions intertwine into something timeless, as species already lost briefly return to life.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/0wM3VJ8L1LuY2YpLFpIQve",
+      "instagram": "https://www.instagram.com/ensemblegamut"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/ensemble-gamut-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "NAH",
+     "day": "sat",
+     "s": "22:00",
+     "e": "23:00",
+     "sm": 1320,
+     "em": 1380,
+     "slug": "nah",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "experimental",
+      "jazz"
+     ],
+     "note": "Since the release of his first demos in 2011, percussionist, sound manipulator and visual artist NAH has been developing his own dynamic synthesis of textured noise and genre-smashing percussive rhythms, with firm roots in DIY punk, noise, avant-jazz, electronic music and the restlessness of hip-hop. Performing live with little more than a drum kit and various samplers, he channels a frenetic energy that teeters on the edge of violent hostility and playful chaos.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/4EEiAmMxzm5scecrFnrTsX",
+      "youtube": "https://www.youtube.com/@NAHisNAH",
+      "instagram": "https://www.instagram.com/nah_is_nah"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/nah-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Murcof",
+     "day": "sat",
+     "s": "00:00",
+     "e": "01:00",
+     "sm": 1440,
+     "em": 1500,
+     "slug": "murcof",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "ambient",
+      "classical"
+     ],
+     "note": "Murcof is the alias of Mexican-born, Spain-based composer and electronic musician Fernando Corona , a master of modern ambient music who constructs vast edifices of sound that bring to mind the worlds of Le Corbusier. Beginning with the influential Nortec Collective in Tijuana and introducing the Murcof alias in 2002, Corona has built a body of work marked by minimalist classical textures, expansive drones, and a deep, unhurried thoughtfulness. Nearly two decades after Cosmos , his new album Twin Color marks a bold step forward. It’s darker, more cinematic, drawing on post-punk, synth-wave, an",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/0liG9qD19eWrt5Ur4cnsYd",
+      "youtube": "https://www.youtube.com/@MurcofMusic",
+      "instagram": "https://www.instagram.com/murcof_music",
+      "soundcloud": "https://soundcloud.com/murcof"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/murcof-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Siba Talks: The University as Creative Daredevil",
+     "day": "sun",
+     "s": "14:00",
+     "e": "15:00",
+     "sm": 840,
+     "em": 900,
+     "slug": "siba-talks-the-university-as-creative-daredevil",
+     "type": "performance",
+     "genres": [
+      "experimental"
+     ],
+     "note": "",
+     "links": {},
+     "img": ""
+    },
+    {
+     "n": "Niillas Holmberg & Pauli Lyytinen: Naarattu laulu",
+     "day": "sun",
+     "s": "16:00",
+     "e": "17:00",
+     "sm": 960,
+     "em": 1020,
+     "slug": "niillas-holmberg-pauli-lyytinen-naarattu-laulu",
+     "type": "live",
+     "genres": [
+      "jazz"
+     ],
+     "note": "Holmberg is a Sámi poet and multidisciplinary artist; Lyytinen an Emma Award-winning saxophonist and composer known for restless, boundary-crossing work. Their collaboration, which began in 2021 and has since taken them to stages across Finland, Germany, Italy, and Norway, is built on channelling, improvisation, and deep mutual listening. Naarattu laulu is not a product but a verb, art not as catch but as act, a net woven together to draw something ancient from the misty water.",
+     "links": {
+      "instagram": "https://www.instagram.com/paulilyytinen"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/niilas-holmberg-pauli-lyytinen-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Akkajee feat. Oma Ensemble",
+     "day": "sun",
+     "s": "18:00",
+     "e": "19:00",
+     "sm": 1080,
+     "em": 1140,
+     "slug": "akkajee-feat-oma-ensemble",
+     "type": "band",
+     "genres": [
+      "house"
+     ],
+     "note": "At Flow, Akkajee and the Oma Ensemble Choir perform Pölynkerääjä , a work that meditates on the passage, relativity, and cycles of time. Church bells, a decomposing body, an abandoned house: the narrators here speak from beyond the individual perspective, inviting the listener into the chains of generations and the quiet turn of life itself.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7D53ldh3d7IFcwLYqUb36S",
+      "youtube": "https://www.youtube.com/@duoakkajee4559",
+      "instagram": "https://www.instagram.com/akkajee_",
+      "soundcloud": "https://soundcloud.com/akkajee"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/akkajee-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Kiri Ra!",
+     "day": "sun",
+     "s": "20:00",
+     "e": "21:00",
+     "sm": 1200,
+     "em": 1260,
+     "slug": "kiri-ra",
+     "type": "live",
+     "genres": [
+      "jazz"
+     ],
+     "note": "Kiri Ra! is a trio formed by Lau Nau ( Laura Naukkarinen ), Linda Fredriksson and Swedish artist Matti Bye . The music created together by these three long‑standing artists lies at the very heart of their creation. Its spark is found in friendship and unhurried collaboration, in moments when music unfolds naturally through shared improvisation. Kiri Ra! is a gentle whisper in a world that shouts at us every day.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1kMbCcSenu1Kk0W9RGa8VR",
+      "instagram": "https://www.instagram.com/kiriratrio",
+      "soundcloud": "https://soundcloud.com/kirira-music"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/kiri-ra-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Voice Actor",
+     "day": "sun",
+     "s": "22:00",
+     "e": "23:00",
+     "sm": 1320,
+     "em": 1380,
+     "slug": "voice-actor",
+     "type": "live",
+     "genres": [
+      "ambient",
+      "pop"
+     ],
+     "note": "The enigmatic music project, Voice Actor , by Sheffield‑based Noa Kurzweil has since released three albums, each more difficult to pin down than the last. These works form hypnotic, hushed and expansively multilayered worlds where trip‑hop, dream pop and ambient unfold.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6PsuUa5ijopH2T8rVzHSZc",
+      "instagram": "https://www.instagram.com/noakurzweil",
+      "soundcloud": "https://soundcloud.com/yes-noa"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/05/voice-actor-flow-website-portrait-768x960.jpg"
+    }
+   ]
+  },
+  {
+   "id": "front",
+   "num": 6,
+   "name": "Front Yard",
+   "lat": 60.18652,
+   "lon": 24.97148,
+   "short": "Front Yard",
+   "location": "",
+   "blurb": "The main dance floor: house, techno, bass, long DJ sets.",
+   "color": "#22d3ee",
+   "acts": [
+    {
+     "n": "Ozan b2b Katerina",
+     "day": "fri",
+     "s": "16:00",
+     "e": "18:00",
+     "sm": 960,
+     "em": 1080,
+     "slug": "ozan-b2b-katerina",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "electronic"
+     ],
+     "note": "Helsinki-based DJs Ozan and Katerina are residents at the club Kaiku, where they DJ together at the Pearl nights they curate. Finnish-Bulgarian Katerina has been working in the local electronic music scene since the late 2000s as a DJ, producer, and programmer for various clubs. Currently, she works on the Kaiku program. As a producer, Katerina draws from a wide range of genres, from G-funk to ambient, house, and techno. She runs the labels Émotsiya and Kotarak and has released music on several acclaimed international labels, including Running Back and REKIDS.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/38KloDVtS6kT7BSU00ZHnn",
+      "youtube": "https://www.youtube.com/@katerina_emotsiya/",
+      "instagram": "https://www.instagram.com/ozan_pearl",
+      "soundcloud": "https://soundcloud.com/ozandenizizci"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/ozanb2bkaterina-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Saffet",
+     "day": "fri",
+     "s": "18:00",
+     "e": "19:00",
+     "sm": 1080,
+     "em": 1140,
+     "slug": "saffet",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "electronic",
+      "ambient"
+     ],
+     "note": "Saffet is the father of Red Arctic Desert Cult community events in Helsinki, and an all-around active figure in the local nightlife. RADC has recently hosted events Yö and Momentum at Post Bar, both continuing until the morning, and the ambient and experimental electronic music event Grotto, organised at various venues such as Post Bar and Lapinlahden lähde. As a DJ, Saffet is known for his preference for trance-influenced, mystical, and dark techno. In the last few years, he has DJ’d around Helsinki at Post Bar, Ääniwalli, Kaiku, Kuudes linja, and Stidilä, and at festivals such as the midsumm",
+     "links": {
+      "instagram": "https://www.instagram.com/s.a.ff.e.t",
+      "soundcloud": "https://soundcloud.com/saffetk"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/saffet-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Paula Koski",
+     "day": "fri",
+     "s": "19:00",
+     "e": "20:15",
+     "sm": 1140,
+     "em": 1215,
+     "slug": "paula-koski",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "electronic"
+     ],
+     "note": "Paula Koski operates in the space between hypnotic and driving techno, crafting a sound that is dark, glossy, and sharp-edged. The Finnish-born DJ started her career in Gothenburg and now lives in Berlin, where she plays regularly at clubs such as Berghain. In the last few years, she has DJ’d almost every weekend somewhere around the world, with gigs at clubs such as Basement in New York and Bassiani in Tbilisi.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/3w9HGVzG0JLJKOPB2N4N2c",
+      "youtube": "https://www.youtube.com/@paulakoski5546",
+      "instagram": "https://www.instagram.com/paula.koski",
+      "soundcloud": "https://soundcloud.com/paulakoski"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/paula-koski-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Orkidea b2b Lil Tony",
+     "day": "fri",
+     "s": "20:45",
+     "e": "22:00",
+     "sm": 1245,
+     "em": 1320,
+     "slug": "orkidea-b2b-lil-tony",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "disco"
+     ],
+     "note": "Lil Tony is a co-founder and programmer of Flow Festival, known for his long DJ and production career, as well as for various clubs in Helsinki, such as Soda and Kerma in the millennium era, and for currently running Kaiku, Ääniwalli, Kuudes linja, and Siltanen. He started DJ’ing already in 1989, and his sets often echo his long history in Detroit- and Chicago-influenced house and techno, dating back to the warehouse parties of his youth. As a DJ and selector, Lil Tony is always on the lookout for discoveries across electronic music, and his productions have been released by highly regarded la",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/72G8JchhC1UXFGZ17M61d8",
+      "instagram": "https://www.instagram.com/liltonys_music4friends",
+      "soundcloud": "https://soundcloud.com/liltony"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/liltony-orkidea-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Kettama",
+     "day": "fri",
+     "s": "22:00",
+     "e": "23:30",
+     "sm": 1320,
+     "em": 1410,
+     "slug": "kettama",
+     "type": "dj",
+     "genres": [
+      "electronic"
+     ],
+     "note": "His producing career began in his bedroom with a laptop, uploading his first tracks on SoundCloud. Since his debut EP in 2018, including the song Body , Kettama has steadily gained attention for his tracks. In October 2025, he released his debut album Archangel , his most important release to date. Releasing strong tracks on his own, such as Pretty Green Eyes and It Gets Better , Kettama has also recently collaborated with several top names in electronic music, including Fred Again.., Underworld, and DJ Heartstring. Growing up in the electronic music underground of Galway, Ireland, Kettama has",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/3an9rnsXKPCAMlZgH4A0n4",
+      "youtube": "https://www.youtube.com/@KETTAMAG-TOWN",
+      "instagram": "https://www.instagram.com/kettama",
+      "soundcloud": "https://soundcloud.com/kettamabro"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/11/FLOW26_Site_Kettama_Portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Gigola",
+     "day": "fri",
+     "s": "23:30",
+     "e": "01:00",
+     "sm": 1410,
+     "em": 1500,
+     "slug": "dj-gigola",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "electronic"
+     ],
+     "note": "Berlin-based DJ Gigola is one of the most interesting contemporary electronic music DJs, with her genre-crossing, diverse sets. She experiences music primarily through its rhythmic structure, so her DJ’ing shows a deep understanding of rhythm and groove, a curiosity to try new things, and a wide knowledge of various genres and eras of electronic music. She might mix techno, trance, and tech house with various pop songs in one DJ set.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7feJmqQ32fTIPKBmPXwHXf",
+      "youtube": "https://www.youtube.com/@dj_gigola",
+      "instagram": "https://www.instagram.com/dj_gigola",
+      "soundcloud": "https://soundcloud.com/djgigola"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/dj-gigola-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Boy Laundry",
+     "day": "sat",
+     "s": "15:00",
+     "e": "16:30",
+     "sm": 900,
+     "em": 990,
+     "slug": "boy-laundry",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "experimental"
+     ],
+     "note": "Operating with avant-garde flair and an unapologetic attitude, Boy Laundry is a newly established DJ collective in Helsinki’s nightlife scene. This “tongue-in-cheek with good taste” music-loving crew consists of Katvyl , Zarunii, and Mangolassi. Having also debuted at Flow last year, techno maximalist Katvyl brings her commanding percussion into the mix, Zarunii captivates any crowd with her eclectic selection, and Mangolassi acts as the collective’s driving force, pumping his dark and wild sound.",
+     "links": {
+      "instagram": "https://www.instagram.com/boy__laundry"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/BOY_LAUNDRY-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Mr.A",
+     "day": "sat",
+     "s": "16:30",
+     "e": "17:45",
+     "sm": 990,
+     "em": 1065,
+     "slug": "dj-mr-a",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "disco"
+     ],
+     "note": "His DJ sets are known for their deep emotional resonance and dance floor energy, blending deep house, disco, progressive, tribal, and after-hours techno. DJ Mr.A has also spread his underground energy beyond Helsinki, DJ’ing across the globe in London, Sydney, Chicago, Berlin, and beyond. His studio productions include the underground anthem Homofaggot , as well as remixes for Yoko Ono and Fischerspooner.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1zF6f6DIg2IZI3alYx8Gw5",
+      "youtube": "https://www.youtube.com/@deejaymra",
+      "instagram": "https://www.instagram.com/djmr.a",
+      "soundcloud": "https://soundcloud.com/mr-a"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/mra-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "€TOM b2b C4KE",
+     "day": "sat",
+     "s": "17:45",
+     "e": "18:45",
+     "sm": 1065,
+     "em": 1125,
+     "slug": "etom-b2b-c4ke",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "electronic"
+     ],
+     "note": "€TOM is known for groovy, unpredictable, and high-energy sets that move between hardgroove and techno, bringing a sexy energy to the dancefloor. C4KE is recognised for their fast-paced rhythms and explosive groove-driven selections. Rooted in techno and inspired by underground club culture, their sets balance intensity, atmosphere, and flow. Together, the duo deliver a journey that is groovy, unpredictable, and above all, built for the dancefloor.",
+     "links": {
+      "instagram": "https://www.instagram.com/djc4ke",
+      "soundcloud": "https://soundcloud.com/dj-c4ke"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/ETOM-b2b-C4KE-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Interplanetary Criminal",
+     "day": "sat",
+     "s": "18:45",
+     "e": "20:15",
+     "sm": 1125,
+     "em": 1215,
+     "slug": "interplanetary-criminal",
+     "type": "dj",
+     "genres": [
+      "bass",
+      "electronic",
+      "pop"
+     ],
+     "note": "Interplanetary Criminal is one of the most popular artists in today’s UK garage. His breakthrough came in 2022 with the single B.O.T.A. (Baddest of Them All), produced with Eliza Rose. The track went viral on TikTok, reached #1 in the UK singles chart, and was certified double platinum. His recent merits include the acclaimed single Yosemite produced with Kettama, as well as earning DJ Mag’s Best of British award for Best Producer, and the Juno Award for Dance Recording of the Year with the track No Time , featuring SadBoi.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6uJ51uV5rYzu1MJkC4CceI",
+      "instagram": "https://www.instagram.com/interplanetary_criminal93",
+      "soundcloud": "https://soundcloud.com/interplanetary-criminal"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/interplanetary-criminal-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Skream & Benga",
+     "day": "sat",
+     "s": "20:15",
+     "e": "21:30",
+     "sm": 1215,
+     "em": 1290,
+     "slug": "skream-benga",
+     "type": "live",
+     "genres": [
+      "bass",
+      "electronic",
+      "reggae"
+     ],
+     "note": "London-based producers Skream & Benga were among the pioneers of dubstep in the early 2000s. The two teenagers met in a record shop in Croydon and began making new bass-heavy music together, releasing tracks such as The Judgement in 2003 that helped dubstep break through. Both have continued their music careers together and separately, releasing dubstep classics such as Skream’s Midnight Request Line and Benga’s Night , produced with Coki.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6TaOlqfpegMP5IpO3fZo38",
+      "instagram": "https://www.instagram.com/skreamandbenga",
+      "soundcloud": "https://soundcloud.com/skreamandbenga"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/skreamb2bbenga-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Honey Dijon",
+     "day": "sat",
+     "s": "21:30",
+     "e": "23:00",
+     "sm": 1290,
+     "em": 1380,
+     "slug": "honey-dijon",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "electronic"
+     ],
+     "note": "Honey Dijon is a queer house icon and one of the most effective DJ-producers in the global electronic music underground. She is known for her uplifting, dancefloor-oriented DJ sets, curated with a vision and mixed carefully, transitioning between house and techno and delivering a warm, hypnotic vibe. Growing up in Chicago, the home of house music, she began her career in the local house scene. Later, she became a beloved figure on the club and fashion circuits in New York, Berlin, London, and Paris.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/0XfQBWgzisaS9ltDV9bXAS",
+      "youtube": "https://www.youtube.com/@HoneyDijon",
+      "instagram": "https://www.instagram.com/honeydijon",
+      "soundcloud": "https://soundcloud.com/HONEYDIJON"
+     },
+     "img": "https://www.flowfestival.com/uploads/2025/12/honeydijon-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Ben Klock b2b Fadi Mohem",
+     "day": "sat",
+     "s": "23:00",
+     "e": "01:00",
+     "sm": 1380,
+     "em": 1500,
+     "slug": "ben-klock-b2b-fadi-mohem",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "electronic"
+     ],
+     "note": "Ben Klock and Fadi Mohem are resident DJs at the legendary Berghain club in Berlin, and with their classic techno sound, they are synonymous with the club’s musical aesthetic. Klock has DJ’d at Berghain for more than two decades, and he is also in demand internationally with his Photon events and a string of quality releases on labels such as Ostgut Ton and his own Klockworks. Fadi Mohem has a 15-year career as a DJ and producer, and he is appreciated for staying true to his musical vision in his DJ sets, hardware live sets, and studio work.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1vJHfCreWAS46V8RZ67ojo",
+      "instagram": "https://www.instagram.com/ben_klock",
+      "soundcloud": "https://soundcloud.com/ben-klock"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/benklock-fadi-b2b-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "NOEI",
+     "day": "sun",
+     "s": "14:00",
+     "e": "16:00",
+     "sm": 840,
+     "em": 960,
+     "slug": "noei",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "electronic"
+     ],
+     "note": "NOEI is one of the newer residents of the Helsinki-based queer-party collective Korgy, known for his unique energy and the technotic eurotrance he plays. NOEI has DJ’d at Korgy’s parties in Ääniwalli for a few years, as well as in various club nights in Post Bar and Kaiku. Last year, he also played abroad with the other Korgy DJs at Den Anden Side in Copenhagen and the KitKat Club in Berlin. In the latter club, his life changed ten years ago, when he visited it for the first time and felt what freedom, connection, and the energy of music could feel like. Now the same elements are present when ",
+     "links": {
+      "instagram": "https://www.instagram.com/noei_noei_noei_noei",
+      "soundcloud": "https://soundcloud.com/noeinoeinoeinoei"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/noei-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Sallidoing",
+     "day": "sun",
+     "s": "16:00",
+     "e": "17:30",
+     "sm": 960,
+     "em": 1050,
+     "slug": "sallidoing",
+     "type": "dj",
+     "genres": [
+      "house",
+      "electronic"
+     ],
+     "note": "Helsinki-based DJ Sallidoing has been in high demand in the electronic music clubs of her hometown in the last few years. She is known as a master of flirty, playful and uplifting tech house. A resident in the Korgy collective, Sallidoing DJ’s frequently in Korgy events and other club nights in Ääniwalli, Kaiku, and Post Bar, as well as at different festivals. Last year, she also debuted internationally alongside the other Korgy DJs at the legendary KitKat Club in Berlin and in Copenhagen. Sallidoing spent years on the dancefloors of Finnish and Central European clubs before she started her DJ",
+     "links": {
+      "instagram": "https://www.instagram.com/sallidoing",
+      "soundcloud": "https://soundcloud.com/sallidoing/"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/sallidoing-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Lara Silva",
+     "day": "sun",
+     "s": "17:30",
+     "e": "18:30",
+     "sm": 1050,
+     "em": 1110,
+     "slug": "lara-silva",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "electronic"
+     ],
+     "note": "Lara Silva has been one of the familiar faces in the DJ booths of Helsinki’s electronic music clubs such as Ääniwalli, Kaiku, and Post Bar for years. Her techno-based DJ sets have dangerous, yet playful energy, and she brings a sound fueled by freedom, tension, and full-body release. Having also performed at Flow Festival several times, Lara Silva is a proud resident of the Korgy queer collective, DJing regularly at their events. Last year, she played abroad with the other collective members at the Den Anden Side club in Copenhagen and the KitKat club in Berlin. In Helsinki, she has also recen",
+     "links": {
+      "instagram": "https://www.instagram.com/noshamelaura",
+      "soundcloud": "https://soundcloud.com/l4r4silv4"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/larasilva-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Patrick Mason",
+     "day": "sun",
+     "s": "18:30",
+     "e": "20:00",
+     "sm": 1110,
+     "em": 1200,
+     "slug": "patrick-mason",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "electronic"
+     ],
+     "note": "Patrick Mason is one of the biggest names in Berlin’s new techno underground, known for his exceptionally high-energy DJ performances, which he has also played in Helsinki. Mixing razor-sharp techno and house, and closing the divide between dancefloor and DJ booth with his energy, Mason cut his teeth in Berghain and Panorama Bar, continuing his path in clubs and festivals all around the world.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/32H97VEM4nTqJsJgdt3hDg",
+      "youtube": "https://www.youtube.com/@iampatrickmason",
+      "instagram": "https://www.instagram.com/patrickmason",
+      "soundcloud": "https://soundcloud.com/patrick_mason-335351725"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/patrick-mason-flowfestival-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Anetha",
+     "day": "sun",
+     "s": "20:00",
+     "e": "21:30",
+     "sm": 1200,
+     "em": 1290,
+     "slug": "anetha",
+     "type": "dj",
+     "genres": [
+      "electronic"
+     ],
+     "note": "Paris-based Anetha is a trained architect, but since 2012, she has dedicated herself to music as a DJ, producer, founder of the record label Mama Told Ya, and co-founder of the talent agency Mama Loves Ya. She began her career in Paris as a co-founder of Blocaus party series and label, and since then she has DJ’d around Europe in Berghain, Ibiza’s Amnesia, and a row of major festivals, as well as in Australasia and the Americas.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7sJ3ngSMvvXGdVLnODPqXa",
+      "youtube": "https://www.youtube.com/@anethamusic",
+      "instagram": "https://www.instagram.com/anetha",
+      "soundcloud": "https://soundcloud.com/anethamusic"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/anetha-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "2THEMAX b2b CEB b2b KEMIK",
+     "day": "sun",
+     "s": "21:30",
+     "e": "23:00",
+     "sm": 1290,
+     "em": 1380,
+     "slug": "2themax-b2b-ceb-b2b-kemik",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "electronic"
+     ],
+     "note": "2THEMAX, Kemik and CEB are masters of high-energy techno, euphoric trance, and strong progressive house, always following the vibe on the dancefloor. All three have recently DJ’d in central Europe in Copenhagen and KitKat Club in Berlin with the Korgy crew, and Kemik and 2THEMAX played a back-to-back set in London’s FOLD. In Helsinki, the three DJs also perform frequently at club nights other than Korgy’s, and CEB is one of the organisers of the popular club night Interlink at Post Bar and Ääniwalli.",
+     "links": {
+      "instagram": "https://www.instagram.com/maxfeinik"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/03/2THEMAX-b2b-KEMIK-b2b-CEB-website-portrait-768x960.jpg"
+    }
+   ]
+  },
+  {
+   "id": "backyard",
+   "num": 7,
+   "name": "Heineken Backyard",
+   "lat": 60.18602,
+   "lon": 24.97079,
+   "short": "Heineken Backyard",
+   "location": "",
+   "blurb": "Back-yard dance stage, mostly two-hour DJ sets.",
+   "color": "#4ade80",
+   "acts": [
+    {
+     "n": "Maria Wesander",
+     "day": "fri",
+     "s": "15:00",
+     "e": "17:00",
+     "sm": 900,
+     "em": 1020,
+     "slug": "maria-wesander",
+     "type": "dj",
+     "genres": [
+      "house",
+      "disco",
+      "electronic"
+     ],
+     "note": "Maria Wesander is one of the most trusted DJs on the Helsinki club circuit, playing electronic and organic rhythms across a wide range, depending on the venue and night. She moves through moods, tempos and genres from uplifting disco to Italo disco, Balearic, nu-disco, new beat, synth-pop, electro, house, and acid.",
+     "links": {
+      "instagram": "https://www.instagram.com/mariacharlottes",
+      "soundcloud": "https://soundcloud.com/m_charlotte"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/maria-wesander-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Eternal Love",
+     "day": "fri",
+     "s": "17:00",
+     "e": "19:00",
+     "sm": 1020,
+     "em": 1140,
+     "slug": "eternal-love",
+     "type": "dj",
+     "genres": [
+      "disco",
+      "electronic",
+      "pop"
+     ],
+     "note": "Milan-based producer and DJ duo Eternal Love began their journey in 2018 with a YouTube channel showcasing rare musical discoveries from around the world. The channel’s popularity soon led to DJ bookings and guest mixes for notable club media outlets. The two still have the passion to discover unknown records, play them, and fill the dancefloor. Eternal Love have played at clubs and festivals on five continents, and on some of the most respected underground radio platforms, including Kiosk Radio, NTS Radio, and The Lost Radio.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/6RGEvodcU9SrSfrnvIOSTl",
+      "instagram": "https://www.instagram.com/eternallovechannel",
+      "soundcloud": "https://soundcloud.com/eternalloveyt"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/eternal-love-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Hitoshi",
+     "day": "fri",
+     "s": "19:00",
+     "e": "21:00",
+     "sm": 1140,
+     "em": 1260,
+     "slug": "hitoshi",
+     "type": "dj",
+     "genres": [
+      "electronic"
+     ],
+     "note": "DJ Hitoshi was born in Osaka, Japan, and moved to Finland, originally inspired by his childhood memories of Moomin figurines. In Helsinki, he first became a staple on IDA Helsinki internet radio and soon became a beloved, highly in-demand DJ in local clubs. A familiar face in Ääniwalli, Kaiku, Post Bar, and Siltanen, Hitoshi has recently DJ’d abroad in Turkey, Germany, and his home country, Japan.",
+     "links": {
+      "instagram": "https://www.instagram.com/hitoshi_withbigt",
+      "soundcloud": "https://soundcloud.com/hitoshi-jin"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/hitoshi-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Babatr",
+     "day": "fri",
+     "s": "21:00",
+     "e": "23:00",
+     "sm": 1260,
+     "em": 1380,
+     "slug": "dj-babatr",
+     "type": "dj",
+     "genres": [
+      "disco",
+      "electronic"
+     ],
+     "note": "When the culture faced problems in the early 2000s, DJ Babatr quit his career and began working as an automotive painter, but his music circulated online, and after nearly two decades, his unique sound, way ahead of its time, was widely rediscovered. In the 2020s, DJ Babatr has played regularly at European clubs such as Berghain and Tresor, and at festivals like Primavera Sound. His vintage productions have been re-released, and his producer career has also continued successfully with tracks like Xtasis , released with Nick Leon and named as Track of the Year 2022 by Resident Advisor.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2VAqLzkNHs0cre3T6i1PHD",
+      "instagram": "https://www.instagram.com/djbabatr",
+      "soundcloud": "https://soundcloud.com/dj-babatr"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/babatr-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Ben UFO",
+     "day": "fri",
+     "s": "23:00",
+     "e": "01:00",
+     "sm": 1380,
+     "em": 1500,
+     "slug": "ben-ufo",
+     "type": "dj",
+     "genres": [
+      "house",
+      "bass",
+      "electronic"
+     ],
+     "note": "Ben UFO is one of the key British DJs showcasing new electronic music in the 2000s. He rose to prominence as one of the founders of the label Hessle Audio and a host on Rinse FM, being the first DJ to play rising producers such as Joy Orbison and Blawan. Ben UFO is one of the few famous British DJs who doesn’t produce music, and therefore his worldwide reputation is based purely on his musical selection and DJ skills. He started his career in the dubstep scene, but later expanded his musical spectrum to house, UK garage, and grime, selecting future classics as well as unknown quality tracks fr",
+     "links": {
+      "instagram": "https://www.instagram.com/ben___ufo",
+      "soundcloud": "https://soundcloud.com/benufo"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/ben-ufo-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Tero Männikkö b2b Ben Bostik",
+     "day": "sat",
+     "s": "14:00",
+     "e": "16:00",
+     "sm": 840,
+     "em": 960,
+     "slug": "tero-mannikko-b2b-ben-bostik",
+     "type": "dj",
+     "genres": [
+      "disco",
+      "electronic"
+     ],
+     "note": "Tero Männikkö and Ben Bostik belong to the most passionate ambassadors of Italo disco in Helsinki. Männikkö has organised Italo clubs in the local nightlife for 15 years already, currently running the club night Italo Disco at Tanner once a month. He also appeared in the 2018 Italian documentary film Italo Disco Legacy. As a DJ, Männikkö has a passion for obscurities, and his sets are a mix of the most valued rarities and bargain-bin classics.",
+     "links": {
+      "youtube": "https://www.youtube.com/@BenBostik",
+      "instagram": "https://www.instagram.com/italo_discoteca",
+      "soundcloud": "https://soundcloud.com/benbostik"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/tero-mannikko-b2b-ben-bostik-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Subaru",
+     "day": "sat",
+     "s": "16:00",
+     "e": "18:00",
+     "sm": 960,
+     "em": 1080,
+     "slug": "dj-subaru",
+     "type": "dj",
+     "genres": [
+      "electronic"
+     ],
+     "note": "DJ Subaru’s career has recently taken off internationally. She has played three times in a year at Berghain and DJ’d at club nights featuring artists such as Alexander Robotnick and Alden Tyrell. She has also played back-to-back with Palms Trax, whose label released her EP Lots Of Love , influenced by new wave and EBM. DJ Subaru collects and plays italo and other synth music from around the world, and she channels the values and heritage of authentic DIY club culture.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2eGRVy9k3za3FagBqYdkJ5",
+      "instagram": "https://www.instagram.com/dj_subaru",
+      "soundcloud": "https://soundcloud.com/dj_subaru"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/djsubary-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Ash Lauryn",
+     "day": "sat",
+     "s": "18:00",
+     "e": "20:00",
+     "sm": 1080,
+     "em": 1200,
+     "slug": "ash-lauryn",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "rnb-soul"
+     ],
+     "note": "Detroit-born Ash Lauryn is known for advancing the Black American roots of house techno through her work across many platforms. She is the founder of Underground & Black, a blog that evolved into a beloved NTS Radio show and an event series. For the last decade, Ash Lauryn has DJ’d internationally in Central Europe, Japan, and across the US, playing deep, soulful house-based sets with a special connection to the dance floor.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1DAJGebgIA7OjVy2umBB8g",
+      "youtube": "https://www.youtube.com/@ashlauryn6404",
+      "instagram": "https://www.instagram.com/ash_lauryn_",
+      "soundcloud": "https://soundcloud.com/ashlauryn"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/ash-lauryn-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Hanna Ojanen",
+     "day": "sat",
+     "s": "20:00",
+     "e": "21:30",
+     "sm": 1200,
+     "em": 1290,
+     "slug": "hanna-ojanen",
+     "type": "dj",
+     "genres": [
+      "disco",
+      "electronic"
+     ],
+     "note": "A long-time favourite of the disco-oriented club-goers in Helsinki, Hanna Ojanen is known for her ability to move the dancefloor and lift the mood whenever she plays. Ojanen started her DJ career while living in Tokyo. In Helsinki, she has recently played at Kaiku during the regular XT4CY club night she runs with local nightlife legend Lil Tony, as well as having several all-nighters at Post Bar.",
+     "links": {
+      "soundcloud": "https://soundcloud.com/hannaojanen"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/hanna-ojanen-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Koze",
+     "day": "sat",
+     "s": "21:30",
+     "e": "23:30",
+     "sm": 1290,
+     "em": 1410,
+     "slug": "dj-koze",
+     "type": "dj",
+     "genres": [
+      "disco",
+      "electronic",
+      "rap"
+     ],
+     "note": "His discography includes six albums and collaborations with artists such as Caribou, Damon Albarn, José González, and Roisin Murphy, whose successful album Hit Parade he produced a few years ago. DJ Koze’s sixth studio album, Music Can Hear Us , was released in April 2025, and the record has been a success in both the charts and reviews. With a solid reputation as a DJ, producer, and remixer, DJ Koze is in high demand worldwide.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1kR99O4MgSTasyeJh8UFCg",
+      "instagram": "https://www.instagram.com/djkozeofficial",
+      "soundcloud": "https://soundcloud.com/dj-koze-official"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/djkoze-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Jennifer Loveless",
+     "day": "sat",
+     "s": "23:30",
+     "e": "01:00",
+     "sm": 1410,
+     "em": 1500,
+     "slug": "jennifer-loveless",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "electronic"
+     ],
+     "note": "After moving to Berlin in 2021, she has frequently played heady nights at clubs such as Panorama Bar and various clubs in Amsterdam, London and Paris. In the last few years, she has also had a row of festival gigs in events such as Dekmantel, Lost Village, and Love International. Loveless plays warm, emotive, pulsing house and techno, and her long history on dancefloors around the world is evident in her DJ sets. In the studio, the multifaceted artist produces intuitive, technical sounds for her releases and for the screen.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2Vsiki0qM11ADccRwwvS1c",
+      "instagram": "https://www.instagram.com/jenniferrloveless",
+      "soundcloud": "https://soundcloud.com/jenniferloveless"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/jennifer-loveless-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Academy Workshop - Family Sunday",
+     "day": "sun",
+     "s": "13:00",
+     "e": "16:00",
+     "sm": 780,
+     "em": 960,
+     "slug": "dj-academy-workshop-family-sunday",
+     "type": "performance",
+     "genres": [
+      "electronic",
+      "house"
+     ],
+     "note": "",
+     "links": {},
+     "img": ""
+    },
+    {
+     "n": "Galactic Mace",
+     "day": "sun",
+     "s": "16:00",
+     "e": "18:00",
+     "sm": 960,
+     "em": 1080,
+     "slug": "galactic-mace",
+     "type": "dj",
+     "genres": [
+      "disco",
+      "electronic",
+      "experimental"
+     ],
+     "note": "Helsinki-based Galactic Mace has a history of more than two decades in the DJ booth and on the dance floor of various clubs in his hometown. He is known for his preference for tropical floorfillers, classic disco, soul, and experimental electronic music, and has recently played in clubs like Tanner, Siltanen, Kaiku, and Ääniwalli. He has also hosted various club nights dedicated to global rhythms such as Zesty and Zoukous.",
+     "links": {
+      "instagram": "https://www.instagram.com/galacticmace",
+      "soundcloud": "https://soundcloud.com/galacticmace"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/galactic-mace-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Awesome Tapes from Africa",
+     "day": "sun",
+     "s": "18:00",
+     "e": "20:30",
+     "sm": 1080,
+     "em": 1230,
+     "slug": "awesome-tapes-from-africa",
+     "type": "dj",
+     "genres": [
+      "classical",
+      "afro"
+     ],
+     "note": "The label has made famous artists such as Hailu Mergia and Ata Kak, who both had ended their musical careers but made comebacks after the success of their reissued music. Throughout the history of Awesome Tapes From Africa, Shimkovitz has DJ’d all around the world, staying true to the original concept and playing cassettes. In the 2020s, Awesome Tapes From Africa has expanded its scope to release contemporary music by younger African artists.",
+     "links": {
+      "youtube": "https://www.youtube.com/@AwesomeTapesFromAfrica",
+      "instagram": "https://www.instagram.com/awesometapesfromafrica",
+      "soundcloud": "https://soundcloud.com/awesometapesfromafrica"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/awesome-tapes-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Habibi Funk",
+     "day": "sun",
+     "s": "20:30",
+     "e": "23:00",
+     "sm": 1230,
+     "em": 1380,
+     "slug": "habibi-funk",
+     "type": "dj",
+     "genres": [
+      "disco",
+      "rnb-soul",
+      "reggae"
+     ],
+     "note": "Stürtz is a vinyl-only DJ who regularly plays high-energy, interesting sets in cities such as Berlin, London, Paris, Oslo, and Beirut. The story of Habibi Funk also continues as a label with a steady output. Recently, Stürtz released a compilation of reggae and disco from Libyan cassette releases, and he has also expanded the label’s catalogue with releases from today’s artists, such as the Lebanese multi-instrumentalist Charif Megarbane.",
+     "links": {
+      "youtube": "https://www.youtube.com/@habibifunk",
+      "instagram": "https://www.instagram.com/habibifunk",
+      "soundcloud": "https://soundcloud.com/habibifunk"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/04/habibi-funk-flow-website-portrait-768x960.jpg"
+    }
+   ]
+  },
+  {
+   "id": "xgarden",
+   "num": 8,
+   "name": "X Garden",
+   "lat": 60.1858,
+   "lon": 24.97352,
+   "short": "X Garden",
+   "location": "",
+   "blurb": "Club-leaning garden stage, local and international DJs.",
+   "color": "#fc8c46",
+   "acts": [
+    {
+     "n": "Itseasias",
+     "day": "fri",
+     "s": "15:00",
+     "e": "16:00",
+     "sm": 900,
+     "em": 960,
+     "slug": "itseasias",
+     "type": "dj",
+     "genres": [
+      "electronic"
+     ],
+     "note": "Itseasias is an exciting new DJ talent in the Helsinki club scene, making her club debut in January 2026 at Post Bar and quickly carving out a place in the city’s nightlife scene. Known for her signature blend of bouncy, sexy club sounds, she brings an infectious energy to the dancefloor. Itseasias delivers sets that are both playful and powerful, balancing feel-good moments with undeniable groove. She has already played at venues and events, including Post Bar, Kaiku, and is set to bring her energy to Flow Festival and Bassline Festival. The rising DJ is driven by a genuine love for club cult",
+     "links": {
+      "instagram": "https://www.instagram.com/itseasias"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/Itseasias-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Kaero",
+     "day": "fri",
+     "s": "16:30",
+     "e": "17:30",
+     "sm": 990,
+     "em": 1050,
+     "slug": "kaero",
+     "type": "dj",
+     "genres": [
+      "electronic"
+     ],
+     "note": "Kaero , alias Karoliina Pärnänen , is the mother of the Alternate Frequency club concept and a DJ who navigates seamlessly on heavy bass frequencies. Her high-energy sets often contain evocative vocals and fragmented drum breaks, weaving together contemporary and deconstructed club sounds. Rooted in the Finnish underground and shaped by years in Den Haag and Berlin, Kaero brings a truly international sensibility to the floor. In Helsinki, her Alternate Frequency concept combines DJ sets with live electronic music, performance art, and visuals. Inspired by her multidisciplinary practice spannin",
+     "links": {
+      "youtube": "https://www.youtube.com/@karoliinaparnanen_world/",
+      "instagram": "https://www.instagram.com/kaero.world",
+      "soundcloud": "https://soundcloud.com/karoliina-parnanen"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/kaero-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "HEL:BOUNCE",
+     "day": "fri",
+     "s": "17:30",
+     "e": "18:30",
+     "sm": 1050,
+     "em": 1110,
+     "slug": "helbounce",
+     "type": "dj",
+     "genres": [
+      "disco",
+      "electronic",
+      "latin"
+     ],
+     "note": "HEL:BOUNCE is a Helsinki-based collective focusing on the bouncier side of electronic music. The HEL:BOUNCE crew consists of ileevi , who has been an active DJ and producer, bouncing from project to project, and Discolisko , who has been playing DJ sets and producing events in Helsinki’s underground scene for years. Their HEL:BOUNCE soundscape flirts with Latincore, hard groove, and whatever bounces. The high-power duo emerged from the “Call on Me on steroids” energy, years of collaborative b2b sessions, and a shared love for bounce. Their combination bounces to heights you might want to check",
+     "links": {
+      "instagram": "https://www.instagram.com/helbounce"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/hel-bounce-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DIORA",
+     "day": "fri",
+     "s": "18:30",
+     "e": "20:00",
+     "sm": 1110,
+     "em": 1200,
+     "slug": "diora",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "electronic"
+     ],
+     "note": "Cape Town-born and Amsterdam-based DIORA is a multi-disciplinary artist and DJ, who has shaken up the electronic music underground in her hometown in the last few years. A force of nature on the decks, she’s an uptempo DJ who doesn’t just play music, she weaves it. With a masterful layering of deconstructed club, techno, bass, and trance, she conjures a euphoric, hypnotic, and undeniably sexy storm when she DJ’s. DIORA plays monthly in the clubs of Amsterdam and regularly also in Berlin, and in Helsinki she DJ’d at the Complex Pride event organized last summer in Kaiku and Kuudes linja.",
+     "links": {
+      "instagram": "https://www.instagram.com/daniiidiora",
+      "soundcloud": "https://soundcloud.com/dioraaaa"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/diora-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "PLUSHB4BY",
+     "day": "fri",
+     "s": "20:00",
+     "e": "21:30",
+     "sm": 1200,
+     "em": 1290,
+     "slug": "plushb4by",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "world"
+     ],
+     "note": "PLUSHB4BY is a London-based DJ and producer whose sets are a journey through genre-defying soundscapes, marked by relentless energy and creative freedom. Her style leans heavily on hard drums and global rhythms, weaving together breakbeats, Jersey club, and deconstructed club influences to create an unapologetically bold and sensual atmosphere. Also a co-founder of London-based queer collective, label and party Hypoxia, PLUSHB4BY has DJ’d at the collective’s parties in London for several years, as well as other clubs in Britain and Berlin. Her producer career has also begun with several qualit",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/2Ya4BHcqA8b450D4qeR1p5",
+      "instagram": "https://www.instagram.com/_rowenne",
+      "soundcloud": "https://soundcloud.com/plushb4by"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/PLUSHB4BY-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "dogheadsurigeri",
+     "day": "fri",
+     "s": "21:30",
+     "e": "23:00",
+     "sm": 1290,
+     "em": 1380,
+     "slug": "dogheadsurigeri",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "electronic"
+     ],
+     "note": "Raised in the club spaces of Warsaw and now based in London, Dogheadsurigeri is rising from the circuit of contemporary club music underground. Her signature style fuses the high-speed catharsis of techno with the euphoric, blurred neon vision of trance. Dogheadsurigeri’s debut single, Fluid Matter , released in 2024, was noted on Mixmag and Crack Magazine, and her productions have later gained attention also on DJ Mag and Beatport, where they have climbed up the Best New Trance playlists. With years of experience in club DJ’ing, Dogheadsurigeri has an instinct for what works on the dancefloor",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/4yHESmHhnVaeoWqZB7DqJm",
+      "youtube": "https://www.youtube.com/@dogheadsurigeri/",
+      "instagram": "https://www.instagram.com/dogheadsurigeri",
+      "soundcloud": "https://soundcloud.com/dogheadsurigeri"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/dogheadsurigeri-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Meg10 b2b Luca Eck",
+     "day": "fri",
+     "s": "23:00",
+     "e": "01:00",
+     "sm": 1380,
+     "em": 1500,
+     "slug": "meg10-b2b-luca-eck",
+     "type": "dj",
+     "genres": [
+      "disco",
+      "electronic",
+      "rap"
+     ],
+     "note": "DJ, producer, promoter and booker Luca Eck has earned respect as a connector of global queer subcultures. An internationally sought after DJ, they have played in clubs and events such as Tresor, Homobloc Festival and Sonar, and their first US tour was completed this spring. Luca Eck’s discography as a producer and an artist spans multilingual queer club anthems, radio ready pop bangers, and deconstructed club ballads, all underscored by their signature sonic aesthetic that balances intimate detail with maximal impact. Their musical collaborations include artists such as Miss Bashful, Cannelle,",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/7FvEqUihbJfx5vpfGd1OLz",
+      "youtube": "https://www.youtube.com/@iamlucaeck",
+      "instagram": "https://www.instagram.com/heymeg10",
+      "soundcloud": "https://soundcloud.com/heymeg10"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/Meg10-b2b-Luca-Eck-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Herkules",
+     "day": "sat",
+     "s": "14:00",
+     "e": "15:30",
+     "sm": 840,
+     "em": 930,
+     "slug": "herkules",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "pop",
+      "reggae"
+     ],
+     "note": "Helsinki nightlife veteran Herkules loves to spin records, and crowds across generations enjoy. In his career of a few decades, he is known for running the Smash Hits club night at Siltanen, various reggae clubs around the city and as a radio host on Bassoradio. This summer, he runs the club night Kompleksi at his favourite summer spot Siltanen on Wednesdays with DJ SomBadi, bringing their favourite Finnish and international DJs to the club. The DJ sets of Herkules bring a wide selection of dance music from this year’s pop-hits to crunchy reggae-records of decades past.",
+     "links": {
+      "instagram": "https://www.instagram.com/henriksuhonen"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/herkules-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Elly",
+     "day": "sat",
+     "s": "15:30",
+     "e": "17:00",
+     "sm": 930,
+     "em": 1020,
+     "slug": "elly",
+     "type": "dj",
+     "genres": [
+      "house",
+      "electronic",
+      "rnb-soul"
+     ],
+     "note": "Finnish-born DJ Elly lives in the island nation of Cape Verde , carving her place in the global DJ scene with a sound that combines cultures and genres. Her sets move through amapiano , Afrohouse , Afrobeats, dancehall, and Brazilian funk in a way that feels natural and fluid. Elly has DJ’d recently at major clubs in both Finland and Cape Verde , and for her , DJ’ing is ultimately about energy and connection. Her sound is both global and personal, and her artistry is also shaped by the Cape Verdean musical culture. She provides smooth transitions and a strong presence, keeping the dancefloor m",
+     "links": {
+      "instagram": "https://www.instagram.com/ellyros.e"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/elly-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "SomBadi + Davy (Live)",
+     "day": "sat",
+     "s": "17:00",
+     "e": "18:30",
+     "sm": 1020,
+     "em": 1110,
+     "slug": "sombadi-davy-live",
+     "type": "band",
+     "genres": [
+      "house",
+      "electronic",
+      "rap"
+     ],
+     "note": "Davy is one of the most exciting new names in Finnish rap, known for his distinctive sound with house influences. His career began with Houseparty -EP in 2024, and so far he has racked up multi-million streams from tracks Ekonomisti and Prada Sheidit . His collaboration with Olga and Victor Nordis, Supermalli , was one of last summer’s festival hits, and the track has streamed gold. Davy is a charismatic and high-energy live performer who has toured in Finland with artists such as Turisti and Averagekidluke. In addition to his own artist project, Davy is active as a producer, with credits incl",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1j0UMs2eqsn464CiW1odZk",
+      "instagram": "https://www.instagram.com/sombadi.eu",
+      "soundcloud": "https://soundcloud.com/sombad1"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/SomBadi-b2b-Davy-live-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Sgamo",
+     "day": "sat",
+     "s": "18:30",
+     "e": "20:00",
+     "sm": 1110,
+     "em": 1200,
+     "slug": "sgamo",
+     "type": "dj",
+     "genres": [
+      "bass",
+      "electronic",
+      "rap"
+     ],
+     "note": "Sgamo is an Italian DJ who was raised between the suburban rave and hip-hop scenes of Bari, and later he became a prominent figure in Milan’s underground nightlife. Sgamo has built an international reputation through bass-driven DJ sets, a deeply DIY approach and community-led projects such as wegoing.sound, the platform behind the first Italian takeover of Rinse FM. Blending bass music, club hybrids and worldwide influences, his sets have taken him from Fabric in London to Circus in Tokyo, alongside festival appearances at Sziget Festival, Clockenflap, and Love Saves The Day. Sgamo is a DJ wh",
+     "links": {
+      "instagram": "https://www.instagram.com/sgamo1990",
+      "soundcloud": "https://soundcloud.com/sgamo1990"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/Sgamo-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Riria",
+     "day": "sat",
+     "s": "20:00",
+     "e": "21:30",
+     "sm": 1200,
+     "em": 1290,
+     "slug": "riria",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "reggae",
+      "afro"
+     ],
+     "note": "Riria put herself on the global club culture map in 2024 with her Boiler Room Tokyo DJ set, reaching five million views and making several underground tracks go viral after being featured in her set. She grew up immersed in Tokyo’s club scene and developed a DJ style where amapiano, jersey club, and dub mix smoothly with commercial hits, cult classics, and underground gems. Riria’s selections are unpredictable, as tracks from different eras and scenes come together, but her DJ sets feel natural, effortless and fresh, bringing energy and good vibes. Nowadays based in London, Riria plays this ye",
+     "links": {
+      "youtube": "https://www.youtube.com/@floating_riri",
+      "instagram": "https://www.instagram.com/floating_riri",
+      "soundcloud": "https://soundcloud.com/floatingriri"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/riria-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Fanny Vilhelmsson b2b Benjamin Baniassadi",
+     "day": "sat",
+     "s": "21:30",
+     "e": "23:00",
+     "sm": 1290,
+     "em": 1380,
+     "slug": "fanny-vilhelmsson-b2b-benjamin-baniassadi",
+     "type": "dj",
+     "genres": [
+      "house",
+      "disco",
+      "electronic"
+     ],
+     "note": "Swedish DJs Fanny Vilhelmsson and Benjamin Baniassadi bring energy and musical versatility to the X Garden stage. Nowadays, based in Paris, Vilhelmsson is known for her playful and dynamic approach to selecting and mixing music. Her selection floats between electronic genres from house to disco, dance and world music. She believes that music is a crossroads of energies rather than musical styles, and by combining and layering them, she seeks to convey an energy that will make you vibrate to the rhythm and the powerful bass. Vilhelmsson always reserves an element of surprise when she plays, and",
+     "links": {
+      "youtube": "https://www.youtube.com/@fannyvilh",
+      "instagram": "https://www.instagram.com/fannyvilh",
+      "soundcloud": "https://soundcloud.com/fannyvilh"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/Benjamin-Baniassadi-b2b-Fanny-Vilhelmsson-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Antídoto",
+     "day": "sat",
+     "s": "23:00",
+     "e": "01:00",
+     "sm": 1380,
+     "em": 1500,
+     "slug": "antidoto",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "world"
+     ],
+     "note": "Madrid-based club concept Antídoto has quickly established itself as a key platform for the new wave of club culture emerging from Spain. The founders of the concept, DJs Diego Armando and Yosef , lead Antídoto with a carefully curated and forward-thinking musical direction, blending an eclectic range of sounds from global and urban club music to the latest electronic music. Antídoto has deep connections to other aspects of contemporary urban culture, such as fashion and design, and the club night, organised every Thursday in Madrid, is an inclusive and safe environment created to support arti",
+     "links": {
+      "instagram": "https://www.instagram.com/antidoto.club",
+      "soundcloud": "https://soundcloud.com/antidotoclub"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/ANTIDOTO-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Family Tunes - Family Sunday",
+     "day": "sun",
+     "s": "13:00",
+     "e": "15:00",
+     "sm": 780,
+     "em": 900,
+     "slug": "family-tunes-family-sunday",
+     "type": "performance",
+     "genres": [
+      "electronic",
+      "club"
+     ],
+     "note": "",
+     "links": {},
+     "img": ""
+    },
+    {
+     "n": "Fadda Francis",
+     "day": "sun",
+     "s": "15:00",
+     "e": "16:00",
+     "sm": 900,
+     "em": 960,
+     "slug": "fadda-francis",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "reggae"
+     ],
+     "note": "Francis Erharuyi alias Fadda Francis moved from Nigeria to Finland in the late 1970s, and his pioneering work as a DJ and a club and event organiser in the Helsinki reggae circuit has continued for more than four decades. Fadda Francis is the sole promoter and producer of the largest annual reggae events in Finland, such as Helsinki Reggae Festival, Reggae Snowsplash and Tampere Reggae Festival, and he has promoted numerous live concerts by Jamaican artists from Lee Scratch Perry to Shaggy. He is the head of his own sound system Lion Head Sound, performing also outside Finland, and in Helsinki",
+     "links": {
+      "instagram": "https://www.instagram.com/franciserharuyi",
+      "soundcloud": "https://soundcloud.com/lionheadsound"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/fadda-francis-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Laura Lazor",
+     "day": "sun",
+     "s": "16:00",
+     "e": "17:00",
+     "sm": 960,
+     "em": 1020,
+     "slug": "laura-lazor",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "reggae"
+     ],
+     "note": "Helsinki-based DJ Laura Lazor has been behind the decks since 2019, and her career is driven by a deep love for dancehall culture. Before becoming a DJ, she spent years dancing and training dancehall, developing a strong connection to the music and its roots. Her passion for the culture has also taken her to Jamaica, where her understanding of the music, community and culture deepened. Known for her passion for playing to dancers, she delivers energetic DJ sets filled with authentic dancehall vibes and rhythms. She has performed at numerous clubs and events across Helsinki, co-ran the dancehal",
+     "links": {
+      "instagram": "https://www.instagram.com/lazorlazor",
+      "soundcloud": "https://soundcloud.com/laura-lazor-kyt-m-ki"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/laura-lazor-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Chargie",
+     "day": "sun",
+     "s": "17:00",
+     "e": "18:00",
+     "sm": 1020,
+     "em": 1080,
+     "slug": "chargie",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "rap",
+      "rnb-soul"
+     ],
+     "note": "Chargie is a Helsinki-based DJ specialising in tropical party music. Chargie’s sets focus heavily on dancehall and reggae, but his repertoire also extends to African sounds, reggaeton, R&B, and rap. DJ’ing since 2011, Chargie has performed at clubs and festivals across Finland and opened for major international artists. He currently holds residencies at the club night Bashment Yard at Kuudes linja and Reggae United club at Ääniwalli. In 2025, Chargie joined Lion Head Sound, Finland’s longest-running active sound system, as a third member alongside Fadda Francis and Rumpunch. The collective boa",
+     "links": {
+      "instagram": "https://www.instagram.com/djchargie",
+      "soundcloud": "https://soundcloud.com/djchargie"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/Chargie-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Wekesa",
+     "day": "sun",
+     "s": "18:00",
+     "e": "19:00",
+     "sm": 1080,
+     "em": 1140,
+     "slug": "wekesa",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "rap",
+      "rnb-soul"
+     ],
+     "note": "Wekesa is a Helsinki-based DJ and dancer. Her sets are rooted in a bass-driven soundscape that blends dancehall, amapiano, afrobeats, hip-hop, R&B, baile, jersey club, queer anthems, edits, and remixes. Known from playing at various club nights in Kuudes linja, Ääniwalli, Siltanen and Kaiku for almost a decade, Wekesa is a socially skilful DJ who reads the energy of the dancefloor and weaves unexpected elements into their artistic vision. The goal is always to deliver deeply physical sets that invite the audience to surrender to the music, encouraging them to let go of the pressure to be ”cool",
+     "links": {
+      "instagram": "https://www.instagram.com/sophiawekesa",
+      "soundcloud": "https://soundcloud.com/sophia-wekesa-586774603"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/wekesa-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "VG+",
+     "day": "sun",
+     "s": "19:00",
+     "e": "20:00",
+     "sm": 1140,
+     "em": 1200,
+     "slug": "vg",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "reggae"
+     ],
+     "note": "VG+ is a DJ and selector familiar from the Helsinki-based sound system Komposti Sound, making their mark in the local club scene on various occasions, such as DJ’ing at the weekly Reggae Sundays club night from 2007–2015. The mix of raw street vibes, deep bass and sweet melodies in Caribbean music has already had a hold of them since the late nineties. With a long career behind them and touring outside Finland with Komposti Sound, VG+ knows how to keep a dancehall reggae party going from night until morning, and is no stranger to soca and bouyon as well as various styles of urban club music. A",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/0pgj6baVfMHvEF8XpDcTp4",
+      "instagram": "https://www.instagram.com/vgplus"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/vg-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Kemarr",
+     "day": "sun",
+     "s": "20:00",
+     "e": "21:30",
+     "sm": 1200,
+     "em": 1290,
+     "slug": "kemarr",
+     "type": "dj",
+     "genres": [
+      "house",
+      "electronic",
+      "rap"
+     ],
+     "note": "Kemarr is a DJ hailing from southwest London, where his Jamaican roots merged with his love for hip-hop. His eclectic club selections and elaborate style include genres such as reggaeton, dancehall, afro house, baile funk and everything in between. Blending timeless classics with rare instrumentals and dubs, Kemarr brings opposing worlds together on the dancefloor.",
+     "links": {
+      "youtube": "https://www.youtube.com/@kemarr5322",
+      "instagram": "https://www.instagram.com/_kemarr",
+      "soundcloud": "https://soundcloud.com/k_3marr"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/kemarr-flow-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Tev",
+     "day": "sun",
+     "s": "21:30",
+     "e": "23:00",
+     "sm": 1290,
+     "em": 1380,
+     "slug": "dj-tev",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "reggae"
+     ],
+     "note": "Sweden-based DJ TEV is one of the most sought-after Caribbean DJs in the region. He has performed at clubs, festivals, corporate events, private functions, and cultural celebrations such as Uppsala Reggae Festival and Jamaican Independence Celebration in Sweden. Born and raised in Jamaica, and nowadays touring around Scandinavia and central Europe, DJ TEV brings the authentic energy, culture, and rhythm of the Caribbean wherever he plays. His other profession as a dancer and dance teacher has given him a special understanding of movement, rhythm, and interaction with the dancefloor . DJ TEV’s ",
+     "links": {
+      "youtube": "https://www.youtube.com/@djtev9111",
+      "instagram": "https://www.instagram.com/djtev_ja"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/06/djtev-website-portrait-768x960.jpg"
+    }
+   ]
+  },
+  {
+   "id": "lanson",
+   "num": 9,
+   "name": "Lanson Champagne Bar & Lounge",
+   "lat": 60.18669,
+   "lon": 24.97401,
+   "short": "Lanson",
+   "location": "",
+   "blurb": "Bar and lounge with DJs from open to close.",
+   "color": "#e8c07a",
+   "acts": [
+    {
+     "n": "Laura Vartio & Harvest",
+     "day": "fri",
+     "s": "15:00",
+     "e": "17:00",
+     "sm": 900,
+     "em": 1020,
+     "slug": "laura-vartio-harvest",
+     "type": "live",
+     "genres": [
+      "house",
+      "electronic"
+     ],
+     "note": "Paha Vaanii club hallmarks are guaranteed dancing, radiant vibes and a full house. In these warm-hearted evenings, people soak up the atmosphere, sing together, shed tears of joy, twist, pair up, clink glasses, and goof around with a twinkle in their eye. From office Christmas parties to yacht decks, from cottage get-togethers to festival stages, Paha Vaanii delivers Finnish music spanning every decade and genre.",
+     "links": {
+      "instagram": "https://www.instagram.com/paha.vaanii"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/paha_vaanii-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Madam Bullet & Silly Girl",
+     "day": "fri",
+     "s": "17:00",
+     "e": "18:00",
+     "sm": 1020,
+     "em": 1080,
+     "slug": "madam-bullet-silly-girl",
+     "type": "live",
+     "genres": [
+      "rnb-soul",
+      "punk"
+     ],
+     "note": "20 years ago two punk souls collided in the night. Friends Mira and Johanna bring bustle to Flow’s Lanson Champagne Bar & Lounge. Their set is guaranteed to include pieces from the likes of Maukka Perusjätkä, Pelle Miljoona and Ratsia. Let’s pogo!",
+     "links": {
+      "instagram": "https://www.instagram.com/miraluoti"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/madambullet_ja_sillygirl-website-portrait-768x960.jpeg"
+    },
+    {
+     "n": "Markkinavako",
+     "day": "fri",
+     "s": "18:00",
+     "e": "20:00",
+     "sm": 1080,
+     "em": 1200,
+     "slug": "markkinavako",
+     "type": "dj",
+     "genres": [
+      "pop"
+     ],
+     "note": "Markkinavako is a DJ collective of four friends who actively throw parties and bring the heat in Helsinki’s nightlife. For Flow Festival, Markkinavako serves up a wide range of Finnish favourite bangers from timeless schlager classics to the hottest pop anthems.",
+     "links": {
+      "instagram": "https://www.instagram.com/markkinavako"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/markkinavako-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Magic Mannila",
+     "day": "fri",
+     "s": "20:00",
+     "e": "21:00",
+     "sm": 1200,
+     "em": 1260,
+     "slug": "dj-magic-mannila",
+     "type": "dj",
+     "genres": [
+      "indie"
+     ],
+     "note": "A graduate of the Indie Sleaze School of Life, where she majored in Partygirl Studies, she has spent more than ten years almost learning how to mix, playing in DJ duos like Wino 4ever and Dream, and working on projects such as D.R.E.A.M.G.I.R.L.S. and DREAMWORLD. Now it’s finally time to crank it on her own — before anyone can stop her.",
+     "links": {
+      "instagram": "https://www.instagram.com/magicmannila"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/taika_mannila-website-portrait-768x960.jpeg"
+    },
+    {
+     "n": "Kalifornia-Keke & DJPP",
+     "day": "fri",
+     "s": "21:00",
+     "e": "23:00",
+     "sm": 1260,
+     "em": 1380,
+     "slug": "kalifornia-keke-djpp",
+     "type": "dj",
+     "genres": [
+      "electronic"
+     ],
+     "note": "Finnish producer legends Kalifornia-Keke & DJPP play domestic bangers and unreleased remixes in a rare joint set.",
+     "links": {
+      "instagram": "https://www.instagram.com/kaliforniakeke"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Kalifornia-Keke_ja_DJPP-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Laura Vartio & Harvest",
+     "day": "fri",
+     "s": "23:00",
+     "e": "00:00",
+     "sm": 1380,
+     "em": 1440,
+     "slug": "laura-vartio-harvest",
+     "type": "live",
+     "genres": [
+      "house",
+      "electronic"
+     ],
+     "note": "Paha Vaanii club hallmarks are guaranteed dancing, radiant vibes and a full house. In these warm-hearted evenings, people soak up the atmosphere, sing together, shed tears of joy, twist, pair up, clink glasses, and goof around with a twinkle in their eye. From office Christmas parties to yacht decks, from cottage get-togethers to festival stages, Paha Vaanii delivers Finnish music spanning every decade and genre.",
+     "links": {
+      "instagram": "https://www.instagram.com/paha.vaanii"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/paha_vaanii-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "ROOS+BERG",
+     "day": "fri",
+     "s": "00:00",
+     "e": "01:00",
+     "sm": 1440,
+     "em": 1500,
+     "slug": "roosberg",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "pop"
+     ],
+     "note": "ROOS+BERG is the songwriter and producer duo of Christel and Jori Roosberg . In their musical world, everything is possible. For a few decades now, the duo has been shaping the soundscape of Finnish pop music by writing and producing music for themselves and the country’s most renowned artists. Now their aesthetic moves into the DJ booth, as ROOS+BERG takes over Flow Festival’s Lanson Champagne Bar & Lounge with a carefully curated set.",
+     "links": {
+      "spotify": "https://open.spotify.com/artist/1zVFUjbWQLjADJsMUGV5Ao",
+      "instagram": "https://www.instagram.com/roosberg_11ones"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/ROOSBERG-website-portrait-768x960.jpeg"
+    },
+    {
+     "n": "Zeze",
+     "day": "sat",
+     "s": "14:00",
+     "e": "15:00",
+     "sm": 840,
+     "em": 900,
+     "slug": "zeze",
+     "type": "dj",
+     "genres": [
+      "rap",
+      "afro"
+     ],
+     "note": "Lanson Champagne Bar & Lounge / SAT 15.8. / 00:00 A culture enthusiast and a fan of all things bounce, ZEZE’s inspiration heavily derives from melodic hip hop and futuristic afro and Caribbean beats. Her carefully curated sets embody ZEZE’s brand #NOREQUESTS, which asks the listeners to trust the DJ and allow her to lead them into her soundscape.",
+     "links": {
+      "youtube": "https://www.youtube.com/@notzeze",
+      "instagram": "https://www.instagram.com/zegenar",
+      "soundcloud": "https://soundcloud.com/zezemadethismix"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Zeze-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Hour FM",
+     "day": "sat",
+     "s": "15:00",
+     "e": "16:00",
+     "sm": 900,
+     "em": 960,
+     "slug": "hour-fm",
+     "type": "dj",
+     "genres": [
+      "disco"
+     ],
+     "note": "HOUR FM is a platform built around celebrating the music that lives beyond expectation. It gives DJs the space to explore the records that have shaped them, with carefully curated sets filled with unexpected discoveries, nostalgia and the music they rarely get the chance to play. Flow Festival gets to experience a unique set from the founder of HOUR FM: Matilda .",
+     "links": {
+      "instagram": "https://www.instagram.com/hour.fm",
+      "soundcloud": "https://soundcloud.com/hour-fm"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/HourFM-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "DJ Smokey",
+     "day": "sat",
+     "s": "16:00",
+     "e": "17:00",
+     "sm": 960,
+     "em": 1020,
+     "slug": "dj-smokey",
+     "type": "dj",
+     "genres": [
+      "house",
+      "rnb-soul",
+      "afro"
+     ],
+     "note": "Smokey is a Helsinki-based DJ known for his distinctive blend of Afrobeat, Afro house, deep house, and soulful house. His sound is rooted in rhythm, warmth and emotional groove — delivering uplifting, soulful and percussive sets that bring people together on the dancefloor.",
+     "links": {
+      "instagram": "https://www.instagram.com/djsmokey94",
+      "soundcloud": "https://soundcloud.com/djsmokeyy94"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Smokey-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Ima",
+     "day": "sat",
+     "s": "17:00",
+     "e": "18:00",
+     "sm": 1020,
+     "em": 1080,
+     "slug": "ima",
+     "type": "dj",
+     "genres": [
+      "house",
+      "electronic",
+      "rap"
+     ],
+     "note": "Ima Iduozee is a DJ and filmmaker based in Helsinki. A 2024 resident DJ at Kaiku, he has brought his genre-spanning sets—blending rap, R&B, house, afrobeats, and club edits—to leading venues and festivals including Ääniwalli, Kuudeslinja, Siltanen, and Flow Festival 2023. He also hosts the monthly radio show Papiz Recipes on Ida Radio.",
+     "links": {
+      "instagram": "https://www.instagram.com/imaiduozee",
+      "soundcloud": "https://soundcloud.com/imaiduozee"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Ima-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Moimar",
+     "day": "sat",
+     "s": "18:00",
+     "e": "19:00",
+     "sm": 1080,
+     "em": 1140,
+     "slug": "moimar",
+     "type": "dj",
+     "genres": [
+      "dnb",
+      "bass",
+      "electronic"
+     ],
+     "note": "Moimar is a Helsinki-based DJ and co-founder of NOSLEEP. Drawing on both UK club music and his Caribbean heritage, his sets blend garage, jungle, bassline, and other underground sounds into fast-paced, bass-driven sessions built for the dance floor.",
+     "links": {
+      "instagram": "https://www.instagram.com/m3rius"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Moimar-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Bucktooth T",
+     "day": "sat",
+     "s": "19:00",
+     "e": "20:00",
+     "sm": 1140,
+     "em": 1200,
+     "slug": "bucktooth-t",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "rap",
+      "reggae"
+     ],
+     "note": "Blending his African roots with UK dance music, hip-hop, and beyond, Helsinki-based DJ Bucktooth T delivers incredible musical variety. His versatile sets span a dynamic range of vibes from bubbly, infectious rhythms to heavy, bass-driven beats. No matter the crowd, Bucktooth T masterfully shapes the perfect atmosphere for every occasion.",
+     "links": {
+      "instagram": "https://www.instagram.com/bucktooth.t"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Bucktooth_T-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Joseysradios",
+     "day": "sat",
+     "s": "20:00",
+     "e": "21:00",
+     "sm": 1200,
+     "em": 1260,
+     "slug": "joseysradios",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "eclectic"
+     ],
+     "note": "She has performed internationally across the Netherlands, Germany, Sweden, and France and has shared lineups with artists including DBN Gogo, Uncle Waffless, Major League DJz, Thuto The Human, Charisse C, and more. In Helsinki, she hosts her own event series, creating spaces that celebrate music, culture, and community.",
+     "links": {
+      "youtube": "https://www.youtube.com/@whatsonjoseysradios/videos",
+      "instagram": "https://www.instagram.com/joseysradios",
+      "soundcloud": "https://soundcloud.com/joseysradios"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Joseysradios-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Smokey B2B Ima",
+     "day": "sat",
+     "s": "21:00",
+     "e": "22:00",
+     "sm": 1260,
+     "em": 1320,
+     "slug": "smokey-b2b-ima",
+     "type": "dj",
+     "genres": [
+      "house",
+      "electronic",
+      "rap"
+     ],
+     "note": "Ima Iduozee is a DJ and filmmaker based in Helsinki. A 2024 resident DJ at Kaiku, he has brought his genre-spanning sets—blending rap, R&B, house, afrobeats, and club edits—to leading venues and festivals including Ääniwalli, Kuudeslinja, Siltanen, and Flow Festival 2023. He also hosts the monthly radio show Papiz Recipes on Ida Radio.",
+     "links": {
+      "instagram": "https://www.instagram.com/djsmokey94",
+      "soundcloud": "https://soundcloud.com/djsmokeyy94"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Smokey-B2B-Ima-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Bucktooth T B2B Moimar",
+     "day": "sat",
+     "s": "22:00",
+     "e": "23:00",
+     "sm": 1320,
+     "em": 1380,
+     "slug": "bucktooth-t-b2b-moimar",
+     "type": "dj",
+     "genres": [
+      "electronic",
+      "rap",
+      "reggae"
+     ],
+     "note": "Blending his African roots with UK dance music, hip-hop, and beyond, Helsinki-based DJ Bucktooth T delivers incredible musical variety. His versatile sets span a dynamic range of vibes from bubbly, infectious rhythms to heavy, bass-driven beats. No matter the crowd, Bucktooth T masterfully shapes the perfect atmosphere for every occasion.",
+     "links": {
+      "instagram": "https://www.instagram.com/bucktooth.t"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Bucktooth-T-B2B-Moimar-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Zeze B2B Hour FM",
+     "day": "sat",
+     "s": "23:00",
+     "e": "00:00",
+     "sm": 1380,
+     "em": 1440,
+     "slug": "zeze-b2b-hour-fm",
+     "type": "dj",
+     "genres": [
+      "disco"
+     ],
+     "note": "HOUR FM is a platform built around celebrating the music that lives beyond expectation. It gives DJs the space to explore the records that have shaped them, with carefully curated sets filled with unexpected discoveries, nostalgia and the music they rarely get the chance to play. Flow Festival gets to experience a unique set from the founder of HOUR FM: Matilda .",
+     "links": {
+      "youtube": "https://www.youtube.com/@notzeze",
+      "instagram": "https://www.instagram.com/zegenar",
+      "soundcloud": "https://soundcloud.com/zezemadethismix"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Zeze-B2B-Hour-FM-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Zeze",
+     "day": "sat",
+     "s": "00:00",
+     "e": "01:00",
+     "sm": 1440,
+     "em": 1500,
+     "slug": "zeze",
+     "type": "dj",
+     "genres": [
+      "rap",
+      "afro"
+     ],
+     "note": "Lanson Champagne Bar & Lounge / SAT 15.8. / 00:00 A culture enthusiast and a fan of all things bounce, ZEZE’s inspiration heavily derives from melodic hip hop and futuristic afro and Caribbean beats. Her carefully curated sets embody ZEZE’s brand #NOREQUESTS, which asks the listeners to trust the DJ and allow her to lead them into her soundscape.",
+     "links": {
+      "youtube": "https://www.youtube.com/@notzeze",
+      "instagram": "https://www.instagram.com/zegenar",
+      "soundcloud": "https://soundcloud.com/zezemadethismix"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Zeze-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "EliXiiri",
+     "day": "sun",
+     "s": "13:00",
+     "e": "14:00",
+     "sm": 780,
+     "em": 840,
+     "slug": "elixiiri",
+     "type": "dj",
+     "genres": [
+      "house",
+      "electronic"
+     ],
+     "note": "eliXiiri  is a Helsinki-based DJ whose genre-fluid sets move from electro to tech-house, breakbeat and percussive modern club music. Her sound brings together playful, seductive club energy and 2000s electro nostalgia, creating unexpected but euphoric moments on the dancefloor. After starting out with the PTNKY collective in 2023, eliXiiri has carved out her own path across the Helsinki club scene, playing venues including Ääniwalli, Post Bar and Siltanen. Since the end of last year, she has also been co-hosting her own night, Roundabout, at Kaiku.",
+     "links": {
+      "instagram": "https://www.instagram.com/s.ii.ri",
+      "soundcloud": "https://soundcloud.com/siiri-hytoenen"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/eliXiiri-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Bilar & Leo Sal",
+     "day": "sun",
+     "s": "14:00",
+     "e": "16:00",
+     "sm": 840,
+     "em": 960,
+     "slug": "bilar-leo-sal",
+     "type": "dj",
+     "genres": [
+      "house",
+      "ambient"
+     ],
+     "note": "Spanning ambient, trance and energetic house, Leo Sal combines genres in often unexpected ways. A frequent Bilar collaborator, his DJ sets are moody yet playful and electric, always ready to surprise you when you least expect it. Following recent sets at local classic venues including Siltanen and Kaiku, Leo Sal is currently working on his debut project coming later this year.",
+     "links": {
+      "instagram": "https://www.instagram.com/ilaristikankare",
+      "soundcloud": "https://soundcloud.com/bilar1"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/bilar_and_leosal-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Marju",
+     "day": "sun",
+     "s": "16:00",
+     "e": "17:00",
+     "sm": 960,
+     "em": 1020,
+     "slug": "marju",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "eclectic"
+     ],
+     "note": "A longtime presence at Kaiku and a key figure behind a decade of DIY parties, Marju has helped shape the rhythm of the local scene from the ground up. Her influence isn’t loud, but it’s lasting. It’s felt in packed rooms, late nights, and the communities built around them.",
+     "links": {
+      "instagram": "https://www.instagram.com/mvrju",
+      "soundcloud": "https://soundcloud.com/djmarju"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Marju-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Hotleevibling & Long Legs",
+     "day": "sun",
+     "s": "17:00",
+     "e": "18:30",
+     "sm": 1020,
+     "em": 1110,
+     "slug": "hotleevibling-long-legs",
+     "type": "live",
+     "genres": [
+      "house",
+      "electronic",
+      "pop"
+     ],
+     "note": "Hotleevibling  &  Long Legs  are best known as the founders and hosts of the Guilty Pleasures club concept. Guilty Pleasures is currently one of Finland’s hottest and most sought-after club nights, having taken the festival and club scene across the country by storm. Already a firm favorite among many Flow Festival visitors, the Lanson Champagne Bar & Lounge celebration returns stronger than ever as Hotleevibling & Long Legs work their magic, reinventing the pop hits, house anthems, and club classics that everyone secretly loves into an irresistible dancefloor experience.",
+     "links": {
+      "instagram": "https://www.instagram.com/hotleevibling",
+      "soundcloud": "https://soundcloud.com/hotleevibling"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Hotleevibling_ja_Long-Legs-website-portrait-768x960.jpeg"
+    },
+    {
+     "n": "DJ Aleksi & DJ Handshaking",
+     "day": "sun",
+     "s": "18:30",
+     "e": "19:30",
+     "sm": 1110,
+     "em": 1170,
+     "slug": "dj-aleksi-dj-handshaking",
+     "type": "dj",
+     "genres": [
+      "techno",
+      "house",
+      "electronic"
+     ],
+     "note": "Driving raw underground rhythms into physical motion, DJ Aleksi knows how to make a room forget time and space. The Helsinki-based DJ is deeply rooted in the city’s underground scene, a resident at the legendary Club Kaiku, and has played internationally at clubs from Sisyphos in Berlin to DOKA and SISSI’S in Amsterdam. With over ten years of experience, DJ Aleksi is known for his ability to read and move the dance floor. His sets are deep yet physical, moving between bouncy house, rolling techno, wild vocals and no-nonsense club heaters.",
+     "links": {
+      "instagram": "https://instagram.com/aleksialeksialeksi",
+      "soundcloud": "https://soundcloud.com/djaleksialeksi"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/DJ-Aleksi-DJ-Handshaking-website-portraitr-768x960.jpg"
+    },
+    {
+     "n": "Club Geeli",
+     "day": "sun",
+     "s": "19:30",
+     "e": "21:00",
+     "sm": 1170,
+     "em": 1260,
+     "slug": "club-geeli",
+     "type": "live",
+     "genres": [
+      "electronic",
+      "pop"
+     ],
+     "note": "Founded by ancient IRC-Galleria besties, Club Geeli  has built a devoted following in just two years through its popular recurring club night at Kaiku, monthly IDA Helsinki radio show and countless packed dancefloors. As dedicated 90s and 00s music archivists, the collective seamlessly serves a finger-licking selection of irresistible dance anthems, delicious pop surprises and shameless nostalgia into one joyful mission: pure unfiltered fun. And for a debut festival appearance, there’s no better place than Lanson Champagne Bar & Lounge: CLUB GEELI LOVES CHAMPAGNE!",
+     "links": {
+      "instagram": "https://www.instagram.com/club.geeli",
+      "soundcloud": "https://soundcloud.com/club_geeli"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Clubgeeli-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Sampo",
+     "day": "sun",
+     "s": "21:00",
+     "e": "22:00",
+     "sm": 1260,
+     "em": 1320,
+     "slug": "sampo",
+     "type": "live",
+     "genres": [
+      "house"
+     ],
+     "note": "Local powerhouse Sampo has been deep-fried in the sweet grease of groove. Some call him the king of tech, others just a lovely guy. It is said that his revelation comes when the afterparty gets good (it always does). Recently launching his own record label Analogia, Sampo is always cooking something for the party people. The marinade is a lifelong process.",
+     "links": {
+      "instagram": "https://www.instagram.com/sampoyk",
+      "soundcloud": "https://soundcloud.com/sampoyk/sets"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Sampo-website-portrait-768x960.jpg"
+    },
+    {
+     "n": "Bonanza Boys",
+     "day": "sun",
+     "s": "22:00",
+     "e": "23:00",
+     "sm": 1320,
+     "em": 1380,
+     "slug": "bonanza-boys",
+     "type": "dj",
+     "genres": [
+      "electronic"
+     ],
+     "note": "Bonanza Boys  is the DJ duo of  Fleur Amser  and  Simo Pukkinen , formed in 2020 with the Picnic Bonanza party. They have been taking over clubs, festivals, events and line-ups in Helsinki’s nightlife and radio for quite some time. Fleur Amser is the co-owner of the A001 label and is active in both solo and multiple ensembles. Simo Pukkinen has been an instrumental force behind IDA Radio for years, alongside events and club concepts. First-timers at Flow Festival, they bring guaranteed quality with a scamp and passionate energy.",
+     "links": {
+      "instagram": "https://www.instagram.com/picnicbonanza",
+      "soundcloud": "https://soundcloud.com/ida_radio/picnic-bonanza-radio-08-04-26"
+     },
+     "img": "https://www.flowfestival.com/uploads/2026/07/Bonanzaboys-website-portrait-768x960.jpg"
+    }
+   ]
+  },
+  {
+   "id": "tiivis",
+   "num": 10,
+   "name": "Tiivistämö",
+   "lat": 60.187,
+   "lon": 24.97302,
+   "short": "Tiivistämö",
+   "location": "",
+   "blurb": "Indoor venue for talks and non-music programme.",
+   "color": "#94a3b8",
+   "acts": [
+    {
+     "n": "AI & Creativity with Google",
+     "day": "fri",
+     "s": "16:00",
+     "e": "17:00",
+     "sm": 960,
+     "em": 1020,
+     "slug": "ai-creativity-with-google",
+     "type": "performance",
+     "genres": [
+      "talk"
+     ],
+     "note": "",
+     "links": {},
+     "img": ""
+    },
+    {
+     "n": "All Inclusive AI & Design with Tieto",
+     "day": "sat",
+     "s": "15:00",
+     "e": "16:00",
+     "sm": 900,
+     "em": 960,
+     "slug": "all-inclusive-ai-design-with-tieto",
+     "type": "performance",
+     "genres": [
+      "talk"
+     ],
+     "note": "",
+     "links": {},
+     "img": ""
+    },
+    {
+     "n": "Musta laatikko",
+     "day": "sat",
+     "s": "16:30",
+     "e": "17:30",
+     "sm": 990,
+     "em": 1050,
+     "slug": "musta-laatikko",
+     "type": "performance",
+     "genres": [
+      "talk"
+     ],
+     "note": "",
+     "links": {},
+     "img": ""
+    },
+    {
+     "n": "Skidit disco marathon - Family Sunday",
+     "day": "sun",
+     "s": "13:00",
+     "e": "16:00",
+     "sm": 780,
+     "em": 960,
+     "slug": "skidit-disco-marathon-family-sunday",
+     "type": "performance",
+     "genres": [
+      "disco"
+     ],
+     "note": "",
+     "links": {},
+     "img": ""
+    }
+   ]
+  }
+ ]
+}

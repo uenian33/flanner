@@ -1,0 +1,1106 @@
+[
+ {
+  "id": "322",
+  "label": "FRI 14.8.",
+  "venues": [
+   {
+    "venue": "Main Stage",
+    "acts": [
+     {
+      "n": "Emilia Sisco & The Northern Lights",
+      "s": "15:45",
+      "e": "16:45",
+      "slug": "emilia-sisco-the-northern-lights"
+     },
+     {
+      "n": "ibe",
+      "s": "18:15",
+      "e": "19:15",
+      "slug": "ibe"
+     },
+     {
+      "n": "MARINA",
+      "s": "20:45",
+      "e": "21:45",
+      "slug": "marina"
+     },
+     {
+      "n": "Zara Larsson",
+      "s": "22:45",
+      "e": "00:00",
+      "slug": "zara-larsson"
+     }
+    ]
+   },
+   {
+    "venue": "Silver Arena",
+    "acts": [
+     {
+      "n": "F Experience",
+      "s": "17:00",
+      "e": "18:00",
+      "slug": "f-experience"
+     },
+     {
+      "n": "Bizi",
+      "s": "19:30",
+      "e": "20:30",
+      "slug": "bizi"
+     },
+     {
+      "n": "Oklou",
+      "s": "21:45",
+      "e": "22:45",
+      "slug": "oklou"
+     },
+     {
+      "n": "Disclosure (DJ set)",
+      "s": "00:00",
+      "e": "01:00",
+      "slug": "disclosure-dj-set"
+     }
+    ]
+   },
+   {
+    "venue": "Black Tent",
+    "acts": [
+     {
+      "n": "Efka Crush",
+      "s": "15:30",
+      "e": "16:30",
+      "slug": "efka-crush"
+     },
+     {
+      "n": "Louna0nline",
+      "s": "17:30",
+      "e": "18:30",
+      "slug": "louna0nline"
+     },
+     {
+      "n": "Pearly Drops",
+      "s": "19:30",
+      "e": "20:30",
+      "slug": "pearly-drops"
+     },
+     {
+      "n": "Bricknasty",
+      "s": "22:00",
+      "e": "23:00",
+      "slug": "bricknasty"
+     },
+     {
+      "n": "Cabaret Voltaire",
+      "s": "00:00",
+      "e": "01:00",
+      "slug": "cabaret-voltaire"
+     }
+    ]
+   },
+   {
+    "venue": "Balloon 360°",
+    "acts": [
+     {
+      "n": "Eero Koivistoinen Quartet feat. Nina Mya",
+      "s": "15:30",
+      "e": "16:30",
+      "slug": "eero-koivistoinen-quartet-feat-nina-mya"
+     },
+     {
+      "n": "Rosettes",
+      "s": "17:15",
+      "e": "18:15",
+      "slug": "rosettes"
+     },
+     {
+      "n": "DJ Kridlokk: Hai",
+      "s": "19:00",
+      "e": "20:00",
+      "slug": "dj-kridlokk-hai"
+     },
+     {
+      "n": "Tyler Ballgame",
+      "s": "21:00",
+      "e": "22:00",
+      "slug": "tyler-ballgame"
+     },
+     {
+      "n": "Ana Frango Elétrico",
+      "s": "23:00",
+      "e": "00:00",
+      "slug": "ana-frango-eletrico"
+     }
+    ]
+   },
+   {
+    "venue": "The Other Sound",
+    "acts": [
+     {
+      "n": "fourest",
+      "s": "16:00",
+      "e": "17:00",
+      "slug": "fourest"
+     },
+     {
+      "n": "Hallintohimmeli",
+      "s": "18:00",
+      "e": "19:00",
+      "slug": "hallintohimmeli"
+     },
+     {
+      "n": "AHO",
+      "s": "20:00",
+      "e": "21:00",
+      "slug": "aho"
+     },
+     {
+      "n": "More Ohr Less Trio (Roedelius, Von Hausswolff & Chaplin)",
+      "s": "22:00",
+      "e": "23:00",
+      "slug": "more-ohr-less-trio-roedelius-von-hausswolff-chaplin"
+     },
+     {
+      "n": "Atonauer",
+      "s": "00:00",
+      "e": "01:00",
+      "slug": "atonauer"
+     }
+    ]
+   },
+   {
+    "venue": "Front Yard",
+    "acts": [
+     {
+      "n": "Ozan b2b Katerina",
+      "s": "16:00",
+      "e": "18:00",
+      "slug": "ozan-b2b-katerina"
+     },
+     {
+      "n": "Saffet",
+      "s": "18:00",
+      "e": "19:00",
+      "slug": "saffet"
+     },
+     {
+      "n": "Paula Koski",
+      "s": "19:00",
+      "e": "20:15",
+      "slug": "paula-koski"
+     },
+     {
+      "n": "Orkidea b2b Lil Tony",
+      "s": "20:45",
+      "e": "22:00",
+      "slug": "orkidea-b2b-lil-tony"
+     },
+     {
+      "n": "Kettama",
+      "s": "22:00",
+      "e": "23:30",
+      "slug": "kettama"
+     },
+     {
+      "n": "DJ Gigola",
+      "s": "23:30",
+      "e": "01:00",
+      "slug": "dj-gigola"
+     }
+    ]
+   },
+   {
+    "venue": "Heineken Backyard",
+    "acts": [
+     {
+      "n": "Maria Wesander",
+      "s": "15:00",
+      "e": "17:00",
+      "slug": "maria-wesander"
+     },
+     {
+      "n": "Eternal Love",
+      "s": "17:00",
+      "e": "19:00",
+      "slug": "eternal-love"
+     },
+     {
+      "n": "Hitoshi",
+      "s": "19:00",
+      "e": "21:00",
+      "slug": "hitoshi"
+     },
+     {
+      "n": "DJ Babatr",
+      "s": "21:00",
+      "e": "23:00",
+      "slug": "dj-babatr"
+     },
+     {
+      "n": "Ben UFO",
+      "s": "23:00",
+      "e": "01:00",
+      "slug": "ben-ufo"
+     }
+    ]
+   },
+   {
+    "venue": "X Garden",
+    "acts": [
+     {
+      "n": "Itseasias",
+      "s": "15:00",
+      "e": "16:00",
+      "slug": "itseasias"
+     },
+     {
+      "n": "Kaero",
+      "s": "16:30",
+      "e": "17:30",
+      "slug": "kaero"
+     },
+     {
+      "n": "HEL:BOUNCE",
+      "s": "17:30",
+      "e": "18:30",
+      "slug": "helbounce"
+     },
+     {
+      "n": "DIORA",
+      "s": "18:30",
+      "e": "20:00",
+      "slug": "diora"
+     },
+     {
+      "n": "PLUSHB4BY",
+      "s": "20:00",
+      "e": "21:30",
+      "slug": "plushb4by"
+     },
+     {
+      "n": "dogheadsurigeri",
+      "s": "21:30",
+      "e": "23:00",
+      "slug": "dogheadsurigeri"
+     },
+     {
+      "n": "Meg10 b2b Luca Eck",
+      "s": "23:00",
+      "e": "01:00",
+      "slug": "meg10-b2b-luca-eck"
+     }
+    ]
+   },
+   {
+    "venue": "Lanson Champagne Bar & Lounge",
+    "acts": [
+     {
+      "n": "Laura Vartio & Harvest",
+      "s": "15:00",
+      "e": "17:00",
+      "slug": "laura-vartio-harvest"
+     },
+     {
+      "n": "Madam Bullet & Silly Girl",
+      "s": "17:00",
+      "e": "18:00",
+      "slug": "madam-bullet-silly-girl"
+     },
+     {
+      "n": "Markkinavako",
+      "s": "18:00",
+      "e": "20:00",
+      "slug": "markkinavako"
+     },
+     {
+      "n": "DJ Magic Mannila",
+      "s": "20:00",
+      "e": "21:00",
+      "slug": "dj-magic-mannila"
+     },
+     {
+      "n": "Kalifornia-Keke & DJPP",
+      "s": "21:00",
+      "e": "23:00",
+      "slug": "kalifornia-keke-djpp"
+     },
+     {
+      "n": "Laura Vartio & Harvest",
+      "s": "23:00",
+      "e": "00:00",
+      "slug": "laura-vartio-harvest"
+     },
+     {
+      "n": "ROOS+BERG",
+      "s": "00:00",
+      "e": "01:00",
+      "slug": "roosberg"
+     }
+    ]
+   },
+   {
+    "venue": "Tiivistämö",
+    "acts": [
+     {
+      "n": "AI & Creativity with Google",
+      "s": "16:00",
+      "e": "17:00",
+      "slug": "ai-creativity-with-google"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "310",
+  "label": "SAT 15.8.",
+  "venues": [
+   {
+    "venue": "Main Stage",
+    "acts": [
+     {
+      "n": "Arthur Verocai with AUKSO Orchestra",
+      "s": "15:30",
+      "e": "16:30",
+      "slug": "arthur-verocai-with-aukso-orchestra"
+     },
+     {
+      "n": "Olga",
+      "s": "18:00",
+      "e": "19:00",
+      "slug": "olga"
+     },
+     {
+      "n": "Turnstile",
+      "s": "20:30",
+      "e": "21:30",
+      "slug": "turnstile"
+     },
+     {
+      "n": "Florence + The Machine",
+      "s": "22:30",
+      "e": "00:00",
+      "slug": "florence-the-machine"
+     }
+    ]
+   },
+   {
+    "venue": "Silver Arena",
+    "acts": [
+     {
+      "n": "Antti Autio + Jouset",
+      "s": "14:30",
+      "e": "15:30",
+      "slug": "antti-autio-jouset"
+     },
+     {
+      "n": "Olavi Uusivirta",
+      "s": "16:45",
+      "e": "17:45",
+      "slug": "olavi-uusivirta"
+     },
+     {
+      "n": "Vesta",
+      "s": "19:15",
+      "e": "20:15",
+      "slug": "vesta"
+     },
+     {
+      "n": "Nu Genea Live Band",
+      "s": "21:30",
+      "e": "22:30",
+      "slug": "nu-genea-live-band"
+     },
+     {
+      "n": "Clipse",
+      "s": "00:00",
+      "e": "01:00",
+      "slug": "clipse"
+     }
+    ]
+   },
+   {
+    "venue": "Black Tent",
+    "acts": [
+     {
+      "n": "Keiju",
+      "s": "14:30",
+      "e": "15:30",
+      "slug": "keiju"
+     },
+     {
+      "n": "Ares",
+      "s": "17:00",
+      "e": "18:00",
+      "slug": "ares"
+     },
+     {
+      "n": "Louie Blue",
+      "s": "19:30",
+      "e": "20:30",
+      "slug": "louie-blue"
+     },
+     {
+      "n": "Malla",
+      "s": "21:30",
+      "e": "22:30",
+      "slug": "malla"
+     },
+     {
+      "n": "Rochelle Jordan",
+      "s": "00:00",
+      "e": "01:00",
+      "slug": "rochelle-jordan"
+     }
+    ]
+   },
+   {
+    "venue": "Balloon 360°",
+    "acts": [
+     {
+      "n": "Finding Jens Hortling",
+      "s": "14:30",
+      "e": "15:15",
+      "slug": "finding-jens-hortling"
+     },
+     {
+      "n": "Juhani Aaltonen Quartet",
+      "s": "16:00",
+      "e": "16:45",
+      "slug": "juhani-aaltonen-quartet"
+     },
+     {
+      "n": "Jimi Tenor Band",
+      "s": "17:15",
+      "e": "18:15",
+      "slug": "jimi-tenor-band"
+     },
+     {
+      "n": "Múm",
+      "s": "19:00",
+      "e": "20:00",
+      "slug": "mum"
+     },
+     {
+      "n": "Dina Ögon",
+      "s": "21:00",
+      "e": "22:00",
+      "slug": "dina-ogon"
+     },
+     {
+      "n": "The Zawose Queens",
+      "s": "23:00",
+      "e": "00:00",
+      "slug": "the-zawose-queens"
+     }
+    ]
+   },
+   {
+    "venue": "The Other Sound",
+    "acts": [
+     {
+      "n": "Aki Rissanen: Omniwerk",
+      "s": "16:00",
+      "e": "17:00",
+      "slug": "aki-rissanen-omniwerk"
+     },
+     {
+      "n": "Minna Koskenlahti",
+      "s": "18:00",
+      "e": "19:00",
+      "slug": "minna-koskenlahti"
+     },
+     {
+      "n": "Ensemble Gamut!",
+      "s": "20:00",
+      "e": "21:00",
+      "slug": "ensemble-gamut"
+     },
+     {
+      "n": "NAH",
+      "s": "22:00",
+      "e": "23:00",
+      "slug": "nah"
+     },
+     {
+      "n": "Murcof",
+      "s": "00:00",
+      "e": "01:00",
+      "slug": "murcof"
+     }
+    ]
+   },
+   {
+    "venue": "Front Yard",
+    "acts": [
+     {
+      "n": "Boy Laundry",
+      "s": "15:00",
+      "e": "16:30",
+      "slug": "boy-laundry"
+     },
+     {
+      "n": "DJ Mr.A",
+      "s": "16:30",
+      "e": "17:45",
+      "slug": "dj-mr-a"
+     },
+     {
+      "n": "€TOM b2b C4KE",
+      "s": "17:45",
+      "e": "18:45",
+      "slug": "etom-b2b-c4ke"
+     },
+     {
+      "n": "Interplanetary Criminal",
+      "s": "18:45",
+      "e": "20:15",
+      "slug": "interplanetary-criminal"
+     },
+     {
+      "n": "Skream & Benga",
+      "s": "20:15",
+      "e": "21:30",
+      "slug": "skream-benga"
+     },
+     {
+      "n": "Honey Dijon",
+      "s": "21:30",
+      "e": "23:00",
+      "slug": "honey-dijon"
+     },
+     {
+      "n": "Ben Klock b2b Fadi Mohem",
+      "s": "23:00",
+      "e": "01:00",
+      "slug": "ben-klock-b2b-fadi-mohem"
+     }
+    ]
+   },
+   {
+    "venue": "Heineken Backyard",
+    "acts": [
+     {
+      "n": "Tero Männikkö b2b Ben Bostik",
+      "s": "14:00",
+      "e": "16:00",
+      "slug": "tero-mannikko-b2b-ben-bostik"
+     },
+     {
+      "n": "DJ Subaru",
+      "s": "16:00",
+      "e": "18:00",
+      "slug": "dj-subaru"
+     },
+     {
+      "n": "Ash Lauryn",
+      "s": "18:00",
+      "e": "20:00",
+      "slug": "ash-lauryn"
+     },
+     {
+      "n": "Hanna Ojanen",
+      "s": "20:00",
+      "e": "21:30",
+      "slug": "hanna-ojanen"
+     },
+     {
+      "n": "DJ Koze",
+      "s": "21:30",
+      "e": "23:30",
+      "slug": "dj-koze"
+     },
+     {
+      "n": "Jennifer Loveless",
+      "s": "23:30",
+      "e": "01:00",
+      "slug": "jennifer-loveless"
+     }
+    ]
+   },
+   {
+    "venue": "X Garden",
+    "acts": [
+     {
+      "n": "Herkules",
+      "s": "14:00",
+      "e": "15:30",
+      "slug": "herkules"
+     },
+     {
+      "n": "Elly",
+      "s": "15:30",
+      "e": "17:00",
+      "slug": "elly"
+     },
+     {
+      "n": "SomBadi + Davy (Live)",
+      "s": "17:00",
+      "e": "18:30",
+      "slug": "sombadi-davy-live"
+     },
+     {
+      "n": "Sgamo",
+      "s": "18:30",
+      "e": "20:00",
+      "slug": "sgamo"
+     },
+     {
+      "n": "Riria",
+      "s": "20:00",
+      "e": "21:30",
+      "slug": "riria"
+     },
+     {
+      "n": "Fanny Vilhelmsson b2b Benjamin Baniassadi",
+      "s": "21:30",
+      "e": "23:00",
+      "slug": "fanny-vilhelmsson-b2b-benjamin-baniassadi"
+     },
+     {
+      "n": "Antídoto",
+      "s": "23:00",
+      "e": "01:00",
+      "slug": "antidoto"
+     }
+    ]
+   },
+   {
+    "venue": "Lanson Champagne Bar & Lounge",
+    "acts": [
+     {
+      "n": "Zeze",
+      "s": "14:00",
+      "e": "15:00",
+      "slug": "zeze"
+     },
+     {
+      "n": "Hour FM",
+      "s": "15:00",
+      "e": "16:00",
+      "slug": "hour-fm"
+     },
+     {
+      "n": "DJ Smokey",
+      "s": "16:00",
+      "e": "17:00",
+      "slug": "dj-smokey"
+     },
+     {
+      "n": "Ima",
+      "s": "17:00",
+      "e": "18:00",
+      "slug": "ima"
+     },
+     {
+      "n": "Moimar",
+      "s": "18:00",
+      "e": "19:00",
+      "slug": "moimar"
+     },
+     {
+      "n": "Bucktooth T",
+      "s": "19:00",
+      "e": "20:00",
+      "slug": "bucktooth-t"
+     },
+     {
+      "n": "Joseysradios",
+      "s": "20:00",
+      "e": "21:00",
+      "slug": "joseysradios"
+     },
+     {
+      "n": "Smokey B2B Ima",
+      "s": "21:00",
+      "e": "22:00",
+      "slug": "smokey-b2b-ima"
+     },
+     {
+      "n": "Bucktooth T B2B Moimar",
+      "s": "22:00",
+      "e": "23:00",
+      "slug": "bucktooth-t-b2b-moimar"
+     },
+     {
+      "n": "Zeze B2B Hour FM",
+      "s": "23:00",
+      "e": "00:00",
+      "slug": "zeze-b2b-hour-fm"
+     },
+     {
+      "n": "Zeze",
+      "s": "00:00",
+      "e": "01:00",
+      "slug": "zeze"
+     }
+    ]
+   },
+   {
+    "venue": "Tiivistämö",
+    "acts": [
+     {
+      "n": "All Inclusive AI & Design with Tieto",
+      "s": "15:00",
+      "e": "16:00",
+      "slug": "all-inclusive-ai-design-with-tieto"
+     },
+     {
+      "n": "Musta laatikko",
+      "s": "16:30",
+      "e": "17:30",
+      "slug": "musta-laatikko"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "326",
+  "label": "SUN 16.8.",
+  "venues": [
+   {
+    "venue": "Main Stage",
+    "acts": [
+     {
+      "n": "Aili Järvelä: VUORI",
+      "s": "14:30",
+      "e": "15:30",
+      "slug": "aili-jarvela-vuori"
+     },
+     {
+      "n": "J. Karjalainen",
+      "s": "16:30",
+      "e": "17:30",
+      "slug": "j-karjalainen"
+     },
+     {
+      "n": "SOMBR",
+      "s": "19:00",
+      "e": "20:00",
+      "slug": "sombr"
+     },
+     {
+      "n": "Nick Cave & the Bad Seeds",
+      "s": "21:00",
+      "e": "23:00",
+      "slug": "nick-cave-the-bad-seeds"
+     }
+    ]
+   },
+   {
+    "venue": "Silver Arena",
+    "acts": [
+     {
+      "n": "Jaakko Kulta",
+      "s": "13:30",
+      "e": "14:30",
+      "slug": "jaakko-kulta"
+     },
+     {
+      "n": "Arppa 8-pack",
+      "s": "15:30",
+      "e": "16:30",
+      "slug": "arppa-8-pack"
+     },
+     {
+      "n": "Geese",
+      "s": "17:45",
+      "e": "18:45",
+      "slug": "geese"
+     },
+     {
+      "n": "Lykke Li",
+      "s": "20:00",
+      "e": "21:00",
+      "slug": "lykke-li"
+     }
+    ]
+   },
+   {
+    "venue": "Black Tent",
+    "acts": [
+     {
+      "n": "fibi",
+      "s": "13:30",
+      "e": "14:30",
+      "slug": "fibi"
+     },
+     {
+      "n": "Asla Jo",
+      "s": "15:45",
+      "e": "16:45",
+      "slug": "asla-jo"
+     },
+     {
+      "n": "james K",
+      "s": "18:30",
+      "e": "19:30",
+      "slug": "james-k"
+     },
+     {
+      "n": "Lambrini Girls",
+      "s": "20:30",
+      "e": "21:30",
+      "slug": "lambrini-girls"
+     }
+    ]
+   },
+   {
+    "venue": "Balloon 360°",
+    "acts": [
+     {
+      "n": "Pekko Käppi & K:H:H:L",
+      "s": "14:00",
+      "e": "15:00",
+      "slug": "pekko-kappi-khhl"
+     },
+     {
+      "n": "Eskola & Mäkynen with The Guards Brass Collective: Drum’n’Brass",
+      "s": "16:00",
+      "e": "17:00",
+      "slug": "eskola-makynen-with-the-guards-brass-collective-drumnbrass"
+     },
+     {
+      "n": "Hannah Cohen",
+      "s": "18:00",
+      "e": "19:00",
+      "slug": "hannah-cohen"
+     },
+     {
+      "n": "The Congos",
+      "s": "20:00",
+      "e": "21:00",
+      "slug": "the-congos"
+     },
+     {
+      "n": "Sailor Honeymoon",
+      "s": "22:00",
+      "e": "23:00",
+      "slug": "sailor-honeymoon"
+     }
+    ]
+   },
+   {
+    "venue": "The Other Sound",
+    "acts": [
+     {
+      "n": "Siba Talks: The University as Creative Daredevil",
+      "s": "14:00",
+      "e": "15:00",
+      "slug": "siba-talks-the-university-as-creative-daredevil"
+     },
+     {
+      "n": "Niillas Holmberg & Pauli Lyytinen: Naarattu laulu",
+      "s": "16:00",
+      "e": "17:00",
+      "slug": "niillas-holmberg-pauli-lyytinen-naarattu-laulu"
+     },
+     {
+      "n": "Akkajee feat. Oma Ensemble",
+      "s": "18:00",
+      "e": "19:00",
+      "slug": "akkajee-feat-oma-ensemble"
+     },
+     {
+      "n": "Kiri Ra!",
+      "s": "20:00",
+      "e": "21:00",
+      "slug": "kiri-ra"
+     },
+     {
+      "n": "Voice Actor",
+      "s": "22:00",
+      "e": "23:00",
+      "slug": "voice-actor"
+     }
+    ]
+   },
+   {
+    "venue": "Front Yard",
+    "acts": [
+     {
+      "n": "NOEI",
+      "s": "14:00",
+      "e": "16:00",
+      "slug": "noei"
+     },
+     {
+      "n": "Sallidoing",
+      "s": "16:00",
+      "e": "17:30",
+      "slug": "sallidoing"
+     },
+     {
+      "n": "Lara Silva",
+      "s": "17:30",
+      "e": "18:30",
+      "slug": "lara-silva"
+     },
+     {
+      "n": "Patrick Mason",
+      "s": "18:30",
+      "e": "20:00",
+      "slug": "patrick-mason"
+     },
+     {
+      "n": "Anetha",
+      "s": "20:00",
+      "e": "21:30",
+      "slug": "anetha"
+     },
+     {
+      "n": "2THEMAX b2b CEB b2b KEMIK",
+      "s": "21:30",
+      "e": "23:00",
+      "slug": "2themax-b2b-ceb-b2b-kemik"
+     }
+    ]
+   },
+   {
+    "venue": "Heineken Backyard",
+    "acts": [
+     {
+      "n": "DJ Academy Workshop - Family Sunday",
+      "s": "13:00",
+      "e": "16:00",
+      "slug": "dj-academy-workshop-family-sunday"
+     },
+     {
+      "n": "Galactic Mace",
+      "s": "16:00",
+      "e": "18:00",
+      "slug": "galactic-mace"
+     },
+     {
+      "n": "Awesome Tapes from Africa",
+      "s": "18:00",
+      "e": "20:30",
+      "slug": "awesome-tapes-from-africa"
+     },
+     {
+      "n": "Habibi Funk",
+      "s": "20:30",
+      "e": "23:00",
+      "slug": "habibi-funk"
+     }
+    ]
+   },
+   {
+    "venue": "X Garden",
+    "acts": [
+     {
+      "n": "Family Tunes - Family Sunday",
+      "s": "13:00",
+      "e": "15:00",
+      "slug": "family-tunes-family-sunday"
+     },
+     {
+      "n": "Fadda Francis",
+      "s": "15:00",
+      "e": "16:00",
+      "slug": "fadda-francis"
+     },
+     {
+      "n": "Laura Lazor",
+      "s": "16:00",
+      "e": "17:00",
+      "slug": "laura-lazor"
+     },
+     {
+      "n": "Chargie",
+      "s": "17:00",
+      "e": "18:00",
+      "slug": "chargie"
+     },
+     {
+      "n": "Wekesa",
+      "s": "18:00",
+      "e": "19:00",
+      "slug": "wekesa"
+     },
+     {
+      "n": "VG+",
+      "s": "19:00",
+      "e": "20:00",
+      "slug": "vg"
+     },
+     {
+      "n": "Kemarr",
+      "s": "20:00",
+      "e": "21:30",
+      "slug": "kemarr"
+     },
+     {
+      "n": "DJ Tev",
+      "s": "21:30",
+      "e": "23:00",
+      "slug": "dj-tev"
+     }
+    ]
+   },
+   {
+    "venue": "Lanson Champagne Bar & Lounge",
+    "acts": [
+     {
+      "n": "EliXiiri",
+      "s": "13:00",
+      "e": "14:00",
+      "slug": "elixiiri"
+     },
+     {
+      "n": "Bilar & Leo Sal",
+      "s": "14:00",
+      "e": "16:00",
+      "slug": "bilar-leo-sal"
+     },
+     {
+      "n": "Marju",
+      "s": "16:00",
+      "e": "17:00",
+      "slug": "marju"
+     },
+     {
+      "n": "Hotleevibling & Long Legs",
+      "s": "17:00",
+      "e": "18:30",
+      "slug": "hotleevibling-long-legs"
+     },
+     {
+      "n": "DJ Aleksi & DJ Handshaking",
+      "s": "18:30",
+      "e": "19:30",
+      "slug": "dj-aleksi-dj-handshaking"
+     },
+     {
+      "n": "Club Geeli",
+      "s": "19:30",
+      "e": "21:00",
+      "slug": "club-geeli"
+     },
+     {
+      "n": "Sampo",
+      "s": "21:00",
+      "e": "22:00",
+      "slug": "sampo"
+     },
+     {
+      "n": "Bonanza Boys",
+      "s": "22:00",
+      "e": "23:00",
+      "slug": "bonanza-boys"
+     }
+    ]
+   },
+   {
+    "venue": "Tiivistämö",
+    "acts": [
+     {
+      "n": "Skidit disco marathon - Family Sunday",
+      "s": "13:00",
+      "e": "16:00",
+      "slug": "skidit-disco-marathon-family-sunday"
+     }
+    ]
+   }
+  ]
+ }
+]

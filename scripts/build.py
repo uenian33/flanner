@@ -59,18 +59,18 @@ def data_uri(path):
     return f"data:{mime};base64,{base64.b64encode(path.read_bytes()).decode()}"
 
 
-def pack_lanes(acts):
+def pack_lanes(acts, key_s=lambda a: mins(a["s"]), key_e=lambda a: mins(a["e"])):
     """Greedy interval packing: each act takes the lowest lane that is free."""
     ends = []
-    for a in sorted(acts, key=lambda x: (mins(x["s"]), -(mins(x["e"]) - mins(x["s"])))):
+    for a in sorted(acts, key=lambda x: (key_s(x), -(key_e(x) - key_s(x)))):
         for i, end in enumerate(ends):
-            if mins(a["s"]) >= end:
+            if key_s(a) >= end:
                 a["lane"] = i
-                ends[i] = mins(a["e"])
+                ends[i] = key_e(a)
                 break
         else:
             a["lane"] = len(ends)
-            ends.append(mins(a["e"]))
+            ends.append(key_e(a))
     return len(ends)
 
 
@@ -104,6 +104,7 @@ def main():
                 "name": a.get("display", name), "q": name,
                 "s": a["s"], "e": a["e"], "sm": mins(a["s"]), "em": mins(a["e"]),
                 "type": a["type"], "genres": a["genres"], "lane": a["lane"],
+                "day": "d1",
                 "b2b": a.get("b2b", False), "allday": a.get("allday", False),
                 "nomusic": a.get("nomusic", False), "note": cur.get("note", ""),
                 "direct": {k: v for k, v in cur.items()
@@ -114,7 +115,7 @@ def main():
             "id": st["id"], "num": st["num"], "name": st["name"],
             "short": st.get("short", st["name"]), "location": st["location"],
             "blurb": st["blurb"], "color": STAGE_COLORS[st["id"]],
-            "lat": st["lat"], "lon": st["lon"], "lanes": lanes,
+            "lat": st["lat"], "lon": st["lon"], "lanes": {"d1": lanes},
             "acts": sorted(out, key=lambda x: x["sm"]),
         })
 
@@ -122,7 +123,10 @@ def main():
         "event": acts["event"], "stages": stages, "poi": acts.get("poi", []),
         "genreLabels": {g: GENRE_LABELS[g] for g in GENRE_LABELS if g in genres_seen},
         "typeLabels": {t: TYPE_LABELS[t] for t in TYPE_LABELS if t in types_seen},
-        "dayStart": DAY_START, "dayEnd": DAY_END, "basemap": basemap,
+        "days": [{"id": "d1", "label": "Sat 1 August", "short": "Sat",
+                  "date": acts["event"]["date"], "start": DAY_START, "end": DAY_END}],
+        "presets": {"live": "alive", "second": "rap"}, "hasPoster": True,
+        "basemap": basemap,
     }
 
     art_payload = {
@@ -145,11 +149,14 @@ def main():
         ("__FONT_LATIN__", data_uri(ROOT / "assets" / "font" / "disp-latin.woff2")),
         ("__FONT_EXT__", data_uri(ROOT / "assets" / "font" / "disp-latin-ext.woff2")),
         ("__MAP_AR__", ar),
+        ("__THEME__", ""),
+        ("__SIBLING__", '<p>Planning Flow too? There is a '
+                        '<a href="flow/">Flow Festival 2026 planner</a> built from the same engine.</p>'),
     ]:
         html = html.replace(token, value)
 
     leftover = [t for t in ("__DATA__", "__ART__", "__BASEMAP__", "__POSTER__", "__LOGO__", "__SATELLITE__", "__TEXTURE__", "__BASEMAP_LIGHT__",
-                            "__FONT_LATIN__", "__FONT_EXT__", "__FONT_TITLE__", "__MAP_AR__") if t in html]
+                            "__FONT_LATIN__", "__FONT_EXT__", "__FONT_TITLE__", "__THEME__", "__SIBLING__", "__MAP_AR__") if t in html]
     if leftover:
         raise SystemExit(f"unreplaced tokens: {leftover}")
 

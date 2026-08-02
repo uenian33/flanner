@@ -10,14 +10,16 @@ emits corrected coordinates to paste back into data/acts.json.
 import json
 import pathlib
 
+import sys
 from build import DATA, ROOT, STAGE_COLORS, data_uri
 
-OUT = ROOT / "tools" / "calibrate.html"
+FLOW = "--flow" in sys.argv
+OUT = ROOT / "tools" / ("calibrate-flow.html" if FLOW else "calibrate.html")
 
 TPL = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stage pin calibration — Kallio Block Party 2026</title>
+<title>Stage pin calibration</title>
 <style>
 :root{--bg:#0a0c10;--bg2:#0f1218;--panel:#151a24;--line:#232936;--line2:#333c4e;
   --tx:#e9edf5;--tx2:#9aa5ba;--tx3:#7b8799;--ok:#a3e635}
@@ -117,7 +119,7 @@ green once you have moved it; hit <b>Copy corrected coordinates</b> and paste th
         <button id="zo" title="Zoom out (−)">−</button>
         <button id="zf" title="Reset view (0)">⌖</button></div>
     </div></div>
-  <div class="pane"><h2>Official map — reference</h2>
+  <div class="pane"><h2>Reference view</h2>
     <div class="view" id="posterView"><div class="plane" id="posterPlane">
       <img src="__POSTER__" alt="Official festival map" draggable="false"></div>
       <div class="ctl"><button id="pi">+</button><button id="po">−</button><button id="pf">⌖</button></div>
@@ -136,9 +138,9 @@ green once you have moved it; hit <b>Copy corrected coordinates</b> and paste th
   </div>
 </div></div>
 <script>
-const STAGES = __STAGES__, B = __BASEMAP_META__;
+const STAGES = __STAGES__, B = __BASEMAP_META__, STORE_KEY = '__STORE__';
 const $ = s => document.querySelector(s);
-const saved = JSON.parse(localStorage.getItem('kbp26calib2') || '{}');
+const saved = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
 const pos = {};
 STAGES.forEach(s => pos[s.id] = saved[s.id] ? {...saved[s.id], moved:true}
                                             : {lat:s.lat, lon:s.lon, moved:false});
@@ -172,7 +174,7 @@ function draw() {
   $('#list').querySelectorAll('.row').forEach(r => r.onclick = () => { sel = r.dataset.id; draw(); centre(r.dataset.id); });
   $('#out').value = JSON.stringify(Object.fromEntries(
     STAGES.map(s => [s.id, [pos[s.id].lat, pos[s.id].lon]])), null, 1);
-  localStorage.setItem('kbp26calib2', JSON.stringify(Object.fromEntries(
+  localStorage.setItem(STORE_KEY, JSON.stringify(Object.fromEntries(
     STAGES.filter(s => pos[s.id].moved).map(s => [s.id, {lat:pos[s.id].lat, lon:pos[s.id].lon}]))));
 }
 function bindPins() {
@@ -286,7 +288,7 @@ $('#copy').onclick = () => {
 };
 $('#reset').onclick = () => {
   if (!confirm('Reset every pin back to the original guess?')) return;
-  localStorage.removeItem('kbp26calib2');
+  localStorage.removeItem(STORE_KEY);
   STAGES.forEach(s => pos[s.id] = {lat:s.lat, lon:s.lon, moved:false});
   draw(); mapPZ.redraw();
 };
@@ -296,19 +298,21 @@ draw();
 
 
 def main():
-    acts = json.loads((DATA / "acts.json").read_text())
-    basemap = json.loads((DATA / "basemap.json").read_text())
+    base = (DATA / "flow") if FLOW else DATA
+    acts = json.loads((base / "acts.json").read_text())
+    basemap = json.loads((base / "basemap.json").read_text())
     stages = [{"id": s["id"], "num": s["num"], "name": s["name"],
                "short": s.get("short", s["name"]), "lat": s["lat"], "lon": s["lon"],
-               "color": STAGE_COLORS[s["id"]]} for s in acts["stages"]]
+               "color": s.get("color") or STAGE_COLORS[s["id"]]} for s in acts["stages"]]
     html = TPL
     for tok, val in [
         ("__STAGES__", json.dumps(stages, ensure_ascii=False)),
         ("__BASEMAP_META__", json.dumps(basemap)),
-        ("__BASEMAP__", data_uri(ROOT / "assets" / "basemap.jpg")),
-        ("__SATELLITE__", data_uri(ROOT / "assets" / "satellite.jpg")),
-        ("__POSTER__", data_uri(ROOT / "assets" / "map.jpg")),
+        ("__BASEMAP__", data_uri(ROOT / "assets" / ("flow-basemap.jpg" if FLOW else "basemap.jpg"))),
+        ("__SATELLITE__", data_uri(ROOT / "assets" / ("flow-satellite.jpg" if FLOW else "satellite.jpg"))),
+        ("__POSTER__", data_uri(ROOT / "assets" / ("flow-satellite.jpg" if FLOW else "map.jpg"))),
         ("__AR__", f'{basemap["wPixels"]}/{basemap["hPixels"]}'),
+        ("__STORE__", "flowcalib1" if FLOW else "kbp26calib2"),
     ]:
         html = html.replace(tok, val)
     OUT.write_text(html)
