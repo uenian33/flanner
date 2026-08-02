@@ -7,6 +7,7 @@ planners it links to.
 """
 import json, pathlib
 from build import ROOT, data_uri
+import seo
 
 NOTE = (
     "<p>Unofficial planners, not affiliated with any of these festivals. Timetables come from "
@@ -29,6 +30,15 @@ def main():
     html = (ROOT / "scripts" / "home.html").read_text()
     for tok, val in [
         ("__DATA__", json.dumps(cfg, ensure_ascii=False, separators=(",", ":"))),
+        ("__BASE__", seo.BASE),
+        ("__OG__", seo.head(
+            f"{seo.BASE}/",
+            "Flanner — Helsinki festival timetables you can plan with",
+            "Free stage grids, set times, artist previews and maps for Flow Festival "
+            "and Kallio Block Party. One page per festival, works offline once loaded.",
+            f"{seo.BASE}/assets/og/home.jpg",
+            jsonld=seo.site_jsonld(cfg["festivals"]) + [seo.festival_event(f) for f in cfg["festivals"]],
+        )),
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
         ("__FOOTER__", (ROOT / "scripts" / "_footer.html").read_text()),

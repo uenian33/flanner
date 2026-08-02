@@ -15,6 +15,10 @@ Output
 
 import base64
 import json
+import sys
+from pathlib import Path as _P
+sys.path.insert(0, str(_P(__file__).resolve().parent))
+import seo
 import mimetypes
 import pathlib
 import urllib.parse
@@ -151,6 +155,16 @@ def main():
         ("__MAP_AR__", ar),
         ("__THEME__", ""),
         ("__HOME__", "../"),
+        ("__OG__", (lambda _f: seo.head(
+            f"{seo.BASE}/{_f['planner']}",
+            f"{_f['name']} {_f['year']} timetable — set times, stages and map",
+            f"Plannable timetable for {_f['name']} {_f['year']}: {_f['stats']['acts']} acts "
+            f"across {_f['stats']['stages']} stages, with artist previews, genre filters and an "
+            f"interactive stage map. Works offline once loaded.",
+            f"{seo.BASE}/assets/og/kallio.jpg",
+            kind="article",
+            jsonld=seo.festival_event(_f),
+        ))(next(x for x in json.loads((ROOT / "data" / "festivals.json").read_text())["festivals"] if x["id"] == "kbp"))),
         ("__CONTACT__", json.loads((ROOT / "data" / "festivals.json").read_text())["site"]["contact"]),
         ("__PROVENANCE__", '  <p>Timetable transcribed from the organiser\'s official “Full Schedule in One Picture” and\n  cross-checked against <a href="https://www.klangi.fi/uutiset/kallio-block-party-2026-ohjelma-aikataulu/" target="_blank" rel="noopener">klangi.fi</a>; where they disagreed the official image won.</p>\n  <p>Stage pins are the organiser\'s map badges snapped to the real street junctions they sit on, so\n  positions are accurate to the corner rather than the metre. Street map © OpenStreetMap\n  contributors, tiles © CARTO; satellite imagery © Esri. The “Official” layer is the organiser\'s\n  own map.</p>'),
         ("__DECO__", (ROOT / "scripts" / "deco-kbp.html").read_text()),

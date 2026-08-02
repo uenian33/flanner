@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#e6e6e6">
 <title>Kallio Block Party 2026 — Stage Planner</title>
+__OG__
 <style>
 @font-face{font-family:"KBP Title";src:url(__FONT_TITLE__) format("woff2");
   font-weight:400;font-style:normal;font-display:swap;
@@ -58,6 +59,32 @@
 /* Stage hue is scoped to the element that sets --c, so the derived tokens must
    be too: defining them on :root would resolve against an absent --c. */
 [style*="--c:"]{--cText:var(--c);--bgc:color-mix(in srgb,var(--c) 15%,var(--bg2))}
+/* ── the timetable grid is always dark ────────────────
+   Set blocks carry a stage hue as a translucent fill. That was tuned against a
+   dark ground; on the light paper the same fills wash out to pastel and the
+   stage colours stop being distinguishable. So the ruler and the grid restate
+   the dark tokens locally. The agenda list has no such fills and follows the
+   page theme.
+
+   Neither gets padding: the ruler is a separate element that mirrors the
+   grid's scrollLeft, so any inset on one and not the other would slide the
+   hours out of line with the columns. */
+:root[data-theme=light] .rulerbar,
+:root[data-theme=light] .board{
+  --bg:#0a0c10; --bg2:#0f1218; --panel:#151a24; --panel2:#1b212d;
+  --line:#232936; --line2:#333c4e;
+  --tx:#e9edf5; --tx2:#9aa5ba; --tx3:#7b8799;
+  --on-accent:#0a1400; --shade:rgba(0,0,0,.5);
+  --lab:#fff; --lab2:rgba(235,235,245,.62); --lab3:rgba(235,235,245,.36);
+  --fill:rgba(118,118,128,.26); --fill2:rgba(118,118,128,.17);
+  --chip-line:var(--line2); --accent-ink:var(--accent);
+  color-scheme:dark;
+  background:var(--bg); color:var(--tx);
+}
+:root[data-theme=light] .board [style*="--c:"]{
+  --cText:var(--c);
+  --bgc:color-mix(in srgb,var(--c) 15%,var(--bg2));
+}
 :root[data-theme=light] [style*="--c:"]{
   --cText:color-mix(in srgb,var(--c) 45%,#0a0a0a);
   --bgc:color-mix(in srgb,var(--c) 24%,#fff);
@@ -154,6 +181,19 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
 .homebtn:hover{color:var(--tx);border-color:var(--tx3);background:var(--panel)}
 .homebtn svg{font-size:15px}
 @media(max-width:820px){.homebtn span{display:none}.homebtn{padding:0;width:38px;justify-content:center}}
+
+/* ── the Flanner mark, docked to the section nav ───────
+   Its own button rather than a fourth tab, because it leaves the planner
+   rather than switching a view within it. Offsets come from the measured nav,
+   which changes size when the mobile bar shrinks on scroll. */
+.navhome{position:fixed;z-index:61;display:grid;place-items:center;text-decoration:none;
+  isolation:isolate;background:var(--glass);border:1px solid var(--glass-line);
+  -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
+  box-shadow:0 10px 34px var(--shade),inset 0 1px 0 var(--glass-line);
+  transition:transform .4s cubic-bezier(.32,.72,0,1),background .2s var(--ease)}
+.navhome:hover{background:var(--glass-pill)}
+.navhome svg{width:30px;height:30px;stroke:none;fill:none}
+.navhome b{display:none}
 .brandmini{display:flex;align-items:center;gap:9px;text-decoration:none;overflow:hidden;
   width:0;margin-right:-10px;opacity:0;transform:translateX(-12px) scale(.9);
   transform-origin:left center;
@@ -676,7 +716,7 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
 .mnav{display:none}
 @media(min-width:821px){
   body{padding-left:96px}
-  .mnav{display:grid;grid-template-rows:repeat(3,1fr);position:fixed;left:16px;top:50%;
+  .mnav{display:grid;grid-template-rows:repeat(3,1fr);position:fixed;left:var(--railx,16px);top:50%;
     transform:translateY(-50%);width:76px;z-index:60;padding:5px;border-radius:26px;
     isolation:isolate;background:var(--glass);
     -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
@@ -697,6 +737,8 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
   .mnav .nb{position:absolute;top:9px;left:calc(50% + 11px);min-width:17px;height:17px;
     border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:10px;
     font-weight:800;display:grid;place-items:center;padding:0 4.5px;z-index:3}
+  .navhome{left:var(--railx,16px);top:50%;width:76px;height:60px;border-radius:24px;
+    transform:translateY(calc(-50% - (var(--navh,214px) / 2) - 10px - 30px))}
 }
 
 footer{border-top:1px solid var(--line);margin-top:34px;padding:22px 0 46px;color:var(--tx3);
@@ -755,6 +797,9 @@ footer p{margin:0 0 9px}
     transition:transform .42s var(--ease)}
   .mnav button.on{color:var(--glass-on)}
   .mnav button:active svg{transform:scale(.9)}
+  .navhome{left:50%;bottom:calc(18px + var(--safe-b));width:54px;height:54px;border-radius:9999px;
+    transform:translate(calc(-50% - (var(--navw,360px) / 2) - 9px),var(--vvshift))}
+  body.nav-min .navhome{width:46px;height:46px}
   .mnav .nb{position:absolute;top:6px;left:calc(50% + 9px);min-width:17px;height:17px;
     border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:10px;font-weight:800;
     display:grid;place-items:center;padding:0 4.5px;z-index:3;
@@ -785,7 +830,7 @@ footer p{margin:0 0 9px}
   *{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
 @media print{
-  .toolbar,.filters,.mnav,.ract,.mapctl,.maplayers,.starbtn{display:none!important}
+  .toolbar,.filters,.mnav,.navhome,.ract,.mapctl,.maplayers,.starbtn{display:none!important}
   body{background:#fff;color:#000}
 }
 __THEME__
@@ -830,6 +875,17 @@ __THEME__
 <symbol id="i-speaker" viewBox="0 0 24 24"><rect x="5.4" y="2.8" width="13.2" height="18.4" rx="2.6"/><circle cx="12" cy="15" r="3.5"/><circle cx="12" cy="7.2" r="1.4"/></symbol>
 <symbol id="i-cathedral" viewBox="0 0 24 24"><path d="M12 1.8v2.4M10.9 3h2.2"/><path d="M8.6 10.4a3.4 3.4 0 0 1 6.8 0"/><path d="M6.2 20.6V13M17.8 20.6V13M6.2 13h11.6"/><path d="M9.4 20.6v-3.9a2.6 2.6 0 0 1 5.2 0v3.9"/><path d="M3.6 20.6h16.8"/></symbol>
 <symbol id="i-robot" viewBox="0 0 24 24"><rect x="4.2" y="8" width="15.6" height="11" rx="3.6"/><path d="M12 4.8V8"/><circle cx="12" cy="3.5" r="1.3"/><circle cx="9.2" cy="12.8" r="1.05"/><circle cx="14.8" cy="12.8" r="1.05"/><path d="M9.8 16.2h4.4"/><path d="M4.2 11.6H2.3M19.8 11.6h1.9"/></symbol>
+<symbol id="i-logo" viewBox="0 0 40 40">
+  <defs>
+    <linearGradient id="fpgrad" x1=".06" y1=".95" x2=".94" y2=".05">
+      <stop offset="0" stop-color="#b6fc46"/><stop offset=".55" stop-color="#e4fb27"/><stop offset="1" stop-color="#fff203"/>
+    </linearGradient>
+    <clipPath id="fpup"><path d="M-14 -14H54V20H-14Z" transform="rotate(-34 20 20)"/></clipPath>
+    <clipPath id="fpdn"><path d="M-14 20H54V54H-14Z" transform="rotate(-34 20 20)"/></clipPath>
+  </defs>
+  <g clip-path="url(#fpup)"><circle cx="22.2" cy="16.7" r="18.4" fill="url(#fpgrad)"/></g>
+  <g clip-path="url(#fpdn)"><circle cx="17.8" cy="23.3" r="18.4" fill="url(#fpgrad)"/></g>
+</symbol>
 <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H5M11 18l-6-6 6-6"/></symbol>
 <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.3M12 19.1v2.3M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.6 12h2.3M19.1 12h2.3M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></symbol>
@@ -872,7 +928,7 @@ __DECO__
 <div class="toolbar">
   <div class="wrap">
   <div class="tbar">
-    <a class="homebtn" href="__HOME__" title="All festival planners">
+    <a class="homebtn" href="__HOME__" title="Flanner — all festival planners">
       <svg class="i"><use href="#i-back"/></svg><span>All festivals</span></a>
     <a class="brandmini" href="#top" aria-label="Kallio Block Party 2026 — Stage planner">
       <img src="__LOGO__" alt="" width="339" height="245"><b>KBP<span class="pl">&nbsp;planner</span></b>
@@ -984,6 +1040,9 @@ __DECO__
   <a href="__HOME__about/">About us</a></p>
 </footer>
 </div>
+
+<a class="navhome" href="__HOME__" aria-label="Flanner — all festival planners"
+   title="Flanner — all festival planners"><svg aria-hidden="true"><use href="#i-logo"/></svg></a>
 
 <nav class="mnav" aria-label="Sections">
   <span class="pill" id="navPill" aria-hidden="true"></span>
@@ -2187,6 +2246,33 @@ if (consentAnswer === null) setTimeout(openConsent, 700);
 // Land the reader on what is happening right now rather than at 12:00.
 requestAnimationFrame(() => scrollToNow(false));
 setInterval(markLive, 30000);
+/* The Flanner button sits above the rail on desktop and beside the bar on
+   mobile; both offsets are derived from the nav's measured box, which changes
+   when the bar shrinks on scroll. */
+(() => {
+  const nav = document.querySelector('.mnav');
+  if (!nav) return;
+  const wrap = document.querySelector('.wrap');
+  const sync = () => {
+    const r = nav.getBoundingClientRect();
+    const root = document.documentElement.style;
+    root.setProperty('--navh', Math.round(r.height) + 'px');
+    root.setProperty('--navw', Math.round(r.width) + 'px');
+    /* On a wide screen the content sits in a centred column, so a rail pinned
+       to the window edge drifts far away from what it controls. Park it just
+       outside the column, never closer than 16px to the edge. */
+    if (wrap && innerWidth > 820) {
+      const x = Math.max(16, Math.round(wrap.getBoundingClientRect().left - r.width - 20));
+      root.setProperty('--railx', x + 'px');
+    } else {
+      root.removeProperty('--railx');
+    }
+  };
+  sync();
+  if (window.ResizeObserver) new ResizeObserver(sync).observe(nav);
+  addEventListener('resize', sync, {passive: true});
+})();
+
 </script>
 </body>
 </html>

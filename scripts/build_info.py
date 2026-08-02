@@ -5,7 +5,11 @@ One template, one JSON file of copy, three self-contained pages under
 about/, terms/ and privacy/. Nothing here is fetched at runtime.
 """
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import seo
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -51,6 +55,20 @@ def main() -> None:
             ("__ROOT__", "../"),
             ("__NOTE__", NOTE),
             ("__CONTACT__", site["contact"]),
+            ("__BASE__", seo.BASE),
+            ("__SLUG__", slug),
+            ("__OG__", seo.head(
+                f"{seo.BASE}/{slug}/",
+                f"{page['title']} — Flanner",
+                page["blurb"],
+                f"{seo.BASE}/assets/og/info.jpg",
+                kind="article",
+                jsonld={"@context": "https://schema.org", "@type": "WebPage",
+                        "name": page["title"], "description": page["blurb"],
+                        "url": f"{seo.BASE}/{slug}/",
+                        "isPartOf": {"@type": "WebSite", "name": seo.SITE,
+                                     "url": f"{seo.BASE}/"}},
+            )),
         ]:
             html = html.replace(token, value)
         # mark the current page in the Info column, and un-link it
