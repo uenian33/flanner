@@ -47,20 +47,25 @@ svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:
 .wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-/* ── masthead ─────────────────────────────────────────── */
-header{padding:clamp(22px,3vw,34px) 0 0}
-.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+/* ── masthead ─────────────────────────────────────────
+   A defined band rather than three items floating in white space: wordmark
+   left, descriptor after a short rule, controls right, hairline underneath.
+   The deck sits below the rule at a readable measure. */
+header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
+.top{display:flex;align-items:center;gap:14px;
+  padding-bottom:clamp(14px,1.8vw,18px);border-bottom:1px solid var(--line)}
 .mark{font-family:var(--title);font-size:var(--f-display);letter-spacing:var(--k-display);
-  text-transform:uppercase;line-height:1;text-decoration:none}
-.mark b{font-weight:400}
-.mark i{font-style:normal;display:inline-block;background:var(--tx);color:var(--bg);
-  padding:2px 9px 3px;border-radius:10rem;margin-left:2px}
+  text-transform:uppercase;line-height:1;text-decoration:none;white-space:nowrap}
+.top .div{width:1px;height:clamp(20px,2.4vw,28px);background:var(--line2);flex:none}
+.loc{font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
+  color:var(--tx2);white-space:nowrap}
 .top .sp{flex:1}
-.tbtn{width:40px;height:40px;border:1px solid var(--line2);border-radius:10rem;
+.tbtn{width:40px;height:40px;flex:none;border:1px solid var(--line2);border-radius:10rem;
   display:grid;place-items:center;font-size:16px;transition:.16s var(--ease)}
 .tbtn:hover{background:var(--tx);color:var(--bg)}
-.lede{margin:14px 0 0;font-size:var(--f-title);line-height:var(--l-body);color:var(--tx2);
-  max-width:64ch;text-wrap:pretty}
+.lede{margin:clamp(14px,1.8vw,18px) 0 0;font-size:var(--f-title);line-height:var(--l-body);
+  color:var(--tx2);max-width:58ch;text-wrap:pretty}
+@media(max-width:560px){.top .div,.loc{display:none}}
 
 /* ── type scale ────────────────────────────────────────
    Sizes and leading follow the Material 3 type scale, with the roles named
@@ -80,41 +85,51 @@ header{padding:clamp(22px,3vw,34px) 0 0}
   --f-over:12px;                        --l-over:1.33;     --k-over:.06em;
 }
 
-/* ── hero: the highlighted festivals ──────────────────── */
-.hero{margin:clamp(26px,4vw,44px) 0 0}
-.shead{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+/* ── hero: the next festival, as an editorial feature ──
+   The previous rail put a 640px photo above a thin caption row, which stranded
+   the festival's name from its own picture. Image and facts now sit side by
+   side and share one block. */
+.hero{margin:0 0 clamp(30px,4vw,46px)}
+.shead{display:flex;align-items:baseline;gap:12px;margin-bottom:clamp(14px,1.8vw,20px);
+  flex-wrap:wrap}
 .shead h2{margin:0;font-family:var(--title);font-size:var(--f-h2);line-height:var(--l-h2);
-  letter-spacing:var(--k-h2);
-  text-transform:uppercase;letter-spacing:.01em;line-height:1}
+  letter-spacing:var(--k-h2);text-transform:uppercase}
 .shead p{margin:0;color:var(--tx2);font-size:var(--f-label);line-height:var(--l-label);
   letter-spacing:var(--k-label)}
-.rail{display:flex;gap:clamp(14px,2vw,22px);overflow-x:auto;padding:6px 0 18px;
-  scroll-snap-type:x mandatory;overscroll-behavior-inline:contain;scrollbar-width:none}
-.rail::-webkit-scrollbar{display:none}
-.rail:has(.big:only-child) .big{flex:0 0 min(100%,720px)}
-.big{position:relative;flex:0 0 min(80vw,470px);scroll-snap-align:start;
-  text-decoration:none;display:block}
-.big .shot{display:block;position:relative;z-index:1;aspect-ratio:16/9;max-height:52vh;border-radius:18px;overflow:hidden;
-  border:1px solid var(--line2);background:var(--panel);
+
+.feature{display:grid;gap:clamp(18px,2.4vw,34px);align-items:center;
+  grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)}
+.fig{position:relative;display:block;border-radius:16px;overflow:hidden;
+  aspect-ratio:3/2;background:var(--panel);text-decoration:none;
   transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
-.big:hover .shot{transform:translateY(-4px);box-shadow:0 18px 40px -18px rgba(0,0,0,.5)}
-.big .shot img.pic{width:100%;height:100%;object-fit:cover;display:block}
-.big .veil{position:absolute;inset:0;
-  background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.34) 62%,rgba(0,0,0,.88) 100%)}
-.big .badge{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;gap:7px;
-  font-family:var(--title);font-size:var(--f-over);letter-spacing:var(--k-over);text-transform:uppercase;
-  background:var(--fa,#fff);color:var(--fi,#000);padding:5px 12px 6px;border-radius:10rem}
-.big .lg{display:block;position:absolute;left:16px;bottom:14px;z-index:2}
-.big .lg img{height:clamp(30px,3.4vw,44px);width:auto;max-width:260px;
-  display:block;filter:drop-shadow(0 2px 10px rgba(0,0,0,.65))}
-.big .meta{display:flex;position:relative;z-index:1;display:flex;gap:10px;align-items:baseline;
-  margin-top:12px;flex-wrap:wrap}
-.big .meta b{font-family:var(--title);font-size:var(--f-h3);line-height:var(--l-h3);text-transform:uppercase;
-  letter-spacing:.01em;font-weight:400}
-.big .meta span{color:var(--tx2);font-size:var(--f-sub);line-height:var(--l-sub);
-  letter-spacing:var(--k-sub)}
-.big .go{margin-left:auto;font-size:var(--f-label);font-weight:650;letter-spacing:var(--k-label);display:inline-flex;align-items:center;gap:6px}
-.big:hover .go{text-decoration:underline;text-underline-offset:3px}
+.fig:hover{transform:translateY(-3px);box-shadow:0 22px 46px -24px rgba(0,0,0,.55)}
+.fig img.pic{width:100%;height:100%;object-fit:cover;display:block}
+.fig .veil{position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 34%,rgba(0,0,0,.30) 62%,rgba(0,0,0,.72) 82%,rgba(0,0,0,.9) 100%)}
+.fig .lg{display:block;position:absolute;left:18px;bottom:16px;z-index:2;width:max-content;
+  max-width:min(66%,240px)}
+.fig .lg img{height:clamp(26px,3vw,36px);width:auto;max-width:100%;display:block;
+  filter:drop-shadow(0 2px 10px rgba(0,0,0,.7))}
+.fig .badge{position:absolute;left:16px;top:16px;z-index:2;display:inline-flex;align-items:center;
+  font-family:var(--title);font-size:var(--f-over);letter-spacing:var(--k-over);
+  text-transform:uppercase;background:var(--fa,#fff);color:var(--fi,#000);
+  padding:6px 13px 7px;border-radius:10rem}
+
+.fbody{min-width:0}
+.fbody h3{margin:0;font-family:var(--title);font-size:clamp(24px,2.9vw,34px);
+  line-height:1.08;letter-spacing:-.008em;text-transform:uppercase;font-weight:400}
+.fbody .fwhen{margin:12px 0 0;font-size:var(--f-h3);line-height:1.25;font-weight:650;
+  font-variant-numeric:tabular-nums}
+.fbody .fwhere{margin:5px 0 0;font-size:var(--f-body);line-height:var(--l-body);color:var(--tx2)}
+.fbody .fstars{margin:14px 0 0;font-size:var(--f-sub);line-height:var(--l-sub);
+  letter-spacing:var(--k-sub);color:var(--tx2);max-width:44ch}
+.fbody .fstars b{color:var(--tx);font-weight:700}
+.facts{display:flex;gap:10px;flex-wrap:wrap;margin-top:clamp(18px,2.2vw,24px)}
+@media(max-width:820px){
+  .feature{grid-template-columns:minmax(0,1fr)}
+  .fig{aspect-ratio:16/9}
+}
+@media(max-width:430px){.facts{flex-direction:column;align-items:stretch}}
 
 /* ── month-grouped cards ──────────────────────────────
    Card anatomy after myhelsinki.fi: flat white card, generous radius, image
@@ -227,7 +242,9 @@ footer p{margin:0 0 9px}
 <div class="wrap">
 <header>
   <div class="top">
-    <a class="mark" href="./"><b>Festival</b> <i>Planner</i></a>
+    <a class="mark" href="./">Festival Planner</a>
+    <span class="div"></span>
+    <span class="loc">Helsinki</span>
     <span class="sp"></span>
     <button class="tbtn" id="themeBtn" aria-label="Switch colour theme">
       <svg class="i"><use href="#i-sun"/></svg></button>
@@ -235,9 +252,9 @@ footer p{margin:0 0 9px}
   <p class="lede" id="lede"></p>
 </header>
 
-<section class="hero" id="hero">
-  <div class="shead"><h2>On now</h2><p id="heroNote"></p></div>
-  <div class="rail" id="rail"></div>
+<section class="hero" id="hero" hidden>
+  <div class="shead"><h2 id="heroHead"></h2><p id="heroNote"></p></div>
+  <div class="feature" id="feature"></div>
 </section>
 
 <div class="filters" id="filters" role="group" aria-label="Filter festivals"></div>
@@ -274,29 +291,43 @@ const status = f => {
 
 const fvars = f => `--fa:${f.accent};--fi:${f.ink}`;
 
-/* ── hero rail ─────────────────────────────────────────── */
+/* ── the feature ───────────────────────────────────────
+   One festival, not a rail: the soonest one still to come. Everything else is
+   reachable from the month list below, so a carousel earned nothing. */
 const upcoming = DATA.festivals
   .filter(f => !status(f).past)
   .sort((a, b) => a.start.localeCompare(b.start));
-const featured = (upcoming.length ? upcoming : DATA.festivals).filter(f => f.highlight);
+const feat = upcoming.find(f => f.highlight) || upcoming[0];
 
-$('#heroNote').textContent = featured.length
-  ? `${featured.length} festival${featured.length > 1 ? 's' : ''} with a planner ready`
-  : '';
-$('#rail').innerHTML = featured.map((f, i) => `
-  <a class="big" href="${esc(f.planner)}" style="${fvars(f)}">
-    <span class="shot">
-      <img class="pic" src="${f.promoSrc}" alt="" loading="lazy">
+if (feat) {
+  const st = status(feat);
+  $('#hero').hidden = false;
+  $('#heroHead').textContent = st.live ? 'On now' : 'Next up';
+  const rest = DATA.festivals.length - 1;
+  $('#heroNote').textContent = rest > 0
+    ? `${rest} more planner${rest > 1 ? 's' : ''} below`
+    : '';
+  $('#feature').setAttribute('style', fvars(feat));
+  $('#feature').innerHTML = `
+    <a class="fig" href="${esc(feat.planner)}" aria-label="Open the ${esc(feat.name)} planner">
+      <img class="pic" src="${feat.promoSrc}" alt="">
       <span class="veil"></span>
-      <span class="badge">${esc(status(f).label)}</span>
-      <span class="lg"><img src="${f.logoSrc}" alt="${esc(f.name)}"></span>
-    </span>
-    <span class="meta">
-      <b>${esc(f.name)}</b>
-      <span>${esc(f.dates)} · ${esc(f.city)}</span>
-      <span class="go">Open planner ${ico('arrow')}</span>
-    </span>
-  </a>`).join('');
+      <span class="badge">${esc(st.label)}</span>
+      <span class="lg"><img src="${feat.logoSrc}" alt="${esc(feat.name)}"></span>
+    </a>
+    <div class="fbody">
+      <h3>${esc(feat.name)} ${esc(feat.year)}</h3>
+      <p class="fwhen">${esc(feat.dates)}</p>
+      <p class="fwhere">${esc(feat.city)} · ${esc(feat.type)} · ${feat.stats.acts} acts on ${feat.stats.stages} stages</p>
+      <p class="fstars"><b>Headlining:</b> ${esc(feat.stars.slice(0, 4).join(' · '))}</p>
+      <div class="facts">
+        <a class="btn primary" href="${esc(feat.planner)}">Open planner ${ico('arrow')}</a>
+        ${feat.free
+          ? `<a class="btn" href="${esc(feat.official)}" target="_blank" rel="noopener">Official ${ico('ext')}</a>`
+          : `<a class="btn" href="${esc(feat.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
+      </div>
+    </div>`;
+}
 
 /* ── month groups ─────────────────────────────────────── */
 const MONTH = ['January','February','March','April','May','June',
