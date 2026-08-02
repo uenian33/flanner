@@ -155,6 +155,7 @@ def main():
         ("__MAP_AR__", ar),
         ("__THEME__", ""),
         ("__HOME__", "../"),
+        ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__YEAR__", '2026'),
         ("__STAGES__", '9'),

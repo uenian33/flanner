@@ -1,0 +1,31 @@
+/* Lifted out of the planner so the home page can use the identical bar.
+   --navn is the number of section tabs beside the Home button. */
+.mnav{display:none}
+@media(min-width:821px){
+  body{padding-left:96px}
+  .mnav{display:grid;grid-template-rows:repeat(var(--navn,4),1fr);position:fixed;left:var(--railx,16px);top:50%;
+    transform:translateY(-50%);width:76px;z-index:60;padding:5px;border-radius:26px;
+    isolation:isolate;background:var(--glass);
+    -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
+    border:1px solid var(--glass-line);
+    box-shadow:0 10px 34px var(--shade),inset 0 1px 0 var(--glass-line)}
+  .mnav .pill{position:absolute;left:5px;right:5px;top:5px;width:auto;
+    height:calc((100% - 10px)/var(--navn,4));border-radius:21px;background:var(--glass-pill);z-index:0;
+    box-shadow:inset 0 1px 0 var(--glass-line);
+    transform:translateY(calc(var(--i,0) * 100%));
+    transition:transform .46s cubic-bezier(.32,.72,0,1)}
+  .mnav button{display:grid;justify-items:center;align-content:center;gap:5px;padding:14px 0;
+    font-size:10.5px;font-weight:600;color:var(--glass-tx);position:relative;z-index:1;
+    border-radius:21px;transition:color .3s var(--ease)}
+  .mnav button svg{width:22px;height:22px;font-size:22px;stroke-width:1.8;
+    transition:transform .42s var(--ease)}
+  .mnav button.on{color:var(--glass-on)}
+  .mnav button:active svg{transform:scale(.9)}
+  .mnav .nb{position:absolute;top:9px;left:calc(50% + 11px);min-width:17px;height:17px;
+    border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:10px;
+    font-weight:800;display:grid;place-items:center;padding:0 4.5px;z-index:3}
+  .navhome-m{display:none}
+  .navhome{left:var(--railx,16px);top:50%;width:76px;height:60px;border-radius:24px;
+    transform:translateY(calc(-50% - (var(--navh,214px) / 2) - 10px - 30px))}
+}
+

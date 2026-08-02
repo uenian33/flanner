@@ -139,6 +139,7 @@ def build():
         ("__MAP_AR__", f'{basemap["wPixels"]}/{basemap["hPixels"]}'),
         ("__THEME__", THEME),
         ("__HOME__", "../"),
+        ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__YEAR__", '2026'),
         ("__STAGES__", '10'),

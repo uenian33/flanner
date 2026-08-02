@@ -64,6 +64,7 @@
   --glass-pill:rgba(255,255,255,.1); --glass-tx:rgba(255,255,255,.55); --glass-on:#fff;
   --cText:var(--tx); --bgc:var(--panel); --accent-ink:var(--kbp-green);
   --gutter:58px; --colw:172px; --radius:10px;
+  --navn:4;   /* Schedule, Map, My plan, Settings */
   --sans:ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
   --disp:"Bricolage Grotesque",var(--sans);
   --title:"KBP Title","Bricolage Grotesque",var(--sans);
@@ -288,11 +289,11 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
 }
 /* the view switch only means something over the schedule itself */
 body.sched-off .schedbar{display:none}
-body[data-view=agenda] /* The field is a 50px circle at the end of the bar until it is asked for, then
+/* The field is a 50px circle at the end of the bar until it is asked for, then
    it opens leftwards into a full search box. Collapsed it is the same shape as
    every other control here, so the bar stays a row of pills either way. */
 .srch{position:relative;flex:0 0 auto;margin-left:auto;width:50px;min-width:0;
-  transition:width .36s var(--ease)}
+  transition:width .38s cubic-bezier(.22,1,.36,1)}
 .srch.open{width:min(100%,460px)}
 input[type=search]{width:100%}
 /* Every measurement in this bar is taken from the home page's, so the two read
@@ -307,7 +308,8 @@ input[type=search]{width:100%}
 .srch.open svg{left:17px;transform:translate(0,-50%);width:17px;height:17px;color:var(--tx3)}
 input[type=search]{font-family:inherit;background:var(--bg2);border:1px solid var(--line2);
   border-radius:10rem;padding:0 16px 0 44px;color:var(--tx);width:100%;font-size:16px;
-  outline:none;height:50px;cursor:text}
+  outline:none;height:50px;cursor:text;
+  transition:padding .34s var(--ease),color .2s var(--ease)}
 .srch:not(.open) input{padding:0;color:transparent;cursor:pointer}
 .srch:not(.open) input::placeholder{color:transparent}
 input[type=search]:focus{border-color:var(--tx)}
@@ -427,9 +429,11 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   /* The day row pins beneath the top bar, so the map column has to clear both
      or its first rows sit behind them. This is the desktop side-by-side layout
      only; on a phone the map is a normal block further down the page. */
+  /* The bar spans the deck above both columns now, so the map keeps the same
+     section margin as the list beside it rather than being pushed down by a
+     bar that is no longer above it. */
   body[data-view=agenda] .deck #secMap{position:sticky;
-    top:calc(var(--toph,104px) + var(--tb2h,0px) + 18px);
-    margin-top:calc(var(--tb2h,0px) + 26px)}
+    top:calc(var(--toph,104px) + var(--tb2h,0px) + 18px)}
   body[data-view=agenda] .deck .maplayout{grid-template-columns:1fr}
   body[data-view=agenda] .deck .agenda{max-width:none}
 }
@@ -501,7 +505,7 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .vbody{display:flex;position:relative}
 .vgutter{position:sticky;left:0;z-index:15;flex:none;width:var(--gutter);
   background:var(--bg);border-right:1px solid var(--line)}
-.vhour{position:absolute;left:0;right:0;padding:0 8px 0 10px;font-size:12px;font-weight:700;
+.vhour{position:absolute;left:0;right:0;text-align:center;font-size:12px;font-weight:700;
   color:var(--tx);font-variant-numeric:tabular-nums;transform:translateY(-50%);
   letter-spacing:-.01em}
 .vhour.half{font-size:10.5px;font-weight:600;color:var(--tx3)}
@@ -876,17 +880,19 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
 .toast button:hover{background:var(--panel)}
 
 /* ── mobile bottom nav ────────────────────────────────── */
+/* Lifted out of the planner so the home page can use the identical bar.
+   --navn is the number of section tabs beside the Home button. */
 .mnav{display:none}
 @media(min-width:821px){
   body{padding-left:96px}
-  .mnav{display:grid;grid-template-rows:repeat(4,1fr);position:fixed;left:var(--railx,16px);top:50%;
+  .mnav{display:grid;grid-template-rows:repeat(var(--navn,4),1fr);position:fixed;left:var(--railx,16px);top:50%;
     transform:translateY(-50%);width:76px;z-index:60;padding:5px;border-radius:26px;
     isolation:isolate;background:var(--glass);
     -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
     border:1px solid var(--glass-line);
     box-shadow:0 10px 34px var(--shade),inset 0 1px 0 var(--glass-line)}
   .mnav .pill{position:absolute;left:5px;right:5px;top:5px;width:auto;
-    height:calc((100% - 10px)/4);border-radius:21px;background:var(--glass-pill);z-index:0;
+    height:calc((100% - 10px)/var(--navn,4));border-radius:21px;background:var(--glass-pill);z-index:0;
     box-shadow:inset 0 1px 0 var(--glass-line);
     transform:translateY(calc(var(--i,0) * 100%));
     transition:transform .46s cubic-bezier(.32,.72,0,1)}
@@ -904,6 +910,8 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
   .navhome{left:var(--railx,16px);top:50%;width:76px;height:60px;border-radius:24px;
     transform:translateY(calc(-50% - (var(--navh,214px) / 2) - 10px - 30px))}
 }
+
+
 
 footer{border-top:1px solid var(--line);margin-top:34px;padding:22px 0 46px;color:var(--tx3);
   font-size:12px;line-height:1.65;max-width:78ch}
@@ -1479,11 +1487,14 @@ chips($('#fStage'), DATA.stages.map(s => [s.id, s.short, s.acts.length]), state.
 /* Pixels per minute. Zoom scales this one number, so a set's height stays
    honestly proportional to how long it runs at every zoom level. */
 let ppm = 1.9;
-const yOf = m => (m - D0) * ppm;
+/* Hour labels straddle their own gridline, so without a little air at the top
+   the first one is cut in half by the sticky header. */
+const VTOP = 14;
+const yOf = m => (m - D0) * ppm + VTOP;
 
 function buildTimeline() {
   const stages = DATA.stages;
-  const bodyH = Math.round(yOf(day.end)) + 16;
+  const bodyH = Math.round(yOf(day.end)) + 20;
 
   let head = '<div class="vcorner"></div>';
   stages.forEach(s => {

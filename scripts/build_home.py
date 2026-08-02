@@ -40,6 +40,7 @@ def main():
             jsonld=seo.site_jsonld(cfg["festivals"]) + [seo.festival_event(f) for f in cfg["festivals"]],
         )),
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
+        ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
         ("__FOOTER__", (ROOT / "scripts" / "_footer.html").read_text()),
         ("__ROOT__", "./"),
