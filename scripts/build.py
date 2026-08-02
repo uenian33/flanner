@@ -21,7 +21,7 @@ import urllib.parse
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
-OUT = ROOT / "index.html"
+OUT = ROOT / "kallio" / "index.html"
 
 DAY_START, DAY_END = 12 * 60, 22 * 60
 LANE_H = 74
@@ -150,16 +150,19 @@ def main():
         ("__FONT_EXT__", data_uri(ROOT / "assets" / "font" / "disp-latin-ext.woff2")),
         ("__MAP_AR__", ar),
         ("__THEME__", ""),
+        ("__HOME__", "../"),
+        ("__DECO__", (ROOT / "scripts" / "deco-kbp.html").read_text()),
         ("__SIBLING__", '<p>Planning Flow too? There is a '
-                        '<a href="flow/">Flow Festival 2026 planner</a> built from the same engine.</p>'),
+                        '<a href="../flow/">Flow Festival 2026 planner</a> built from the same engine.</p>'),
     ]:
         html = html.replace(token, value)
 
     leftover = [t for t in ("__DATA__", "__ART__", "__BASEMAP__", "__POSTER__", "__LOGO__", "__SATELLITE__", "__TEXTURE__", "__BASEMAP_LIGHT__",
-                            "__FONT_LATIN__", "__FONT_EXT__", "__FONT_TITLE__", "__THEME__", "__SIBLING__", "__MAP_AR__") if t in html]
+                            "__FONT_LATIN__", "__FONT_EXT__", "__FONT_TITLE__", "__THEME__", "__SIBLING__", "__DECO__", "__HOME__", "__MAP_AR__") if t in html]
     if leftover:
         raise SystemExit(f"unreplaced tokens: {leftover}")
 
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(html)
     n = sum(len(s["acts"]) for s in stages)
     print(f"{OUT}\n  {n} acts · {len(stages)} stages · {len(art_payload)} artworks "

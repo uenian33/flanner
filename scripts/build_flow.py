@@ -36,6 +36,38 @@ THEME = """
 }
 .logo img{width:clamp(150px,24vw,260px)}
 h1{font-size:clamp(26px,6.2vw,50px)}
+
+/* ── Flow's own visual language ───────────────────────────
+   Their site is grey paper, black hairlines, one electric yellow, condensed
+   uppercase headlines, fully-round buttons, and vertical yellow bars used as
+   a barcode motif behind the masthead. */
+@keyframes bargrow{0%,100%{transform:scaleY(1)}50%{transform:scaleY(var(--s,1.14))}}
+.flowbars{overflow:hidden}
+.flowbars i{position:absolute;left:var(--x);top:var(--t);width:var(--w);height:var(--h);
+  background:var(--accent);transform-origin:50% 0;opacity:.9;
+  animation:bargrow 5.5s ease-in-out infinite;animation-delay:var(--d)}
+.flowbars i:nth-child(3n){--s:1.22;opacity:.55}
+.flowbars i:nth-child(4n){--s:1.08;background:var(--tx);opacity:.14}
+:root[data-theme=light] .flowbars i{opacity:1}
+:root[data-theme=light] .flowbars i:nth-child(3n){opacity:.7}
+@media(prefers-reduced-motion:reduce){.flowbars i{animation:none}}
+@media(max-width:640px){.flowbars i:nth-child(n+8):nth-child(-n+10){display:none}}
+
+/* condensed uppercase marquee, the strip that runs under their masthead */
+.ticker{position:relative;overflow:hidden;border-top:1px solid var(--line2);
+  border-bottom:1px solid var(--line2);background:var(--accent);margin-top:16px}
+.ticker div{display:flex;gap:0;width:max-content;animation:tick 32s linear infinite}
+.ticker span{font-family:var(--title);font-size:13px;letter-spacing:.06em;
+  text-transform:uppercase;color:#000;padding:7px 0;white-space:nowrap}
+.ticker span::after{content:"◆";margin:0 18px;font-size:9px;vertical-align:2px}
+@keyframes tick{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.ticker div{animation:none}}
+
+/* buttons and chips take Flow's fully-round, hard-edged treatment */
+.ghost,.chip,.cyes,.cno{border-radius:10rem}
+.seg,.seg button,.iconbtn{border-radius:10rem}
+h1{letter-spacing:.01em;line-height:.94}
+.snm,.aname,.cbody h2{letter-spacing:-.005em}
 """
 
 def build():
@@ -104,12 +136,18 @@ def build():
         ("__FONT_EXT__", data_uri(ROOT / "assets" / "font" / "disp-latin-ext.woff2")),
         ("__MAP_AR__", f'{basemap["wPixels"]}/{basemap["hPixels"]}'),
         ("__THEME__", THEME),
+        ("__HOME__", "../"),
+        ("__DECO__", (ROOT / "scripts" / "deco-flow.html").read_text()),
         ("__SIBLING__", '<p>Also here: the '
-                        '<a href="../">Kallio Block Party 2026 planner</a>, same engine.</p>'),
+                        '<a href="../kallio/">Kallio Block Party 2026 planner</a>, same engine.</p>'),
     ]:
         html = html.replace(tok, val)
 
     # festival-specific copy
+    ticker = ("14.–16.8.2026", "FLOW FESTIVAL", "SUVILAHTI", "HELSINKI",
+              "156 ACTS", "10 STAGES", "3 DAYS")
+    strip = "".join(f"<span>{t}</span>" for t in ticker * 2)
+    html = html.replace("</header>", f'</header>\n<div class="ticker" aria-hidden="true"><div>{strip}</div></div>')
     html = html.replace("Kallio Block Party 2026 — Stage Planner", "Flow Festival 2026 — Stage Planner")
     html = html.replace("Kallio&nbsp;Block&nbsp;Party Planner", "Flow Festival Planner")
     html = html.replace('alt="Kallio Block Party 2026"', 'alt="Flow Festival 2026"')
