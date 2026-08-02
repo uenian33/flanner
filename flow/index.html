@@ -261,9 +261,12 @@ body.bars-joined .toolbar::before{border-bottom-color:transparent}
   .brandmini{width:auto;margin:0;opacity:1;transform:none;overflow:visible;flex:none}
   .brandmini b{display:block;font-size:15px;letter-spacing:.03em}
   .brandmini .fpmark{width:26px;height:26px}
-  .srch{flex:1 1 40px;min-width:0}
+  /* 44px here, matching the phone-sized buttons; the earlier flex rule fought
+     the collapse and left the field stuck at a third of the bar. */
+  .srch{width:44px}
+  .srch.open{width:min(100%,460px)}
   .toolbar input[type=search]{height:44px;padding:0 16px 0 38px;font-size:15px}
-  .srch svg{left:14px}
+  .srch.open svg{left:14px}
   .toolbar .iconbtn{width:44px;height:44px}
 }
 @media(max-width:420px){
@@ -275,11 +278,15 @@ header{transition:none}
 body.scrolled .logo img{transform:scale(.72);opacity:.55}
 /* 1px border + 2px padding + a 44px button = the 50px every other control in
    these bars is, so the segment lines up with the filter button beside it. */
-.seg{display:flex;flex:1 1 auto;background:var(--bg2);border:1px solid var(--line2);
+/* List view puts this bar in the narrow left column of a two-column grid, and
+   flexible segments meant the day and view switches changed size the moment
+   you switched view. They are content-sized instead, so they look the same in
+   both; if the row runs out of room it wraps rather than squeezing them. */
+.seg{display:flex;flex:0 0 auto;background:var(--bg2);border:1px solid var(--line2);
   border-radius:10rem;padding:2px;gap:3px}
 .seg button{display:inline-flex;flex:1 1 0;align-items:center;justify-content:center;gap:8px;
   font-size:15px;font-weight:650;padding:0 16px;border-radius:10rem;color:var(--tx2);
-  transition:.16s var(--ease);min-height:44px}
+  transition:.16s var(--ease);min-height:44px;white-space:nowrap}
 /* Day and view belong to the timetable, not to the whole page, so they live
    inside the schedule section. A sticky child only pins within its parent's
    box, which is exactly the behaviour wanted: they ride under the top bar
@@ -290,8 +297,8 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
   box-shadow:0 1px 0 var(--line);pointer-events:none}
 .schedbar > *{position:relative;z-index:1}
-.tbar2{padding:8px 0 10px}
-.daybar{flex:1 1 auto}
+.tbar2{padding:8px 0 10px;flex-wrap:wrap;row-gap:8px}
+.daybar{flex:0 0 auto}
 .daybar .dshort{display:none}
 @media(max-width:700px){
   .tbar2{flex-wrap:wrap}
@@ -301,8 +308,15 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
 }
 /* the view switch only means something over the schedule itself */
 body.sched-off .tbar2{display:none}
-.zoomwrap{display:inline-flex;gap:6px;flex:none}
-.srch{flex:1 1 80px;min-width:0}
+.zoomwrap{display:inline-flex;gap:6px;flex:none;overflow:hidden;max-width:92px;opacity:1;
+  transition:max-width .34s var(--ease),opacity .22s var(--ease),margin-left .34s var(--ease)}
+body[data-view=agenda] .zoomwrap{max-width:0;opacity:0;margin-left:-10px;pointer-events:none}
+/* The field is a 50px circle at the end of the bar until it is asked for, then
+   it opens leftwards into a full search box. Collapsed it is the same shape as
+   every other control here, so the bar stays a row of pills either way. */
+.srch{position:relative;flex:0 0 auto;margin-left:auto;width:50px;min-width:0;
+  transition:width .36s var(--ease)}
+.srch.open{width:min(100%,460px)}
 input[type=search]{width:100%}
 /* Every measurement in this bar is taken from the home page's, so the two read
    as one product: 13px vertical padding, a 10px gap, 50px pill controls on a
@@ -310,11 +324,15 @@ input[type=search]{width:100%}
 .seg button[aria-pressed=true]{background:var(--tx);color:var(--bg2);box-shadow:none}
 .seg button:hover{color:var(--tx)}
 .srch{position:relative;display:flex;align-items:center}
-.srch svg{position:absolute;left:17px;width:17px;height:17px;color:var(--tx3);
-  pointer-events:none}
+.srch svg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:18px;height:18px;color:var(--tx2);pointer-events:none;
+  transition:left .3s var(--ease),transform .3s var(--ease),color .2s}
+.srch.open svg{left:17px;transform:translate(0,-50%);width:17px;height:17px;color:var(--tx3)}
 input[type=search]{font-family:inherit;background:var(--bg2);border:1px solid var(--line2);
-  border-radius:10rem;
-  padding:0 44px;color:var(--tx);width:100%;font-size:16px;outline:none;height:50px}
+  border-radius:10rem;padding:0 16px 0 44px;color:var(--tx);width:100%;font-size:16px;
+  outline:none;height:50px;cursor:text}
+.srch:not(.open) input{padding:0;color:transparent;cursor:pointer}
+.srch:not(.open) input::placeholder{color:transparent}
 input[type=search]:focus{border-color:var(--tx)}
 input[type=search]::placeholder{color:var(--tx3)}
 .tspacer{flex:1 1 auto}
@@ -335,13 +353,55 @@ input[type=search]::placeholder{color:var(--tx3)}
 .toolbar>.wrap{position:relative;z-index:2}
 /* The drawer hangs below the pinned rows rather than growing them, so the bar
    keeps sticking and the page below does not jump when it opens. */
+/* ── settings ─────────────────────────────────────────
+   A card in the middle of the screen on a pointer device and a sheet off the
+   bottom edge on a phone — the same shape the artist card uses, so the planner
+   has one way of presenting a panel rather than two. */
+dialog.setdlg{border:none;padding:0;background:transparent;max-width:none;max-height:none;
+  width:100%;height:100%;overflow:visible;color:var(--tx)}
+dialog.setdlg::backdrop{background:rgba(4,6,9,.6);
+  -webkit-backdrop-filter:blur(9px) saturate(140%);backdrop-filter:blur(9px) saturate(140%);
+  opacity:0;transition:opacity .3s var(--ease)}
+dialog.setdlg.in::backdrop{opacity:1}
+.setbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
+  transform:translate(-50%,16px);opacity:0;
+  width:min(460px,calc(100vw - 24px));max-height:min(84svh,720px);overflow:auto;
+  overscroll-behavior:contain;
+  background:var(--sheet);border:1px solid var(--line2);border-radius:22px;
+  padding:0 clamp(16px,2.4vw,22px) 18px;
+  box-shadow:0 26px 70px -18px rgba(0,0,0,.7);
+  transition:opacity .28s var(--ease),transform .36s var(--ease)}
+dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
+@media(min-width:700px){
+  .setbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
+  dialog.setdlg.in .setbox{transform:translate(-50%,-50%)}
+}
+.sethead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;padding:14px 0 10px;background:var(--sheet)}
+.sethead h2{margin:0;font-family:var(--disp);font-size:20px;letter-spacing:-.022em}
+.setclose{width:40px;height:40px;flex:none}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.setrow:last-child{border-bottom:none;padding-bottom:2px}
+.setrow:first-child{padding-top:2px}
+.setrow b{display:block;font-size:15px;font-weight:700}
+.setrow i{display:block;font-style:normal;font-size:12.5px;color:var(--tx3);margin-top:3px}
+.setrow .seg{flex:0 0 auto;min-width:190px}
+.setnote{margin:14px 0 0;font-size:12.5px;line-height:1.6;color:var(--tx3);max-width:70ch}
+.setnote a{color:var(--tx2);text-underline-offset:3px}
+@media(max-width:520px){.setrow .seg{flex:1 1 100%;min-width:0}}
+
 .filters{grid-template-columns:minmax(0,1fr);
   display:grid;grid-template-rows:0fr;opacity:0;pointer-events:none;
   transition:grid-template-rows .38s var(--ease),opacity .26s var(--ease);
   border-bottom:1px solid transparent}
 .filters.open{grid-template-rows:1fr;opacity:1;pointer-events:auto}
 .finner{min-height:0;overflow:hidden}
-.filters>.wrap{min-width:0;width:100%;margin-inline:0}
+/* The 0fr -> 1fr collapse only works if the grid child can actually reach
+   zero, so the wrap needs min-height:0 and overflow:hidden. This was
+   invisible while the drawer was absolutely positioned and its height did
+   not affect the page. */
+.filters>.wrap{min-width:0;min-height:0;overflow:hidden;width:100%;margin-inline:0}
 .finner{min-width:0;padding:8px 0 18px}
 .frow{display:flex;flex-wrap:wrap;align-items:center;margin-bottom:24px}
 .chipset{display:flex;flex-wrap:wrap;gap:11px 10px;width:100%}
@@ -822,14 +882,14 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
 .mnav{display:none}
 @media(min-width:821px){
   body{padding-left:96px}
-  .mnav{display:grid;grid-template-rows:repeat(3,1fr);position:fixed;left:var(--railx,16px);top:50%;
+  .mnav{display:grid;grid-template-rows:repeat(4,1fr);position:fixed;left:var(--railx,16px);top:50%;
     transform:translateY(-50%);width:76px;z-index:60;padding:5px;border-radius:26px;
     isolation:isolate;background:var(--glass);
     -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
     border:1px solid var(--glass-line);
     box-shadow:0 10px 34px var(--shade),inset 0 1px 0 var(--glass-line)}
   .mnav .pill{position:absolute;left:5px;right:5px;top:5px;width:auto;
-    height:calc((100% - 10px)/3);border-radius:21px;background:var(--glass-pill);z-index:0;
+    height:calc((100% - 10px)/4);border-radius:21px;background:var(--glass-pill);z-index:0;
     box-shadow:inset 0 1px 0 var(--glass-line);
     transform:translateY(calc(var(--i,0) * 100%));
     transition:transform .46s cubic-bezier(.32,.72,0,1)}
@@ -882,7 +942,7 @@ footer p{margin:0 0 9px}
   .navhome-m svg{width:24px;height:24px;transform:translateY(-7px);
     transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
   body.nav-min .navhome-m svg{transform:translateY(0) scale(.96)}
-  .mnav{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:50%;
+  .mnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:50%;
     bottom:calc(18px + var(--safe-b));transform:translate(-50%,var(--vvshift));
     width:min(94vw,430px);max-width:calc(100vw - 32px);height:67px;overflow:hidden;
     contain:layout style;
@@ -892,7 +952,7 @@ footer p{margin:0 0 9px}
     -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
     border:1px solid var(--glass-line);
     box-shadow:0 8px 32px var(--shade),inset 0 1px 0 var(--glass-line)}
-  .mnav .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/4);
+  .mnav .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/5);
     border-radius:9999px;background:var(--glass-pill);z-index:0;
     box-shadow:inset 0 1px 0 var(--glass-line);
     transform:translateX(calc((var(--i,0) + 1) * 100%));
@@ -1065,6 +1125,7 @@ h1{letter-spacing:.01em;line-height:.94}
 <symbol id="i-soundcloud" viewBox="0 0 24 24"><path d="M3 15.3v-2.6M6.1 16.6v-5.7M9.2 16.6V8.9"/><path d="M12.3 16.6V7.9a4.4 4.4 0 0 1 8.3 2 3.4 3.4 0 0 1-.5 6.7z"/></symbol>
 <symbol id="i-bandcamp" viewBox="0 0 24 24"><path d="M3.4 17.2 9.6 6.8h11L14.4 17.2z"/></symbol>
 <symbol id="i-nav" viewBox="0 0 24 24"><path d="M3.4 10.6 21 3l-7.6 17.6-2.2-7.8z"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></symbol>
 <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
 </defs></svg>
 
@@ -1078,8 +1139,6 @@ h1{letter-spacing:.01em;line-height:.94}
       <svg class="i"><use href="#i-search"/></svg>
       <input type="search" id="q" placeholder="Search artist, stage, genre…" autocomplete="off">
     </label>
-    <button class="iconbtn" id="themeBtn" aria-label="Switch colour theme">
-      <svg class="i"><use href="#i-moon"/></svg></button>
   </div>
   </div>
 </div>
@@ -1238,7 +1297,42 @@ h1{letter-spacing:.01em;line-height:.94}
   <button id="nSched" class="on"><svg class="i"><use href="#i-rows"/></svg><span class="lbl">Schedule</span></button>
   <button id="nMap"><svg class="i"><use href="#i-pin"/></svg><span class="lbl">Map</span></button>
   <button id="nRoute"><svg class="i"><use href="#i-route"/></svg><span class="lbl">My plan</span><span class="nb" id="navBadge" hidden>0</span></button>
+  <button id="nSet"><svg class="i"><use href="#i-gear"/></svg><span class="lbl">Settings</span></button>
 </nav>
+
+<dialog class="setdlg" id="setDlg" aria-labelledby="setTitle">
+  <div class="setbox">
+    <div class="sethead">
+      <h2 id="setTitle">Settings</h2>
+      <button class="iconbtn setclose" id="setClose" aria-label="Close settings">
+        <svg class="i"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="setrow">
+      <div><b>Appearance</b><i>Applies to every Flanner page on this device.</i></div>
+      <div class="seg" id="themeSeg" role="group" aria-label="Colour theme">
+        <button data-theme-set="light" aria-pressed="false">
+          <svg class="i"><use href="#i-sun"/></svg>Light</button>
+        <button data-theme-set="dark" aria-pressed="false">
+          <svg class="i"><use href="#i-moon"/></svg>Dark</button>
+      </div>
+    </div>
+    <div class="setrow">
+      <div><b>Cookies</b><i id="cookieState">—</i></div>
+      <div class="seg" id="cookieSeg" role="group" aria-label="Cookie storage">
+        <button data-consent="1" aria-pressed="false">Allow</button>
+        <button data-consent="0" aria-pressed="false">Off</button>
+      </div>
+    </div>
+    <p class="setnote">Cookies here only remember your own choices — the plan you build, the
+      day you were looking at, and this theme. Nothing is sent anywhere and no analytics run.
+      With them off, your picks last until you close the tab.
+      <a href="../privacy/">EU data policy</a></p>
+    <div class="setrow">
+      <div><b>Your plan</b><i id="planState">—</i></div>
+      <button class="ghost" id="clearPlan">Clear plan</button>
+    </div>
+  </div>
+</dialog>
 
 <dialog class="consent" id="consent" aria-labelledby="consentTitle">
   <div class="consentbox">
@@ -1560,7 +1654,6 @@ function setView(v, byUser) {
   $('#agenda').hidden = v !== 'agenda';
   $('#vTimeline').setAttribute('aria-pressed', v === 'timeline');
   $('#vAgenda').setAttribute('aria-pressed', v === 'agenda');
-  $('#zoomWrap').style.display = v === 'timeline' ? 'inline-flex' : 'none';
   Store.set('view', v);
   apply();
   if (typeof markLive === 'function') markLive();
@@ -2260,18 +2353,77 @@ $('#rCopy').onclick = () => {
 };
 
 /* ══ theme ═════════════════════════════════════════════ */
+/* The search opens on demand and folds away again once it is empty and no
+   longer focused, so the bar is not carrying a wide empty field all the time. */
+(() => {
+  const box = document.querySelector('.srch'), q = $('#q');
+  if (!box || !q) return;
+  const open = () => { box.classList.add('open'); q.focus(); };
+  box.addEventListener('click', () => { if (!box.classList.contains('open')) open(); });
+  box.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && !box.classList.contains('open')) {
+      e.preventDefault(); open();
+    }
+  });
+  q.addEventListener('blur', () => { if (!q.value) box.classList.remove('open'); });
+  q.addEventListener('input', () => { if (q.value) box.classList.add('open'); });
+  if (q.value) box.classList.add('open');
+})();
+
+/* ── settings ──────────────────────────────────────────
+   Every choice here goes through Store, so it lands in a cookie once cookies
+   are allowed and stays in memory for the tab when they are not. */
+function paintSettings() {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  document.querySelectorAll('#themeSeg button').forEach(b =>
+    b.setAttribute('aria-pressed', (b.dataset.themeSet === 'dark') === dark));
+  const answered = Store.readConsent();
+  document.querySelectorAll('#cookieSeg button').forEach(b =>
+    b.setAttribute('aria-pressed', answered !== null && b.dataset.consent === answered));
+  const st = $('#cookieState');
+  if (st) st.textContent = !Store.cookiesWork
+    ? 'This page is open from a file, so choices are kept in local storage instead.'
+    : answered === '1' ? 'On — your choices are remembered on this device.'
+    : answered === '0' ? 'Off — your choices last until you close the tab.'
+    : 'Not set yet.';
+  const pl = $('#planState');
+  if (pl) pl.textContent = state.route.size
+    ? state.route.size + (state.route.size === 1 ? ' act picked' : ' acts picked')
+    : 'Nothing picked yet.';
+}
+document.querySelectorAll('#themeSeg button').forEach(b =>
+  b.onclick = () => { applyTheme(b.dataset.themeSet); });
+document.querySelectorAll('#cookieSeg button').forEach(b =>
+  b.onclick = () => { Store.setConsent(b.dataset.consent === '1'); paintSettings(); });
+const setDlg = $('#setDlg');
+function openSettings() {
+  paintSettings();
+  setDlg.showModal();
+  requestAnimationFrame(() => setDlg.classList.add('in'));
+}
+function closeSettings() {
+  setDlg.classList.remove('in');
+  setTimeout(() => { if (setDlg.open) setDlg.close(); }, 260);
+}
+$('#setClose').onclick = closeSettings;
+setDlg.addEventListener('click', e => { if (e.target === setDlg) closeSettings(); });
+setDlg.addEventListener('cancel', e => { e.preventDefault(); closeSettings(); });
+
+const clearBtn = $('#clearPlan');
+if (clearBtn) clearBtn.onclick = () => {
+  [...state.route].forEach(k => state.route.delete(k));
+  saveRoute(); renderRoute(); syncStars(); paintSettings();
+  showToast('Plan cleared');
+};
+
 function applyTheme(mode) {
   const dark = mode === 'dark';
   document.documentElement.dataset.theme = mode;
-  $('#themeBtn').querySelector('use').setAttribute('href', dark ? '#i-moon' : '#i-sun');
-  $('#themeBtn').setAttribute('aria-label',
-    dark ? 'Switch to the light theme' : 'Switch to the dark theme');
-  document.querySelector('meta[name=theme-color]').content = dark ? '#0a0c10' : '#e6e6e6';
+  if (typeof paintSettings === 'function') paintSettings();
+  document.querySelector('meta[name=theme-color]').content = dark ? '#101010' : '#e9e9e9';
   if (typeof layer !== 'undefined') setLayer(layer);
   Store.set('theme', mode);
 }
-$('#themeBtn').onclick = () =>
-  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
 applyTheme(Store.get('theme') || 'light');   // bright by default
 
 /* ══ mobile nav ════════════════════════════════════════ */
@@ -2311,6 +2463,12 @@ $('.brandmini').onclick = e => {
 Object.entries(NAVMAP).forEach(([id, sel]) => $('#'+id).onclick = () => {
   scrollToSection(sel); setActiveNav(id);
 });
+/* Settings is a panel, not a place on the page, so it opens rather than
+   scrolls and never takes the active indicator. */
+$('#nSet').onclick = () => {
+  if (typeof window.holdNavOpen === 'function') window.holdNavOpen();
+  openSettings();
+};
 if ('IntersectionObserver' in window) {
   new IntersectionObserver(([e]) =>
     document.body.classList.toggle('sched-off', !e.isIntersecting),

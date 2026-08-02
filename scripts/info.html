@@ -157,8 +157,6 @@ __FOOTER_CSS__
     <span class="div"></span>
     <span class="loc">Helsinki</span>
     <span class="sp"></span>
-    <button class="tbtn" id="themeBtn" aria-label="Switch colour theme">
-      <svg class="i"><use href="#i-sun"/></svg></button>
   </div>
 </header>
 
@@ -174,21 +172,33 @@ __FOOTER__
 </div>
 
 <script>
+/* Settings persist in a first-party cookie, with local storage as the fallback
+   for a page opened straight off disk where cookies are blocked. */
 const KEY = 'fp-theme';
 const root = document.documentElement;
-const btn = document.getElementById('themeBtn');
-const read = () => { try { return localStorage.getItem(KEY); } catch (e) { return null; } };
+const jar = {
+  read() {
+    const m = document.cookie.match(/(?:^|; )fp-theme=([^;]*)/);
+    if (m) return decodeURIComponent(m[1]);
+    try { return localStorage.getItem(KEY); } catch (e) { return null; }
+  },
+  write(v) {
+    try { document.cookie = KEY + '=' + encodeURIComponent(v) +
+      ';path=/;Max-Age=' + 60 * 60 * 24 * 400 + ';SameSite=Lax'; } catch (e) {}
+    try { localStorage.setItem(KEY, v); } catch (e) {}
+  },
+};
 function applyTheme(t) {
   root.dataset.theme = t;
-  btn.innerHTML = `<svg class="i"><use href="#i-${t === 'dark' ? 'moon' : 'sun'}"/></svg>`;
-  btn.setAttribute('aria-label', t === 'dark' ? 'Switch to the light theme' : 'Switch to the dark theme');
+  document.querySelectorAll('#themeSeg button').forEach(b =>
+    b.setAttribute('aria-pressed', b.dataset.themeSet === t));
+  const meta = document.querySelector('meta[name=theme-color]');
+  if (meta) meta.content = t === 'dark' ? '#101010' : '#e9e9e9';
+  jar.write(t);
 }
-btn.onclick = () => {
-  const t = root.dataset.theme === 'dark' ? 'light' : 'dark';
-  try { localStorage.setItem(KEY, t); } catch (e) {}
-  applyTheme(t);
-};
-applyTheme(read() || 'light');
+document.querySelectorAll('#themeSeg button').forEach(b =>
+  b.onclick = () => applyTheme(b.dataset.themeSet));
+applyTheme(jar.read() || 'light');
 </script>
 </body>
 </html>
