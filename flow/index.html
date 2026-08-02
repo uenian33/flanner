@@ -190,16 +190,18 @@ h1{margin:0 auto;font-family:var(--title);font-size:clamp(29px,7vw,56px);font-we
    the side. Painting it on a pseudo-element stretched past both gutters makes
    it full-bleed whatever the body padding is — the same trick the home page
    uses for the same reason. */
+/* Over the festival block the bar is just type on the page; the frosted panel
+   only appears once there is content sliding under it. */
 .toolbar{position:sticky;top:0;z-index:40;margin-bottom:2px}
 .toolbar::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 86%,transparent);
   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line);pointer-events:none}
+  opacity:0;transition:opacity .26s var(--ease);pointer-events:none}
+body.past-head .toolbar::before{opacity:1}
 .toolbar > *{position:relative;z-index:1}
 /* While a second bar is pinned directly beneath it, the rule between them is
    a seam through what should read as one block, so it is dropped for as long
    as they are touching. */
-body.bars-joined .toolbar::before{border-bottom-color:transparent}
 .tbar{display:flex;gap:10px;align-items:center;padding:13px 0;flex-wrap:nowrap}
 /* The bar borrows the home page's two faces so the two read as one product.
    Scoped to the bar: the rest of the planner keeps its own typography. */
@@ -210,18 +212,6 @@ body.bars-joined .toolbar::before{border-bottom-color:transparent}
    Its own button rather than a fourth tab, because it leaves the planner
    rather than switching a view within it. Offsets come from the measured nav,
    which changes size when the mobile bar shrinks on scroll. */
-.navhome{position:fixed;z-index:61;display:grid;place-items:center;text-decoration:none;
-  isolation:isolate;background:var(--glass);border:1px solid var(--glass-line);
-  -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
-  box-shadow:0 10px 34px var(--shade),inset 0 1px 0 var(--glass-line);
-  transition:transform .4s cubic-bezier(.32,.72,0,1),background .2s var(--ease)}
-.navhome:hover{background:var(--glass-pill)}
-.navhome svg{width:30px;height:30px;stroke:none;fill:none}
-.navhome b{display:none}
-/* On the phone the mark is not a floating button but the first item of the
-   bar, so getting home costs the same tap as switching view. */
-.navhome-m{display:none}
-.navhome-m svg{stroke:none;fill:none}
 /* Always present, not revealed on scroll: the masthead is below the fold for
    most of the page, so the bar is the only place the festival is named. */
 /* The same lockup as the home page's masthead, at the same sizes: mark, the
@@ -287,7 +277,7 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
 .schedbar::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--bg) 86%,transparent);
   -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-  box-shadow:0 1px 0 var(--line);pointer-events:none}
+  pointer-events:none}
 .schedbar > *{position:relative;z-index:1}
 .tbar2{padding:8px 0 10px;flex-wrap:wrap;row-gap:8px}
 .daybar{flex:1 1 auto}
@@ -891,6 +881,18 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
 .toast button:hover{background:var(--panel)}
 
 /* ── mobile bottom nav ────────────────────────────────── */
+.navhome{position:fixed;z-index:61;display:grid;place-items:center;text-decoration:none;
+  isolation:isolate;background:var(--glass);border:1px solid var(--glass-line);
+  -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
+  box-shadow:0 10px 34px var(--shade),inset 0 1px 0 var(--glass-line);
+  transition:transform .4s cubic-bezier(.32,.72,0,1),background .2s var(--ease)}
+.navhome:hover{background:var(--glass-pill)}
+.navhome svg{width:30px;height:30px;stroke:none;fill:none}
+.navhome b{display:none}
+/* On the phone the mark is not a floating button but the first item of the
+   bar, so getting home costs the same tap as switching view. */
+.navhome-m{display:none}
+.navhome-m svg{stroke:none;fill:none}
 /* Lifted out of the planner so the home page can use the identical bar.
    --navn is the number of section tabs beside the Home button. */
 .mnav{display:none}
@@ -921,7 +923,50 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
   .navhome{left:var(--railx,16px);top:50%;width:76px;height:60px;border-radius:24px;
     transform:translateY(calc(-50% - (var(--navh,214px) / 2) - 10px - 30px))}
 }
-
+@media(max-width:820px){
+  .navhome-m{display:grid;place-content:center;text-decoration:none;position:relative;
+      height:100%;z-index:1;color:var(--glass-tx);border-radius:9999px;
+      font-size:11px;font-weight:500;letter-spacing:-.003em}
+  .navhome-m svg{width:24px;height:24px;transform:translateY(-7px);
+      transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
+  body.nav-min .navhome-m svg{transform:translateY(0) scale(.96)}
+  .mnav{display:grid;grid-template-columns:repeat(var(--navcols,calc(var(--navn,4) + 1)),1fr);position:fixed;left:50%;
+      bottom:calc(18px + var(--safe-b));transform:translate(-50%,var(--vvshift,0px));
+      width:min(94vw,430px);max-width:calc(100vw - 32px);height:67px;overflow:hidden;
+      contain:layout style;
+      transition:width .4s cubic-bezier(.34,1.56,.64,1),height .4s cubic-bezier(.34,1.56,.64,1);
+      z-index:60;padding:4px;isolation:isolate;
+      border-radius:9999px;background:var(--glass);
+      -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
+      border:1px solid var(--glass-line);
+      box-shadow:0 8px 32px var(--shade),inset 0 1px 0 var(--glass-line)}
+  .mnav .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/var(--navcols,calc(var(--navn,4) + 1)));
+      border-radius:9999px;background:var(--glass-pill);z-index:0;
+      box-shadow:inset 0 1px 0 var(--glass-line);
+      transform:translateX(calc((var(--i,0) + 1) * 100%));
+      transition:transform .42s cubic-bezier(.32,.72,0,1)}
+  .mnav button{display:grid;place-content:center;padding:0;font-size:11px;
+      font-weight:500;color:var(--glass-tx);position:relative;height:100%;z-index:1;
+      letter-spacing:-.003em;transition:color .3s var(--ease);border-radius:9999px}
+  .mnav button svg{transform:translateY(-7px);
+      transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
+  .mnav .lbl{position:absolute;left:0;right:0;bottom:8px;text-align:center;
+      transition:opacity .2s var(--ease),transform .3s var(--ease)}
+  body.nav-min .mnav{width:min(74vw,272px);height:48px}
+  body.nav-min .mnav .lbl{opacity:0;transform:translateY(5px)}
+  body.nav-min .mnav button svg{transform:translateY(0) scale(.96)}
+  .mnav button svg{width:24px;height:24px;font-size:24px;stroke-width:1.8;
+      transition:transform .42s var(--ease)}
+  .mnav button.on{color:var(--glass-on)}
+  .mnav button:active svg{transform:scale(.9)}
+  .navhome{left:50%;bottom:calc(18px + var(--safe-b));width:54px;height:54px;border-radius:9999px;
+      transform:translate(calc(-50% - (var(--navw,360px) / 2) - 9px),var(--vvshift,0px))}
+  body.nav-min .navhome{width:46px;height:46px}
+  .mnav .nb{position:absolute;top:6px;left:calc(50% + 9px);min-width:17px;height:17px;
+      border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:10px;font-weight:800;
+      display:grid;place-items:center;padding:0 4.5px;z-index:3;
+      box-shadow:0 1px 4px rgba(0,0,0,.4)}
+}
 
 
 footer{border-top:1px solid var(--line);margin-top:34px;padding:22px 0 46px;color:var(--tx3);
@@ -947,17 +992,11 @@ footer p{margin:0 0 9px}
   input[type=search]{width:100%}
 
 
-  body{padding-bottom:calc(96px + var(--safe-b))}
   /* Collapses on scroll-down and springs back on scroll-up, matching the
      kinoon.fi bar: width and height on cubic-bezier(.34,1.56,.64,1) over 400ms. */
-  .navhome{display:none}
-  .navhome-m{display:grid;place-content:center;text-decoration:none;position:relative;
     height:100%;z-index:1;color:var(--glass-tx);border-radius:9999px;
     font-size:11px;font-weight:500;letter-spacing:-.003em}
-  .navhome-m svg{width:24px;height:24px;transform:translateY(-7px);
     transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
-  body.nav-min .navhome-m svg{transform:translateY(0) scale(.96)}
-  .mnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:50%;
     bottom:calc(18px + var(--safe-b));transform:translate(-50%,var(--vvshift));
     width:min(94vw,430px);max-width:calc(100vw - 32px);height:67px;overflow:hidden;
     contain:layout style;
@@ -967,29 +1006,16 @@ footer p{margin:0 0 9px}
     -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
     border:1px solid var(--glass-line);
     box-shadow:0 8px 32px var(--shade),inset 0 1px 0 var(--glass-line)}
-  .mnav .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/5);
     border-radius:9999px;background:var(--glass-pill);z-index:0;
     box-shadow:inset 0 1px 0 var(--glass-line);
     transform:translateX(calc((var(--i,0) + 1) * 100%));
     transition:transform .42s cubic-bezier(.32,.72,0,1)}
-  .mnav button{display:grid;place-content:center;padding:0;font-size:11px;
     font-weight:500;color:var(--glass-tx);position:relative;height:100%;z-index:1;
     letter-spacing:-.003em;transition:color .3s var(--ease);border-radius:9999px}
-  .mnav button svg{transform:translateY(-7px);
     transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
-  .mnav .lbl{position:absolute;left:0;right:0;bottom:8px;text-align:center;
     transition:opacity .2s var(--ease),transform .3s var(--ease)}
-  body.nav-min .mnav{width:min(74vw,272px);height:48px}
-  body.nav-min .mnav .lbl{opacity:0;transform:translateY(5px)}
-  body.nav-min .mnav button svg{transform:translateY(0) scale(.96)}
-  .mnav button svg{width:24px;height:24px;font-size:24px;stroke-width:1.8;
     transition:transform .42s var(--ease)}
-  .mnav button.on{color:var(--glass-on)}
-  .mnav button:active svg{transform:scale(.9)}
-  .navhome{left:50%;bottom:calc(18px + var(--safe-b));width:54px;height:54px;border-radius:9999px;
     transform:translate(calc(-50% - (var(--navw,360px) / 2) - 9px),var(--vvshift))}
-  body.nav-min .navhome{width:46px;height:46px}
-  .mnav .nb{position:absolute;top:6px;left:calc(50% + 9px);min-width:17px;height:17px;
     border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:10px;font-weight:800;
     display:grid;place-items:center;padding:0 4.5px;z-index:3;
     box-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -2691,6 +2717,17 @@ document.addEventListener('keydown', e => {
   addEventListener('scroll', joined, {passive: true});
   addEventListener('resize', joined, {passive: true});
   joined();
+})();
+
+/* The bar frosts only once the festival block has gone past it. */
+(() => {
+  const head = document.querySelector('header');
+  if (!head) return;
+  const read = () => document.body.classList.toggle('past-head',
+    head.getBoundingClientRect().bottom <= 4);
+  addEventListener('scroll', read, {passive: true});
+  addEventListener('resize', read, {passive: true});
+  read();
 })();
 
 const measureTop = () => {
