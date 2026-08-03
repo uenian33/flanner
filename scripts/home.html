@@ -553,7 +553,7 @@ body[data-view=cal] .grid{display:none}
   /* A third of a phone column has to hold an icon, a word and a chevron, and
      the word is the part that must survive: every piece around it is trimmed
      until "Upcoming" fits whole. */
-  .trig{width:100%;min-width:0;justify-content:center;gap:4px;padding:0 5px;
+  .trig{width:100%;min-width:0;justify-content:center;gap:3px;padding:0 4px;
     font-size:12.5px}
   .trig svg.i{width:14px;height:14px}
   .trig .cv{width:11px;height:11px}
@@ -1196,7 +1196,11 @@ const WHEN = [
   {k: 'any',  label: 'All festivals', trig: 'All',      test: () => true},
   {k: 'up',   label: 'Upcoming',      trig: 'Upcoming', test: f => !status(f).past},
   {k: 'past', label: 'Past',          trig: 'Past',     test: f => status(f).past},
-  ...MONTHS_IN_DATA.map(m => ({k: 'm:' + m, label: monthName(m), trig: monthShort(m),
+  /* The month you are in is worth naming as such; the others still need
+     their own name, which is why the list is built from the data. */
+  ...MONTHS_IN_DATA.map(m => ({k: 'm:' + m,
+                              label: m === thisMonth ? 'This month' : monthName(m),
+                              trig:  m === thisMonth ? 'This month' : monthShort(m),
                               test: f => f.month === m})),
 ];
 /* Four kinds, fixed. Deriving them from the data made the list swing between
