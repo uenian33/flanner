@@ -286,11 +286,14 @@ __SETTINGS_CSS__
   .top:has(#hslot .sbox.open) .locwrap{display:none}
   body.at-cards .hslot .sbox.open{width:100%;margin-left:0}
 
-  /* With the field in the masthead the toolbar is just the two filters. */
-  .tools{position:static;padding:0;margin:0 0 clamp(14px,2vw,20px)}
-  .tools::before{display:none}
+  /* With the field in the masthead the toolbar is just the three controls.
+     It pins directly under the masthead — --headh is that bar's measured
+     height — and carries the same frosted panel, so the two read as one
+     surface rather than as a bar and a thing stuck to it. */
   .tools .toolmark{display:none}
-  .tools{grid-template-columns:1fr 1fr;grid-template-areas:"filters filters"}
+  /* Resting against each other, the two bars share one edge: the masthead
+     gives up its rule and the filter bar draws the only one. */
+  body.bars-joined header::before{border-bottom-color:transparent}
 }
 
 __NAV_CSS__
@@ -532,7 +535,12 @@ body[data-view=cal] .grid{display:none}
      underneath. */
   .tools{display:grid;align-items:center;gap:8px 10px;
     grid-template-columns:minmax(0,1fr) auto;
-    grid-template-areas:"mark search" "filters filters"}
+    grid-template-areas:"mark search" "filters filters";
+    /* Pinned under the masthead rather than at the top of the viewport;
+       --headh is that bar's measured height. */
+    position:sticky;top:var(--headh,52px);z-index:59;
+    padding:8px 0;margin:0 0 clamp(14px,2vw,20px)}
+  .tools::before{display:block}
   .toolmark{grid-area:mark;max-width:none;opacity:1}
   .tools.stuck .toolmark{max-width:none}
   .tools .sbox{grid-area:search;flex:none;width:44px;justify-self:end;
@@ -1101,8 +1109,20 @@ const tools = $('#tools');
 /* The bar sits below the highlight while that is on screen and pins once it
    reaches the top — which is exactly when its own offset hits zero. Nothing
    above it collapses, so the measurement cannot feed back into the layout. */
+const headEl = document.querySelector('header');
 function readStuck() {
-  tools.classList.toggle('stuck', tools.getBoundingClientRect().top <= 0);
+  /* On a phone the masthead is sticky too, so the toolbar pins beneath it
+     rather than at zero. Publishing the measured height keeps the offset
+     honest when the bar's own contents change size. */
+  const phone = matchMedia('(max-width:620px)').matches;
+  const h = phone && headEl ? Math.round(headEl.getBoundingClientRect().height) : 0;
+  if (phone) document.documentElement.style.setProperty('--headh', h + 'px');
+  else document.documentElement.style.removeProperty('--headh');
+
+  const top = tools.getBoundingClientRect().top;
+  tools.classList.toggle('stuck', top <= h + 1);
+  /* Joined means resting on the masthead, not merely scrolled past it. */
+  document.body.classList.toggle('bars-joined', phone && Math.abs(top - h) <= 1.5);
 }
 addEventListener('scroll', readStuck, {passive: true});
 addEventListener('resize', readStuck, {passive: true});
