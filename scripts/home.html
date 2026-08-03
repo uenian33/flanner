@@ -173,7 +173,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 
 .side{grid-area:1/9/3/13;z-index:3;align-self:center;
   display:flex;flex-direction:column}
-.panel{--tuck:clamp(26px,5vw,64px);
+.panel{position:relative;--tuck:clamp(26px,5vw,64px);
   margin-left:calc(-1 * var(--tuck));
   background:color-mix(in srgb,var(--fa,#fff) 8%,var(--bg2));
   border-radius:16px;padding:clamp(22px,2.6vw,34px) var(--tuck);
@@ -382,7 +382,96 @@ __NAV_CSS__
 .sheet .foot .lnk:hover{color:var(--tx)}
 .sheet .foot .go{background:var(--tx);color:var(--bg);border-radius:10rem;padding:11px 24px;
   font-size:var(--f-sub);font-weight:700;min-height:44px}
+/* ── the banner's own clock ────────────────────────────
+   A hairline that fills over the dwell, so the next slide is never a surprise.
+   It scales rather than resizes, which keeps it off the layout path, and it
+   fades out whenever the rotation is paused. */
+.reelbar{position:absolute;left:var(--tuck,22px);right:var(--tuck,22px);bottom:-1.5px;
+  height:3px;border-radius:3px;overflow:hidden;
+  background:color-mix(in srgb,var(--tx) 14%,transparent);
+  opacity:0;transition:opacity .3s var(--ease)}
+.reelbar.on{opacity:1}
+.reelbar i{display:block;height:100%;border-radius:inherit;background:var(--tx2);
+  transform:scaleX(0);transform-origin:left center}
+@media(prefers-reduced-motion:reduce){.reelbar{display:none}}
+
 .dropset{display:contents}
+
+/* ── card size switcher ────────────────────────────────
+   Same height and radius as the two filter triggers so the three read as one
+   set of controls rather than a control and a widget. */
+.vseg{display:flex;flex:none;gap:3px;padding:3px;border:1px solid var(--line2);
+  border-radius:10rem;background:var(--bg2)}
+.vseg button{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;
+  border-radius:10rem;font-size:var(--f-sub);font-weight:650;color:var(--tx2);
+  transition:background .18s var(--ease),color .18s var(--ease)}
+.vseg button svg.i{width:17px;height:17px}
+.vseg button[aria-pressed=true]{background:var(--tx);color:var(--bg)}
+.vseg button:hover:not([aria-pressed=true]){color:var(--tx)}
+
+/* ── calendar view ─────────────────────────────────────
+   Hidden until asked for, so the month grid costs nothing in the other two
+   views beyond the markup that builds it. */
+.cal{display:none}
+body[data-view=cal] .cal{display:block}
+body[data-view=cal] .grid{display:none}
+.calhead{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+  margin-bottom:6px}
+.calhead span{font-size:var(--f-caption);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tx3);font-weight:700;text-align:center}
+.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+  border:1px solid var(--line2);border-radius:16px;overflow:hidden;
+  background:var(--line2);gap:1px}
+.cell{background:var(--bg2);min-height:88px;padding:6px 5px;display:flex;
+  flex-direction:column;gap:3px}
+.cell.out{background:var(--bg)}
+.cell .dn{font-size:12.5px;font-weight:700;color:var(--tx3);padding-left:2px}
+.cell.has .dn{color:var(--tx)}
+/* A run of days reads as one bar: square edges in the middle, rounded only
+   where the festival actually starts and ends. */
+.ev{position:relative;display:block;min-height:20px;padding:3px 6px;margin:0 -5px;
+  background:color-mix(in srgb,var(--fa,var(--tx)) 32%,var(--bg2));
+  border-left:3px solid transparent;text-decoration:none;
+  font-size:11.5px;font-weight:700;line-height:1.25;color:var(--tx)}
+.ev.st{margin-left:0;border-radius:6px 0 0 6px;border-left-color:var(--fa,var(--tx))}
+.ev.en{margin-right:0;border-radius:0 6px 6px 0}
+.ev.st.en{border-radius:6px}
+.ev:hover{background:color-mix(in srgb,var(--fa,var(--tx)) 52%,var(--bg2))}
+.ev[hidden]{display:none}
+/* A day cell is far too narrow for a festival name, so the label is laid over
+   the whole run instead of the one cell it lives in — --span is how many days
+   the bar still has to go in this week row. */
+.cell{overflow:visible}
+.ev span{position:absolute;left:6px;right:auto;top:50%;transform:translateY(-50%);
+  z-index:2;pointer-events:none;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;width:calc(var(--span,1) * 100% - 12px)}
+@media(max-width:620px){
+  .calhead span{font-size:9.5px;letter-spacing:.04em}
+  .cell{min-height:62px;padding:4px 3px}
+  .cell .dn{font-size:11px}
+  .ev{min-height:16px;padding:2px 4px;border-left-width:3px}
+  .ev span{font-size:9.5px;left:4px;width:calc(var(--span,1) * 100% - 8px)}
+}
+
+/* ── compact tiles ─────────────────────────────────────
+   A thumbnail and the three things worth scanning: what it is called, when and
+   where, and what kind of festival it is. Everything else is a tap away. */
+.grid.tile{grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));
+  gap:clamp(12px,1.6vw,18px)}
+.grid.tile .card .shot{aspect-ratio:16/9}
+.grid.tile .card .lg img{height:clamp(24px,3vw,30px)}
+.grid.tile .card .body{padding:14px 16px 16px;gap:0}
+.grid.tile .card h4{font-size:clamp(16px,1.5vw,19px);line-height:1.2}
+.grid.tile .card .offi,.grid.tile .card .figs,.grid.tile .card .stars,
+.grid.tile .card .acts,.grid.tile .card .cats{display:none}
+.grid.tile .card .when{margin-top:8px}
+.grid.tile .card .where{margin-top:4px}
+.grid.tile .card .kind{display:inline-block;margin-top:10px;padding:4px 11px;
+  border:1px solid var(--line2);border-radius:10rem;font-size:12.5px;font-weight:700;
+  letter-spacing:.04em;color:var(--tx2);width:max-content}
+/* The whole tile is the target, since the buttons are gone. */
+.grid.tile .card{cursor:pointer}
+.card .kind{display:none}
 /* On a phone the search box and two triggers will not share one row, and left
    to wrap they produced three ragged ones. Two rows instead: the mark and the
    search, then the filters side by side.
@@ -410,7 +499,36 @@ __NAV_CSS__
     transition:left .3s var(--ease),transform .3s var(--ease)}
   .sbox.open svg.i{left:14px;transform:translate(0,-50%)}
   .sbox .clr{display:none}
-  .dropset{grid-area:filters;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  /* Three equal thirds of the column. At this width the icon is the first
+     thing to go — a trigger whose label reads "Al…" has told you nothing,
+     while a label with no icon still has. */
+  .dropset{grid-area:filters;display:grid;gap:8px;
+    grid-template-columns:repeat(3,minmax(0,1fr))}
+  .trig{width:100%;min-width:0;justify-content:center;gap:0;padding:0 10px;
+    font-size:13.5px}
+  .trig svg.i{display:none}
+  .trig span:not(.n){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vseg{justify-self:stretch;width:100%}
+  .vseg button{flex:1 1 0;min-width:0;justify-content:center;padding:0;position:relative}
+  /* Labels are gone here, so a button is narrower than it is tall and the
+     pressed pill came out an ellipse. The highlight is drawn instead as a disc
+     the width of the button, which aspect-ratio makes exactly round. */
+  .vseg button[aria-pressed=true]{background:none;color:var(--bg)}
+  .vseg button::before{content:"";position:absolute;left:0;right:0;top:50%;
+    transform:translateY(-50%);aspect-ratio:1;border-radius:50%;
+    background:transparent;transition:background .18s var(--ease)}
+  .vseg button[aria-pressed=true]::before{background:var(--tx)}
+  .vseg button svg.i{position:relative;z-index:1}
+  .vseg button{height:42px;padding:0 11px}
+  .vseg button .lbl{display:none}
+  /* Two per row is the point of the compact view on a phone. */
+  .grid.tile{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .grid.tile .card{border-radius:18px}
+  .grid.tile .card .body{padding:11px 12px 13px}
+  .grid.tile .card h4{font-size:15px}
+  .grid.tile .card .when{font-size:13px;margin-top:6px}
+  .grid.tile .card .where{font-size:12.5px}
+  .grid.tile .card .kind{font-size:11px;padding:3px 9px;margin-top:8px}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
   .sheet{left:0;right:0;width:auto;max-width:none}
@@ -606,6 +724,14 @@ __FOOTER_CSS__
       </div>
     </div>
   </div>
+  <div class="vseg" id="viewSeg" role="group" aria-label="How to show festivals">
+    <button data-view="cal" aria-pressed="false" title="Calendar">
+      <svg class="i"><use href="#i-cal"/></svg><span class="lbl">Calendar</span></button>
+    <button data-view="tile" aria-pressed="false" title="Compact">
+      <svg class="i"><use href="#i-grid"/></svg><span class="lbl">Compact</span></button>
+    <button data-view="full" aria-pressed="true" title="Detailed">
+      <svg class="i"><use href="#i-rows"/></svg><span class="lbl">Detailed</span></button>
+  </div>
   </div>
 </div>
 
@@ -668,6 +794,7 @@ if (reel.length) {
     </a>
     <div class="side">
     <div class="panel" data-open="${esc(f.planner)}">
+      <div class="reelbar" id="reelBar" aria-hidden="true"><i></i></div>
       <p class="fline">
         <span class="fdate">${esc(f.dates)}</span>
         <span>${esc(f.free ? 'Free' : 'Ticketed')}</span><span class="dot"></span>
@@ -685,10 +812,10 @@ if (reel.length) {
     </div>
     </div>
     ${reel.length > 1 ? `<div class="nav">
-      <button id="prev" aria-label="Previous festival" ${cur ? '' : 'disabled'}>
+      <button id="prev" aria-label="Previous festival">
         <svg class="i"><use href="#i-left"/></svg></button>
       <span class="count">${cur + 1} / ${reel.length}</span>
-      <button id="next" aria-label="Next festival" ${cur < reel.length - 1 ? '' : 'disabled'}>
+      <button id="next" aria-label="Next festival">
         <svg class="i"><use href="#i-right"/></svg></button>
     </div>` : ''}`;
   };
@@ -699,6 +826,7 @@ if (reel.length) {
     $('#heroNote').textContent = `${DATA.festivals.length} planner${DATA.festivals.length > 1 ? 's' : ''}`;
     stage.setAttribute('style', fvars(f));
     stage.innerHTML = shell(f);
+    armBar(canRun());
     const pv = $('#prev'), nx = $('#next');
     if (pv) pv.onclick = e => { e.preventDefault(); go(cur - 1, true); nudge(); };
     if (nx) nx.onclick = e => { e.preventDefault(); go(cur + 1, true); nudge(); };
@@ -768,12 +896,32 @@ if (reel.length) {
   const canRun = () => reel.length > 1 && motionOK && !document.hidden &&
                        onscreen && !hovering;
 
+
+  /* Restarting the line and restarting the interval are the same event, so
+     they are driven from one place — a bar that ran on its own clock would
+     drift away from the slide it is describing. */
+  function armBar(run) {
+    /* Re-queried every time: the panel that holds it is rebuilt per slide. */
+    const rbar = document.querySelector('#reelBar');
+    const rfill = rbar && rbar.firstElementChild;
+    if (!rfill) return;
+    rbar.classList.toggle('on', !!run);
+    rfill.style.transition = 'none';
+    rfill.style.transform = 'scaleX(0)';
+    void rfill.offsetWidth;
+    if (run) {
+      rfill.style.transition = `transform ${DWELL}ms linear`;
+      rfill.style.transform = 'scaleX(1)';
+    }
+  }
+
   function nudge() {
     clearInterval(timer); timer = 0;
+    armBar(canRun());
     if (!canRun()) return;
     timer = setInterval(() => {
-      if (!canRun()) { clearInterval(timer); timer = 0; return; }
-      go(cur + 1, true);
+      if (!canRun()) { clearInterval(timer); timer = 0; armBar(false); return; }
+      go(cur + 1, true);   /* paint() arms the new slide's line */
     }, DWELL);
   }
 
@@ -789,6 +937,53 @@ if (reel.length) {
 
   paint();
   nudge();
+}
+
+/* ── calendar ──────────────────────────────────────────
+   A real month grid, Monday first as Finland writes it. A festival occupies
+   every day it runs, not just the day it opens — a three-day festival that
+   showed up once would be exactly the thing a calendar is meant to fix.
+
+   A festival that crosses a month boundary appears in the month it starts in,
+   which is the month its group belongs to. */
+const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const iso = (y, m, d) =>
+  `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+function calendar(month, list) {
+  const [y, mo] = month.split('-').map(Number);
+  /* UTC throughout: a local-time Date shifts the first of the month across a
+     day boundary in any zone behind UTC, and the grid silently rotates. */
+  const lead = (new Date(Date.UTC(y, mo - 1, 1)).getUTCDay() + 6) % 7;
+  const days = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+
+  const cells = [];
+  for (let i = 0; i < lead; i++) cells.push('<div class="cell out"></div>');
+  for (let d = 1; d <= days; d++) {
+    const key = iso(y, mo, d);
+    const col = (lead + d - 1) % 7;
+    const evs = list.filter(f => f.start <= key && key <= f.end).map(f => {
+      /* The name is written once per week row — on the opening day, or on the
+         Monday a run carries into. Repeating it in every cell was noise. */
+      const label = key === f.start || col === 0;
+      const cls = ['ev', key === f.start ? 'st' : '', key === f.end ? 'en' : ''].join(' ');
+      /* Days left in this run, capped at the Sunday — a label may not spill
+         into the week below. */
+      const left = Math.round((Date.parse(f.end) - Date.parse(key)) / 864e5) + 1;
+      const span = Math.max(1, Math.min(left, 7 - col));
+      return `<a class="${cls}" style="${fvars(f)};--span:${span}" href="${esc(f.planner)}"
+                 data-id="${esc(f.id)}" title="${esc(f.name)} ${esc(f.year)} · ${esc(f.dates)}">
+        <span>${label ? esc(f.name) : ''}</span></a>`;
+    }).join('');
+    cells.push(`<div class="cell${evs ? ' has' : ''}" data-d="${key}">
+      <span class="dn">${d}</span>${evs}</div>`);
+  }
+  while (cells.length % 7) cells.push('<div class="cell out"></div>');
+
+  return `<div class="cal" aria-label="${MONTH[mo - 1]} ${y}">
+    <div class="calhead">${DOW.map(d => `<span>${d}</span>`).join('')}</div>
+    <div class="calgrid">${cells.join('')}</div>
+  </div>`;
 }
 
 /* ── month groups ─────────────────────────────────────── */
@@ -809,6 +1004,7 @@ $('#months').innerHTML = Object.keys(groups).sort().map(m => {
       <hr>
     </div>
     <div class="grid">${list.map(card).join('')}</div>
+    ${calendar(m, list)}
   </div>`;
 }).join('');
 
@@ -829,6 +1025,7 @@ function card(f) {
       </div>
       <div class="when">${esc(f.dates)}</div>
       <div class="where">${esc(f.city)} · ${esc(f.type)}</div>
+      <div class="kind">${esc(f.category || 'Music')}</div>
       <div class="figs">
         <span><b>${f.stats.acts}</b> acts</span>
         <span><b>${f.stats.stages}</b> stages</span>
@@ -931,23 +1128,43 @@ paintPlace();
 /* Defaults to everything. This is an archive of a handful of planners, not a
    live feed of hundreds, so hiding a festival that finished yesterday costs
    more than it saves — the countdown badges already carry the timing. */
-const WHEN = [
-  {k: 'any',   label: 'All festivals', test: () => true},
-  {k: 'up',    label: 'Upcoming',      test: f => !status(f).past},
-  {k: 'month', label: 'This month',    test: f => f.month === thisMonth},
-  {k: 'past',  label: 'Past',          test: f => status(f).past},
-];
 const thisMonth = new Date().toISOString().slice(0, 7);
-const CATS = [...new Set(DATA.festivals.flatMap(f => [f.type, ...f.tags]))].sort();
+/* "This month" was a fixed option that says nothing in a month with no
+   festivals. The months that actually have one are listed instead, so picking
+   a month is picking something real. */
+const MONTHS_IN_DATA = [...new Set(DATA.festivals.map(f => f.month))].sort();
+const monthName = m => {
+  const [y, mo] = m.split('-');
+  return `${MONTH[+mo - 1]} ${y}`;
+};
+/* The trigger is a third of a phone column wide, which "September 2026" does
+   not fit into. The sheet keeps the full name; only the trigger abbreviates. */
+const monthShort = m => {
+  const [y, mo] = m.split('-');
+  return `${MONTH[+mo - 1].slice(0, 3)} ${y}`;
+};
+const WHEN = [
+  {k: 'any',  label: 'All festivals', test: () => true},
+  {k: 'up',   label: 'Upcoming',      test: f => !status(f).past},
+  {k: 'past', label: 'Past',          test: f => status(f).past},
+  ...MONTHS_IN_DATA.map(m => ({k: 'm:' + m, label: monthName(m), short: monthShort(m),
+                              test: f => f.month === m})),
+];
+/* Four kinds, fixed. Deriving them from the data made the list swing between
+   one chip and a dozen, and mixing genres in made "Techno" read as an
+   alternative to "Music" rather than a detail under it. Genres are still
+   searchable; they are just not a filter. */
+const KINDS = ['Music', 'Film', 'Culture', 'Others'];
+const CATS = KINDS;
 
 let when = 'any', cats = new Set(), draft = new Set(), q = '';
 
 $('#whenOpts').innerHTML = WHEN.map(w =>
   `<button class="opt" role="radio" data-k="${w.k}" aria-checked="${w.k === when}">${w.label}</button>`).join('');
-$('#catOpts').innerHTML = CATS.map(c =>
+$('#catOpts').innerHTML = KINDS.map(c =>
   `<button class="opt" data-c="${esc(c)}" aria-pressed="false">${esc(c)}</button>`).join('');
 
-const haystack = f => [f.name, f.city, f.type, ...f.tags, ...f.stars, f.description]
+const haystack = f => [f.name, f.city, f.type, f.category, ...f.tags, ...f.stars, f.description]
   .join(' ').toLowerCase();
 
 function apply() {
@@ -959,12 +1176,14 @@ function apply() {
     if (!el) return;
     const ok = w.test(f)
       && (!needle || haystack(f).includes(needle))
-      && (!cats.size || [f.type, ...f.tags].some(t => cats.has(t)));
+      && (!cats.size || cats.has(f.category || 'Others'));
     el.hidden = !ok;
+    document.querySelectorAll(`.ev[data-id="${f.id}"]`).forEach(ev => ev.hidden = !ok);
     if (ok) shown++;
   });
   document.querySelectorAll('.mgroup').forEach(g => {
     const n = g.querySelectorAll('.card:not([hidden])').length;
+    /* .mgroup is hidden as a whole below, which takes the calendar with it. */
     const ct = g.querySelector('.ct'), total = +ct.dataset.total;
     ct.textContent = n === total
       ? `${total} festival${total > 1 ? 's' : ''}`
@@ -972,7 +1191,9 @@ function apply() {
     g.hidden = !n;
   });
   $('#empty').hidden = shown > 0;
-  $('#whenLabel').textContent = WHEN.find(x => x.k === when).label;
+  const w2 = WHEN.find(x => x.k === when);
+  $('#whenLabel').textContent =
+    (w2.short && matchMedia('(max-width:620px)').matches) ? w2.short : w2.label;
   $('#catN').hidden = !cats.size;
   $('#catN').textContent = cats.size;
   $('#activeTags').innerHTML = [...cats].map(c =>
@@ -1151,6 +1372,51 @@ document.addEventListener('keydown', e => {
   $('#setClose').onclick = close;
   dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
   dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
+})();
+
+/* ── card size ─────────────────────────────────────────
+   Compact trades the artwork and the buttons for density — two per row on a
+   phone, name, date, place and category only. The choice is remembered, since
+   someone who scans in one shape wants that shape on the next visit too. */
+(() => {
+  const seg = document.querySelector('#viewSeg');
+  if (!seg) return;
+  const VKEY = 'fp-view';
+  const readView = () => {
+    const m = document.cookie.match(/(?:^|; )fp-view=([^;]*)/);
+    if (m) return decodeURIComponent(m[1]);
+    try { return localStorage.getItem(VKEY); } catch (e) { return null; }
+  };
+  const writeView = v => {
+    try { document.cookie = VKEY + '=' + encodeURIComponent(v) +
+      ';path=/;Max-Age=' + 60 * 60 * 24 * 400 + ';SameSite=Lax' +
+      (location.protocol === 'https:' ? ';Secure' : ''); } catch (e) {}
+    try { localStorage.setItem(VKEY, v); } catch (e) {}
+  };
+
+  const VIEWS = ['cal', 'tile', 'full'];
+
+  function paintView(v, remember) {
+    document.body.dataset.view = v;
+    document.querySelectorAll('.grid').forEach(g => g.classList.toggle('tile', v === 'tile'));
+    seg.querySelectorAll('[data-view]').forEach(b =>
+      b.setAttribute('aria-pressed', b.dataset.view === v));
+    if (remember) writeView(v);
+  }
+
+  seg.querySelectorAll('[data-view]').forEach(b =>
+    b.onclick = () => paintView(b.dataset.view, true));
+  const saved = readView();
+  paintView(VIEWS.includes(saved) ? saved : 'full', false);
+
+  /* A compact tile has no buttons, so the tile itself is the link. */
+  document.querySelector('#months').addEventListener('click', e => {
+    const grid = e.target.closest('.grid.tile');
+    if (!grid || e.target.closest('a,button')) return;
+    const card = e.target.closest('.card');
+    const href = card && card.querySelector('.acts a.primary');
+    if (href) location.href = href.getAttribute('href');
+  });
 })();
 
 /* ── theme ─────────────────────────────────────────────── */
