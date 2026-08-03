@@ -323,6 +323,17 @@
           "v": "Write to <a href=\"mailto:__CONTACT__?subject=Festival%20Planner\">__CONTACT__</a>."
         }
       ]
+    },
+    {
+      "slug": "faq",
+      "title": "Questions · Kysyttyä",
+      "blurb": "What Flanner is, which festivals it covers, whether it is official and whether it works without a signal — in English and in Finnish.",
+      "body": [
+        {
+          "t": "lead",
+          "v": "The questions people ask about Flanner, answered in English and in Finnish. Kysytyimmät kysymykset, vastauksineen."
+        }
+      ]
     }
   ]
 }

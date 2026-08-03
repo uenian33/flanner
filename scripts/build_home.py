@@ -40,9 +40,7 @@ def main():
             f"{seo.BASE}/assets/og/home.jpg",
             jsonld=seo.site_jsonld(cfg["festivals"])
                    + [seo.festival_event(f) for f in cfg["festivals"]]
-                   + [seo.site_faq(cfg["festivals"])],
         )),
-        ("__FAQHTML__", seo.site_faq_html(cfg["festivals"])),
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
@@ -51,6 +49,7 @@ def main():
         ("__ROOT__", "./"),
         ("__NOTE__", NOTE),
         ("__CUR_PRIVACY__", ""), ("__CUR_TERMS__", ""), ("__CUR_ABOUT__", ""),
+        ("__CUR_FAQ__", ""),
         ("__OFFLINE__", (ROOT / "scripts" / "_offline.html").read_text()),
         ("__SETTINGS_CSS__", (ROOT / "scripts" / "_settings.css").read_text()),
         ("__PAGEFX__", (ROOT / "scripts" / "_pagefx.html").read_text()),

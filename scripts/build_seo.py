@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import seo
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ["", "kallio/", "flow/", "about/", "terms/", "privacy/"]
+PAGES = ["", "kallio/", "flow/", "about/", "faq/", "terms/", "privacy/"]
 
 
 def lastmod(path: str) -> str:

@@ -306,6 +306,12 @@ def site_faq(festivals: list[dict]) -> dict:
     }
 
 
+def site_faq_blocks(festivals: list[dict]) -> list[dict]:
+    """The same questions as info.json content blocks, for the FAQ page."""
+    return [b for lang, q, a in _site_qa(festivals)
+            for b in ({"t": "h2", "v": q}, {"t": "p", "v": a})]
+
+
 def site_faq_html(festivals: list[dict]) -> str:
     return "\n".join(
         f'<div class="faqq" lang="{lang}"><h3>{_esc(q)}</h3><p>{_esc(a)}</p></div>'

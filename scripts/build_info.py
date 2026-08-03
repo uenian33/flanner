@@ -35,7 +35,8 @@ def render(block: str) -> str:
 
 def main() -> None:
     info = json.loads((ROOT / "data" / "info.json").read_text())
-    site = json.loads((ROOT / "data" / "festivals.json").read_text())["site"]
+    cfg = json.loads((ROOT / "data" / "festivals.json").read_text())
+    site = cfg["site"]
     template = (ROOT / "scripts" / "info.html").read_text()
     footer = (ROOT / "scripts" / "_footer.html").read_text()
     footer_css = (ROOT / "scripts" / "_footer.css").read_text()
@@ -46,7 +47,11 @@ def main() -> None:
         html = template
         html = html.replace("__FOOTER__", footer)
         html = html.replace("__FOOTER_CSS__", footer_css)
-        html = html.replace("__BODY__", "\n  ".join(render(b) for b in page["body"]))
+        # The FAQ's questions live in seo.py, next to the structured data that
+        # has to say the same thing — info.json carries only its lead.
+        body = page["body"] + (seo.site_faq_blocks(cfg["festivals"])
+                               if slug == "faq" else [])
+        html = html.replace("__BODY__", "\n  ".join(render(b) for b in body))
         for token, value in [
             ("__FONTCSS__", fontcss),
             ("__TITLE__", page["title"]),
@@ -64,7 +69,8 @@ def main() -> None:
                 page["blurb"],
                 f"{seo.BASE}/assets/og/info.jpg",
                 kind="article",
-                jsonld={"@context": "https://schema.org", "@type": "WebPage",
+                jsonld=seo.site_faq(cfg["festivals"]) if slug == "faq" else
+                       {"@context": "https://schema.org", "@type": "WebPage",
                         "name": page["title"], "description": page["blurb"],
                         "url": f"{seo.BASE}/{slug}/",
                         "isPartOf": {"@type": "WebSite", "name": seo.SITE,
@@ -73,7 +79,7 @@ def main() -> None:
         ]:
             html = html.replace(token, value)
         # mark the current page in the Info column, and un-link it
-        for other in ("privacy", "terms", "about"):
+        for other in ("privacy", "terms", "about", "faq"):
             html = html.replace(
                 f"__CUR_{other.upper()}__", ' aria-current="page"' if other == slug else ""
             )
