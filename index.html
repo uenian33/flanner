@@ -258,7 +258,39 @@
   --md-sys-elevation-4:0 2px 3px rgba(0,0,0,.30),0 6px 10px 4px rgba(0,0,0,.15);
   --md-sys-elevation-5:0 4px 4px rgba(0,0,0,.30),0 8px 12px 6px rgba(0,0,0,.15);
 
-  /* Motion, from m3.material.io/styles/motion/easing-and-duration. */
+  /* ── motion: the physics system ──────────────────────
+     "The physics system is replacing the previous system based on easing and
+     duration." Motion is springs now. On the web we can't run the springs
+     themselves, and Material says so, and then hands us the conversion:
+     "Use springs when possible, otherwise use curves that mimic the springs."
+     The twelve curves below are that published table, verbatim — note the y
+     values above 1 on the spatial rows, which is the overshoot.
+
+     Two kinds, and the distinction is the whole point. SPATIAL springs move
+     things — position, size, rotation, corner radius — and bounce past the
+     target on the way. EFFECTS springs change colour and opacity, "where
+     there shouldn't be any overshoot". Using one for the other's job is the
+     mistake this file exists to prevent.
+
+     Three speeds, chosen by how much of the screen moves: fast for small
+     components, default for surfaces that partly cover the screen, slow for
+     full-screen work.
+
+     These are composite tokens, in M3's own sense of the word — duration and
+     curve in one value, in `transition` shorthand order, so a declaration
+     reads `transition:transform var(--md-sys-motion-spring-fast-spatial)`. */
+  --md-sys-motion-spring-fast-spatial:350ms cubic-bezier(0.42,1.67,0.21,0.90);
+  --md-sys-motion-spring-default-spatial:500ms cubic-bezier(0.38,1.21,0.22,1.00);
+  --md-sys-motion-spring-slow-spatial:650ms cubic-bezier(0.39,1.29,0.35,0.98);
+  --md-sys-motion-spring-fast-effects:150ms cubic-bezier(0.31,0.94,0.34,1.00);
+  --md-sys-motion-spring-default-effects:200ms cubic-bezier(0.34,0.80,0.34,1.00);
+  --md-sys-motion-spring-slow-effects:300ms cubic-bezier(0.34,0.88,0.34,1.00);
+
+  /* Motion, from m3.material.io/styles/motion/easing-and-duration. Kept
+     because Material keeps it: the easing and duration tokens "are still
+     available to use as a fallback, and are currently used for animating
+     transitions". Keyframe animations below still name them; component
+     transitions do not. */
   --md-sys-motion-easing-standard:cubic-bezier(0.2,0,0,1);
   --md-sys-motion-easing-standard-decelerate:cubic-bezier(0,0,0,1);
   --md-sys-motion-easing-standard-accelerate:cubic-bezier(0.3,0,1,1);
@@ -268,7 +300,6 @@
   --md-sys-motion-duration-medium3:350ms; --md-sys-motion-duration-medium4:400ms;
   --md-sys-motion-duration-long1:450ms;  --md-sys-motion-duration-long2:500ms;
   --md-sys-motion-duration-long3:550ms;  --md-sys-motion-duration-long4:600ms;
-  --ease:var(--md-sys-motion-easing-standard);
 
   /* State layers: one overlay, the content's own colour, fixed opacity. */
   --md-sys-state-hover-opacity:.08;
@@ -289,6 +320,25 @@
 }
 :root[data-theme=dark]{color-scheme:dark}
 
+/* The scheme is chosen at the product level, not per token — "the 'expressive'
+   scheme isn't part of the token itself. Rather, it's called at the product
+   level and applied to all tokens." Flanner's product-level scheme is
+   expressive, which is the values above: it is Material's default and is meant
+   for "hero moments and key interactions", which is what a festival page is.
+
+   One subtree opts out. The timetable is a dense grid of half-hour cells where
+   an overshoot on a 22px block reads as a wobble rather than as life, so it
+   takes the standard scheme — "more functional with minimal bounce". This is
+   M3's own level-3 customisation, swapping the scheme for one element; because
+   the tokens are custom properties, setting them on the container swaps the
+   scheme for everything inside it. The effects springs are identical in both
+   schemes, so only the spatial three are restated. */
+.motion-standard{
+  --md-sys-motion-spring-fast-spatial:350ms cubic-bezier(0.27,1.06,0.18,1.00);
+  --md-sys-motion-spring-default-spatial:500ms cubic-bezier(0.27,1.06,0.18,1.00);
+  --md-sys-motion-spring-slow-spatial:750ms cubic-bezier(0.27,1.06,0.18,1.00);
+}
+
 /* ── state layers ──────────────────────────────────────
    "A state layer is a semi-transparent covering… an overlay with a fixed
    opacity for each state [that] uses the same color as the content."
@@ -297,8 +347,7 @@
 .st{position:relative;isolation:isolate}
 .st::after{content:"";position:absolute;inset:0;border-radius:inherit;
   background:var(--st-on,currentColor);opacity:0;pointer-events:none;z-index:0;
-  transition:opacity var(--md-sys-motion-duration-short2)
-             var(--md-sys-motion-easing-standard)}
+  transition:opacity var(--md-sys-motion-spring-fast-effects)}
 .st > *{position:relative;z-index:1}
 .st:hover::after{opacity:var(--md-sys-state-hover-opacity)}
 .st:focus-visible::after{opacity:var(--md-sys-state-focus-opacity)}
@@ -345,7 +394,7 @@ a{color:inherit}
 :root[data-theme=dark]{--dotop:.45}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--dotop:.45}}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  opacity:var(--dotop);transition:opacity var(--md-sys-motion-duration-long3) var(--ease);
+  opacity:var(--dotop);transition:opacity var(--md-sys-motion-spring-slow-effects);
   background-image:radial-gradient(circle at 1px 1px,
     color-mix(in srgb,var(--md-sys-color-on-surface) 10%,transparent) 1px,transparent 0);
   background-size:26px 26px}
@@ -386,7 +435,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .locwrap{position:relative;flex:none}
 .loc{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;
   border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
-  color:var(--md-sys-color-on-surface-variant);white-space:nowrap;transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface-variant);white-space:nowrap;transition:var(--md-sys-motion-spring-fast-effects)}
 .loc:hover{background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
 .loc[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 .loc svg{width:14px;height:14px}
@@ -395,7 +444,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .tools .loc{min-height:50px;padding:0 18px;border:1px solid var(--md-sys-color-outline)}
 .tools .loc:hover{border-color:var(--md-sys-color-on-surface)}
 .tools .loc[aria-expanded=true]{border-color:var(--md-sys-color-on-surface)}
-.loc .cv{width:12px;height:12px;opacity:.7;transition:transform var(--md-sys-motion-duration-short4) var(--ease)}
+.loc .cv{width:12px;height:12px;opacity:.7;transition:transform var(--md-sys-motion-spring-fast-spatial)}
 .loc[aria-expanded=true] .cv{transform:rotate(180deg)}
 /* The trigger sits at the right edge, so the panel hangs from that edge. On a
    phone the general .sheet rule takes over and spans the column instead. */
@@ -408,7 +457,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .locnote{margin:12px 0 0;font-size:9.6px;line-height:13.6px;color:var(--md-sys-color-on-surface-variant)}
 .top .sp{flex:1}
 .tbtn{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-spring-fast-effects)}
 .tbtn:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 /* The place control stays on small screens — it is a control now, not a label —
    but the wordmark, the control and the theme toggle will not share one row at
@@ -537,29 +586,29 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .nav .dots{display:flex;align-items:center;gap:8px}
 .nav .dot{width:8px;height:8px;padding:0;border-radius:50%;
-  background:rgba(255,255,255,.45);transition:var(--md-sys-motion-duration-short4) var(--ease)}
+  background:rgba(255,255,255,.45);transition:var(--md-sys-motion-spring-fast-effects)}
 .nav .dot:hover{background:rgba(255,255,255,.75)}
 .nav .dot.on{background:#fff;width:22px;border-radius:var(--md-sys-shape-corner-full)}
 /* The arrows are a pointer-device convenience: on a touch screen the swipe
    across the picture already does it, and the dots are the tap target. */
 .nav .arw{display:none;width:28px;height:28px;border-radius:50%;
-  place-items:center;color:#fff;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  place-items:center;color:#fff;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-spring-fast-effects)}
 .nav .arw:hover{background:rgba(255,255,255,.22)}
 @media(hover:hover) and (pointer:fine){.nav .arw{display:grid}}
 
-/* Slide change: M3's lateral transition, which is the pattern for moving
-   between peers. Outgoing content accelerates away and fades over short4;
-   incoming decelerates in over medium1. The offset is small because Android's
-   own forward/backward "uses a fade as screens slide… since the screens don't
-   have to slide the full width". */
+/* Slide change: the lateral pattern, for moving between peers. Under the
+   physics system there is no accelerate/decelerate pair to swap between — the
+   spring is the model, and the only dial is speed. So the outgoing half runs
+   on the fast springs and the incoming half on default, which reads the same
+   way round as the old curve pair did: leaving is brisk, arriving settles.
+   The offset stays small because Android's own forward/backward "uses a fade
+   as screens slide… since the screens don't have to slide the full width". */
 .fig img.pic,.side,.fig .lg,.fig .badge{
-  transition:opacity var(--md-sys-motion-duration-medium1)
-               var(--md-sys-motion-easing-standard-decelerate),
-             transform var(--md-sys-motion-duration-medium1)
-               var(--md-sys-motion-easing-standard-decelerate)}
+  transition:opacity var(--md-sys-motion-spring-default-effects),
+             transform var(--md-sys-motion-spring-default-spatial)}
 .stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{
-  transition-duration:var(--md-sys-motion-duration-short4);
-  transition-timing-function:var(--md-sys-motion-easing-standard-accelerate)}
+  transition:opacity var(--md-sys-motion-spring-fast-effects),
+             transform var(--md-sys-motion-spring-fast-spatial)}
 .stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{opacity:0}
 .stage.out.back .fig img.pic{transform:scale(1.03) translateX(3%)}
 .stage.out.fwd  .fig img.pic{transform:scale(1.03) translateX(-3%)}
@@ -609,14 +658,14 @@ dialog.setdlg{border:none;padding:0;background:transparent;max-width:none;max-he
   width:100%;height:100%;overflow:visible;color:var(--md-sys-color-on-surface)}
 dialog.setdlg::backdrop{background:rgba(4,6,9,.55);
   -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
-  opacity:0;transition:opacity var(--md-sys-motion-duration-medium2) var(--ease)}
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects)}
 dialog.setdlg.in::backdrop{opacity:1}
 .setbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
   transform:translate(-50%,16px);opacity:0;width:min(460px,calc(100vw - 24px));
   max-height:min(84svh,720px);overflow:auto;overscroll-behavior:contain;
   background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large-increased);
   padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:var(--md-sys-elevation-3);
-  transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
+  transition:opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
 dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 @media(min-width:600px){
   .setbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
@@ -627,7 +676,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .sethead h2{margin:0;font-family:var(--title);font-weight:600;font-size:var(--md-sys-typescale-title-medium-size);
   letter-spacing:.02em;text-transform:uppercase}
 .setclose{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .setclose:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
   padding:15px 0;border-top:1px solid var(--md-sys-color-outline-variant);flex-wrap:wrap}
@@ -635,13 +684,13 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .setrow i{display:block;font-style:normal;font-size:var(--md-sys-typescale-label-small-size);color:var(--md-sys-color-on-surface-variant);margin-top:3px;
   max-width:42ch}
 .setbtn{min-height:38px;padding:0 18px;border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);
-  font-size:var(--md-sys-typescale-label-small-size);font-weight:650;color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  font-size:var(--md-sys-typescale-label-small-size);font-weight:650;color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-spring-fast-effects)}
 .setbtn:hover:not(:disabled){background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setbtn:disabled{opacity:.5}
 .fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px;flex:none}
 .fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:650;padding:0 16px;min-height:34px;
-  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setnote{margin:15px 0 0;font-size:var(--md-sys-typescale-label-small-size);line-height:1.6;color:var(--md-sys-color-on-surface-variant)}
 .setnote a{color:var(--md-sys-color-on-surface-variant)}
@@ -683,7 +732,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
     background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);
     -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
     border-bottom:1px solid transparent;opacity:0;pointer-events:none;
-    transition:opacity var(--md-sys-motion-duration-medium1) var(--ease),border-color var(--md-sys-motion-duration-medium1) var(--ease)}
+    transition:opacity var(--md-sys-motion-spring-default-effects),border-color var(--md-sys-motion-spring-default-effects)}
   body.scrolled header::before{opacity:1;border-bottom-color:var(--md-sys-color-outline-variant)}
   header > *{position:relative;z-index:1}
   .top{padding-bottom:8px;border-bottom:none;gap:10px}
@@ -698,9 +747,9 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   .hslot .loc{margin:0}
   .hslot .sbox{width:0;margin-left:0;opacity:0;transform:scale(.86);
     pointer-events:none;
-    transition:width var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard),
-               margin-left var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard),
-               opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
+    transition:width var(--md-sys-motion-spring-default-spatial),
+               margin-left var(--md-sys-motion-spring-default-spatial),
+               opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
   body.at-cards .hslot .sbox{width:44px;margin-left:8px;opacity:1;transform:none;
     pointer-events:auto}
   /* Open, the field claims the rest of the row instead of guessing at a
@@ -728,7 +777,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   isolation:isolate;background:var(--glass);border:1px solid var(--glass-line);
   -webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6);
   box-shadow:0 10px 34px var(--shade),inset 0 1px 0 var(--glass-line);
-  transition:transform var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard),background var(--md-sys-motion-duration-short4) var(--ease)}
+  transition:transform var(--md-sys-motion-spring-default-spatial),background var(--md-sys-motion-spring-fast-effects)}
 .navhome:hover{background:var(--glass-pill)}
 .navhome svg{width:30px;height:30px;stroke:none;fill:none}
 .navhome b{display:none}
@@ -751,12 +800,12 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
     height:calc((100% - 10px)/var(--navn,4));border-radius:var(--md-sys-shape-corner-large-increased);background:var(--glass-pill);z-index:0;
     box-shadow:inset 0 1px 0 var(--glass-line);
     transform:translateY(calc(var(--i,0) * 100%));
-    transition:transform var(--md-sys-motion-duration-long1) var(--md-sys-motion-easing-standard)}
+    transition:transform var(--md-sys-motion-spring-slow-spatial)}
   .mnav button{display:grid;justify-items:center;align-content:center;gap:5px;padding:14px 0;
     font-size:8.4px;font-weight:600;color:var(--glass-tx);position:relative;z-index:1;
-    border-radius:var(--md-sys-shape-corner-large-increased);transition:color var(--md-sys-motion-duration-medium2) var(--ease)}
+    border-radius:var(--md-sys-shape-corner-large-increased);transition:color var(--md-sys-motion-spring-default-effects)}
   .mnav button svg{width:22px;height:22px;font-size:var(--md-sys-typescale-title-medium-size);stroke-width:1.8;
-    transition:transform var(--md-sys-motion-duration-medium4) var(--ease)}
+    transition:transform var(--md-sys-motion-spring-default-spatial)}
   .mnav button.on{color:var(--glass-on)}
   .mnav button:active svg{transform:scale(.9)}
   .mnav .nb{position:absolute;top:9px;left:calc(50% + 11px);min-width:17px;height:17px;
@@ -774,13 +823,13 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
       letter-spacing:var(--md-sys-typescale-label-medium-tracking);
       font-weight:var(--md-sys-typescale-label-weight)}
   .navhome-m svg{width:24px;height:24px;transform:translateY(-7px);
-      transition:transform var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-standard)}
+      transition:transform var(--md-sys-motion-spring-default-spatial)}
   body.nav-min .navhome-m svg{transform:translateY(0) scale(.96)}
   .mnav{display:grid;grid-template-columns:repeat(var(--navcols,calc(var(--navn,4) + 1)),1fr);position:fixed;left:50%;
       bottom:calc(18px + var(--safe-b));transform:translate(-50%,var(--vvshift,0px));
       width:min(94vw,430px);max-width:calc(100vw - 32px);height:80px;overflow:hidden;
       contain:layout style;
-      transition:width var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard),height var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard);
+      transition:width var(--md-sys-motion-spring-default-spatial),height var(--md-sys-motion-spring-default-spatial);
       z-index:60;padding:4px;isolation:isolate;
       border-radius:var(--md-sys-shape-corner-extra-large);background:var(--glass);
       -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
@@ -790,22 +839,22 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
       border-radius:var(--md-sys-shape-corner-extra-large);background:var(--glass-pill);z-index:0;
       box-shadow:inset 0 1px 0 var(--glass-line);
       transform:translateX(calc((var(--i,0) + var(--pillbase,1)) * 100%));
-      transition:transform var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard)}
+      transition:transform var(--md-sys-motion-spring-default-spatial)}
   .mnav button{display:grid;place-content:center;padding:0;
       font-size:var(--md-sys-typescale-label-medium-size);
       line-height:var(--md-sys-typescale-label-medium-line-height);
       letter-spacing:var(--md-sys-typescale-label-medium-tracking);
       font-weight:var(--md-sys-typescale-label-weight);color:var(--glass-tx);position:relative;height:100%;z-index:1;
-      transition:color var(--md-sys-motion-duration-medium2) var(--ease);border-radius:var(--md-sys-shape-corner-extra-large)}
+      transition:color var(--md-sys-motion-spring-default-effects);border-radius:var(--md-sys-shape-corner-extra-large)}
   .mnav button svg{transform:translateY(-7px);
-      transition:transform var(--md-sys-motion-duration-medium3) var(--md-sys-motion-easing-standard)}
+      transition:transform var(--md-sys-motion-spring-default-spatial)}
   .mnav .lbl{position:absolute;left:0;right:0;bottom:8px;text-align:center;
-      transition:opacity var(--md-sys-motion-duration-short4) var(--ease),transform var(--md-sys-motion-duration-medium2) var(--ease)}
+      transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-default-spatial)}
   body.nav-min .mnav{width:min(74vw,272px);height:48px}
   body.nav-min .mnav .lbl{opacity:0;transform:translateY(5px)}
   body.nav-min .mnav button svg{transform:translateY(0) scale(.96)}
   .mnav button svg{width:24px;height:24px;font-size:var(--md-sys-typescale-title-large-size);stroke-width:1.8;
-      transition:transform var(--md-sys-motion-duration-medium4) var(--ease)}
+      transition:transform var(--md-sys-motion-spring-default-spatial)}
   .mnav button.on{color:var(--glass-on)}
   .mnav button:active svg{transform:scale(.9)}
   /* Desktop only — on a phone Home is a cell inside the bar, and leaving this
@@ -829,7 +878,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   .navhome-m .lbl{display:block}
 }
 @media(prefers-reduced-motion:reduce){
-  .fig img.pic,.side,.fig .lg,.fig .badge{transition:opacity var(--md-sys-motion-duration-short1)}
+  .fig img.pic,.side,.fig .lg,.fig .badge{transition:opacity var(--md-sys-motion-spring-fast-effects)}
   .stage.out .fig img.pic{transform:none}
 }
 
@@ -842,13 +891,13 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
    as it does. */
 .tools{position:sticky;top:0;z-index:60;display:flex;gap:10px;align-items:center;
   flex-wrap:wrap;margin:0 0 clamp(18px,2.4vw,26px);padding:10px 0;
-  transition:padding var(--md-sys-motion-duration-medium1) var(--ease)}
+  transition:padding var(--md-sys-motion-spring-default-spatial)}
 /* The bar lives inside a max-width column, so its backdrop is painted by a
    pseudo-element stretched past the gutters rather than by the bar itself. */
 .tools::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);border-bottom:1px solid transparent;
-  opacity:0;transition:opacity var(--md-sys-motion-duration-medium1) var(--ease),border-color var(--md-sys-motion-duration-medium1) var(--ease);
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects),border-color var(--md-sys-motion-spring-default-effects);
   pointer-events:none}
 .tools > *{position:relative;z-index:1}
 .tools.stuck{padding:13px 0}
@@ -857,7 +906,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 /* the mark only appears once the masthead has scrolled away */
 .toolmark{display:flex;align-items:center;gap:9px;flex:none;text-decoration:none;
   max-width:0;overflow:hidden;opacity:0;
-  transition:max-width var(--md-sys-motion-duration-medium2) var(--ease),opacity var(--md-sys-motion-duration-short4) var(--ease),margin var(--md-sys-motion-duration-medium2) var(--ease)}
+  transition:max-width var(--md-sys-motion-spring-default-spatial),opacity var(--md-sys-motion-spring-fast-effects),margin var(--md-sys-motion-spring-default-spatial)}
 .tools.stuck .toolmark{max-width:220px;opacity:1;margin-right:2px}
 .toolmark svg{width:30px;height:30px;flex:none;stroke:none;fill:none}
 .toolmark .wm{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -870,7 +919,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   width:17px;height:17px;color:var(--md-sys-color-on-surface-variant);pointer-events:none}
 .sbox input{width:100%;height:56px;border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);
   background:var(--md-sys-color-surface-container-lowest);padding:0 44px 0 44px;font:inherit;font-size:var(--f-body);
-  color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-spring-fast-effects)}
 .sbox input::placeholder{color:var(--md-sys-color-on-surface-variant)}
 .sbox input:focus{outline:none;border-color:var(--md-sys-color-on-surface)}
 .sbox .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;
@@ -880,13 +929,13 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .drop{position:relative;flex:none}
 .trig{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;
   border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);background:var(--md-sys-color-surface-container-lowest);
-  font-size:var(--f-body);font-weight:700;transition:var(--md-sys-motion-duration-short3) var(--ease);white-space:nowrap}
+  font-size:var(--f-body);font-weight:700;transition:var(--md-sys-motion-spring-fast-effects);white-space:nowrap}
 .trig svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
 .trig:hover{border-color:var(--md-sys-color-on-surface)}
 .trig[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
 .trig[aria-expanded=true] svg.i{color:var(--md-sys-color-surface)}
 .trig .cv{width:12px;height:12px;flex:none;opacity:.7;
-  transition:transform var(--md-sys-motion-duration-short4) var(--ease)}
+  transition:transform var(--md-sys-motion-spring-fast-spatial)}
 .trig[aria-expanded=true] .cv{transform:rotate(180deg)}
 .sheet{position:absolute;top:calc(100% + 8px);right:0;z-index:40;width:max-content;
   max-width:min(92vw,440px);background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
@@ -894,12 +943,12 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   transform-origin:top right}
 .sheet[hidden]{display:none}
 @starting-style{.sheet{opacity:0;transform:scale(.97) translateY(-4px)}}
-.sheet{transition:opacity var(--md-sys-motion-duration-short4) var(--ease),transform var(--md-sys-motion-duration-short4) var(--ease)}
+.sheet{transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-fast-spatial)}
 .sheet h4{margin:0 0 14px;font-size:var(--f-caption);letter-spacing:.1em;
   text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);font-weight:700}
 .sheet .opts{display:flex;flex-wrap:wrap;gap:8px}
 .opt{font-size:var(--f-sub);font-weight:600;padding:9px 15px;border-radius:var(--md-sys-shape-corner-full);
-  border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease);
+  border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects);
   min-height:40px;text-align:left}
 .opt:hover{border-color:var(--md-sys-color-on-surface);color:var(--md-sys-color-on-surface)}
 .opt[aria-pressed=true],.opt[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
@@ -920,7 +969,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest)}
 .vseg button{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;
   border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-sub);font-weight:700;color:var(--md-sys-color-on-surface-variant);
-  transition:background var(--md-sys-motion-duration-short4) var(--ease),color var(--md-sys-motion-duration-short4) var(--ease)}
+  transition:background var(--md-sys-motion-spring-fast-effects),color var(--md-sys-motion-spring-fast-effects)}
 .vseg button svg.i{width:17px;height:17px}
 .vseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 .vseg button:hover:not([aria-pressed=true]){color:var(--md-sys-color-on-surface)}
@@ -935,7 +984,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .vseg button[aria-pressed=true]{background:none;color:var(--md-sys-color-surface)}
 .vseg button::before{content:"";position:absolute;left:0;right:0;top:50%;
   transform:translateY(-50%);aspect-ratio:1;border-radius:50%;
-  background:transparent;transition:background var(--md-sys-motion-duration-short4) var(--ease)}
+  background:transparent;transition:background var(--md-sys-motion-spring-fast-effects)}
 .vseg button[aria-pressed=true]::before{background:var(--md-sys-color-on-surface)}
 .vseg button svg.i{position:relative;z-index:1}
 @media(min-width:600px){
@@ -987,12 +1036,12 @@ body[data-view=cal] .empty{display:none}
   line-height:var(--md-sys-typescale-headline-small-line-height);
   text-transform:uppercase;color:var(--md-sys-color-on-surface)}
 .calpick .cv{width:15px;height:15px;opacity:.65;
-  transition:transform var(--md-sys-motion-duration-short4) var(--ease)}
+  transition:transform var(--md-sys-motion-spring-fast-spatial)}
 .calpick[aria-expanded=true] .cv{transform:rotate(180deg)}
 .calarrows{display:flex;gap:6px;flex:none}
 .calarrows button{width:40px;height:40px;border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);
-  transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  transition:var(--md-sys-motion-spring-fast-effects)}
 .calarrows button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
 .calarrows .i{width:17px;height:17px}
 /* ── the month picker ──────────────────────────────────
@@ -1003,14 +1052,14 @@ dialog.caldlg{border:none;padding:0;background:transparent;max-width:none;
   max-height:none;width:100%;height:100%;overflow:visible;color:var(--md-sys-color-on-surface)}
 dialog.caldlg::backdrop{background:rgba(4,6,9,.55);
   -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
-  opacity:0;transition:opacity var(--md-sys-motion-duration-medium2) var(--ease)}
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects)}
 dialog.caldlg.in::backdrop{opacity:1}
 .calbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
   transform:translate(-50%,16px);opacity:0;width:min(420px,calc(100vw - 24px));
   max-height:min(78svh,640px);overflow:auto;overscroll-behavior:contain;
   background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large-increased);
   padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:var(--md-sys-elevation-3);
-  transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
+  transition:opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
 dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 @media(min-width:600px){
   .calbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
@@ -1024,13 +1073,13 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   padding:4px 0 14px}
 .yrow b{font-family:var(--title);font-size:var(--md-sys-typescale-title-medium-size);letter-spacing:.02em}
 .yrow button{width:38px;height:38px;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .yrow button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
 .yrow .i{width:15px;height:15px}
 .mons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .mons button{position:relative;min-height:46px;border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-medium);font-size:var(--md-sys-typescale-label-medium-size);font-weight:700;color:var(--md-sys-color-on-surface);
-  transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  transition:var(--md-sys-motion-spring-fast-effects)}
 .mons button:hover{border-color:var(--md-sys-color-on-surface)}
 .mons button[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
   border-color:var(--md-sys-color-on-surface)}
@@ -1139,13 +1188,13 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   .toolmark{grid-area:mark;max-width:none;opacity:1}
   .tools.stuck .toolmark{max-width:none}
   .tools .sbox{grid-area:search;flex:none;width:44px;justify-self:end;
-    transition:width var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard)}
+    transition:width var(--md-sys-motion-spring-default-spatial)}
   .tools .sbox.open{width:min(100%,calc(100vw - 96px))}
   .sbox input{height:44px;padding:0 16px 0 38px;font-size:var(--md-sys-typescale-label-medium-size)}
   .sbox:not(.open) input{padding:0;color:transparent;cursor:pointer}
   .sbox:not(.open) input::placeholder{color:transparent}
   .sbox svg.i{left:50%;transform:translate(-50%,-50%);
-    transition:left var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium2) var(--ease)}
+    transition:left var(--md-sys-motion-spring-default-spatial),transform var(--md-sys-motion-spring-default-spatial)}
   .sbox.open svg.i{left:14px;transform:translate(0,-50%)}
   .sbox .clr{display:none}
   /* Three equal thirds of the column. At this width the icon is the first
@@ -1218,7 +1267,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
    underneath is the site's surface, so a row of cards reads as one list rather
    than as a set of differently tinted objects. */
 .card{background:var(--md-sys-color-surface-container-lowest);border-radius:var(--r-card);overflow:hidden;display:flex;
-  flex-direction:column;transition:transform var(--md-sys-motion-duration-medium2) var(--ease),box-shadow var(--md-sys-motion-duration-medium2) var(--ease)}
+  flex-direction:column;transition:transform var(--md-sys-motion-spring-default-spatial),box-shadow var(--md-sys-motion-spring-default-effects)}
 .card[hidden]{display:none}
 .card:hover{transform:translateY(-2px);box-shadow:var(--md-sys-elevation-2)}
 .card.past .shot img.pic{filter:grayscale(.8) contrast(.95)}
@@ -1250,7 +1299,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .offi{position:relative;flex:none;display:inline-flex;align-items:center;gap:5px;font-size:var(--f-caption);
   letter-spacing:var(--k-caption);font-weight:700;
   color:var(--md-sys-color-on-surface-variant);text-decoration:none;border:1.5px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  padding:5px 11px;margin-top:1px;white-space:nowrap;transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  padding:5px 11px;margin-top:1px;white-space:nowrap;transition:var(--md-sys-motion-spring-fast-effects)}
 /* the pill stays visually light beside the title, but its hit area is
    expanded to the 44pt minimum both HIG and Material ask for */
 .offi::after{content:'';position:absolute;inset:-5px -6px}
@@ -1283,7 +1332,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   letter-spacing:var(--md-sys-typescale-label-large-tracking);
   font-weight:var(--md-sys-typescale-emphasized-weight);
   letter-spacing:var(--k-label);padding:12px 20px;border-radius:var(--md-sys-shape-corner-full);border:1.5px solid var(--md-sys-color-on-surface);text-decoration:none;
-  transition:var(--md-sys-motion-duration-short3) var(--ease);min-height:40px;color:var(--md-sys-color-on-surface)}
+  transition:var(--md-sys-motion-spring-fast-effects);min-height:40px;color:var(--md-sys-color-on-surface)}
 /* Buttons are ink on paper or paper on ink — never the category's colour.
    Colour is how a label is read at a glance, and a page that uses it for the
    buttons too has spent it. */
@@ -1328,7 +1377,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
 .fbrand .tag{margin:0 0 18px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;color:var(--md-sys-color-on-surface-variant)}
 .flinks{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:20px}
 .flinks a{display:inline-flex;align-items:center;gap:9px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;
-  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-spring-fast-effects)}
 .flinks a:hover{color:var(--md-sys-color-on-surface)}
 .flinks svg{width:15px;height:15px;flex:none;color:var(--md-sys-color-on-surface-variant)}
 .fset{display:flex;align-items:center;gap:10px;margin:0 0 18px;flex-wrap:wrap}
@@ -1337,7 +1386,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
 .fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px}
 .fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:700;padding:0 14px;min-height:32px;
-  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .fcopy{margin:0;font-size:var(--md-sys-typescale-label-small-size);line-height:16.8px;color:var(--md-sys-color-on-surface-variant)}
 
@@ -1347,7 +1396,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
 .fcol li{margin:0;padding:0}
 .fcol li::before{display:none}
 .fcol a{display:inline-flex;align-items:center;gap:7px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;
-  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-spring-fast-effects)}
 .fcol a:hover{color:var(--md-sys-color-on-surface)}
 .fcol a svg{width:13px;height:13px;color:var(--md-sys-color-on-surface-variant)}
 .fcol a[aria-current]{color:var(--md-sys-color-on-surface);font-weight:700}
@@ -2858,20 +2907,20 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
    Everything here is opt-out: with reduced motion the links behave like plain
    links, and if navigation stalls the page restores itself rather than leaving
    the reader on a faded screen. */
-.fx-shell{transition:opacity var(--md-sys-motion-duration-short4) var(--ease),transform var(--md-sys-motion-duration-medium2) var(--ease);
+.fx-shell{transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-default-spatial);
   transform-origin:50% 38%}
 html.fx-out .fx-shell{opacity:0;transform:scale(.972)}
 html.fx-in .fx-shell{opacity:0;transform:scale(1.014)}
 
 .fx{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
   background:var(--bg);opacity:0;pointer-events:none;
-  transition:opacity var(--md-sys-motion-duration-medium1) var(--ease)}
+  transition:opacity var(--md-sys-motion-spring-default-effects)}
 .fx.on{opacity:1;pointer-events:auto}
 .fx svg{width:74px;height:74px;overflow:visible}
 /* The mark's two halves drift apart and settle back, which is the shape doing
    what it already does rather than a spinner borrowed from somewhere else. */
-.fx .fx-a{animation:fxa var(--md-sys-motion-duration-long4) var(--ease) infinite}
-.fx .fx-b{animation:fxa var(--md-sys-motion-duration-long4) var(--ease) infinite reverse}
+.fx .fx-a{animation:fxa var(--md-sys-motion-spring-slow-spatial) infinite}
+.fx .fx-b{animation:fxa var(--md-sys-motion-spring-slow-spatial) infinite reverse}
 @keyframes fxa{
   0%,100%{transform:translate(0,0)}
   50%{transform:translate(2.4px,-3.6px)}

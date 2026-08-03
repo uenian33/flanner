@@ -125,7 +125,39 @@
   --md-sys-elevation-4:0 2px 3px rgba(0,0,0,.30),0 6px 10px 4px rgba(0,0,0,.15);
   --md-sys-elevation-5:0 4px 4px rgba(0,0,0,.30),0 8px 12px 6px rgba(0,0,0,.15);
 
-  /* Motion, from m3.material.io/styles/motion/easing-and-duration. */
+  /* ── motion: the physics system ──────────────────────
+     "The physics system is replacing the previous system based on easing and
+     duration." Motion is springs now. On the web we can't run the springs
+     themselves, and Material says so, and then hands us the conversion:
+     "Use springs when possible, otherwise use curves that mimic the springs."
+     The twelve curves below are that published table, verbatim — note the y
+     values above 1 on the spatial rows, which is the overshoot.
+
+     Two kinds, and the distinction is the whole point. SPATIAL springs move
+     things — position, size, rotation, corner radius — and bounce past the
+     target on the way. EFFECTS springs change colour and opacity, "where
+     there shouldn't be any overshoot". Using one for the other's job is the
+     mistake this file exists to prevent.
+
+     Three speeds, chosen by how much of the screen moves: fast for small
+     components, default for surfaces that partly cover the screen, slow for
+     full-screen work.
+
+     These are composite tokens, in M3's own sense of the word — duration and
+     curve in one value, in `transition` shorthand order, so a declaration
+     reads `transition:transform var(--md-sys-motion-spring-fast-spatial)`. */
+  --md-sys-motion-spring-fast-spatial:350ms cubic-bezier(0.42,1.67,0.21,0.90);
+  --md-sys-motion-spring-default-spatial:500ms cubic-bezier(0.38,1.21,0.22,1.00);
+  --md-sys-motion-spring-slow-spatial:650ms cubic-bezier(0.39,1.29,0.35,0.98);
+  --md-sys-motion-spring-fast-effects:150ms cubic-bezier(0.31,0.94,0.34,1.00);
+  --md-sys-motion-spring-default-effects:200ms cubic-bezier(0.34,0.80,0.34,1.00);
+  --md-sys-motion-spring-slow-effects:300ms cubic-bezier(0.34,0.88,0.34,1.00);
+
+  /* Motion, from m3.material.io/styles/motion/easing-and-duration. Kept
+     because Material keeps it: the easing and duration tokens "are still
+     available to use as a fallback, and are currently used for animating
+     transitions". Keyframe animations below still name them; component
+     transitions do not. */
   --md-sys-motion-easing-standard:cubic-bezier(0.2,0,0,1);
   --md-sys-motion-easing-standard-decelerate:cubic-bezier(0,0,0,1);
   --md-sys-motion-easing-standard-accelerate:cubic-bezier(0.3,0,1,1);
@@ -135,7 +167,6 @@
   --md-sys-motion-duration-medium3:350ms; --md-sys-motion-duration-medium4:400ms;
   --md-sys-motion-duration-long1:450ms;  --md-sys-motion-duration-long2:500ms;
   --md-sys-motion-duration-long3:550ms;  --md-sys-motion-duration-long4:600ms;
-  --ease:var(--md-sys-motion-easing-standard);
 
   /* State layers: one overlay, the content's own colour, fixed opacity. */
   --md-sys-state-hover-opacity:.08;
@@ -156,6 +187,25 @@
 }
 :root[data-theme=dark]{color-scheme:dark}
 
+/* The scheme is chosen at the product level, not per token — "the 'expressive'
+   scheme isn't part of the token itself. Rather, it's called at the product
+   level and applied to all tokens." Flanner's product-level scheme is
+   expressive, which is the values above: it is Material's default and is meant
+   for "hero moments and key interactions", which is what a festival page is.
+
+   One subtree opts out. The timetable is a dense grid of half-hour cells where
+   an overshoot on a 22px block reads as a wobble rather than as life, so it
+   takes the standard scheme — "more functional with minimal bounce". This is
+   M3's own level-3 customisation, swapping the scheme for one element; because
+   the tokens are custom properties, setting them on the container swaps the
+   scheme for everything inside it. The effects springs are identical in both
+   schemes, so only the spatial three are restated. */
+.motion-standard{
+  --md-sys-motion-spring-fast-spatial:350ms cubic-bezier(0.27,1.06,0.18,1.00);
+  --md-sys-motion-spring-default-spatial:500ms cubic-bezier(0.27,1.06,0.18,1.00);
+  --md-sys-motion-spring-slow-spatial:750ms cubic-bezier(0.27,1.06,0.18,1.00);
+}
+
 /* ── state layers ──────────────────────────────────────
    "A state layer is a semi-transparent covering… an overlay with a fixed
    opacity for each state [that] uses the same color as the content."
@@ -164,8 +214,7 @@
 .st{position:relative;isolation:isolate}
 .st::after{content:"";position:absolute;inset:0;border-radius:inherit;
   background:var(--st-on,currentColor);opacity:0;pointer-events:none;z-index:0;
-  transition:opacity var(--md-sys-motion-duration-short2)
-             var(--md-sys-motion-easing-standard)}
+  transition:opacity var(--md-sys-motion-spring-fast-effects)}
 .st > *{position:relative;z-index:1}
 .st:hover::after{opacity:var(--md-sys-state-hover-opacity)}
 .st:focus-visible::after{opacity:var(--md-sys-state-focus-opacity)}

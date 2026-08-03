@@ -22,7 +22,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
 .fbrand .tag{margin:0 0 18px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;color:var(--md-sys-color-on-surface-variant)}
 .flinks{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:20px}
 .flinks a{display:inline-flex;align-items:center;gap:9px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;
-  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-spring-fast-effects)}
 .flinks a:hover{color:var(--md-sys-color-on-surface)}
 .flinks svg{width:15px;height:15px;flex:none;color:var(--md-sys-color-on-surface-variant)}
 .fset{display:flex;align-items:center;gap:10px;margin:0 0 18px;flex-wrap:wrap}
@@ -31,7 +31,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
 .fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px}
 .fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:700;padding:0 14px;min-height:32px;
-  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .fcopy{margin:0;font-size:var(--md-sys-typescale-label-small-size);line-height:16.8px;color:var(--md-sys-color-on-surface-variant)}
 
@@ -41,7 +41,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
 .fcol li{margin:0;padding:0}
 .fcol li::before{display:none}
 .fcol a{display:inline-flex;align-items:center;gap:7px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;
-  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-spring-fast-effects)}
 .fcol a:hover{color:var(--md-sys-color-on-surface)}
 .fcol a svg{width:13px;height:13px;color:var(--md-sys-color-on-surface-variant)}
 .fcol a[aria-current]{color:var(--md-sys-color-on-surface);font-weight:700}

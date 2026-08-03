@@ -128,13 +128,13 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   color:var(--md-sys-color-on-surface-variant);white-space:nowrap}
 .top .sp{flex:1}
 .tbtn{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-spring-fast-effects)}
 .tbtn:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 @media(max-width:599px){.top .div,.loc{display:none}}
 
 .back{display:inline-flex;align-items:center;gap:8px;font-size:var(--f-label);font-weight:650;
   color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:10px 0;margin-bottom:6px;
-  transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  transition:var(--md-sys-motion-spring-fast-effects)}
 .back:hover{color:var(--md-sys-color-on-surface)}
 .back svg{width:15px;height:15px}
 
@@ -183,7 +183,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
 .fbrand .tag{margin:0 0 18px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;color:var(--md-sys-color-on-surface-variant)}
 .flinks{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:20px}
 .flinks a{display:inline-flex;align-items:center;gap:9px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;
-  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-spring-fast-effects)}
 .flinks a:hover{color:var(--md-sys-color-on-surface)}
 .flinks svg{width:15px;height:15px;flex:none;color:var(--md-sys-color-on-surface-variant)}
 .fset{display:flex;align-items:center;gap:10px;margin:0 0 18px;flex-wrap:wrap}
@@ -192,7 +192,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
 .fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px}
 .fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:700;padding:0 14px;min-height:32px;
-  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .fcopy{margin:0;font-size:var(--md-sys-typescale-label-small-size);line-height:16.8px;color:var(--md-sys-color-on-surface-variant)}
 
@@ -202,7 +202,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
 .fcol li{margin:0;padding:0}
 .fcol li::before{display:none}
 .fcol a{display:inline-flex;align-items:center;gap:7px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;
-  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-spring-fast-effects)}
 .fcol a:hover{color:var(--md-sys-color-on-surface)}
 .fcol a svg{width:13px;height:13px;color:var(--md-sys-color-on-surface-variant)}
 .fcol a[aria-current]{color:var(--md-sys-color-on-surface);font-weight:700}
@@ -366,20 +366,20 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
    Everything here is opt-out: with reduced motion the links behave like plain
    links, and if navigation stalls the page restores itself rather than leaving
    the reader on a faded screen. */
-.fx-shell{transition:opacity var(--md-sys-motion-duration-short4) var(--ease),transform var(--md-sys-motion-duration-medium2) var(--ease);
+.fx-shell{transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-default-spatial);
   transform-origin:50% 38%}
 html.fx-out .fx-shell{opacity:0;transform:scale(.972)}
 html.fx-in .fx-shell{opacity:0;transform:scale(1.014)}
 
 .fx{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
   background:var(--bg);opacity:0;pointer-events:none;
-  transition:opacity var(--md-sys-motion-duration-medium1) var(--ease)}
+  transition:opacity var(--md-sys-motion-spring-default-effects)}
 .fx.on{opacity:1;pointer-events:auto}
 .fx svg{width:74px;height:74px;overflow:visible}
 /* The mark's two halves drift apart and settle back, which is the shape doing
    what it already does rather than a spinner borrowed from somewhere else. */
-.fx .fx-a{animation:fxa var(--md-sys-motion-duration-long4) var(--ease) infinite}
-.fx .fx-b{animation:fxa var(--md-sys-motion-duration-long4) var(--ease) infinite reverse}
+.fx .fx-a{animation:fxa var(--md-sys-motion-spring-slow-spatial) infinite}
+.fx .fx-b{animation:fxa var(--md-sys-motion-spring-slow-spatial) infinite reverse}
 @keyframes fxa{
   0%,100%{transform:translate(0,0)}
   50%{transform:translate(2.4px,-3.6px)}

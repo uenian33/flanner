@@ -51,7 +51,7 @@ a{color:inherit}
 :root[data-theme=dark]{--dotop:.45}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--dotop:.45}}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  opacity:var(--dotop);transition:opacity var(--md-sys-motion-duration-long3) var(--ease);
+  opacity:var(--dotop);transition:opacity var(--md-sys-motion-spring-slow-effects);
   background-image:radial-gradient(circle at 1px 1px,
     color-mix(in srgb,var(--md-sys-color-on-surface) 10%,transparent) 1px,transparent 0);
   background-size:26px 26px}
@@ -92,7 +92,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .locwrap{position:relative;flex:none}
 .loc{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;
   border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
-  color:var(--md-sys-color-on-surface-variant);white-space:nowrap;transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface-variant);white-space:nowrap;transition:var(--md-sys-motion-spring-fast-effects)}
 .loc:hover{background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
 .loc[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 .loc svg{width:14px;height:14px}
@@ -101,7 +101,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .tools .loc{min-height:50px;padding:0 18px;border:1px solid var(--md-sys-color-outline)}
 .tools .loc:hover{border-color:var(--md-sys-color-on-surface)}
 .tools .loc[aria-expanded=true]{border-color:var(--md-sys-color-on-surface)}
-.loc .cv{width:12px;height:12px;opacity:.7;transition:transform var(--md-sys-motion-duration-short4) var(--ease)}
+.loc .cv{width:12px;height:12px;opacity:.7;transition:transform var(--md-sys-motion-spring-fast-spatial)}
 .loc[aria-expanded=true] .cv{transform:rotate(180deg)}
 /* The trigger sits at the right edge, so the panel hangs from that edge. On a
    phone the general .sheet rule takes over and spans the column instead. */
@@ -114,7 +114,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .locnote{margin:12px 0 0;font-size:9.6px;line-height:13.6px;color:var(--md-sys-color-on-surface-variant)}
 .top .sp{flex:1}
 .tbtn{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-spring-fast-effects)}
 .tbtn:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 /* The place control stays on small screens — it is a control now, not a label —
    but the wordmark, the control and the theme toggle will not share one row at
@@ -243,29 +243,29 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .nav .dots{display:flex;align-items:center;gap:8px}
 .nav .dot{width:8px;height:8px;padding:0;border-radius:50%;
-  background:rgba(255,255,255,.45);transition:var(--md-sys-motion-duration-short4) var(--ease)}
+  background:rgba(255,255,255,.45);transition:var(--md-sys-motion-spring-fast-effects)}
 .nav .dot:hover{background:rgba(255,255,255,.75)}
 .nav .dot.on{background:#fff;width:22px;border-radius:var(--md-sys-shape-corner-full)}
 /* The arrows are a pointer-device convenience: on a touch screen the swipe
    across the picture already does it, and the dots are the tap target. */
 .nav .arw{display:none;width:28px;height:28px;border-radius:50%;
-  place-items:center;color:#fff;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  place-items:center;color:#fff;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-spring-fast-effects)}
 .nav .arw:hover{background:rgba(255,255,255,.22)}
 @media(hover:hover) and (pointer:fine){.nav .arw{display:grid}}
 
-/* Slide change: M3's lateral transition, which is the pattern for moving
-   between peers. Outgoing content accelerates away and fades over short4;
-   incoming decelerates in over medium1. The offset is small because Android's
-   own forward/backward "uses a fade as screens slide… since the screens don't
-   have to slide the full width". */
+/* Slide change: the lateral pattern, for moving between peers. Under the
+   physics system there is no accelerate/decelerate pair to swap between — the
+   spring is the model, and the only dial is speed. So the outgoing half runs
+   on the fast springs and the incoming half on default, which reads the same
+   way round as the old curve pair did: leaving is brisk, arriving settles.
+   The offset stays small because Android's own forward/backward "uses a fade
+   as screens slide… since the screens don't have to slide the full width". */
 .fig img.pic,.side,.fig .lg,.fig .badge{
-  transition:opacity var(--md-sys-motion-duration-medium1)
-               var(--md-sys-motion-easing-standard-decelerate),
-             transform var(--md-sys-motion-duration-medium1)
-               var(--md-sys-motion-easing-standard-decelerate)}
+  transition:opacity var(--md-sys-motion-spring-default-effects),
+             transform var(--md-sys-motion-spring-default-spatial)}
 .stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{
-  transition-duration:var(--md-sys-motion-duration-short4);
-  transition-timing-function:var(--md-sys-motion-easing-standard-accelerate)}
+  transition:opacity var(--md-sys-motion-spring-fast-effects),
+             transform var(--md-sys-motion-spring-fast-spatial)}
 .stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{opacity:0}
 .stage.out.back .fig img.pic{transform:scale(1.03) translateX(3%)}
 .stage.out.fwd  .fig img.pic{transform:scale(1.03) translateX(-3%)}
@@ -331,7 +331,7 @@ __SETTINGS_CSS__
     background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);
     -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
     border-bottom:1px solid transparent;opacity:0;pointer-events:none;
-    transition:opacity var(--md-sys-motion-duration-medium1) var(--ease),border-color var(--md-sys-motion-duration-medium1) var(--ease)}
+    transition:opacity var(--md-sys-motion-spring-default-effects),border-color var(--md-sys-motion-spring-default-effects)}
   body.scrolled header::before{opacity:1;border-bottom-color:var(--md-sys-color-outline-variant)}
   header > *{position:relative;z-index:1}
   .top{padding-bottom:8px;border-bottom:none;gap:10px}
@@ -346,9 +346,9 @@ __SETTINGS_CSS__
   .hslot .loc{margin:0}
   .hslot .sbox{width:0;margin-left:0;opacity:0;transform:scale(.86);
     pointer-events:none;
-    transition:width var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard),
-               margin-left var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard),
-               opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
+    transition:width var(--md-sys-motion-spring-default-spatial),
+               margin-left var(--md-sys-motion-spring-default-spatial),
+               opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
   body.at-cards .hslot .sbox{width:44px;margin-left:8px;opacity:1;transform:none;
     pointer-events:auto}
   /* Open, the field claims the rest of the row instead of guessing at a
@@ -383,7 +383,7 @@ __NAV_CSS__
   .navhome-m .lbl{display:block}
 }
 @media(prefers-reduced-motion:reduce){
-  .fig img.pic,.side,.fig .lg,.fig .badge{transition:opacity var(--md-sys-motion-duration-short1)}
+  .fig img.pic,.side,.fig .lg,.fig .badge{transition:opacity var(--md-sys-motion-spring-fast-effects)}
   .stage.out .fig img.pic{transform:none}
 }
 
@@ -396,13 +396,13 @@ __NAV_CSS__
    as it does. */
 .tools{position:sticky;top:0;z-index:60;display:flex;gap:10px;align-items:center;
   flex-wrap:wrap;margin:0 0 clamp(18px,2.4vw,26px);padding:10px 0;
-  transition:padding var(--md-sys-motion-duration-medium1) var(--ease)}
+  transition:padding var(--md-sys-motion-spring-default-spatial)}
 /* The bar lives inside a max-width column, so its backdrop is painted by a
    pseudo-element stretched past the gutters rather than by the bar itself. */
 .tools::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);border-bottom:1px solid transparent;
-  opacity:0;transition:opacity var(--md-sys-motion-duration-medium1) var(--ease),border-color var(--md-sys-motion-duration-medium1) var(--ease);
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects),border-color var(--md-sys-motion-spring-default-effects);
   pointer-events:none}
 .tools > *{position:relative;z-index:1}
 .tools.stuck{padding:13px 0}
@@ -411,7 +411,7 @@ __NAV_CSS__
 /* the mark only appears once the masthead has scrolled away */
 .toolmark{display:flex;align-items:center;gap:9px;flex:none;text-decoration:none;
   max-width:0;overflow:hidden;opacity:0;
-  transition:max-width var(--md-sys-motion-duration-medium2) var(--ease),opacity var(--md-sys-motion-duration-short4) var(--ease),margin var(--md-sys-motion-duration-medium2) var(--ease)}
+  transition:max-width var(--md-sys-motion-spring-default-spatial),opacity var(--md-sys-motion-spring-fast-effects),margin var(--md-sys-motion-spring-default-spatial)}
 .tools.stuck .toolmark{max-width:220px;opacity:1;margin-right:2px}
 .toolmark svg{width:30px;height:30px;flex:none;stroke:none;fill:none}
 .toolmark .wm{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -424,7 +424,7 @@ __NAV_CSS__
   width:17px;height:17px;color:var(--md-sys-color-on-surface-variant);pointer-events:none}
 .sbox input{width:100%;height:56px;border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);
   background:var(--md-sys-color-surface-container-lowest);padding:0 44px 0 44px;font:inherit;font-size:var(--f-body);
-  color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-spring-fast-effects)}
 .sbox input::placeholder{color:var(--md-sys-color-on-surface-variant)}
 .sbox input:focus{outline:none;border-color:var(--md-sys-color-on-surface)}
 .sbox .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;
@@ -434,13 +434,13 @@ __NAV_CSS__
 .drop{position:relative;flex:none}
 .trig{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;
   border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);background:var(--md-sys-color-surface-container-lowest);
-  font-size:var(--f-body);font-weight:700;transition:var(--md-sys-motion-duration-short3) var(--ease);white-space:nowrap}
+  font-size:var(--f-body);font-weight:700;transition:var(--md-sys-motion-spring-fast-effects);white-space:nowrap}
 .trig svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
 .trig:hover{border-color:var(--md-sys-color-on-surface)}
 .trig[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
 .trig[aria-expanded=true] svg.i{color:var(--md-sys-color-surface)}
 .trig .cv{width:12px;height:12px;flex:none;opacity:.7;
-  transition:transform var(--md-sys-motion-duration-short4) var(--ease)}
+  transition:transform var(--md-sys-motion-spring-fast-spatial)}
 .trig[aria-expanded=true] .cv{transform:rotate(180deg)}
 .sheet{position:absolute;top:calc(100% + 8px);right:0;z-index:40;width:max-content;
   max-width:min(92vw,440px);background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
@@ -448,12 +448,12 @@ __NAV_CSS__
   transform-origin:top right}
 .sheet[hidden]{display:none}
 @starting-style{.sheet{opacity:0;transform:scale(.97) translateY(-4px)}}
-.sheet{transition:opacity var(--md-sys-motion-duration-short4) var(--ease),transform var(--md-sys-motion-duration-short4) var(--ease)}
+.sheet{transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-fast-spatial)}
 .sheet h4{margin:0 0 14px;font-size:var(--f-caption);letter-spacing:.1em;
   text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);font-weight:700}
 .sheet .opts{display:flex;flex-wrap:wrap;gap:8px}
 .opt{font-size:var(--f-sub);font-weight:600;padding:9px 15px;border-radius:var(--md-sys-shape-corner-full);
-  border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease);
+  border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects);
   min-height:40px;text-align:left}
 .opt:hover{border-color:var(--md-sys-color-on-surface);color:var(--md-sys-color-on-surface)}
 .opt[aria-pressed=true],.opt[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
@@ -474,7 +474,7 @@ __NAV_CSS__
   border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest)}
 .vseg button{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;
   border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-sub);font-weight:700;color:var(--md-sys-color-on-surface-variant);
-  transition:background var(--md-sys-motion-duration-short4) var(--ease),color var(--md-sys-motion-duration-short4) var(--ease)}
+  transition:background var(--md-sys-motion-spring-fast-effects),color var(--md-sys-motion-spring-fast-effects)}
 .vseg button svg.i{width:17px;height:17px}
 .vseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 .vseg button:hover:not([aria-pressed=true]){color:var(--md-sys-color-on-surface)}
@@ -489,7 +489,7 @@ __NAV_CSS__
 .vseg button[aria-pressed=true]{background:none;color:var(--md-sys-color-surface)}
 .vseg button::before{content:"";position:absolute;left:0;right:0;top:50%;
   transform:translateY(-50%);aspect-ratio:1;border-radius:50%;
-  background:transparent;transition:background var(--md-sys-motion-duration-short4) var(--ease)}
+  background:transparent;transition:background var(--md-sys-motion-spring-fast-effects)}
 .vseg button[aria-pressed=true]::before{background:var(--md-sys-color-on-surface)}
 .vseg button svg.i{position:relative;z-index:1}
 @media(min-width:600px){
@@ -541,12 +541,12 @@ body[data-view=cal] .empty{display:none}
   line-height:var(--md-sys-typescale-headline-small-line-height);
   text-transform:uppercase;color:var(--md-sys-color-on-surface)}
 .calpick .cv{width:15px;height:15px;opacity:.65;
-  transition:transform var(--md-sys-motion-duration-short4) var(--ease)}
+  transition:transform var(--md-sys-motion-spring-fast-spatial)}
 .calpick[aria-expanded=true] .cv{transform:rotate(180deg)}
 .calarrows{display:flex;gap:6px;flex:none}
 .calarrows button{width:40px;height:40px;border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);
-  transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  transition:var(--md-sys-motion-spring-fast-effects)}
 .calarrows button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
 .calarrows .i{width:17px;height:17px}
 /* ── the month picker ──────────────────────────────────
@@ -557,14 +557,14 @@ dialog.caldlg{border:none;padding:0;background:transparent;max-width:none;
   max-height:none;width:100%;height:100%;overflow:visible;color:var(--md-sys-color-on-surface)}
 dialog.caldlg::backdrop{background:rgba(4,6,9,.55);
   -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
-  opacity:0;transition:opacity var(--md-sys-motion-duration-medium2) var(--ease)}
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects)}
 dialog.caldlg.in::backdrop{opacity:1}
 .calbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
   transform:translate(-50%,16px);opacity:0;width:min(420px,calc(100vw - 24px));
   max-height:min(78svh,640px);overflow:auto;overscroll-behavior:contain;
   background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large-increased);
   padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:var(--md-sys-elevation-3);
-  transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
+  transition:opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
 dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 @media(min-width:600px){
   .calbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
@@ -578,13 +578,13 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   padding:4px 0 14px}
 .yrow b{font-family:var(--title);font-size:var(--md-sys-typescale-title-medium-size);letter-spacing:.02em}
 .yrow button{width:38px;height:38px;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .yrow button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
 .yrow .i{width:15px;height:15px}
 .mons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .mons button{position:relative;min-height:46px;border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-medium);font-size:var(--md-sys-typescale-label-medium-size);font-weight:700;color:var(--md-sys-color-on-surface);
-  transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  transition:var(--md-sys-motion-spring-fast-effects)}
 .mons button:hover{border-color:var(--md-sys-color-on-surface)}
 .mons button[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
   border-color:var(--md-sys-color-on-surface)}
@@ -693,13 +693,13 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   .toolmark{grid-area:mark;max-width:none;opacity:1}
   .tools.stuck .toolmark{max-width:none}
   .tools .sbox{grid-area:search;flex:none;width:44px;justify-self:end;
-    transition:width var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard)}
+    transition:width var(--md-sys-motion-spring-default-spatial)}
   .tools .sbox.open{width:min(100%,calc(100vw - 96px))}
   .sbox input{height:44px;padding:0 16px 0 38px;font-size:var(--md-sys-typescale-label-medium-size)}
   .sbox:not(.open) input{padding:0;color:transparent;cursor:pointer}
   .sbox:not(.open) input::placeholder{color:transparent}
   .sbox svg.i{left:50%;transform:translate(-50%,-50%);
-    transition:left var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium2) var(--ease)}
+    transition:left var(--md-sys-motion-spring-default-spatial),transform var(--md-sys-motion-spring-default-spatial)}
   .sbox.open svg.i{left:14px;transform:translate(0,-50%)}
   .sbox .clr{display:none}
   /* Three equal thirds of the column. At this width the icon is the first
@@ -772,7 +772,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
    underneath is the site's surface, so a row of cards reads as one list rather
    than as a set of differently tinted objects. */
 .card{background:var(--md-sys-color-surface-container-lowest);border-radius:var(--r-card);overflow:hidden;display:flex;
-  flex-direction:column;transition:transform var(--md-sys-motion-duration-medium2) var(--ease),box-shadow var(--md-sys-motion-duration-medium2) var(--ease)}
+  flex-direction:column;transition:transform var(--md-sys-motion-spring-default-spatial),box-shadow var(--md-sys-motion-spring-default-effects)}
 .card[hidden]{display:none}
 .card:hover{transform:translateY(-2px);box-shadow:var(--md-sys-elevation-2)}
 .card.past .shot img.pic{filter:grayscale(.8) contrast(.95)}
@@ -804,7 +804,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .offi{position:relative;flex:none;display:inline-flex;align-items:center;gap:5px;font-size:var(--f-caption);
   letter-spacing:var(--k-caption);font-weight:700;
   color:var(--md-sys-color-on-surface-variant);text-decoration:none;border:1.5px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  padding:5px 11px;margin-top:1px;white-space:nowrap;transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  padding:5px 11px;margin-top:1px;white-space:nowrap;transition:var(--md-sys-motion-spring-fast-effects)}
 /* the pill stays visually light beside the title, but its hit area is
    expanded to the 44pt minimum both HIG and Material ask for */
 .offi::after{content:'';position:absolute;inset:-5px -6px}
@@ -837,7 +837,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   letter-spacing:var(--md-sys-typescale-label-large-tracking);
   font-weight:var(--md-sys-typescale-emphasized-weight);
   letter-spacing:var(--k-label);padding:12px 20px;border-radius:var(--md-sys-shape-corner-full);border:1.5px solid var(--md-sys-color-on-surface);text-decoration:none;
-  transition:var(--md-sys-motion-duration-short3) var(--ease);min-height:40px;color:var(--md-sys-color-on-surface)}
+  transition:var(--md-sys-motion-spring-fast-effects);min-height:40px;color:var(--md-sys-color-on-surface)}
 /* Buttons are ink on paper or paper on ink — never the category's colour.
    Colour is how a label is read at a glance, and a page that uses it for the
    buttons too has spent it. */

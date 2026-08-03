@@ -5,14 +5,14 @@ dialog.setdlg{border:none;padding:0;background:transparent;max-width:none;max-he
   width:100%;height:100%;overflow:visible;color:var(--md-sys-color-on-surface)}
 dialog.setdlg::backdrop{background:rgba(4,6,9,.55);
   -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
-  opacity:0;transition:opacity var(--md-sys-motion-duration-medium2) var(--ease)}
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects)}
 dialog.setdlg.in::backdrop{opacity:1}
 .setbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
   transform:translate(-50%,16px);opacity:0;width:min(460px,calc(100vw - 24px));
   max-height:min(84svh,720px);overflow:auto;overscroll-behavior:contain;
   background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large-increased);
   padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:var(--md-sys-elevation-3);
-  transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
+  transition:opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
 dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 @media(min-width:600px){
   .setbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
@@ -23,7 +23,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .sethead h2{margin:0;font-family:var(--title);font-weight:600;font-size:var(--md-sys-typescale-title-medium-size);
   letter-spacing:.02em;text-transform:uppercase}
 .setclose{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .setclose:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
   padding:15px 0;border-top:1px solid var(--md-sys-color-outline-variant);flex-wrap:wrap}
@@ -31,13 +31,13 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .setrow i{display:block;font-style:normal;font-size:var(--md-sys-typescale-label-small-size);color:var(--md-sys-color-on-surface-variant);margin-top:3px;
   max-width:42ch}
 .setbtn{min-height:38px;padding:0 18px;border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);
-  font-size:var(--md-sys-typescale-label-small-size);font-weight:650;color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  font-size:var(--md-sys-typescale-label-small-size);font-weight:650;color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-spring-fast-effects)}
 .setbtn:hover:not(:disabled){background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setbtn:disabled{opacity:.5}
 .fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px;flex:none}
 .fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:650;padding:0 16px;min-height:34px;
-  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
+  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setnote{margin:15px 0 0;font-size:var(--md-sys-typescale-label-small-size);line-height:1.6;color:var(--md-sys-color-on-surface-variant)}
 .setnote a{color:var(--md-sys-color-on-surface-variant)}

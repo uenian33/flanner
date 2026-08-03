@@ -7,20 +7,20 @@
    Everything here is opt-out: with reduced motion the links behave like plain
    links, and if navigation stalls the page restores itself rather than leaving
    the reader on a faded screen. */
-.fx-shell{transition:opacity var(--md-sys-motion-duration-short4) var(--ease),transform var(--md-sys-motion-duration-medium2) var(--ease);
+.fx-shell{transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-default-spatial);
   transform-origin:50% 38%}
 html.fx-out .fx-shell{opacity:0;transform:scale(.972)}
 html.fx-in .fx-shell{opacity:0;transform:scale(1.014)}
 
 .fx{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
   background:var(--bg);opacity:0;pointer-events:none;
-  transition:opacity var(--md-sys-motion-duration-medium1) var(--ease)}
+  transition:opacity var(--md-sys-motion-spring-default-effects)}
 .fx.on{opacity:1;pointer-events:auto}
 .fx svg{width:74px;height:74px;overflow:visible}
 /* The mark's two halves drift apart and settle back, which is the shape doing
    what it already does rather than a spinner borrowed from somewhere else. */
-.fx .fx-a{animation:fxa var(--md-sys-motion-duration-long4) var(--ease) infinite}
-.fx .fx-b{animation:fxa var(--md-sys-motion-duration-long4) var(--ease) infinite reverse}
+.fx .fx-a{animation:fxa var(--md-sys-motion-spring-slow-spatial) infinite}
+.fx .fx-b{animation:fxa var(--md-sys-motion-spring-slow-spatial) infinite reverse}
 @keyframes fxa{
   0%,100%{transform:translate(0,0)}
   50%{transform:translate(2.4px,-3.6px)}
