@@ -53,24 +53,35 @@ body{margin:0;background:var(--bg);color:var(--tx);font:14.4px/1.5 var(--sans);
   -webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
 a{color:inherit}
 /* ── ground ────────────────────────────────────────────
-   The bright theme is mostly paper, and flat paper reads as unfinished. A dot
-   grid gives it a weave and two soft washes in the festivals' own colours give
-   it a light source. Both are fixed, sit behind everything, and are faint
-   enough to leave text contrast untouched. */
-body::before,body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
-body::before{
+   The bright theme is mostly paper, and flat paper reads as unfinished. Two
+   soft washes in the festivals' own colours give it a light source; they are
+   fixed, sit behind everything, and are faint enough to leave text contrast
+   untouched.
+
+   The grid belongs to the highlight band alone. Run under the whole document
+   it turned the festival list into a textured surface competing with the cards
+   on it; kept to the top of the page it reads as the backdrop the highlight
+   stands on, and everything below it is plain. It is drawn by the section
+   rather than fixed to the viewport so it scrolls away with what it belongs
+   to, and it is stretched past the column's gutters to the full window
+   width. */
+.hero{position:relative}
+.hero::before{content:"";position:absolute;top:0;bottom:0;
+  left:calc(50% - 50vw);width:100vw;z-index:-1;pointer-events:none;
   background-image:radial-gradient(circle at 1px 1px,
     color-mix(in srgb,var(--tx) 10%,transparent) 1px,transparent 0);
   background-size:26px 26px}
-body::after{
+:root[data-theme=dark] .hero::before{opacity:.45}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme=light]) .hero::before{opacity:.45}
+}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:
     radial-gradient(56vw 38vw at 6% -10%,rgba(182,252,70,.26),transparent 66%),
     radial-gradient(48vw 32vw at 97% 0%,rgba(255,242,3,.22),transparent 64%),
     radial-gradient(40vw 30vw at 50% 108%,rgba(182,252,70,.14),transparent 70%)}
-:root[data-theme=dark] body::before{opacity:.45}
 :root[data-theme=dark] body::after{opacity:.3}
 @media(prefers-color-scheme:dark){
-  :root:not([data-theme=light]) body::before{opacity:.45}
   :root:not([data-theme=light]) body::after{opacity:.3}
 }
 
