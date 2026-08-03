@@ -1046,6 +1046,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
   <div class="stage" id="stage"></div>
 </section>
 
+<div id="toolsMark" aria-hidden="true"></div>
 <div class="tools" id="tools">
   <a class="toolmark" href="#top" aria-label="Back to the top">
     <svg aria-hidden="true"><use href="#i-logo"/></svg>
@@ -1318,6 +1319,26 @@ if (reel.length) {
     </div>` : ''}`;
   };
 
+  /* Festivals have different amounts to say, so the panel changed height on
+     every rotation and shoved the whole page up and down under the reader —
+     and moved the boundary the section snapping measures from. The stage keeps
+     the tallest height it has needed so far. */
+  let tallest = 0;
+  const holdHeight = () => {
+    const h = Math.ceil(stage.getBoundingClientRect().height);
+    if (h > tallest) { tallest = h; stage.style.minHeight = tallest + 'px'; }
+  };
+  /* Only a real width change invalidates the held height. A phone fires resize
+     every time its address bar slides, and resetting on those threw the
+     measurement away constantly. */
+  let heldAt = innerWidth;
+  addEventListener('resize', () => {
+    if (innerWidth === heldAt) return;
+    heldAt = innerWidth;
+    tallest = 0;
+    stage.style.minHeight = '';
+  }, {passive: true});
+
   function paint() {
     const f = reel[cur], st = status(f);
     $('#heroHead').textContent = st.live ? 'On now' : st.past ? 'Recently' : 'Next up';
@@ -1325,6 +1346,7 @@ if (reel.length) {
     stage.setAttribute('style', fvars(f));
     stage.innerHTML = shell(f);
     armBar(canRun());
+    holdHeight();
     const pv = $('#prev'), nx = $('#next');
     if (pv) pv.onclick = e => { e.preventDefault(); go(cur - 1, true); nudge(); };
     if (nx) nx.onclick = e => { e.preventDefault(); go(cur + 1, true); nudge(); };
@@ -1967,10 +1989,25 @@ document.addEventListener('keydown', e => {
   const tools = $('#tools');
   if (!tools || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  const DOWN = 0.35, UP = 0.65, QUIET = 60;
+  const DOWN = 0.35, UP = 0.90, QUIET = 60;
   let timer = 0, last = scrollY, touching = false, cooling = false, raf = 0;
 
-  const anchor = () => tools.offsetTop;
+  /* Two screens only exist if the festivals can actually come to rest at the
+     top. With few festivals the page is barely taller than the window, the
+     toolbar never reaches it, and there is nothing to snap between — so this
+     reports no boundary at all rather than clamping to the end of the
+     document, which would have turned the whole page into one snap band and
+     forced the scroll everywhere. */
+  /* Measured from a zero-height marker sitting just before the bar. The bar
+     itself is position:sticky, and a stuck element reports its *displaced*
+     offsetTop — so reading it grew the boundary as the page scrolled, and the
+     snap band grew along with it right into the festivals. */
+  const mark = document.querySelector('#toolsMark');
+  const anchor = () => {
+    const max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+    const b = mark ? Math.round(mark.getBoundingClientRect().top + scrollY) : 0;
+    return b > 0 && b <= max ? b : 0;
+  };
 
   /* The platform's smooth scroll is tuned for jumping across a document and
      takes about half a second to cross a few hundred pixels, which is what
@@ -2003,10 +2040,18 @@ document.addEventListener('keydown', e => {
 
     const b = anchor();
     const y = scrollY;
-    if (b < 80 || y <= 0 || y >= b) return;      /* already on one or the other */
+    /* The only boundary this handles is the one between the highlight and the
+       festivals. Below the toolbar the page is an ordinary document — the
+       month list, the calendar, a day's cards — and scrolls like one. */
+    if (b < 80 || y <= 0 || y >= b) return;
 
     const down = y > last;
     const ratio = y / b;
+    /* Coming down, a third of the way commits. Going back up, almost anything
+       releases: being shoved back toward the festivals while scrolling away
+       from them is the one thing that reads as the page fighting you. The
+       small holdout near the edge is there so a stray pixel of overscroll does
+       not throw you to the top. */
     const target = down ? (ratio >= DOWN ? b : 0) : (ratio >= UP ? b : 0);
     if (Math.round(target) === Math.round(y)) return;
     glide(target);
@@ -2016,6 +2061,21 @@ document.addEventListener('keydown', e => {
     clearTimeout(timer);
     timer = setTimeout(() => { settle(); last = scrollY; }, QUIET);
   }, {passive: true});
+
+  /* Reaching for a filter, the view switcher or the search box says you are
+     done with the highlight — everything they change is in the list below, and
+     leaving the page up here would have hidden the result of the tap. Capture,
+     so it runs before the control's own handler opens a sheet. */
+  const toFestivals = () => {
+    const b = anchor();
+    if (scrollY < b - 2) glide(b);
+  };
+  tools.addEventListener('pointerdown', e => {
+    if (e.target.closest('.toolmark')) return;   /* that one goes back to the top */
+    toFestivals();
+  }, true);
+  const field = document.querySelector('.sbox');
+  if (field) field.addEventListener('focusin', toFestivals);
 
   /* A finger still on the glass is a gesture in progress, not a resting page. */
   addEventListener('touchstart', () => { touching = true; }, {passive: true});
