@@ -7,6 +7,7 @@ planners it links to.
 """
 import json, pathlib
 from build import ROOT, data_uri
+import schema
 import seo
 
 NOTE = (
@@ -17,11 +18,11 @@ NOTE = (
 )
 
 OUT = ROOT / "index.html"
-CFG = ROOT / "data" / "festivals.json"
 H = ROOT / "assets" / "home"
 
 def main():
-    cfg = json.loads(CFG.read_text())
+    # Validated and normalised before anything is rendered — see schema.py.
+    cfg = schema.load()
     for f in cfg["festivals"]:
         f["promoSrc"] = data_uri(H / f["promo"])
         f["logoSrc"] = data_uri(ROOT / "assets" / f["logo"])
@@ -41,6 +42,7 @@ def main():
             jsonld=seo.site_jsonld(cfg["festivals"])
                    + [seo.festival_event(f) for f in cfg["festivals"]]
         )),
+        ("__CATCSS__", schema.category_css(cfg)),
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),

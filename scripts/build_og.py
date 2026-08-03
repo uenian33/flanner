@@ -8,7 +8,11 @@ file at a real URL. Everything else about a page stays self-contained.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import schema
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -99,7 +103,7 @@ def card(out: str, photo: Path | None, kicker: str, title: str, sub: str,
 
 
 def main() -> None:
-    cfg = json.loads((ROOT / "data" / "festivals.json").read_text())
+    cfg = schema.load()
     by = {f["id"]: f for f in cfg["festivals"]}
 
     card("home.jpg", ROOT / "assets" / "home" / "flow-promo.jpg",

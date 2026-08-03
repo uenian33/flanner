@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "fallback": "others",
+  "categories": [
+    {
+      "id": "music",
+      "label": "Music",
+      "labelFi": "Musiikki",
+      "color": "#c9f24d",
+      "ink": "#101010",
+      "blurb": "Concerts, club nights and music festivals."
+    },
+    {
+      "id": "film",
+      "label": "Film",
+      "labelFi": "Elokuva",
+      "color": "#7fc4ff",
+      "ink": "#101010",
+      "blurb": "Screenings, film festivals and cinema events."
+    },
+    {
+      "id": "art",
+      "label": "Art",
+      "labelFi": "Taide",
+      "color": "#ff9ec4",
+      "ink": "#101010",
+      "blurb": "Exhibitions, installations and gallery weekends."
+    },
+    {
+      "id": "culture",
+      "label": "Culture",
+      "labelFi": "Kulttuuri",
+      "color": "#ffc861",
+      "ink": "#101010",
+      "blurb": "Street festivals, city events, food and heritage."
+    },
+    {
+      "id": "others",
+      "label": "Others",
+      "labelFi": "Muut",
+      "color": "#d9d9d9",
+      "ink": "#101010",
+      "blurb": "Anything the four above do not describe."
+    }
+  ]
+}

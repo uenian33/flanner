@@ -17,6 +17,9 @@
 __OG__
 <style>
 __FONTCSS__
+/* Category colours, generated from data/categories.json by schema.py. Adding
+   a category is a data edit, not a stylesheet edit. */
+__CATCSS__
 :root{
   --bg:#f5f5f5; --bg2:#fff; --panel:#fafafa; --panel2:#ececec;
   --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.8);
@@ -624,9 +627,11 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .grid.tile .card .acts,.grid.tile .card .cats{display:none}
 .grid.tile .card .when{margin-top:8px}
 .grid.tile .card .where{margin-top:4px}
+/* The compact tile has no notch — the picture is too small to carry one — so
+   the category chip is where its colour goes instead. */
 .grid.tile .card .kind{display:inline-block;margin-top:10px;padding:4px 11px;
-  border:1px solid var(--line2);border-radius:10rem;font-size:10px;font-weight:700;
-  letter-spacing:.04em;color:var(--tx2);width:max-content}
+  border-radius:10rem;font-size:11px;font-weight:700;letter-spacing:.04em;
+  background:var(--cat,var(--panel2));color:var(--cat-ink,var(--tx2));width:max-content}
 /* The whole tile is the target, since the buttons are gone. */
 .grid.tile .card{cursor:pointer}
 .card .kind{display:none}
@@ -738,12 +743,14 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .card .lg{position:absolute;left:18px;top:16px;width:max-content;max-width:66%;z-index:2}
 .card .lg img{height:clamp(34px,4vw,44px);width:auto;max-width:100%;display:block;
   filter:drop-shadow(0 2px 8px rgba(0,0,0,.55))}
-/* the notched tag: a black block whose top-left corner curves back into the image */
-.notch{position:absolute;right:0;bottom:0;z-index:2;background:var(--fa,var(--tx));color:var(--fi,var(--bg2));
+/* The notched tag: a block whose top-left corner curves back into the image.
+   It is the card's one piece of colour, and the colour says what kind of
+   festival this is — music, film, art, culture or other. */
+.notch{position:absolute;right:0;bottom:0;z-index:2;background:var(--cat,var(--tx));color:var(--cat-ink,var(--bg2));
   font-family:var(--title);font-size:var(--f-caption);letter-spacing:var(--k-over);text-transform:uppercase;
   padding:11px 18px 12px;border-top-left-radius:22px}
 .notch::before,.notch::after{content:"";position:absolute;width:22px;height:22px;
-  background:radial-gradient(circle at 0 0,transparent 22px,var(--fa,var(--tx)) 22px)}
+  background:radial-gradient(circle at 0 0,transparent 22px,var(--cat,var(--tx)) 22px)}
 .notch::before{right:100%;bottom:0}
 .notch::after{right:0;bottom:100%}
 /* Card interior, measured off a myhelsinki.fi event card: 24px of padding on
@@ -765,7 +772,9 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   background:color-mix(in srgb,var(--fa,var(--tx)) 26%,transparent)}
 .offi svg{width:12px;height:12px}
 .ttl{padding-top:24px}
-.body h4{margin:0;font-family:var(--sans);font-size:14.4px;line-height:21.6px;
+/* The name is what a reader scans for, so it steps up two rungs from the
+   14.4px the rest of the card runs at rather than sharing their size. */
+.body h4{margin:0;font-family:var(--sans);font-size:20px;line-height:1.25;
   letter-spacing:normal;text-transform:none;font-weight:700;color:var(--tx)}
 .when{font-size:14.4px;line-height:21.6px;color:var(--tx);font-weight:400;
   font-variant-numeric:tabular-nums}
@@ -982,6 +991,74 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ico = n => `<svg class="i"><use href="#i-${n}"/></svg>`;
 
+/* ── stored preferences ────────────────────────────────
+   Everything this page remembers about a reader lives here: three settings,
+   no identifiers, nothing that leaves the device. The schema below is the
+   whole contract — a field declares its allowed values and its default, and a
+   value that is not in that list is treated as absent. That is what makes an
+   old cookie, a hand-edited one, or one written by a newer version of the site
+   harmless: it fails the check and the default takes over.
+
+   Each field is written twice, to a first-party cookie and to local storage,
+   because neither survives every situation on its own — a page opened straight
+   off disk has no cookie jar, and a browser told to clear site data on exit
+   may keep one but not the other. Reads prefer the cookie and fall back.
+
+   Keys are namespaced and versioned (flanner1.theme). A future change of
+   meaning gets a new version rather than a silent reinterpretation of what is
+   already on people's devices; the legacy fp-* keys this replaced are read
+   once, migrated, and then left alone. */
+const Store = (() => {
+  const NS = 'flanner1.';
+  const YEAR = 60 * 60 * 24 * 400;          /* the cap most browsers apply */
+  const FIELDS = {
+    theme: {values: ['light', 'dark'], def: 'light', legacy: 'fp-theme'},
+    view:  {values: ['cal', 'tile', 'full'], def: null, legacy: 'fp-view'},
+    place: {values: null, def: 'fi', legacy: 'fp-place'},  /* checked against PLACES */
+  };
+
+  const readCookie = k => {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + k.replace('.', '\\.') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : null;
+  };
+  const readLocal = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const write = (k, v) => {
+    try {
+      document.cookie = k + '=' + encodeURIComponent(v) + ';path=/;Max-Age=' + YEAR +
+        ';SameSite=Lax' + (location.protocol === 'https:' ? ';Secure' : '');
+    } catch (e) {}
+    try { localStorage.setItem(k, v); } catch (e) {}
+  };
+
+  const valid = (name, v) => {
+    const f = FIELDS[name];
+    return v != null && v !== '' && (!f.values || f.values.includes(v));
+  };
+
+  return {
+    /* `allowed` lets a caller narrow the check when the valid set is data —
+       the place list, for instance, is not known to this module. */
+    get(name, allowed) {
+      const f = FIELDS[name];
+      if (!f) throw new Error('unknown setting ' + name);
+      const raw = readCookie(NS + name) || readLocal(NS + name) ||
+                  (f.legacy ? readCookie(f.legacy) || readLocal(f.legacy) : null);
+      const ok = valid(name, raw) && (!allowed || allowed.includes(raw));
+      return ok ? raw : f.def;
+    },
+    set(name, v) {
+      const f = FIELDS[name];
+      if (!f) throw new Error('unknown setting ' + name);
+      write(NS + name, v);
+      /* The planner and info pages are separate documents that still speak the
+         old key. Writing both keeps one theme across the whole site; when
+         those pages move over, this line is what gets deleted. */
+      if (f.legacy) write(f.legacy, v);
+      return v;
+    },
+  };
+})();
+
 
 /* Days until a festival opens — drives the "on now / in N days" line. */
 const today = new Date(); today.setHours(0,0,0,0);
@@ -995,6 +1072,14 @@ const status = f => {
 };
 
 const fvars = f => `--fa:${f.accent};--fi:${f.ink}`;
+
+/* The list, the colours and the labels all come from data/categories.json —
+   see schema.py. Nothing here hardcodes what a category is. */
+const CATEGORIES = DATA.categories;
+const CAT_FALLBACK = DATA.categoryFallback;
+const CAT_BY_ID = new Map(CATEGORIES.map(c => [c.id, c]));
+const catOf = f => CAT_BY_ID.get(f.category) || CAT_BY_ID.get(CAT_FALLBACK);
+
 
 /* ── the hero ──────────────────────────────────────────
    One festival on screen at a time. Every image is already a data URI in the
@@ -1308,7 +1393,8 @@ $('#months').innerHTML = Object.keys(groups).sort().map(m => {
 function card(f) {
   const st = status(f);
   return `<article class="card${st.past ? ' past' : ''}" style="${fvars(f)}"
-             data-id="${esc(f.id)}" data-cost="${f.free ? 'free' : 'paid'}">
+             data-id="${esc(f.id)}" data-cat="${esc(catOf(f).id)}"
+             data-cost="${f.free ? 'free' : 'paid'}">
     <div class="shot">
       <img class="pic" src="${f.promoSrc}" alt="" loading="lazy">
       <span class="lg"><img src="${f.logoSrc}" alt="${esc(f.name)}"></span>
@@ -1322,7 +1408,7 @@ function card(f) {
       </div>
       <div class="when">${esc(f.dates)}</div>
       <div class="where">${esc(f.city)} · ${esc(f.type)}</div>
-      <div class="kind">${esc(f.category || 'Music')}</div>
+      <div class="kind">${esc(catOf(f).label)}</div>
       <div class="figs">
         <span><b>${f.stats.acts}</b> acts</span>
         <span><b>${f.stats.stages}</b> stages</span>
@@ -1380,8 +1466,7 @@ const PLACES = [
   {k: 'fi',  label: 'Finland',  lat: 62.6, lon: 25.7},
   {k: 'hel', label: 'Helsinki', lat: 60.17, lon: 24.94},
 ];
-const PKEY = 'fp-place';
-let place = (() => { try { return localStorage.getItem(PKEY) || 'fi'; } catch (e) { return 'fi'; } })();
+let place = Store.get('place', PLACES.map(p => p.k));
 
 const kmBetween = (a, b) => {
   const R = 6371, rad = d => d * Math.PI / 180;
@@ -1399,8 +1484,7 @@ function paintPlace() {
 $('#locOpts').innerHTML = PLACES.map(p =>
   `<button class="opt" role="radio" data-k="${p.k}" aria-checked="false">${p.label}</button>`).join('');
 $('#locOpts').querySelectorAll('.opt').forEach(o => o.onclick = () => {
-  place = o.dataset.k;
-  try { localStorage.setItem(PKEY, place); } catch (e) {}
+  place = Store.set('place', o.dataset.k);
   paintPlace();
   openSheet(null);
 });
@@ -1416,8 +1500,7 @@ $('#locFind').onclick = () => {
       const here = {lat: pos.coords.latitude, lon: pos.coords.longitude};
       const near = PLACES.slice().sort((a, b) => kmBetween(here, a) - kmBetween(here, b))[0];
       const away = Math.round(kmBetween(here, PLACES.find(p => p.k === 'hel')));
-      place = away < 120 ? 'hel' : 'fi';
-      try { localStorage.setItem(PKEY, place); } catch (e) {}
+      place = Store.set('place', away < 120 ? 'hel' : 'fi');
       paintPlace();
       note.textContent = away < 120
         ? `You are about ${away} km from Helsinki — showing what is on there.`
@@ -1466,21 +1549,21 @@ const WHEN = [
                               trig:  m === thisMonth ? 'This month' : monthShort(m),
                               test: f => f.month === m})),
 ];
-/* Four kinds, fixed. Deriving them from the data made the list swing between
-   one chip and a dozen, and mixing genres in made "Techno" read as an
-   alternative to "Music" rather than a detail under it. Genres are still
-   searchable; they are just not a filter. */
-const KINDS = ['Music', 'Film', 'Culture', 'Others'];
-const CATS = KINDS;
-
+/* A fixed set of kinds, defined in the data. Deriving them from whatever the
+   festivals happened to carry made the list swing between one chip and a
+   dozen, and mixing genres in made "Techno" read as an alternative to "Music"
+   rather than a detail under it. Genres are still searchable; they are just
+   not a filter. The chips carry the category id and show its label. */
 let when = 'any', cats = new Set(), draft = new Set(), q = '';
 
 $('#whenOpts').innerHTML = WHEN.map(w =>
   `<button class="opt" role="radio" data-k="${w.k}" aria-checked="${w.k === when}">${w.label}</button>`).join('');
-$('#catOpts').innerHTML = KINDS.map(c =>
-  `<button class="opt" data-c="${esc(c)}" aria-pressed="false">${esc(c)}</button>`).join('');
+$('#catOpts').innerHTML = CATEGORIES.map(c =>
+  `<button class="opt" data-c="${esc(c.id)}" aria-pressed="false"
+     title="${esc(c.blurb || '')}">${esc(c.label)}</button>`).join('');
 
-const haystack = f => [f.name, f.city, f.type, f.category, ...f.tags, ...f.stars, f.description]
+const haystack = f => [f.name, f.city, f.type, catOf(f).label, catOf(f).labelFi,
+                       ...f.tags, ...f.stars, f.description]
   .join(' ').toLowerCase();
 
 /* One predicate, asked by the list and by the calendar, so the two can never
@@ -1490,7 +1573,7 @@ function matches(f) {
   const needle = q.trim().toLowerCase();
   return w.test(f)
     && (!needle || haystack(f).includes(needle))
-    && (!cats.size || cats.has(f.category || 'Others'));
+    && (!cats.size || cats.has(catOf(f).id));
 }
 
 function apply() {
@@ -1518,10 +1601,14 @@ function apply() {
      sheet it opens is already titled "Filter by date". */
   const w2 = WHEN.find(x => x.k === when);
   $('#whenLabel').textContent = w2.trig || w2.label;
+  /* The filter state is held as category ids; everything shown to a reader is
+     the label that belongs to the id. */
+  const catLabel = id => (CAT_BY_ID.get(id) || {label: id}).label;
   $('#catLabel').textContent =
-    cats.size === 0 ? 'All' : cats.size === 1 ? [...cats][0] : `${cats.size} kinds`;
+    cats.size === 0 ? 'All' : cats.size === 1 ? catLabel([...cats][0]) : `${cats.size} kinds`;
   $('#activeTags').innerHTML = [...cats].map(c =>
-    `<span class="tag">${esc(c)}<button data-drop="${esc(c)}" aria-label="Remove ${esc(c)}">
+    `<span class="tag" data-cat="${esc(c)}">${esc(catLabel(c))}<button data-drop="${esc(c)}"
+      aria-label="Remove ${esc(catLabel(c))}">
       <svg class="i"><use href="#i-close"/></svg></button></span>`).join('');
   $('#activeTags').querySelectorAll('[data-drop]').forEach(btn => btn.onclick = () => {
     cats.delete(btn.dataset.drop);
@@ -1939,19 +2026,6 @@ document.addEventListener('keydown', e => {
 (() => {
   const seg = document.querySelector('#viewSeg');
   if (!seg) return;
-  const VKEY = 'fp-view';
-  const readView = () => {
-    const m = document.cookie.match(/(?:^|; )fp-view=([^;]*)/);
-    if (m) return decodeURIComponent(m[1]);
-    try { return localStorage.getItem(VKEY); } catch (e) { return null; }
-  };
-  const writeView = v => {
-    try { document.cookie = VKEY + '=' + encodeURIComponent(v) +
-      ';path=/;Max-Age=' + 60 * 60 * 24 * 400 + ';SameSite=Lax' +
-      (location.protocol === 'https:' ? ';Secure' : ''); } catch (e) {}
-    try { localStorage.setItem(VKEY, v); } catch (e) {}
-  };
-
   const VIEWS = ['cal', 'tile', 'full'];
 
   function paintView(v, remember) {
@@ -1964,7 +2038,7 @@ document.addEventListener('keydown', e => {
       g.classList.toggle('tile', v === 'tile'));
     seg.querySelectorAll('[data-view]').forEach(b =>
       b.setAttribute('aria-pressed', b.dataset.view === v));
-    if (remember) writeView(v);
+    if (remember) Store.set('view', v);
   }
 
   seg.querySelectorAll('[data-view]').forEach(b =>
@@ -1976,8 +2050,8 @@ document.addEventListener('keydown', e => {
      right one rather than on whichever was true at load. */
   const phone = matchMedia('(max-width:620px)');
   const fallback = () => (phone.matches ? 'tile' : 'full');
-  const saved = readView();
-  let chosen = VIEWS.includes(saved) ? saved : '';
+  const saved = Store.get('view', VIEWS);
+  let chosen = saved || '';
   paintView(chosen || fallback(), false);
   phone.addEventListener('change', () => { if (!chosen) paintView(fallback(), false); });
 
@@ -1992,34 +2066,19 @@ document.addEventListener('keydown', e => {
 })();
 
 /* ── theme ─────────────────────────────────────────────── */
-/* Settings persist in a first-party cookie, with local storage as the fallback
-   for a page opened straight off disk where cookies are blocked. */
-const KEY = 'fp-theme';
+/* Persisted by Store, alongside the view and the place — see its notes. */
 const root = document.documentElement;
-const jar = {
-  read() {
-    const m = document.cookie.match(/(?:^|; )fp-theme=([^;]*)/);
-    if (m) return decodeURIComponent(m[1]);
-    try { return localStorage.getItem(KEY); } catch (e) { return null; }
-  },
-  write(v) {
-    try { document.cookie = KEY + '=' + encodeURIComponent(v) +
-      ';path=/;Max-Age=' + 60 * 60 * 24 * 400 + ';SameSite=Lax' +
-      (location.protocol === 'https:' ? ';Secure' : ''); } catch (e) {}
-    try { localStorage.setItem(KEY, v); } catch (e) {}
-  },
-};
 function applyTheme(t) {
   root.dataset.theme = t;
   document.querySelectorAll('#themeSeg button').forEach(b =>
     b.setAttribute('aria-pressed', b.dataset.themeSet === t));
   const meta = document.querySelector('meta[name=theme-color]');
   if (meta) meta.content = t === 'dark' ? '#101010' : '#f5f5f5';
-  jar.write(t);
+  Store.set('theme', t);
 }
 document.querySelectorAll('#themeSeg button').forEach(b =>
   b.onclick = () => applyTheme(b.dataset.themeSet));
-applyTheme(jar.read() || 'light');
+applyTheme(Store.get('theme'));
 apply();
 </script>
 <script>
