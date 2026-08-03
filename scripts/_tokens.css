@@ -4,35 +4,143 @@
    its own (a planner's stage hues, the home page's category colours); it
    never restates what is here.
 
-   The type scale is measured off myhelsinki.fi/tapahtumat, the city's own
-   events listing, then taken to 80%. It is short on purpose: nine rungs, a
-   flat 1.5 leading on anything that is a sentence and 1.0–1.1 on anything
-   that is a title, and no tracking except on uppercase runs, which set too
-   tight without it.
-
-   The bottom two rungs exist for the timetable. A grid of 30-minute cells is
-   denser than a list of cards, and that density is the point of the page —
-   but nothing that is a sentence is allowed down there. */
+   Type is the Material 3 scale, verbatim: 15 baseline styles, each with its
+   own size, line height, tracking and weight, from
+   m3.material.io/styles/typography/type-scale-tokens. "No single product will
+   use all the styles" — the roles beneath the scale say which ones this one
+   uses. */
 :root{
   --sans:Arial,Helvetica,"Helvetica Neue",sans-serif;
   --title:var(--sans);
-  --ease:cubic-bezier(.16,1,.3,1);
   --safe-b:env(safe-area-inset-bottom,0px);
 
-  --f-display:clamp(19px,2.9vw,26.9px);  --l-display:1;     --k-display:.008em;
-  --f-h2:clamp(20.8px,2.4vw,27.2px);     --l-h2:1;          --k-h2:.03em;
-  --f-h3:clamp(17.6px,1.92vw,22.4px);    --l-h3:1.05;       --k-h3:.02em;
-  --f-title:14.4px;                      --l-title:1.5;     /* card title, 700 */
-  --f-body:14.4px;                       --l-body:1.5;      --k-body:normal;
-  --f-sub:12.8px;                        --l-sub:1.5;       --k-sub:normal;
-  --f-label:12.8px;                      --l-label:1.5;     --k-label:normal;
-  --f-caption:11.2px;                    --l-caption:1.5;   --k-caption:normal;
-  --f-over:9.6px;                        --l-over:1.33;     --k-over:.06em;
-  --f-micro:8.4px;                       --l-micro:1.3;     --k-micro:.04em;
+  --md-sys-typescale-display-large-size:57px;
+  --md-sys-typescale-display-large-line-height:64px;
+  --md-sys-typescale-display-large-tracking:-.25px;
+  --md-sys-typescale-display-medium-size:45px;
+  --md-sys-typescale-display-medium-line-height:52px;
+  --md-sys-typescale-display-medium-tracking:0;
+  --md-sys-typescale-display-small-size:36px;
+  --md-sys-typescale-display-small-line-height:44px;
+  --md-sys-typescale-display-small-tracking:0;
+  --md-sys-typescale-headline-large-size:32px;
+  --md-sys-typescale-headline-large-line-height:40px;
+  --md-sys-typescale-headline-medium-size:28px;
+  --md-sys-typescale-headline-medium-line-height:36px;
+  --md-sys-typescale-headline-small-size:24px;
+  --md-sys-typescale-headline-small-line-height:32px;
+  --md-sys-typescale-headline-tracking:0;
+  --md-sys-typescale-title-large-size:22px;
+  --md-sys-typescale-title-large-line-height:28px;
+  --md-sys-typescale-title-large-tracking:0;
+  --md-sys-typescale-title-medium-size:16px;
+  --md-sys-typescale-title-medium-line-height:24px;
+  --md-sys-typescale-title-medium-tracking:.15px;
+  --md-sys-typescale-title-small-size:14px;
+  --md-sys-typescale-title-small-line-height:20px;
+  --md-sys-typescale-title-small-tracking:.1px;
+  --md-sys-typescale-body-large-size:16px;
+  --md-sys-typescale-body-large-line-height:24px;
+  --md-sys-typescale-body-large-tracking:.5px;
+  --md-sys-typescale-body-medium-size:14px;
+  --md-sys-typescale-body-medium-line-height:20px;
+  --md-sys-typescale-body-medium-tracking:.25px;
+  --md-sys-typescale-body-small-size:12px;
+  --md-sys-typescale-body-small-line-height:16px;
+  --md-sys-typescale-body-small-tracking:.4px;
+  --md-sys-typescale-label-large-size:14px;
+  --md-sys-typescale-label-large-line-height:20px;
+  --md-sys-typescale-label-large-tracking:.1px;
+  --md-sys-typescale-label-medium-size:12px;
+  --md-sys-typescale-label-medium-line-height:16px;
+  --md-sys-typescale-label-medium-tracking:.5px;
+  --md-sys-typescale-label-small-size:11px;
+  --md-sys-typescale-label-small-line-height:16px;
+  --md-sys-typescale-label-small-tracking:.5px;
+  /* Title, body and label styles carry a weight of their own: 500 for titles
+     and labels, 400 for body and everything larger. */
+  --md-sys-typescale-title-weight:500;
+  --md-sys-typescale-label-weight:500;
+  --md-sys-typescale-body-weight:400;
+  /* The emphasized set is the same scale at a heavier weight, "best applied
+     to bold, selection, and other areas of emphasis". */
+  --md-sys-typescale-emphasized-weight:700;
 
-  /* Four corners for the whole site. A pill is a control, a card is a thing
-     you can open, a panel is a region, a box is everything small. */
-  --r-pill:10rem; --r-card:36px; --r-panel:18px; --r-box:10px;
+  /* Which style each role in this product resolves to. Every element names a
+     role; a role names an M3 style; nothing names a number. */
+  --f-display:var(--md-sys-typescale-headline-small-size);
+    --l-display:var(--md-sys-typescale-headline-small-line-height);
+    --k-display:var(--md-sys-typescale-headline-tracking);
+  --f-h2:var(--md-sys-typescale-headline-small-size);
+    --l-h2:var(--md-sys-typescale-headline-small-line-height);
+    --k-h2:var(--md-sys-typescale-headline-tracking);
+  --f-h3:var(--md-sys-typescale-title-large-size);
+    --l-h3:var(--md-sys-typescale-title-large-line-height);
+    --k-h3:var(--md-sys-typescale-title-large-tracking);
+  --f-title:var(--md-sys-typescale-title-medium-size);
+    --l-title:var(--md-sys-typescale-title-medium-line-height);
+  --f-body:var(--md-sys-typescale-body-medium-size);
+    --l-body:var(--md-sys-typescale-body-medium-line-height);
+    --k-body:var(--md-sys-typescale-body-medium-tracking);
+  --f-sub:var(--md-sys-typescale-body-small-size);
+    --l-sub:var(--md-sys-typescale-body-small-line-height);
+    --k-sub:var(--md-sys-typescale-body-small-tracking);
+  --f-label:var(--md-sys-typescale-label-large-size);
+    --l-label:var(--md-sys-typescale-label-large-line-height);
+    --k-label:var(--md-sys-typescale-label-large-tracking);
+  --f-caption:var(--md-sys-typescale-label-medium-size);
+    --l-caption:var(--md-sys-typescale-label-medium-line-height);
+    --k-caption:var(--md-sys-typescale-label-medium-tracking);
+  --f-over:var(--md-sys-typescale-label-small-size);
+    --l-over:var(--md-sys-typescale-label-small-line-height);
+    --k-over:var(--md-sys-typescale-label-small-tracking);
+  /* Below the scale on purpose — a 30-minute timetable cell has no room for
+     11px. Documented in DESIGN.md §9. */
+  --f-micro:9px; --l-micro:1.3; --k-micro:.04em;
+
+  /* Shape: the M3 corner scale. Components take the corner their spec gives
+     them — cards medium, chips small, dialogs and sheets extra-large, buttons
+     and search full. */
+  --md-sys-shape-corner-none:0;
+  --md-sys-shape-corner-extra-small:4px;
+  --md-sys-shape-corner-small:8px;
+  --md-sys-shape-corner-medium:12px;
+  --md-sys-shape-corner-large:16px;
+  --md-sys-shape-corner-large-increased:20px;
+  --md-sys-shape-corner-extra-large:28px;
+  --md-sys-shape-corner-full:9999px;
+  --r-pill:var(--md-sys-shape-corner-full);
+  --r-card:var(--md-sys-shape-corner-medium);
+  --r-panel:var(--md-sys-shape-corner-large);
+  --r-box:var(--md-sys-shape-corner-small);
+
+  /* Elevation. M3 raises a surface with a container role rather than with a
+     bigger shadow; the shadows below are only for the components whose specs
+     use them — menus, dialogs, the FAB and the snackbar. */
+  --md-sys-elevation-0:none;
+  --md-sys-elevation-1:0 1px 2px rgba(0,0,0,.30),0 1px 3px 1px rgba(0,0,0,.15);
+  --md-sys-elevation-2:0 1px 2px rgba(0,0,0,.30),0 2px 6px 2px rgba(0,0,0,.15);
+  --md-sys-elevation-3:0 1px 3px rgba(0,0,0,.30),0 4px 8px 3px rgba(0,0,0,.15);
+  --md-sys-elevation-4:0 2px 3px rgba(0,0,0,.30),0 6px 10px 4px rgba(0,0,0,.15);
+  --md-sys-elevation-5:0 4px 4px rgba(0,0,0,.30),0 8px 12px 6px rgba(0,0,0,.15);
+
+  /* Motion, from m3.material.io/styles/motion/easing-and-duration. */
+  --md-sys-motion-easing-standard:cubic-bezier(0.2,0,0,1);
+  --md-sys-motion-easing-standard-decelerate:cubic-bezier(0,0,0,1);
+  --md-sys-motion-easing-standard-accelerate:cubic-bezier(0.3,0,1,1);
+  --md-sys-motion-duration-short1:50ms;  --md-sys-motion-duration-short2:100ms;
+  --md-sys-motion-duration-short3:150ms; --md-sys-motion-duration-short4:200ms;
+  --md-sys-motion-duration-medium1:250ms; --md-sys-motion-duration-medium2:300ms;
+  --md-sys-motion-duration-medium3:350ms; --md-sys-motion-duration-medium4:400ms;
+  --md-sys-motion-duration-long1:450ms;  --md-sys-motion-duration-long2:500ms;
+  --md-sys-motion-duration-long3:550ms;  --md-sys-motion-duration-long4:600ms;
+  --ease:var(--md-sys-motion-easing-standard);
+
+  /* State layers: one overlay, the content's own colour, fixed opacity. */
+  --md-sys-state-hover-opacity:.08;
+  --md-sys-state-focus-opacity:.10;
+  --md-sys-state-pressed-opacity:.10;
+  --md-sys-state-dragged-opacity:.16;
 
   /* Colour comes from the generated Material 3 scheme above: 26 roles, two
      schemes, one source colour. The few compound values a pinned bar needs are

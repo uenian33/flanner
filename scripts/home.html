@@ -31,7 +31,9 @@ __TOKENS__
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
-body{margin:0;background:var(--md-sys-color-surface);color:var(--md-sys-color-on-surface);font:14.4px/1.5 var(--sans);
+body{margin:0;background:var(--md-sys-color-surface);color:var(--md-sys-color-on-surface);
+  font:var(--md-sys-typescale-body-medium-size)/var(--md-sys-typescale-body-medium-line-height) var(--sans);
+  letter-spacing:var(--md-sys-typescale-body-medium-tracking);
   -webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
 a{color:inherit}
 /* ── ground ────────────────────────────────────────────
@@ -49,7 +51,7 @@ a{color:inherit}
 :root[data-theme=dark]{--dotop:.45}
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--dotop:.45}}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  opacity:var(--dotop);transition:opacity .55s var(--ease);
+  opacity:var(--dotop);transition:opacity var(--md-sys-motion-duration-long3) var(--ease);
   background-image:radial-gradient(circle at 1px 1px,
     color-mix(in srgb,var(--md-sys-color-on-surface) 10%,transparent) 1px,transparent 0);
   background-size:26px 26px}
@@ -60,7 +62,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
 svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;
   stroke-linecap:round;stroke-linejoin:round;vertical-align:-.13em}
-:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:3px;border-radius:6px}
+:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:3px;border-radius:var(--md-sys-shape-corner-extra-small)}
 .wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
@@ -76,9 +78,10 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .mark{display:inline-flex;align-items:center;gap:clamp(11px,1.3vw,16px);
   text-decoration:none;white-space:nowrap}
 .wm{display:flex;flex-direction:column;gap:3px;min-width:0}
-.wm b{font-family:var(--title);font-weight:600;font-size:var(--f-display);
+.wm b{font-family:var(--title);font-weight:var(--md-sys-typescale-emphasized-weight);
+  font-size:var(--md-sys-typescale-headline-small-size);
   letter-spacing:var(--k-display);text-transform:uppercase;line-height:1}
-.wm i{font-style:normal;font-size:clamp(8px,0.76vw,9.6px);font-weight:400;
+.wm i{font-style:normal;font-size:var(--md-sys-typescale-label-small-size);font-weight:400;
   letter-spacing:.22em;text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);line-height:1}
 .logo{width:clamp(21px,2.5vw,31px);height:clamp(21px,2.5vw,31px);flex:none;
   stroke:none;fill:none}
@@ -88,8 +91,8 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .hslot{margin-left:auto}
 .locwrap{position:relative;flex:none}
 .loc{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;
-  border-radius:10rem;font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
-  color:var(--md-sys-color-on-surface-variant);white-space:nowrap;transition:.15s var(--ease)}
+  border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
+  color:var(--md-sys-color-on-surface-variant);white-space:nowrap;transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .loc:hover{background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
 .loc[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 .loc svg{width:14px;height:14px}
@@ -98,7 +101,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .tools .loc{min-height:50px;padding:0 18px;border:1px solid var(--md-sys-color-outline)}
 .tools .loc:hover{border-color:var(--md-sys-color-on-surface)}
 .tools .loc[aria-expanded=true]{border-color:var(--md-sys-color-on-surface)}
-.loc .cv{width:12px;height:12px;opacity:.7;transition:transform .18s var(--ease)}
+.loc .cv{width:12px;height:12px;opacity:.7;transition:transform var(--md-sys-motion-duration-short4) var(--ease)}
 .loc[aria-expanded=true] .cv{transform:rotate(180deg)}
 /* The trigger sits at the right edge, so the panel hangs from that edge. On a
    phone the general .sheet rule takes over and spans the column instead. */
@@ -110,8 +113,8 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .opt.find svg{width:15px;height:15px}
 .locnote{margin:12px 0 0;font-size:9.6px;line-height:13.6px;color:var(--md-sys-color-on-surface-variant)}
 .top .sp{flex:1}
-.tbtn{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:10rem;
-  display:grid;place-items:center;font-size:12.8px;transition:.16s var(--ease)}
+.tbtn{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
+  display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .tbtn:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 /* The place control stays on small screens — it is a control now, not a label —
    but the wordmark, the control and the theme toggle will not share one row at
@@ -141,7 +144,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    and finish on the same two lines. The picture crops to whatever height the
    text needs rather than setting its own. */
 .fig{grid-area:1/6/3/13;position:relative;display:block;overflow:hidden;
-  border-radius:0 18px 18px 0;height:100%;
+  border-radius:0 var(--r-card) var(--r-card) 0;height:100%;
   min-height:clamp(300px,27vw,400px);background:var(--md-sys-color-surface-container-low);
   text-decoration:none;touch-action:pan-y}
 /* Laid over the box rather than filling it: as a normal child the picture's
@@ -162,7 +165,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    two line up as a pair rather than as two different labels. */
 .fig .badge{position:absolute;right:18px;top:18px;z-index:2;display:inline-flex;align-items:center;
   background:var(--cat,#fff);color:var(--cat-ink,#000);
-  padding:9px 18px 10px;border-radius:10rem;
+  padding:9px 18px 10px;border-radius:var(--md-sys-shape-corner-full);
   font-size:var(--f-sub);font-weight:700;line-height:1;white-space:nowrap}
 
 .side{grid-area:1/1/3/6;z-index:3;align-self:stretch;
@@ -170,7 +173,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* The panel is the left half of that object, so it carries the white and the
    rounding that the picture cannot. */
 .panel{position:relative;--tuck:0px;background:var(--md-sys-color-surface-container-lowest);
-  border-radius:18px 0 0 18px;padding:clamp(24px,2.6vw,34px);flex:1;
+  border-radius:var(--r-card) 0 0 var(--r-card);padding:clamp(24px,2.6vw,34px);flex:1;
   /* Every slide's panel is as tall as the wordiest one — see sizePanels().
      The actions sit at the bottom of that box rather than floating up under
      a short festival's text. */
@@ -184,15 +187,21 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* The date is the thing people scan for, so it is set as a filled pill in the
    category's colour rather than as one more item in a grey run-on line. */
 .fdate{background:var(--cat,var(--md-sys-color-on-surface));color:var(--cat-ink,var(--md-sys-color-surface-container-lowest));
-  padding:9px 18px 10px;border-radius:10rem;
+  padding:9px 18px 10px;border-radius:var(--md-sys-shape-corner-full);
   font-size:var(--f-sub);font-weight:700;line-height:1;white-space:nowrap}
-.panel h3{margin:0;font-size:clamp(27px,3.1vw,40px);font-weight:700;
-  line-height:1.12;letter-spacing:-.015em}
+/* The one display style on the page — M3 display-small, and headline-medium
+   where the column is too narrow for it. */
+.panel h3{margin:0;font-size:var(--md-sys-typescale-display-small-size);
+  line-height:var(--md-sys-typescale-display-small-line-height);
+  letter-spacing:var(--md-sys-typescale-display-small-tracking);
+  font-weight:var(--md-sys-typescale-emphasized-weight)}
 .panel .fwhere{margin:clamp(10px,1.2vw,14px) 0 0;display:flex;align-items:center;gap:8px;
   font-size:var(--f-body);line-height:var(--l-body);color:var(--md-sys-color-on-surface)}
 .panel .fwhere svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
-.panel .fdesc{margin:clamp(12px,1.3vw,16px) 0 0;font-size:var(--f-body);
-  line-height:1.55;color:var(--md-sys-color-on-surface-variant);max-width:46ch}
+.panel .fdesc{margin:clamp(12px,1.3vw,16px) 0 0;
+  font-size:var(--md-sys-typescale-body-large-size);
+  line-height:var(--md-sys-typescale-body-large-line-height);
+  letter-spacing:var(--md-sys-typescale-body-large-tracking);color:var(--md-sys-color-on-surface-variant);max-width:46ch}
 /* Genres and the top of the bill, as outlined labels: enough to tell a techno
    street party from a jazz weekend without reading the sentence above. */
 /* The bottom margin is a floor, not the whole gap: the actions are pushed to
@@ -200,7 +209,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    the labels touching the rule when a wordy festival leaves no slack. */
 .ftags{list-style:none;display:flex;flex-wrap:wrap;gap:8px;
   margin:clamp(14px,1.5vw,18px) 0 clamp(16px,2vw,24px);padding:0}
-.ftags li{border:1px solid var(--md-sys-color-on-surface);border-radius:10rem;background:var(--md-sys-color-surface-container-lowest);
+.ftags li{border:1px solid var(--md-sys-color-on-surface);border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest);
   color:var(--md-sys-color-on-surface);padding:4px 11px 5px;font-size:var(--f-caption);
   font-weight:700;line-height:1.2;white-space:nowrap;
   /* A headliner's name can be half a sentence — enough of it to recognise. */
@@ -230,24 +239,24 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    touch, where a swipe does the same work. The arrows here follow it. */
 .nav{grid-area:1/6/3/13;align-self:end;justify-self:center;z-index:4;
   display:flex;align-items:center;gap:10px;margin:0 0 16px;
-  padding:6px 8px;border-radius:10rem;
+  padding:6px 8px;border-radius:var(--md-sys-shape-corner-full);
   background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .nav .dots{display:flex;align-items:center;gap:8px}
 .nav .dot{width:8px;height:8px;padding:0;border-radius:50%;
-  background:rgba(255,255,255,.45);transition:.2s var(--ease)}
+  background:rgba(255,255,255,.45);transition:var(--md-sys-motion-duration-short4) var(--ease)}
 .nav .dot:hover{background:rgba(255,255,255,.75)}
-.nav .dot.on{background:#fff;width:22px;border-radius:10rem}
+.nav .dot.on{background:#fff;width:22px;border-radius:var(--md-sys-shape-corner-full)}
 /* The arrows are a pointer-device convenience: on a touch screen the swipe
    across the picture already does it, and the dots are the tap target. */
 .nav .arw{display:none;width:28px;height:28px;border-radius:50%;
-  place-items:center;color:#fff;font-size:13px;transition:.15s var(--ease)}
+  place-items:center;color:#fff;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .nav .arw:hover{background:rgba(255,255,255,.22)}
 @media(hover:hover) and (pointer:fine){.nav .arw{display:grid}}
 
 /* the swap: everything that carries festival identity leaves in the direction
    of travel and the incoming one arrives from the far side */
 .fig img.pic,.side,.fig .lg,.fig .badge{
-  transition:opacity .3s var(--ease),transform .3s var(--ease)}
+  transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium2) var(--ease)}
 .stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{opacity:0}
 .stage.out.back .fig img.pic{transform:scale(1.03) translateX(3%)}
 .stage.out.fwd  .fig img.pic{transform:scale(1.03) translateX(-3%)}
@@ -258,7 +267,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   /* Stacked, picture first — the panel keeps its card here, because on one
      column a bare block of type under a photograph has nothing holding it. */
   .stage{grid-template-columns:minmax(0,1fr);row-gap:0}
-  .fig{grid-area:auto;aspect-ratio:16/10;min-height:0;border-radius:16px 16px 0 0}
+  .fig{grid-area:auto;aspect-ratio:16/10;min-height:0;border-radius:var(--r-card) var(--r-card) 0 0}
   .side{grid-area:auto;align-self:auto}
   .facts .btn{width:100%}
   /* Stacked, the control leaves the picture and sits centred under the card,
@@ -289,7 +298,8 @@ __SETTINGS_CSS__
      one tap away inside. */
   .fig{aspect-ratio:16/11}
   .panel{padding:16px 18px 18px;cursor:pointer}
-  .panel h3{font-size:clamp(21px,5.6vw,26px)}
+  .panel h3{font-size:var(--md-sys-typescale-headline-medium-size);
+    line-height:var(--md-sys-typescale-headline-medium-line-height)}
   .panel .fmore,.panel .fstars,.panel .fdesc,.panel .ftags,.side .facts{display:none}
   .panel .fwhere{margin-top:9px}
   .fline{margin-bottom:9px}
@@ -299,12 +309,12 @@ __SETTINGS_CSS__
     background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);
     -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
     border-bottom:1px solid transparent;opacity:0;pointer-events:none;
-    transition:opacity .26s var(--ease),border-color .26s var(--ease)}
+    transition:opacity var(--md-sys-motion-duration-medium1) var(--ease),border-color var(--md-sys-motion-duration-medium1) var(--ease)}
   body.scrolled header::before{opacity:1;border-bottom-color:var(--md-sys-color-outline-variant)}
   header > *{position:relative;z-index:1}
   .top{padding-bottom:8px;border-bottom:none;gap:10px}
-  .wm b{font-size:clamp(12.3px,3.6vw,15.1px)}
-  .wm i{font-size:7.2px;letter-spacing:.16em}
+  .wm b{font-size:var(--md-sys-typescale-title-large-size)}
+  .wm i{font-size:var(--md-sys-typescale-label-small-size);letter-spacing:.16em}
   .logo{width:23px;height:23px}
 
   /* The two controls sit side by side. The place you are in stays on screen
@@ -314,9 +324,9 @@ __SETTINGS_CSS__
   .hslot .loc{margin:0}
   .hslot .sbox{width:0;margin-left:0;opacity:0;transform:scale(.86);
     pointer-events:none;
-    transition:width .38s cubic-bezier(.22,1,.36,1),
-               margin-left .38s cubic-bezier(.22,1,.36,1),
-               opacity .28s var(--ease),transform .34s var(--ease)}
+    transition:width var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard),
+               margin-left var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard),
+               opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
   body.at-cards .hslot .sbox{width:44px;margin-left:8px;opacity:1;transform:none;
     pointer-events:auto}
   /* Open, the field claims the rest of the row instead of guessing at a
@@ -346,12 +356,12 @@ __NAV_CSS__
 @media(min-width:821px){
   .navhome-m{display:grid;place-content:center;gap:5px;justify-items:center;
     text-decoration:none;position:relative;z-index:1;color:var(--glass-tx);
-    border-radius:21px;padding:14px 0;font-size:8.4px;font-weight:600}
+    border-radius:var(--md-sys-shape-corner-large-increased);padding:14px 0;font-size:8.4px;font-weight:600}
   .navhome-m svg{width:22px;height:22px;stroke:none;fill:none}
   .navhome-m .lbl{display:block}
 }
 @media(prefers-reduced-motion:reduce){
-  .fig img.pic,.side,.fig .lg,.fig .badge{transition:opacity .01ms}
+  .fig img.pic,.side,.fig .lg,.fig .badge{transition:opacity var(--md-sys-motion-duration-short1)}
   .stage.out .fig img.pic{transform:none}
 }
 
@@ -364,13 +374,13 @@ __NAV_CSS__
    as it does. */
 .tools{position:sticky;top:0;z-index:60;display:flex;gap:10px;align-items:center;
   flex-wrap:wrap;margin:0 0 clamp(18px,2.4vw,26px);padding:10px 0;
-  transition:padding .26s var(--ease)}
+  transition:padding var(--md-sys-motion-duration-medium1) var(--ease)}
 /* The bar lives inside a max-width column, so its backdrop is painted by a
    pseudo-element stretched past the gutters rather than by the bar itself. */
 .tools::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
   background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);border-bottom:1px solid transparent;
-  opacity:0;transition:opacity .24s var(--ease),border-color .24s var(--ease);
+  opacity:0;transition:opacity var(--md-sys-motion-duration-medium1) var(--ease),border-color var(--md-sys-motion-duration-medium1) var(--ease);
   pointer-events:none}
 .tools > *{position:relative;z-index:1}
 .tools.stuck{padding:13px 0}
@@ -379,49 +389,49 @@ __NAV_CSS__
 /* the mark only appears once the masthead has scrolled away */
 .toolmark{display:flex;align-items:center;gap:9px;flex:none;text-decoration:none;
   max-width:0;overflow:hidden;opacity:0;
-  transition:max-width .3s var(--ease),opacity .2s var(--ease),margin .3s var(--ease)}
+  transition:max-width var(--md-sys-motion-duration-medium2) var(--ease),opacity var(--md-sys-motion-duration-short4) var(--ease),margin var(--md-sys-motion-duration-medium2) var(--ease)}
 .tools.stuck .toolmark{max-width:220px;opacity:1;margin-right:2px}
 .toolmark svg{width:30px;height:30px;flex:none;stroke:none;fill:none}
 .toolmark .wm{display:flex;flex-direction:column;gap:2px;min-width:0}
-.toolmark .wm i{font-style:normal;font-size:8px;font-weight:400;letter-spacing:.18em;
+.toolmark .wm i{font-style:normal;font-size:var(--md-sys-typescale-label-small-size);font-weight:400;letter-spacing:.18em;
   text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);line-height:1;white-space:nowrap}
-.toolmark b{font-family:var(--title);font-weight:600;font-size:15.2px;letter-spacing:.05em;
+.toolmark b{font-family:var(--title);font-weight:600;font-size:var(--md-sys-typescale-title-medium-size);letter-spacing:.05em;
   text-transform:uppercase;line-height:1;color:var(--md-sys-color-on-surface)}
 .sbox{position:relative;flex:1 1 280px;min-width:0}
 .sbox svg.i{position:absolute;left:17px;top:50%;transform:translateY(-50%);
   width:17px;height:17px;color:var(--md-sys-color-on-surface-variant);pointer-events:none}
-.sbox input{width:100%;height:50px;border-radius:10rem;border:1px solid var(--md-sys-color-outline);
+.sbox input{width:100%;height:50px;border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);
   background:var(--md-sys-color-surface-container-lowest);padding:0 44px 0 44px;font:inherit;font-size:var(--f-body);
-  color:var(--md-sys-color-on-surface);transition:.16s var(--ease)}
+  color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .sbox input::placeholder{color:var(--md-sys-color-on-surface-variant)}
 .sbox input:focus{outline:none;border-color:var(--md-sys-color-on-surface)}
 .sbox .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;
-  border-radius:10rem;display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);font-size:12px}
+  border-radius:var(--md-sys-shape-corner-full);display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);font-size:var(--md-sys-typescale-label-medium-size)}
 .sbox .clr:hover{background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
 .sbox .clr[hidden]{display:none}
 .drop{position:relative;flex:none}
 .trig{display:inline-flex;align-items:center;gap:9px;height:50px;padding:0 20px;
-  border-radius:10rem;border:1px solid var(--md-sys-color-outline);background:var(--md-sys-color-surface-container-lowest);
-  font-size:var(--f-body);font-weight:700;transition:.16s var(--ease);white-space:nowrap}
+  border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);background:var(--md-sys-color-surface-container-lowest);
+  font-size:var(--f-body);font-weight:700;transition:var(--md-sys-motion-duration-short3) var(--ease);white-space:nowrap}
 .trig svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
 .trig:hover{border-color:var(--md-sys-color-on-surface)}
 .trig[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
 .trig[aria-expanded=true] svg.i{color:var(--md-sys-color-surface)}
 .trig .cv{width:12px;height:12px;flex:none;opacity:.7;
-  transition:transform .18s var(--ease)}
+  transition:transform var(--md-sys-motion-duration-short4) var(--ease)}
 .trig[aria-expanded=true] .cv{transform:rotate(180deg)}
 .sheet{position:absolute;top:calc(100% + 8px);right:0;z-index:40;width:max-content;
   max-width:min(92vw,440px);background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
-  border-radius:18px;padding:18px;box-shadow:0 26px 60px -28px rgba(0,0,0,.5);
+  border-radius:var(--md-sys-shape-corner-large);padding:18px;box-shadow:0 26px 60px -28px rgba(0,0,0,.5);
   transform-origin:top right}
 .sheet[hidden]{display:none}
 @starting-style{.sheet{opacity:0;transform:scale(.97) translateY(-4px)}}
-.sheet{transition:opacity .18s var(--ease),transform .18s var(--ease)}
+.sheet{transition:opacity var(--md-sys-motion-duration-short4) var(--ease),transform var(--md-sys-motion-duration-short4) var(--ease)}
 .sheet h4{margin:0 0 14px;font-size:var(--f-caption);letter-spacing:.1em;
   text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);font-weight:700}
 .sheet .opts{display:flex;flex-wrap:wrap;gap:8px}
-.opt{font-size:var(--f-sub);font-weight:600;padding:9px 15px;border-radius:10rem;
-  border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface-variant);transition:.14s var(--ease);
+.opt{font-size:var(--f-sub);font-weight:600;padding:9px 15px;border-radius:var(--md-sys-shape-corner-full);
+  border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease);
   min-height:40px;text-align:left}
 .opt:hover{border-color:var(--md-sys-color-on-surface);color:var(--md-sys-color-on-surface)}
 .opt[aria-pressed=true],.opt[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
@@ -430,7 +440,7 @@ __NAV_CSS__
   margin-top:18px;padding-top:15px;border-top:1px solid var(--md-sys-color-outline-variant)}
 .sheet .foot .lnk{font-size:var(--f-sub);color:var(--md-sys-color-on-surface-variant);font-weight:600;padding:8px 4px}
 .sheet .foot .lnk:hover{color:var(--md-sys-color-on-surface)}
-.sheet .foot .go{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-radius:10rem;padding:11px 24px;
+.sheet .foot .go{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-radius:var(--md-sys-shape-corner-full);padding:11px 24px;
   font-size:var(--f-sub);font-weight:700;min-height:44px}
 
 .dropset{display:contents}
@@ -439,10 +449,10 @@ __NAV_CSS__
    Same height and radius as the two filter triggers so the three read as one
    set of controls rather than a control and a widget. */
 .vseg{display:flex;flex:none;gap:3px;padding:3px;border:1px solid var(--md-sys-color-outline);
-  border-radius:10rem;background:var(--md-sys-color-surface-container-lowest)}
+  border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest)}
 .vseg button{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;
-  border-radius:10rem;font-size:var(--f-sub);font-weight:700;color:var(--md-sys-color-on-surface-variant);
-  transition:background .18s var(--ease),color .18s var(--ease)}
+  border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-sub);font-weight:700;color:var(--md-sys-color-on-surface-variant);
+  transition:background var(--md-sys-motion-duration-short4) var(--ease),color var(--md-sys-motion-duration-short4) var(--ease)}
 .vseg button svg.i{width:17px;height:17px}
 .vseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 .vseg button:hover:not([aria-pressed=true]){color:var(--md-sys-color-on-surface)}
@@ -457,7 +467,7 @@ __NAV_CSS__
 .vseg button[aria-pressed=true]{background:none;color:var(--md-sys-color-surface)}
 .vseg button::before{content:"";position:absolute;left:0;right:0;top:50%;
   transform:translateY(-50%);aspect-ratio:1;border-radius:50%;
-  background:transparent;transition:background .18s var(--ease)}
+  background:transparent;transition:background var(--md-sys-motion-duration-short4) var(--ease)}
 .vseg button[aria-pressed=true]::before{background:var(--md-sys-color-on-surface)}
 .vseg button svg.i{position:relative;z-index:1}
 @media(min-width:821px){
@@ -505,14 +515,16 @@ body[data-view=cal] .empty{display:none}
 .calmonth{position:relative}
 .calpick{display:inline-flex;align-items:center;gap:9px;padding:6px 4px;
   font-family:var(--title);font-weight:700;letter-spacing:.01em;
-  font-size:clamp(19.2px,2.72vw,27.2px);text-transform:uppercase;color:var(--md-sys-color-on-surface)}
+  font-size:var(--md-sys-typescale-headline-small-size);
+  line-height:var(--md-sys-typescale-headline-small-line-height);
+  text-transform:uppercase;color:var(--md-sys-color-on-surface)}
 .calpick .cv{width:15px;height:15px;opacity:.65;
-  transition:transform .18s var(--ease)}
+  transition:transform var(--md-sys-motion-duration-short4) var(--ease)}
 .calpick[aria-expanded=true] .cv{transform:rotate(180deg)}
 .calarrows{display:flex;gap:6px;flex:none}
 .calarrows button{width:40px;height:40px;border:1px solid var(--md-sys-color-outline);
-  border-radius:10rem;display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);
-  transition:.15s var(--ease)}
+  border-radius:var(--md-sys-shape-corner-full);display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);
+  transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .calarrows button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
 .calarrows .i{width:17px;height:17px}
 /* ── the month picker ──────────────────────────────────
@@ -523,14 +535,14 @@ dialog.caldlg{border:none;padding:0;background:transparent;max-width:none;
   max-height:none;width:100%;height:100%;overflow:visible;color:var(--md-sys-color-on-surface)}
 dialog.caldlg::backdrop{background:rgba(4,6,9,.55);
   -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
-  opacity:0;transition:opacity .3s var(--ease)}
+  opacity:0;transition:opacity var(--md-sys-motion-duration-medium2) var(--ease)}
 dialog.caldlg.in::backdrop{opacity:1}
 .calbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
   transform:translate(-50%,16px);opacity:0;width:min(420px,calc(100vw - 24px));
   max-height:min(78svh,640px);overflow:auto;overscroll-behavior:contain;
-  background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);border-radius:22px;
-  padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:0 26px 70px -18px rgba(0,0,0,.5);
-  transition:opacity .28s var(--ease),transform .36s var(--ease)}
+  background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large-increased);
+  padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:var(--md-sys-elevation-3);
+  transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
 dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 @media(min-width:700px){
   .calbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
@@ -538,19 +550,19 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 }
 .calboxhead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
   justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--md-sys-color-surface-container-lowest)}
-.calboxhead h2{margin:0;font-family:var(--title);font-weight:600;font-size:17.6px;
+.calboxhead h2{margin:0;font-family:var(--title);font-weight:600;font-size:var(--md-sys-typescale-title-medium-size);
   letter-spacing:.02em;text-transform:uppercase}
 .yrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:4px 0 14px}
-.yrow b{font-family:var(--title);font-size:17.6px;letter-spacing:.02em}
-.yrow button{width:38px;height:38px;border:1px solid var(--md-sys-color-outline);border-radius:10rem;
-  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:.15s var(--ease)}
+.yrow b{font-family:var(--title);font-size:var(--md-sys-typescale-title-medium-size);letter-spacing:.02em}
+.yrow button{width:38px;height:38px;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
+  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .yrow button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
 .yrow .i{width:15px;height:15px}
 .mons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .mons button{position:relative;min-height:46px;border:1px solid var(--md-sys-color-outline);
-  border-radius:14px;font-size:11.6px;font-weight:700;color:var(--md-sys-color-on-surface);
-  transition:.15s var(--ease)}
+  border-radius:var(--md-sys-shape-corner-medium);font-size:var(--md-sys-typescale-label-medium-size);font-weight:700;color:var(--md-sys-color-on-surface);
+  transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .mons button:hover{border-color:var(--md-sys-color-on-surface)}
 .mons button[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
   border-color:var(--md-sys-color-on-surface)}
@@ -559,7 +571,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   transform:translateX(-50%);width:4px;height:4px;border-radius:50%;
   background:var(--md-sys-color-on-surface)}
 .mons button[aria-checked=true].dot::after{background:var(--md-sys-color-surface)}
-.calhint{margin:12px 0 0;text-align:center;font-size:10px;color:var(--md-sys-color-on-surface-variant)}
+.calhint{margin:12px 0 0;text-align:center;font-size:var(--md-sys-typescale-label-small-size);color:var(--md-sys-color-on-surface-variant)}
 @media(hover:hover){.calhint{display:none}}
 
 /* ── the day panel ─────────────────────────────────────*/
@@ -575,22 +587,22 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .calhead span{font-size:var(--f-caption);letter-spacing:.08em;text-transform:uppercase;
   color:var(--md-sys-color-on-surface-variant);font-weight:700;text-align:center}
 .calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
-  border:1px solid var(--md-sys-color-outline);border-radius:16px;overflow:hidden;
+  border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large);overflow:hidden;
   background:var(--md-sys-color-outline);gap:1px}
 .cell{background:var(--md-sys-color-surface-container-lowest);min-height:88px;padding:6px 5px;display:flex;
   flex-direction:column;gap:3px}
 .cell.out{background:var(--md-sys-color-surface)}
-.cell .dn{font-size:10px;font-weight:700;color:var(--md-sys-color-on-surface-variant);padding-left:2px}
+.cell .dn{font-size:var(--md-sys-typescale-label-small-size);font-weight:700;color:var(--md-sys-color-on-surface-variant);padding-left:2px}
 .cell.has .dn{color:var(--md-sys-color-on-surface)}
 /* A run of days reads as one bar: square edges in the middle, rounded only
    where the festival actually starts and ends. */
 .ev{position:relative;display:block;min-height:24px;padding:3px 6px;margin:0 -5px;
   background:color-mix(in srgb,var(--cat,var(--md-sys-color-on-surface)) 55%,var(--md-sys-color-surface-container-lowest));
   border-left:3px solid transparent;text-decoration:none;
-  font-size:12.5px;font-weight:700;line-height:1.3;color:var(--md-sys-color-on-surface)}
-.ev.st{margin-left:0;border-radius:6px 0 0 6px;border-left-color:var(--cat,var(--md-sys-color-on-surface))}
-.ev.en{margin-right:0;border-radius:0 6px 6px 0}
-.ev.st.en{border-radius:6px}
+  font-size:var(--md-sys-typescale-label-medium-size);font-weight:700;line-height:1.3;color:var(--md-sys-color-on-surface)}
+.ev.st{margin-left:0;border-radius:var(--md-sys-shape-corner-extra-small) 0 0 var(--md-sys-shape-corner-extra-small);border-left-color:var(--cat,var(--md-sys-color-on-surface))}
+.ev.en{margin-right:0;border-radius:0 var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) 0}
+.ev.st.en{border-radius:var(--md-sys-shape-corner-extra-small)}
 .cell.has:hover .ev{background:color-mix(in srgb,var(--cat,var(--md-sys-color-on-surface)) 80%,var(--md-sys-color-surface-container-lowest))}
 .ev{pointer-events:none}
 /* A day cell is far too narrow for a festival name, so the label is laid over
@@ -605,11 +617,11 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
    so neither needs the width that the rest of the page was saving. These sit
    above the page's own small sizes on purpose. */
 @media(max-width:620px){
-  .calhead span{font-size:11px;letter-spacing:.04em}
+  .calhead span{font-size:var(--md-sys-typescale-label-small-size);letter-spacing:.04em}
   .cell{min-height:70px;padding:5px 4px}
-  .cell .dn{font-size:12px}
+  .cell .dn{font-size:var(--md-sys-typescale-label-medium-size)}
   .ev{min-height:22px;padding:2px 4px;border-left-width:3px}
-  .ev span{font-size:12px;left:4px;width:calc(var(--span,1) * 100% - 8px)}
+  .ev span{font-size:var(--md-sys-typescale-label-medium-size);left:4px;width:calc(var(--span,1) * 100% - 8px)}
 }
 
 /* ── compact tiles ─────────────────────────────────────
@@ -621,7 +633,8 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .grid.tile .card .lg img{height:clamp(24px,3vw,30px)}
 .grid.tile .card .body{padding:14px 16px 16px;gap:0}
 .grid.tile .card .ttl{padding-top:0}
-.grid.tile .card h4{font-size:clamp(12.8px,1.2vw,15.2px);line-height:1.35}
+.grid.tile .card h4{font-size:var(--md-sys-typescale-title-medium-size);
+  line-height:var(--md-sys-typescale-title-medium-line-height)}
 .grid.tile .card .where{margin-top:4px}
 .grid.tile .card .offi,.grid.tile .card .figs,.grid.tile .card .stars,
 .grid.tile .card .acts,.grid.tile .card .cats{display:none}
@@ -630,7 +643,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 /* The compact tile has no notch — the picture is too small to carry one — so
    the category chip is where its colour goes instead. */
 .grid.tile .card .kind{display:inline-block;margin-top:10px;padding:4px 11px;
-  border-radius:10rem;font-size:11px;font-weight:700;letter-spacing:.04em;
+  border-radius:var(--md-sys-shape-corner-full);font-size:var(--md-sys-typescale-label-small-size);font-weight:700;letter-spacing:.04em;
   background:var(--cat,var(--md-sys-color-surface-container-high));color:var(--cat-ink,var(--md-sys-color-on-surface-variant));width:max-content}
 /* The whole tile is the target, since the buttons are gone. */
 .grid.tile .card{cursor:pointer}
@@ -658,13 +671,13 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   .toolmark{grid-area:mark;max-width:none;opacity:1}
   .tools.stuck .toolmark{max-width:none}
   .tools .sbox{grid-area:search;flex:none;width:44px;justify-self:end;
-    transition:width .38s cubic-bezier(.22,1,.36,1)}
+    transition:width var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-standard)}
   .tools .sbox.open{width:min(100%,calc(100vw - 96px))}
-  .sbox input{height:44px;padding:0 16px 0 38px;font-size:12px}
+  .sbox input{height:44px;padding:0 16px 0 38px;font-size:var(--md-sys-typescale-label-medium-size)}
   .sbox:not(.open) input{padding:0;color:transparent;cursor:pointer}
   .sbox:not(.open) input::placeholder{color:transparent}
   .sbox svg.i{left:50%;transform:translate(-50%,-50%);
-    transition:left .3s var(--ease),transform .3s var(--ease)}
+    transition:left var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium2) var(--ease)}
   .sbox.open svg.i{left:14px;transform:translate(0,-50%)}
   .sbox .clr{display:none}
   /* Three equal thirds of the column. At this width the icon is the first
@@ -676,7 +689,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
      the word is the part that must survive: every piece around it is trimmed
      until "Upcoming" fits whole. */
   .trig{width:100%;min-width:0;justify-content:center;gap:3px;padding:0 4px;
-    font-size:10px}
+    font-size:var(--md-sys-typescale-label-small-size)}
   .trig svg.i{width:14px;height:14px}
   .trig .cv{width:11px;height:11px}
   .trig > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -686,14 +699,14 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   .vseg button .lbl{display:none}
   /* Two per row is the point of the compact view on a phone. */
   .grid.tile{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .grid.tile .card{border-radius:18px}
+  .grid.tile .card{border-radius:var(--md-sys-shape-corner-large)}
   .grid.tile .card .body{padding:11px 12px 13px}
   /* Two to a row leaves no space for the full 18/27, but nothing that is a
      sentence goes under 14px — the city's listing holds 16 for its meta and
      this is the same job at half the width. */
-  .grid.tile .card h4{font-size:12.8px}
-  .grid.tile .card .when{font-size:11.2px;line-height:1.5;margin-top:6px}
-  .grid.tile .card .where{font-size:11.2px;line-height:1.5}
+  .grid.tile .card h4{font-size:var(--md-sys-typescale-label-medium-size)}
+  .grid.tile .card .when{font-size:var(--md-sys-typescale-label-small-size);line-height:1.5;margin-top:6px}
+  .grid.tile .card .where{font-size:var(--md-sys-typescale-label-small-size);line-height:1.5}
   .grid.tile .card .kind{font-size:9.6px;padding:3px 9px;margin-top:8px}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
@@ -707,9 +720,9 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   margin:0 0 clamp(16px,2vw,22px)}
 .active:empty{display:none}
 .active .tag{display:inline-flex;align-items:center;gap:7px;font-size:var(--f-caption);
-  font-weight:700;padding:7px 8px 7px 14px;border-radius:10rem;background:var(--md-sys-color-surface-container-high);
+  font-weight:700;padding:7px 8px 7px 14px;border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-high);
   color:var(--md-sys-color-on-surface)}
-.active .tag button{width:20px;height:20px;border-radius:10rem;display:grid;place-items:center;
+.active .tag button{width:20px;height:20px;border-radius:var(--md-sys-shape-corner-full);display:grid;place-items:center;
   font-size:9.6px;color:var(--md-sys-color-on-surface-variant)}
 .active .tag button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 
@@ -721,8 +734,9 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .mgroup{margin-bottom:clamp(28px,4vw,46px)}
 .mgroup[hidden]{display:none}
 .mhead{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-.mhead h3{margin:0;font-family:var(--title);font-weight:700;
-  font-size:calc(var(--f-h2) * .8);
+.mhead h3{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-emphasized-weight);
+  font-size:var(--md-sys-typescale-title-large-size);
+  line-height:var(--md-sys-typescale-title-large-line-height);
   text-transform:uppercase;letter-spacing:.02em;line-height:1;white-space:nowrap}
 .mhead .ct{font-size:var(--f-label);line-height:var(--l-label);letter-spacing:var(--k-label);
   color:var(--md-sys-color-on-surface-variant);white-space:nowrap}
@@ -735,10 +749,10 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 /* The festival's own colour is confined to the label on the picture. The card
    underneath is the site's surface, so a row of cards reads as one list rather
    than as a set of differently tinted objects. */
-.card{background:var(--md-sys-color-surface-container-lowest);border-radius:36px;overflow:hidden;display:flex;
-  flex-direction:column;transition:transform .28s var(--ease),box-shadow .28s var(--ease)}
+.card{background:var(--md-sys-color-surface-container-lowest);border-radius:var(--r-card);overflow:hidden;display:flex;
+  flex-direction:column;transition:transform var(--md-sys-motion-duration-medium2) var(--ease),box-shadow var(--md-sys-motion-duration-medium2) var(--ease)}
 .card[hidden]{display:none}
-.card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -22px rgba(0,0,0,.5)}
+.card:hover{transform:translateY(-2px);box-shadow:var(--md-sys-elevation-2)}
 .card.past .shot img.pic{filter:grayscale(.8) contrast(.95)}
 
 .card .shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--md-sys-color-surface-container-low)}
@@ -767,8 +781,8 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .ttl h4{flex:1;min-width:0}
 .offi{position:relative;flex:none;display:inline-flex;align-items:center;gap:5px;font-size:var(--f-caption);
   letter-spacing:var(--k-caption);font-weight:700;
-  color:var(--md-sys-color-on-surface-variant);text-decoration:none;border:1.5px solid var(--md-sys-color-outline);border-radius:10rem;
-  padding:5px 11px;margin-top:1px;white-space:nowrap;transition:.16s var(--ease)}
+  color:var(--md-sys-color-on-surface-variant);text-decoration:none;border:1.5px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
+  padding:5px 11px;margin-top:1px;white-space:nowrap;transition:var(--md-sys-motion-duration-short3) var(--ease)}
 /* the pill stays visually light beside the title, but its hit area is
    expanded to the 44pt minimum both HIG and Material ask for */
 .offi::after{content:'';position:absolute;inset:-5px -6px}
@@ -778,23 +792,30 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .ttl{padding-top:24px}
 /* The name is what a reader scans for, so it steps up two rungs from the
    14.4px the rest of the card runs at rather than sharing their size. */
-.body h4{margin:0;font-family:var(--sans);font-size:20px;line-height:1.25;
-  letter-spacing:normal;text-transform:none;font-weight:700;color:var(--md-sys-color-on-surface)}
-.when{font-size:14.4px;line-height:21.6px;color:var(--md-sys-color-on-surface);font-weight:400;
+.body h4{margin:0;font-family:var(--sans);
+  font-size:var(--md-sys-typescale-title-large-size);
+  line-height:var(--md-sys-typescale-title-large-line-height);
+  letter-spacing:var(--md-sys-typescale-title-large-tracking);
+  text-transform:none;font-weight:var(--md-sys-typescale-emphasized-weight);
+  color:var(--md-sys-color-on-surface)}
+.when{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface);font-weight:400;
   font-variant-numeric:tabular-nums}
 /* The date and the place are consecutive lines of one address on their card,
    not two blocks — so this one closes the stack gap rather than adding to it. */
-.where{font-size:14.4px;line-height:21.6px;color:var(--md-sys-color-on-surface-variant);margin-top:-12px}
-.stars{font-size:14.4px;line-height:21.6px;color:var(--md-sys-color-on-surface-variant)}
+.where{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface-variant);margin-top:-12px}
+.stars{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface-variant)}
 .stars b{color:var(--md-sys-color-on-surface);font-weight:700}
-.cats{font-size:12.8px;line-height:19.2px;font-weight:700;color:var(--md-sys-color-on-surface)}
-.figs{display:flex;gap:18px;font-size:12.8px;line-height:19.2px;color:var(--md-sys-color-on-surface-variant)}
+.cats{font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;font-weight:700;color:var(--md-sys-color-on-surface)}
+.figs{display:flex;gap:18px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;color:var(--md-sys-color-on-surface-variant)}
 .figs b{color:var(--md-sys-color-on-surface);font-weight:700;font-variant-numeric:tabular-nums}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  white-space:nowrap;font-size:var(--f-body);font-weight:700;
-  letter-spacing:var(--k-label);padding:12px 20px;border-radius:10rem;border:1.5px solid var(--md-sys-color-on-surface);text-decoration:none;
-  transition:.16s var(--ease);min-height:44px;color:var(--md-sys-color-on-surface)}
+  white-space:nowrap;font-size:var(--md-sys-typescale-label-large-size);
+  line-height:var(--md-sys-typescale-label-large-line-height);
+  letter-spacing:var(--md-sys-typescale-label-large-tracking);
+  font-weight:var(--md-sys-typescale-emphasized-weight);
+  letter-spacing:var(--k-label);padding:12px 20px;border-radius:var(--md-sys-shape-corner-full);border:1.5px solid var(--md-sys-color-on-surface);text-decoration:none;
+  transition:var(--md-sys-motion-duration-short3) var(--ease);min-height:44px;color:var(--md-sys-color-on-surface)}
 /* Buttons are ink on paper or paper on ink — never the category's colour.
    Colour is how a label is read at a glance, and a page that uses it for the
    buttons too has spent it. */
@@ -812,7 +833,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   line-height:var(--l-body)}
 
 __FOOTER_CSS__
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:var(--md-sys-motion-duration-short1)!important;transition-duration:var(--md-sys-motion-duration-short1)!important}}
 </style>
 </head>
 <body id="top" class="fx-shell">
@@ -841,7 +862,7 @@ __FOOTER_CSS__
 <symbol id="i-left" viewBox="0 0 24 24"><path d="m14.4 6-6 6 6 6"/></symbol>
 <symbol id="i-right" viewBox="0 0 24 24"><path d="m9.6 6 6 6-6 6"/></symbol>
 <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.4 6.4 11.2 11.2M17.6 6.4 6.4 17.6"/></symbol>
-<symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10.4c0 5-7 11-7 11s-7-6-7-11a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10.2" r="2.6"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10.4c0 5-7 11-7 var(--md-sys-motion-duration-long4)-7-6-7-11a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10.2" r="2.6"/></symbol>
 <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9.6 6 6 6-6"/></symbol>
 <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.4" y="3.4" width="7.2" height="7.2" rx="2"/><rect x="13.4" y="3.4" width="7.2" height="7.2" rx="2"/><rect x="3.4" y="13.4" width="7.2" height="7.2" rx="2"/><rect x="13.4" y="13.4" width="7.2" height="7.2" rx="2"/></symbol>
 <symbol id="i-rows" viewBox="0 0 24 24"><path d="M3.6 6.4h16.8M3.6 12h16.8M3.6 17.6h16.8"/></symbol>

@@ -24,7 +24,7 @@ __FONTCSS__
   --line:#d6d6d6; --line2:#c4c4c4;
   --sans:Arial,Helvetica,"Helvetica Neue",sans-serif;
   --title:var(--sans);
-  --ease:cubic-bezier(.22,1,.36,1);
+  --ease:var(--md-sys-motion-easing-standard);
   --safe-b:env(safe-area-inset-bottom,0px);
 
   --f-display:clamp(27.2px,4.16vw,41.6px);   --k-display:.008em;
@@ -79,7 +79,7 @@ body::after{
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;
   stroke-linecap:round;stroke-linejoin:round;vertical-align:-.13em}
-:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:3px;border-radius:6px}
+:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:3px;border-radius:var(--md-sys-shape-corner-extra-small)}
 .wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
@@ -96,14 +96,14 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .loc{font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
   color:var(--md-sys-color-on-surface-variant);white-space:nowrap}
 .top .sp{flex:1}
-.tbtn{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:10rem;
-  display:grid;place-items:center;font-size:12.8px;transition:.16s var(--ease)}
+.tbtn{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
+  display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .tbtn:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 @media(max-width:560px){.top .div,.loc{display:none}}
 
 .back{display:inline-flex;align-items:center;gap:8px;font-size:var(--f-label);font-weight:650;
   color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:10px 0;margin-bottom:6px;
-  transition:.15s var(--ease)}
+  transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .back:hover{color:var(--md-sys-color-on-surface)}
 .back svg{width:15px;height:15px}
 
@@ -124,12 +124,12 @@ article li{position:relative;margin:0 0 10px;padding-left:20px;color:var(--md-sy
 article li::before{content:"";position:absolute;left:2px;top:.62em;width:5px;height:5px;
   border-radius:50%;background:var(--md-sys-color-on-surface-variant)}
 .lead{font-size:var(--f-title);line-height:1.5;color:var(--md-sys-color-on-surface)}
-.callout{margin:0 0 20px;padding:18px 20px;border-radius:14px;background:var(--md-sys-color-surface-container-lowest);
+.callout{margin:0 0 20px;padding:18px 20px;border-radius:var(--md-sys-shape-corner-medium);background:var(--md-sys-color-surface-container-lowest);
   border:1px solid var(--md-sys-color-outline)}
 .callout p:last-child{margin:0}
 
 __FOOTER_CSS__
-@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:var(--md-sys-motion-duration-short1)!important;transition-duration:var(--md-sys-motion-duration-short1)!important}}
 </style>
 </head>
 <body class="fx-shell">
