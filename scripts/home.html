@@ -597,12 +597,16 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .ev span{position:absolute;left:6px;right:auto;top:50%;transform:translateY(-50%);
   z-index:2;pointer-events:none;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;width:calc(var(--span,1) * 100% - 12px)}
+/* The grid is the one place the 80% scale went too far: a seventh of a phone
+   screen is narrow, but a date is two digits and a weekday is three letters,
+   so neither needs the width that the rest of the page was saving. These sit
+   above the page's own small sizes on purpose. */
 @media(max-width:620px){
-  .calhead span{font-size:7.6px;letter-spacing:.04em}
-  .cell{min-height:62px;padding:4px 3px}
-  .cell .dn{font-size:8.8px}
-  .ev{min-height:16px;padding:2px 4px;border-left-width:3px}
-  .ev span{font-size:7.6px;left:4px;width:calc(var(--span,1) * 100% - 8px)}
+  .calhead span{font-size:11px;letter-spacing:.04em}
+  .cell{min-height:66px;padding:5px 4px}
+  .cell .dn{font-size:12px}
+  .ev{min-height:18px;padding:2px 4px;border-left-width:3px}
+  .ev span{font-size:11px;left:4px;width:calc(var(--span,1) * 100% - 8px)}
 }
 
 /* ── compact tiles ─────────────────────────────────────
