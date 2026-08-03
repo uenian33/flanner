@@ -107,9 +107,16 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .loc:hover{background:var(--panel2);color:var(--tx)}
 .loc[aria-expanded=true]{background:var(--tx);color:var(--bg)}
 .loc svg{width:14px;height:14px}
+/* Riding the pinned bar it stands next to 50px pills, so it takes their
+   height and their outline rather than reading as a smaller stray control. */
+.tools .loc{min-height:50px;padding:0 18px;border:1px solid var(--line2)}
+.tools .loc:hover{border-color:var(--tx)}
+.tools .loc[aria-expanded=true]{border-color:var(--tx)}
 .loc .cv{width:12px;height:12px;opacity:.7;transition:transform .18s var(--ease)}
 .loc[aria-expanded=true] .cv{transform:rotate(180deg)}
-.locsheet{left:0;right:auto;max-width:min(92vw,320px)}
+/* The trigger sits at the right edge, so the panel hangs from that edge. On a
+   phone the general .sheet rule takes over and spans the column instead. */
+.locsheet{right:0;left:auto;max-width:min(92vw,320px)}
 .locsheet .opts{flex-direction:column;align-items:stretch}
 .locsheet .opt{width:100%}
 .opt.find{display:flex;align-items:center;gap:9px;width:100%;margin-top:10px;
@@ -654,6 +661,10 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
   .sheet{left:0;right:0;width:auto;max-width:none}
+  /* .locwrap stays position:relative for the pointer-device anchoring, so the
+     generic left:0/right:0 would span the trigger rather than the column. The
+     place sheet gets an explicit width hanging off the right edge instead. */
+  .locsheet{left:auto;right:0;width:min(84vw,300px);max-width:none}
 }
 .active{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
   margin:0 0 clamp(16px,2vw,22px)}
@@ -1266,6 +1277,7 @@ const tools = $('#tools');
    above it collapses, so the measurement cannot feed back into the layout. */
 const headEl = document.querySelector('header');
 function readStuck() {
+  const wasStuck = tools.classList.contains('stuck');
   /* On a phone the masthead is sticky too, so the toolbar pins beneath it
      rather than at zero. Publishing the measured height keeps the offset
      honest when the bar's own contents change size. */
@@ -1278,6 +1290,7 @@ function readStuck() {
   tools.classList.toggle('stuck', top <= h + 1);
   /* Joined means resting on the masthead, not merely scrolled past it. */
   document.body.classList.toggle('bars-joined', phone && Math.abs(top - h) <= 1.5);
+  if (tools.classList.contains('stuck') !== wasStuck && window.placeControls) placeControls();
 }
 addEventListener('scroll', readStuck, {passive: true});
 addEventListener('resize', readStuck, {passive: true});
@@ -1528,7 +1541,9 @@ document.addEventListener('keydown', e => {
     scrollTo({top: Math.max(0, el.getBoundingClientRect().top + scrollY - 90), behavior: 'smooth'});
   };
   $('#nTop').onclick = () => { setActive('nTop'); scrollTo({top: 0, behavior: 'smooth'}); };
-  $('#nFest').onclick = () => goto('.months', 'nFest');
+  /* The toolbar is where the festivals section begins in every view; .months
+     is hidden outright when the calendar is showing. */
+  $('#nFest').onclick = () => goto('#tools', 'nFest');
 
   /* Whichever section owns the middle of the screen is the one you are on. */
   if ('IntersectionObserver' in window) {
@@ -1554,10 +1569,19 @@ document.addEventListener('keydown', e => {
      pointer device — the same element, moved, rather than two of them. */
   const phone = matchMedia('(max-width:620px)');
   const slot = $('#hslot'), bar = $('#tools'), field = document.querySelector('.sbox');
+  const loc = document.querySelector('.locwrap');
+  window.placeControls = () => place();
   const place = () => {
     const host = phone.matches ? slot : bar;
     if (field.parentElement !== host) {
       phone.matches ? host.appendChild(field) : host.insertBefore(field, host.children[1]);
+    }
+    /* The masthead is sticky on a phone, so the selector stays put there. On a
+       pointer device the masthead scrolls off and the pinned bar is the only
+       thing left, so the selector rides along rather than disappearing. */
+    if (loc) {
+      const lhost = (!phone.matches && bar.classList.contains('stuck')) ? bar : slot;
+      if (loc.parentElement !== lhost) lhost.appendChild(loc);
     }
   };
   phone.addEventListener('change', place);
@@ -1608,6 +1632,79 @@ document.addEventListener('keydown', e => {
   $('#setClose').onclick = close;
   dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
   dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
+})();
+
+/* ── section snapping ──────────────────────────────────
+   The highlight and the festivals read as two screens, so the page settles on
+   one or the other rather than halfway between. This waits for a gesture to
+   finish and then commits, instead of fighting the scroll while it happens —
+   hijacking the wheel is what makes a page feel broken rather than app-like.
+
+   The two thresholds are deliberately far apart: coming down, 40% of the way
+   is enough to commit; going back up, you have to return above 60% before it
+   lets go. That gap is what makes a small scroll fall back to where it started
+   and a committed one stay put, so switching sections takes a real gesture. */
+(() => {
+  const tools = $('#tools');
+  if (!tools || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const DOWN = 0.35, UP = 0.65, QUIET = 60;
+  let timer = 0, last = scrollY, touching = false, cooling = false, raf = 0;
+
+  const anchor = () => tools.offsetTop;
+
+  /* The platform's smooth scroll is tuned for jumping across a document and
+     takes about half a second to cross a few hundred pixels, which is what
+     read as lag. This is a short ease-out sized to the distance — the move is
+     over before it can feel like waiting. */
+  function glide(to) {
+    const from = scrollY, d = to - from;
+    if (!d) return;
+    const dur = Math.min(340, Math.max(150, Math.abs(d) * 0.4));
+    const t0 = performance.now();
+    cancelAnimationFrame(raf);
+    cooling = true;
+    const done = () => { cooling = false; last = scrollY; };
+    const step = now => {
+      const pr = Math.min(1, (now - t0) / dur);
+      scrollTo(0, from + d * (1 - Math.pow(1 - pr, 3)));
+      if (pr < 1) raf = requestAnimationFrame(step); else done();
+    };
+    raf = requestAnimationFrame(step);
+    /* A backgrounded tab serves no frames, and without this the lock would
+       latch and the page would never settle again. */
+    setTimeout(() => { if (cooling) { cancelAnimationFrame(raf); scrollTo(0, to); done(); } },
+      dur + 120);
+  }
+
+  const settle = () => {
+    if (touching || cooling) return;
+    if (document.querySelector('dialog[open]')) return;
+    if (document.activeElement && document.activeElement.closest('input,textarea')) return;
+
+    const b = anchor();
+    const y = scrollY;
+    if (b < 80 || y <= 0 || y >= b) return;      /* already on one or the other */
+
+    const down = y > last;
+    const ratio = y / b;
+    const target = down ? (ratio >= DOWN ? b : 0) : (ratio >= UP ? b : 0);
+    if (Math.round(target) === Math.round(y)) return;
+    glide(target);
+  };
+
+  addEventListener('scroll', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { settle(); last = scrollY; }, QUIET);
+  }, {passive: true});
+
+  /* A finger still on the glass is a gesture in progress, not a resting page. */
+  addEventListener('touchstart', () => { touching = true; }, {passive: true});
+  addEventListener('touchend', () => {
+    touching = false;
+    clearTimeout(timer);
+    timer = setTimeout(() => { settle(); last = scrollY; }, QUIET);
+  }, {passive: true});
 })();
 
 /* ── calendar behaviour ────────────────────────────────*/
