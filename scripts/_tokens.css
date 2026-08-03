@@ -274,7 +274,7 @@
   background:color-mix(in srgb,var(--md-sys-color-primary) 42%,var(--md-sys-color-surface));
   -webkit-mask:var(--wave-src) repeat-x center/56px 16px;
           mask:var(--wave-src) repeat-x center/56px 16px}
-:root{--wave-src:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='16' viewBox='0 0 56 16'%3E%3Cpath d='M0 8q7 -6 14 0t14 0 14 0 14 0' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")}
+:root{--wave-src:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='16' viewBox='0 0 56 16'%3E%3Cpath d='M0 8q7 -6 14 0t14 0 14 0 14 0' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E")}
 
 /* ── emphasized type ───────────────────────────────────
    "Material components don't use emphasized type styles by default. To use an
