@@ -640,26 +640,6 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .sheet .foot .lnk:hover{color:var(--tx)}
 .sheet .foot .go{background:var(--tx);color:var(--bg);border-radius:10rem;padding:11px 24px;
   font-size:var(--f-sub);font-weight:700;min-height:44px}
-/* ── the banner's own clock ────────────────────────────
-   A dim wash that creeps across the picture over the dwell, so the next slide
-   is never a surprise. It scales rather than resizes, which keeps it off the
-   layout path, and it fades out whenever the rotation is paused.
-
-   The soft leading edge is what stops it reading as a black rectangle sliding
-   in: the shade is dark where it has been and dissolves into the picture where
-   it is going. Scaling would stretch that edge along with the fill, so the
-   sheet is twice the width of the picture and slides instead — a translation
-   leaves the feather the same 64px the whole way across. */
-.reelbar{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;
-  opacity:0;transition:opacity .45s var(--ease)}
-.reelbar.on{opacity:1}
-/* Parked one picture-width to the left, so at rest only the feather's tail
-   reaches the left edge. Sliding half its own width carries the fill across. */
-.reelbar i{position:absolute;top:0;bottom:0;left:-100%;width:200%;
-  transform:translateX(0);
-  background:linear-gradient(90deg,rgba(0,0,0,.34) 0,rgba(0,0,0,.34) calc(50% - 64px),
-    rgba(0,0,0,0) 50%,rgba(0,0,0,0) 100%)}
-@media(prefers-reduced-motion:reduce){.reelbar{display:none}}
 
 .dropset{display:contents}
 
@@ -1492,7 +1472,6 @@ if (reel.length) {
     <a class="fig" href="${esc(f.planner)}" aria-label="Open the ${esc(f.name)} planner">
       <img class="pic" src="${f.promoSrc}" alt="">
       <span class="veil"></span>
-      <span class="reelbar" id="reelBar" aria-hidden="true"><i></i></span>
       <span class="badge">${esc(catOf(f).label)}</span>
       <span class="lg"><img src="${f.logoSrc}" alt="${esc(f.name)}"></span>
     </a>
@@ -1586,7 +1565,6 @@ if (reel.length) {
     /* Colour comes from the category, the same as on a card. */
     stage.dataset.cat = catOf(f).id;
     stage.innerHTML = shell(f);
-    armBar(canRun());
     holdHeight();
     const pv = $('#prev'), nx = $('#next');
     if (pv) pv.onclick = e => { e.preventDefault(); go(cur - 1, true); nudge(); };
@@ -1660,34 +1638,12 @@ if (reel.length) {
                        onscreen && !hovering;
 
 
-  /* Restarting the line and restarting the interval are the same event, so
-     they are driven from one place — a bar that ran on its own clock would
-     drift away from the slide it is describing. */
-  function armBar(run) {
-    /* Re-queried every time: the panel that holds it is rebuilt per slide. */
-    const rbar = document.querySelector('#reelBar');
-    const rfill = rbar && rbar.firstElementChild;
-    if (!rfill) return;
-    rbar.classList.toggle('on', !!run);
-    rfill.style.transition = 'none';
-    rfill.style.transform = 'translateX(0)';
-    void rfill.offsetWidth;
-    if (run) {
-      /* The sheet is twice the picture wide, so half of itself is all of it —
-         plus the feather, so the last slice is covered too rather than left
-         under the fade. */
-      rfill.style.transition = `transform ${DWELL}ms linear`;
-      rfill.style.transform = 'translateX(calc(50% + 64px))';
-    }
-  }
-
   function nudge() {
     clearInterval(timer); timer = 0;
-    armBar(canRun());
     if (!canRun()) return;
     timer = setInterval(() => {
-      if (!canRun()) { clearInterval(timer); timer = 0; armBar(false); return; }
-      go(cur + 1, true);   /* paint() arms the new slide's line */
+      if (!canRun()) { clearInterval(timer); timer = 0; return; }
+      go(cur + 1, true);
     }, DWELL);
   }
 
