@@ -216,13 +216,16 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .shead p{margin:0;color:var(--tx2);font-size:var(--f-label);line-height:var(--l-label);
   letter-spacing:var(--k-label)}
 
-.stage{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
+/* Twelve columns for the card, then one auto column for the rail beside it.
+   The rail used to share the card's last column, which left an accidental
+   36px of air between them; now the gap is one declaration. */
+.stage{display:grid;grid-template-columns:repeat(12,minmax(0,1fr)) auto;
   column-gap:0;row-gap:clamp(14px,1.8vw,20px);align-items:stretch}
 /* Panel and picture are one object: no gap between them, the rounding on the
    outside corners only, and both stretched to the row's height so they start
    and finish on the same two lines. The picture crops to whatever height the
    text needs rather than setting its own. */
-.fig{grid-area:1/6/3/12;position:relative;display:block;overflow:hidden;
+.fig{grid-area:1/6/3/13;position:relative;display:block;overflow:hidden;
   border-radius:0 18px 18px 0;height:100%;
   min-height:clamp(300px,27vw,400px);background:var(--panel);
   text-decoration:none;touch-action:pan-y}
@@ -301,10 +304,16 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    five festivals — the most the highlight will carry — make a rail exactly as
    tall as the card, and two make one two-fifths as tall. The frames are the
    control, so the arrows are only needed where the rail has to lie down. */
-.nav{grid-area:1/12/3/13;align-self:stretch;justify-self:end;
-  display:flex;flex-direction:column;align-items:stretch;gap:0;
-  border:none;border-radius:0;padding:0;background:none}
-.nav #prev,.nav #next{display:none}
+.nav{grid-area:1/13/3/14;align-self:start;justify-self:end;width:56px;
+  margin-left:10px;
+  display:flex;flex-direction:column;align-items:stretch;gap:4px;
+  border:1px solid var(--line2);border-radius:10rem;padding:4px;background:var(--bg2)}
+.nav #prev,.nav #next{width:100%;height:36px}
+/* A frame is what is left of the card's height once the box's own furniture is
+   taken out: 2px of border, 8px of padding, two 36px arrows, the 4px either
+   side of the stack and the four 6px gaps inside it — 114px in all. Five
+   frames therefore make a box exactly as tall as the card beside it. */
+.nav .reelpips .pip{height:calc((var(--panelh,525px) - 114px) / 5)}
 .nav svg.i.up{transform:rotate(180deg)}
 .nav button{width:44px;height:44px;border-radius:10rem;display:grid;place-items:center;
   font-size:13.6px;color:var(--tx2);transition:.15s var(--ease)}
@@ -313,10 +322,9 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* "2 of 5" tells you how many there are; the pictures tell you which ones.
    Dimmed and desaturated until they are the slide on screen, so the row reads
    as one current frame among faded neighbours rather than five thumbnails. */
-.nav .reelpips{flex:1;display:flex;flex-direction:column;justify-content:flex-start;
-  align-items:stretch;gap:var(--pipgap,8px);padding:0}
-.nav .reelpips .pip{width:100%;
-  flex:0 0 calc((100% - 4 * var(--pipgap,8px)) / 5);
+.nav .reelpips{display:flex;flex-direction:column;justify-content:flex-start;
+  align-items:stretch;gap:6px;padding:0}
+.nav .reelpips .pip{width:100%;flex:none;
   border-radius:8px;overflow:hidden;padding:0;
   position:relative;opacity:.4;filter:saturate(.45);transition:.2s var(--ease);
   outline:1px solid transparent;outline-offset:1px}
@@ -349,6 +357,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   .nav #prev,.nav #next{display:grid}
   .nav .reelpips{flex:none;flex-direction:row;align-items:center;gap:6px;padding:0 8px}
   .nav .reelpips .pip{width:38px;height:26px;flex:none}
+  .nav{width:auto}
   .nav svg.i.up{transform:rotate(90deg)}
   .nav #next svg.i{transform:rotate(-90deg)}
   .panel{background:var(--bg2);border-radius:0 0 16px 16px;
