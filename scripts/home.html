@@ -89,6 +89,31 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* The spacer sits after this in the markup, so it needs its own auto margin
    to reach the end of the bar. */
 .hslot{margin-left:auto}
+/* At rail widths the place picker leaves the masthead and joins the rail's
+   utility foot, one step above the theme button. It stays a single element in
+   the markup — only its position and its shape change. */
+@media(min-width:600px){
+  /* No masthead once the rail is there. The rail already carries the mark and
+     the navigation, and a brand bar that only repeats the name is not what an
+     app bar is for — "focus on describing the current page". The header stays
+     in the markup at zero height because the place picker is its child and is
+     positioned into the rail below; on a phone, where there is no rail, the
+     masthead comes back. */
+  header{height:0;overflow:visible;margin:0;padding:0}
+  header .mark{display:none}
+  header .top{padding:0;border-bottom:0;min-height:0}
+  .hslot{position:fixed;left:20px;bottom:62px;z-index:61;margin:0}
+  .loc{width:40px;height:40px;min-height:40px;padding:0;justify-content:center;
+    border:1px solid var(--md-sys-color-outline-variant);
+    border-radius:var(--md-sys-shape-corner-full)}
+  .loc:hover{border-color:var(--md-sys-color-outline)}
+  .loc svg{width:20px;height:20px}
+  .loc #locLabel,.loc .cv{display:none}
+  /* The trigger is at the left edge now, so the panel opens from that edge
+     rather than hanging off the right. */
+  .locsheet{left:0;right:auto;bottom:calc(100% + 10px);top:auto;
+    transform-origin:bottom left}
+}
 .locwrap{position:relative;flex:none}
 .loc{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;
   border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
@@ -214,6 +239,42 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   font-weight:var(--md-sys-typescale-emphasized-label-weight);line-height:1.2;white-space:nowrap;
   /* A headliner's name can be half a sentence — enough of it to recognise. */
   max-width:22ch;overflow:hidden;text-overflow:ellipsis}
+
+/* ── intro ─────────────────────────────────────────────
+   One of the two hero moments the guidance allows: "Hero moments use multiple
+   expressive tactics to break from predictable or uniformly applied design
+   ideas… meant to make a stand-alone statement." Display type, a container
+   one tonal step off the page, and the extra-large-increased corner that
+   nothing else on the page uses — the break in the shape story is what makes
+   it read as a beginning rather than as another card. */
+.intro{background:var(--md-sys-color-surface-container);
+  border-radius:var(--md-sys-shape-corner-extra-large-increased);
+  padding:clamp(28px,4.4vw,56px);margin-bottom:clamp(16px,2vw,24px);
+  overflow:hidden}
+.intro h1{margin:0 0 clamp(10px,1.4vw,16px);
+  font-size:clamp(var(--md-sys-typescale-headline-large-size),7vw,
+                  var(--md-sys-typescale-display-medium-size));
+  line-height:1.05;letter-spacing:var(--md-sys-typescale-display-medium-tracking);
+  font-weight:var(--md-sys-typescale-emphasized-display-weight);
+  color:var(--md-sys-color-on-surface)}
+.intro p{margin:0 0 clamp(20px,2.6vw,30px);max-width:52ch;
+  font-size:var(--md-sys-typescale-body-large-size);
+  line-height:var(--md-sys-typescale-body-large-line-height);
+  letter-spacing:var(--md-sys-typescale-body-large-tracking);
+  color:var(--md-sys-color-on-surface-variant)}
+/* The large button size, since this is the page's primary action and the
+   sizes exist to say so: 96dp tall with the large corner when pressed. */
+.intro .btn.lg{min-height:56px;padding:0 32px;flex:none;align-self:flex-start;
+  --shape-pressed:var(--md-sys-shape-corner-pressed-l);
+  font-size:var(--md-sys-typescale-title-medium-size)}
+/* Leaving: opacity on an effects spring, the collapse on a spatial one, which
+   is the split the two kinds of spring exist for. */
+.intro{transition:opacity var(--md-sys-motion-spring-default-effects),
+                  margin var(--md-sys-motion-spring-default-spatial),
+                  padding var(--md-sys-motion-spring-default-spatial),
+                  max-height var(--md-sys-motion-spring-default-spatial);
+  max-height:80svh}
+.intro.gone{opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-bottom:0}
 
 .facts{display:flex;flex-direction:column;gap:10px;align-items:stretch;
   margin:clamp(16px,1.8vw,22px) 0 0;border-top:0}
@@ -940,6 +1001,16 @@ __FOOTER_CSS__
   </div>
 </header>
 
+<!-- The page's one editorial moment: a display-size name, a sentence, and the
+     only way past it. It is shown once — dismissing it is remembered with the
+     view and the theme, so a returning reader lands on the festivals. -->
+<section class="intro" id="intro" hidden>
+  <h1>Flanner</h1>
+  <p>Set times, stage maps and running orders for Helsinki's festivals — each
+     one a single page that keeps working after the signal doesn't.</p>
+  <button class="btn primary lg st" id="introGo">Get started</button>
+</section>
+
 <section class="hero" id="hero" hidden>
   <!-- No heading: the card says what it is, and "Next up · 2 planners" was a
        label for something already in plain view. -->
@@ -1051,6 +1122,15 @@ __FOOTER_CSS__
   <button id="nFest"><svg class="i"><use href="#i-grid"/></svg><span class="lbl">Festivals</span></button>
   <button id="nPlan"><svg class="i"><use href="#i-route"/></svg><span class="lbl">My plan</span></button>
   <button id="nSet"><svg class="i"><use href="#i-gear"/></svg><span class="lbl">Settings</span></button>
+  <!-- Utilities, not destinations: they change how the page looks rather than
+       what it shows, so they sit at the foot of the rail rather than in the
+       list above. The place picker joins them from the masthead, positioned
+       here at rail widths. On a phone the rail is a bottom bar with no room
+       for either, and both stay where they were. -->
+  <div class="railfoot">
+    <button id="railTheme" aria-label="Switch to dark theme" title="Theme">
+      <svg class="i"><use href="#i-moon"/></svg></button>
+  </div>
 </nav>
 
 __SETTINGS__
@@ -1088,6 +1168,7 @@ const Store = (() => {
     theme: {values: ['light', 'dark'], def: 'light', legacy: 'fp-theme'},
     view:  {values: ['cal', 'tile', 'full'], def: null, legacy: 'fp-view'},
     place: {values: null, def: 'fi', legacy: 'fp-place'},  /* checked against PLACES */
+    intro: {values: ['seen'], def: null, legacy: null},    /* the welcome, once */
   };
 
   const readCookie = k => {
@@ -2175,6 +2256,28 @@ document.addEventListener('keydown', e => {
   });
 })();
 
+/* ── the welcome ───────────────────────────────────────
+   Shown until it is dismissed, then never again on this device. The exit is
+   M3's exit pattern — the panel leaves, nothing arrives to replace it — so it
+   fades while it collapses and the page closes the gap behind it. */
+(() => {
+  const intro = $('#intro'), go = $('#introGo');
+  if (!intro || !go) return;
+  if (Store.get('intro') === 'seen') { intro.remove(); return; }
+  intro.hidden = false;
+  go.onclick = () => {
+    Store.set('intro', 'seen');
+    /* From its measured height, so the collapse has somewhere to travel. */
+    intro.style.maxHeight = intro.scrollHeight + 'px';
+    requestAnimationFrame(() => intro.classList.add('gone'));
+    intro.addEventListener('transitionend', e => {
+      if (e.propertyName === 'max-height') intro.remove();
+    }, {once: true});
+    /* Belt and braces: a hidden tab never fires the transition. */
+    setTimeout(() => intro.remove(), 900);
+  };
+})();
+
 /* ── theme ─────────────────────────────────────────────── */
 /* Persisted by Store, alongside the view and the place — see its notes. */
 const root = document.documentElement;
@@ -2182,12 +2285,23 @@ function applyTheme(t) {
   root.dataset.theme = t;
   document.querySelectorAll('#themeSeg button').forEach(b =>
     b.setAttribute('aria-pressed', b.dataset.themeSet === t));
+  const rt = document.querySelector('#railTheme');
+  if (rt) {
+    const next = t === 'dark' ? 'light' : 'dark';
+    rt.setAttribute('aria-label', `Switch to ${next} theme`);
+    rt.querySelector('use').setAttribute('href', t === 'dark' ? '#i-sun' : '#i-moon');
+  }
   const meta = document.querySelector('meta[name=theme-color]');
   if (meta) meta.content = t === 'dark' ? '#101010' : '#f5f5f5';
   Store.set('theme', t);
 }
 document.querySelectorAll('#themeSeg button').forEach(b =>
   b.onclick = () => applyTheme(b.dataset.themeSet));
+/* The rail's theme button is the same setting with one tap instead of two:
+   it shows the theme you would get, not the one you are in. */
+const railTheme = $('#railTheme');
+if (railTheme) railTheme.onclick = () =>
+  applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
 applyTheme(Store.get('theme'));
 apply();
 </script>
