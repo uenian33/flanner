@@ -2,7 +2,7 @@
    One card, one stylesheet, every page. Centred on a pointer device, a sheet
    off the bottom edge on a phone. */
 dialog.setdlg{border:none;padding:0;background:transparent;max-width:none;max-height:none;
-  width:100%;height:100%;overflow:visible;color:var(--tx)}
+  width:100%;height:100%;overflow:visible;color:var(--md-sys-color-on-surface)}
 dialog.setdlg::backdrop{background:rgba(4,6,9,.55);
   -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
   opacity:0;transition:opacity .3s var(--ease)}
@@ -10,7 +10,7 @@ dialog.setdlg.in::backdrop{opacity:1}
 .setbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
   transform:translate(-50%,16px);opacity:0;width:min(460px,calc(100vw - 24px));
   max-height:min(84svh,720px);overflow:auto;overscroll-behavior:contain;
-  background:var(--bg2);border:1px solid var(--line2);border-radius:22px;
+  background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);border-radius:22px;
   padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:0 26px 70px -18px rgba(0,0,0,.5);
   transition:opacity .28s var(--ease),transform .36s var(--ease)}
 dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
@@ -19,34 +19,34 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   dialog.setdlg.in .setbox{transform:translate(-50%,-50%)}
 }
 .sethead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--bg2)}
+  justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--md-sys-color-surface-container-lowest)}
 .sethead h2{margin:0;font-family:var(--title);font-weight:600;font-size:17.6px;
   letter-spacing:.02em;text-transform:uppercase}
-.setclose{width:40px;height:40px;flex:none;border:1px solid var(--line2);border-radius:10rem;
-  display:grid;place-items:center;color:var(--tx2);transition:.15s var(--ease)}
-.setclose:hover{background:var(--tx);color:var(--bg2)}
+.setclose{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:10rem;
+  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:.15s var(--ease)}
+.setclose:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:15px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+  padding:15px 0;border-top:1px solid var(--md-sys-color-outline-variant);flex-wrap:wrap}
 .setrow b{display:block;font-size:12px;font-weight:700}
-.setrow i{display:block;font-style:normal;font-size:10px;color:var(--tx3);margin-top:3px;
+.setrow i{display:block;font-style:normal;font-size:10px;color:var(--md-sys-color-on-surface-variant);margin-top:3px;
   max-width:42ch}
-.setbtn{min-height:38px;padding:0 18px;border-radius:10rem;border:1px solid var(--line2);
-  font-size:11.2px;font-weight:650;color:var(--tx);transition:.15s var(--ease)}
-.setbtn:hover:not(:disabled){background:var(--tx);color:var(--bg2)}
+.setbtn{min-height:38px;padding:0 18px;border-radius:10rem;border:1px solid var(--md-sys-color-outline);
+  font-size:11.2px;font-weight:650;color:var(--md-sys-color-on-surface);transition:.15s var(--ease)}
+.setbtn:hover:not(:disabled){background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setbtn:disabled{opacity:.5}
-.fseg{display:flex;background:var(--bg2);border:1px solid var(--line2);
+.fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:10rem;padding:2px;gap:3px;flex:none}
 .fseg button{font-size:10.8px;font-weight:650;padding:0 16px;min-height:34px;
-  border-radius:10rem;color:var(--tx2);transition:.15s var(--ease)}
-.fseg button[aria-pressed=true]{background:var(--tx);color:var(--bg2)}
-.setnote{margin:15px 0 0;font-size:10px;line-height:1.6;color:var(--tx3)}
-.setnote a{color:var(--tx2)}
+  border-radius:10rem;color:var(--md-sys-color-on-surface-variant);transition:.15s var(--ease)}
+.fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
+.setnote{margin:15px 0 0;font-size:10px;line-height:1.6;color:var(--md-sys-color-on-surface-variant)}
+.setnote a{color:var(--md-sys-color-on-surface-variant)}
 @media(max-width:520px){.setrow .fseg{flex:1 1 100%}}
 
 /* The footer lives at the end of the page on a pointer device and at the
    bottom of this card on a phone — never both. */
 .setfoot{display:none}
-.setfoot footer{display:block;border-top:1px solid var(--line);margin-top:16px;
+.setfoot footer{display:block;border-top:1px solid var(--md-sys-color-outline-variant);margin-top:16px;
   padding:16px 0 0}
 .setfoot .fgrid{grid-template-columns:minmax(0,1fr);gap:20px}
 .setfoot .fbrand{grid-column:auto}

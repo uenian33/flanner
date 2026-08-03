@@ -7,6 +7,7 @@ planners it links to.
 """
 import json, pathlib
 from build import ROOT, data_uri
+import m3color
 import schema
 import seo
 
@@ -43,7 +44,8 @@ def main():
                    + [seo.festival_event(f) for f in cfg["festivals"]]
         )),
         ("__CATCSS__", schema.category_css(cfg)),
-        ("__TOKENS__", (ROOT / "scripts" / "_tokens.css").read_text()),
+        ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
+         (ROOT / "scripts" / "_tokens.css").read_text()),
         ("__FONTCSS__", ""),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),

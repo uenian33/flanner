@@ -34,22 +34,15 @@
      you can open, a panel is a region, a box is everything small. */
   --r-pill:10rem; --r-card:36px; --r-panel:18px; --r-box:10px;
 
-  /* Bright theme: paper, pure black ink, hairlines. */
-  --bg:#f5f5f5; --bg2:#fff; --panel:#fafafa; --panel2:#ececec;
-  --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.8);
-  --tx:#000; --tx2:#3a3a3a; --tx3:#5c5c5c;
-  --shade:rgba(0,0,0,.16);
-  /* A pinned bar is glass over whatever it covers, on every page. */
-  --glass:rgba(255,255,255,.78); --glass-line:rgba(0,0,0,.16);
-  --glass-pill:rgba(0,0,0,.09); --glass-tx:rgba(0,0,0,.55); --glass-on:#000;
+  /* Colour comes from the generated Material 3 scheme above: 26 roles, two
+     schemes, one source colour. The few compound values a pinned bar needs are
+     mixed from those roles rather than picked. */
+  --glass:color-mix(in srgb,var(--md-sys-color-surface) 80%,transparent);
+  --glass-line:var(--md-sys-color-outline-variant);
+  --glass-pill:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent);
+  --glass-tx:var(--md-sys-color-on-surface-variant);
+  --glass-on:var(--md-sys-color-on-surface);
+  --shade:color-mix(in srgb,var(--md-sys-color-scrim) 32%,transparent);
   color-scheme:light;
 }
-:root[data-theme=dark]{
-  --bg:#0a0b0d; --bg2:#141518; --panel:#17181c; --panel2:#1f2126;
-  --line:#25272d; --line2:#3a3d45;
-  --tx:#f2f4f8; --tx2:#a3aab8; --tx3:#848b99;
-  --shade:rgba(0,0,0,.5);
-  --glass:rgba(22,22,25,.7); --glass-line:rgba(255,255,255,.06);
-  --glass-pill:rgba(255,255,255,.1); --glass-tx:rgba(255,255,255,.55); --glass-on:#fff;
-  color-scheme:dark;
-}
+:root[data-theme=dark]{color-scheme:dark}

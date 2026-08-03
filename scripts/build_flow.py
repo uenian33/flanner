@@ -7,6 +7,7 @@ guessed from third-party APIs.
 """
 import base64, json, pathlib, sys, urllib.parse
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import m3color
 import seo
 from build import ROOT, data_uri, pack_lanes, GENRE_LABELS, TYPE_LABELS
 
@@ -137,7 +138,8 @@ def build():
         ("__THEME__", THEME),
         ("__HOME__", "../"),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
-        ("__TOKENS__", (ROOT / "scripts" / "_tokens.css").read_text()),
+        ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
+         (ROOT / "scripts" / "_tokens.css").read_text()),
         ("__FONTCSS__", ""),
         ("__YEAR__", '2026'),
         ("__STAGES__", '10'),

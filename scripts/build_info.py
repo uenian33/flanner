@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import m3color
 import seo
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -53,7 +54,8 @@ def main() -> None:
                                if slug == "faq" else [])
         html = html.replace("__BODY__", "\n  ".join(render(b) for b in body))
         for token, value in [
-            ("__TOKENS__", (ROOT / "scripts" / "_tokens.css").read_text()),
+            ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
+         (ROOT / "scripts" / "_tokens.css").read_text()),
             ("__FONTCSS__", fontcss),
             ("__TITLE__", page["title"]),
             ("__BLURB__", page["blurb"]),
