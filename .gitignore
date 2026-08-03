@@ -2,3 +2,4 @@
 assets/_*.jpg
 assets/_*.png
 scripts/gmaps-key.txt
+node_modules/

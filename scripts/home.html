@@ -215,19 +215,81 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   /* A headliner's name can be half a sentence — enough of it to recognise. */
   max-width:22ch;overflow:hidden;text-overflow:ellipsis}
 
-/* Section headline, set to the metrics Material's own site uses for its
-   section headings ("Material at Google I/O 2026"): display-small at 36/44,
-   tracking normal, an 8px gap beneath, and weight 475 — a variable-font
-   weight between medium and regular, which is why the face has an axis.
-   The left inset is the panel's own padding, so the heading starts on the
-   same line as the card text under it rather than on the card's edge. */
-.shl{margin:0 0 8px;padding-left:clamp(24px,2.6vw,34px);
-  font-size:clamp(var(--md-sys-typescale-headline-medium-size),3.4vw,
-                  var(--md-sys-typescale-display-small-size));
-  line-height:1.22;
-  letter-spacing:var(--md-sys-typescale-display-small-tracking);
-  font-weight:475;
+/* ── Material Web components ───────────────────────────
+   The buttons are md-filled-button and md-outlined-button now. They read
+   --md-sys-* for colour, shape and type, which this project already emits, so
+   they arrive themed; what is set below is only what the product decides.
+
+   Two product decisions carry over. Buttons stay ink-on-paper rather than
+   taking the brand colour, which is DESIGN.md §9 — the components expose that
+   as container and label tokens rather than as a stylesheet override. And the
+   press-morph from the Expressive shape work is re-applied through the
+   component's own container-shape token, so it survives the migration. */
+md-filled-button,md-outlined-button{
+  --md-filled-button-container-color:var(--md-sys-color-on-surface);
+  --md-filled-button-label-text-color:var(--md-sys-color-surface-container-lowest);
+  --md-filled-button-icon-color:var(--md-sys-color-surface-container-lowest);
+  --md-filled-button-hover-label-text-color:var(--md-sys-color-surface-container-lowest);
+  --md-filled-button-pressed-label-text-color:var(--md-sys-color-surface-container-lowest);
+  --md-filled-button-focus-label-text-color:var(--md-sys-color-surface-container-lowest);
+  --md-outlined-button-label-text-color:var(--md-sys-color-on-surface);
+  --md-outlined-button-icon-color:var(--md-sys-color-on-surface);
+  --md-outlined-button-outline-color:var(--md-sys-color-on-surface);
+  --md-filled-button-label-text-weight:var(--md-sys-typescale-emphasized-label-weight);
+  --md-outlined-button-label-text-weight:var(--md-sys-typescale-label-weight);
+  --md-filled-button-container-shape:var(--shape,var(--md-sys-shape-corner-full));
+  --md-outlined-button-container-shape:var(--shape,var(--md-sys-shape-corner-full));
+  --shape-pressed:var(--md-sys-shape-corner-pressed-m)}
+md-filled-button:active,md-outlined-button:active{--shape:var(--shape-pressed)}
+/* The hero's two actions fill their column, as they did before the swap. */
+.facts md-filled-button,.facts md-outlined-button,
+.acts md-filled-button,.acts md-outlined-button{width:100%}
+.acts{display:flex;flex-direction:column;gap:8px}
+/* The welcome's action is the large size: the sizes exist to say which action
+   on a screen is the primary one. */
+.btn-lg{--md-filled-button-container-height:56px;
+  --md-filled-button-label-text-size:var(--md-sys-typescale-title-medium-size);
+  --shape-pressed:var(--md-sys-shape-corner-pressed-l);
+  align-self:flex-start}
+md-filled-button span[slot=icon],md-outlined-button span[slot=icon]{
+  display:inline-grid;place-items:center}
+md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
+  width:18px;height:18px}
+
+/* Toolbar controls, at the metrics of the strip they are modelled on:
+   pill-shaped, filled with a surface-container tone rather than outlined,
+   0 24px of padding, and a title-medium label. An outline plus a fill is two
+   ways of saying the same thing. */
+.tools .opt,.tools .drop > button,.tools .vseg{border-color:transparent}
+.tools .drop > button{background:var(--md-sys-color-surface-container);
+  border:0;min-height:48px;padding:0 20px;
+  border-radius:var(--md-sys-shape-corner-full);
+  font-size:var(--md-sys-typescale-title-medium-size);
+  line-height:var(--md-sys-typescale-title-medium-line-height);
+  font-weight:var(--md-sys-typescale-title-weight);
   color:var(--md-sys-color-on-surface)}
+.tools .drop > button:hover{background:var(--md-sys-color-surface-container-high)}
+.tools .vseg{background:var(--md-sys-color-surface-container);border:0;
+  border-radius:var(--md-sys-shape-corner-full);padding:4px}
+.tools .sbox input{background:var(--md-sys-color-surface-container);border:0;
+  height:48px;border-radius:var(--md-sys-shape-corner-full)}
+.tools .sbox input:focus{border:0;outline:2px solid var(--md-sys-color-primary);
+  outline-offset:-2px}
+
+/* Section title, set to the tab label on Material's own component pages:
+   16/24 at weight 500 with normal tracking — title-medium — beside a 24px
+   symbol. It labels the region rather than shouting it, which is why it sits
+   below the festival name in size instead of above it. The icon is the same
+   mark the rail's Highlights destination uses, so the title and the way back
+   to it are the same thing. */
+.shl{display:flex;align-items:center;gap:8px;margin:0 0 12px;
+  padding-left:clamp(24px,2.6vw,34px);
+  font-size:var(--md-sys-typescale-title-medium-size);
+  line-height:var(--md-sys-typescale-title-medium-line-height);
+  letter-spacing:normal;
+  font-weight:var(--md-sys-typescale-title-weight);
+  color:var(--md-sys-color-on-surface)}
+.shl svg{width:24px;height:24px;flex:none;stroke:none;fill:none}
 
 /* ── intro ─────────────────────────────────────────────
    One of the two hero moments the guidance allows: "Hero moments use multiple
@@ -450,31 +512,28 @@ __NAV_CSS__
 /* The bar sits below the highlight in normal flow and pins to the top once the
    highlight has scrolled past it, growing its backdrop and revealing the mark
    as it does. */
-.tools{position:sticky;top:0;z-index:60;display:flex;gap:10px;align-items:center;
-  flex-wrap:wrap;margin:0 0 clamp(18px,2.4vw,26px);padding:10px 0;
+.tools{position:sticky;top:0;z-index:60;display:flex;gap:8px;align-items:center;
+  flex-wrap:wrap;margin:0 0 clamp(18px,2.4vw,26px);padding:9px 0;
   transition:padding var(--md-sys-motion-spring-default-spatial)}
-/* The bar lives inside a max-width column, so its backdrop is painted by a
-   pseudo-element stretched past the gutters rather than by the bar itself. */
+/* Measured off Material's own navigation strip: a flat surface, an 8px gap,
+   9px above, and no border, no shadow and no blur. The bar separates itself
+   from the content by being the surface rather than by floating over it —
+   which is also what the app bar page asks for: "On scroll: No drop shadow,
+   instead a color fill creates separation from content."
+   The bar sits inside a max-width column, so the fill is painted by a
+   pseudo-element stretched past the gutters. */
 .tools::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
-  background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);border-bottom:1px solid transparent;
-  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects),border-color var(--md-sys-motion-spring-default-effects);
+  background:var(--md-sys-color-surface);
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects);
   pointer-events:none}
 .tools > *{position:relative;z-index:1}
-.tools.stuck{padding:13px 0}
-.tools.stuck::before{opacity:1;border-bottom-color:var(--md-sys-color-outline-variant)}
+.tools.stuck{padding:9px 0}
+.tools.stuck::before{opacity:1}
 
-/* the mark only appears once the masthead has scrolled away */
-.toolmark{display:flex;align-items:center;gap:9px;flex:none;text-decoration:none;
-  max-width:0;overflow:hidden;opacity:0;
-  transition:max-width var(--md-sys-motion-spring-default-spatial),opacity var(--md-sys-motion-spring-fast-effects),margin var(--md-sys-motion-spring-default-spatial)}
-.tools.stuck .toolmark{max-width:220px;opacity:1;margin-right:2px}
-.toolmark svg{width:30px;height:30px;flex:none;stroke:none;fill:none}
-.toolmark .wm{display:flex;flex-direction:column;gap:2px;min-width:0}
-.toolmark .wm i{font-style:normal;font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-body-weight);letter-spacing:.18em;
-  text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);line-height:1;white-space:nowrap}
-.toolmark b{font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--md-sys-typescale-title-medium-size);letter-spacing:.05em;
-  text-transform:uppercase;line-height:1;color:var(--md-sys-color-on-surface)}
+/* Their strip carries no wordmark and neither does this one: the rail says
+   what the product is, and repeating it in the toolbar spends a slot that the
+   controls need. */
+.toolmark{display:none}
 .sbox{position:relative;flex:1 1 280px;min-width:0}
 .sbox svg.i{position:absolute;left:17px;top:50%;transform:translateY(-50%);
   width:17px;height:17px;color:var(--md-sys-color-on-surface-variant);pointer-events:none}
@@ -1037,7 +1096,7 @@ __FOOTER_CSS__
   <h1>Flanner</h1>
   <p>Set times, stage maps and running orders for Helsinki's festivals — each
      one a single page that keeps working after the signal doesn't.</p>
-  <button class="btn primary lg st" id="introGo">Get started</button>
+  <md-filled-button class="btn-lg" id="introGo">Get started</md-filled-button>
 </section>
 
 <section class="hero" id="hero" hidden>
@@ -1046,7 +1105,7 @@ __FOOTER_CSS__
        rather than describing the card inside it, which is why it survives
        where "Next up · 2 planners" did not. It lives inside the section, so
        it appears and disappears with the thing it titles. -->
-  <h2 class="shl">Highlights</h2>
+  <h2 class="shl"><svg class="i" aria-hidden="true"><use href="#i-logo"/></svg>Highlights</h2>
   <div class="stage" id="stage"></div>
 </section>
 
@@ -1308,10 +1367,10 @@ if (reel.length) {
       <ul class="ftags">${[...f.tags.slice(0, 3), f.stars[0]]
         .filter(Boolean).map(k => `<li>${esc(k)}</li>`).join('')}</ul>
       <div class="facts">
-      <a class="btn primary st" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
+      <md-filled-button trailing-icon href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'}<span slot="icon">${ico('arrow')}</span></md-filled-button>
       ${f.free
-        ? `<a class="btn st" href="${esc(f.official)}" target="_blank" rel="noopener">Official ${ico('ext')}</a>`
-        : `<a class="btn st" href="${esc(f.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
+        ? `<md-outlined-button trailing-icon href="${esc(f.official)}" target="_blank">Official<span slot="icon">${ico('ext')}</span></md-outlined-button>`
+        : `<md-outlined-button trailing-icon href="${esc(f.tickets)}" target="_blank">Tickets<span slot="icon">${ico('ticket')}</span></md-outlined-button>`}
       </div>
     </div>
     </div>
@@ -1620,10 +1679,10 @@ function card(f) {
       <p class="stars"><b>${st.past ? 'Played' : 'Headlining'}:</b> ${esc(f.stars.slice(0, 4).join(' · '))}</p>
       <div class="cats">${esc(f.tags.join(', '))}</div>
       <div class="acts">
-        <a class="btn primary st" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
+        <md-filled-button trailing-icon href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'}<span slot="icon">${ico('arrow')}</span></md-filled-button>
         ${f.free
-          ? `<span class="btn free">Free entry</span>`
-          : `<a class="btn st" href="${esc(f.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
+          ? `<md-outlined-button disabled>Free entry</md-outlined-button>`
+          : `<md-outlined-button trailing-icon href="${esc(f.tickets)}" target="_blank">Tickets<span slot="icon">${ico('ticket')}</span></md-outlined-button>`}
       </div>
     </div>
   </article>`;
@@ -1954,13 +2013,11 @@ document.addEventListener('keydown', e => {
     if (field.parentElement !== host) {
       phone.matches ? host.appendChild(field) : host.insertBefore(field, host.children[1]);
     }
-    /* The masthead is sticky on a phone, so the selector stays put there. On a
-       pointer device the masthead scrolls off and the pinned bar is the only
-       thing left, so the selector rides along rather than disappearing. */
-    if (loc) {
-      const lhost = (!phone.matches && bar.classList.contains('stuck')) ? bar : slot;
-      if (loc.parentElement !== lhost) lhost.appendChild(loc);
-    }
+    /* The selector no longer travels. It belongs to the rail at rail widths
+       and to the masthead on a phone, and in both cases that element is
+       always on screen — so riding along with the pinned bar bought nothing
+       and cost the bar a slot. */
+    if (loc && loc.parentElement !== slot) slot.appendChild(loc);
   };
   phone.addEventListener('change', place);
   place();
@@ -2350,5 +2407,6 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </script>
 __OFFLINE__
 __PAGEFX__
+__MWC__
 </body>
 </html>

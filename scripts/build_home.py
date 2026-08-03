@@ -9,6 +9,7 @@ import json, pathlib
 from build import ROOT, data_uri
 import fontsub
 import m3color
+import mwc
 import schema
 import seo
 
@@ -59,6 +60,7 @@ def main():
         ("__OFFLINE__", (ROOT / "scripts" / "_offline.html").read_text()),
         ("__SETTINGS_CSS__", (ROOT / "scripts" / "_settings.css").read_text()),
         ("__PAGEFX__", (ROOT / "scripts" / "_pagefx.html").read_text()),
+        ("__MWC__", mwc.script()),
         ("__CONTACT__", cfg["site"]["contact"]),
     ]:
         html = html.replace(tok, val)
