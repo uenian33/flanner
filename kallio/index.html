@@ -106,7 +106,7 @@
   --chip-line:var(--line2);
   --cText:var(--tx); --bgc:var(--panel); --accent-ink:var(--kbp-green);
   --gutter:58px; --colw:172px; --radius:var(--r-box);
-  --navn:4;   /* Schedule, Map, My plan, Settings */
+  --navn:3;   /* Schedule, Map, Settings */
   --disp:var(--sans);
   --vvshift:0px;
 }
@@ -449,6 +449,16 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .chip[aria-pressed=true]{background:var(--tx);color:var(--bg2);border-color:var(--tx);
   font-weight:650}
 .chip .dot{width:8px;height:8px;border-radius:var(--r-pill);background:var(--c,currentColor);flex:none}
+/* The starred filter sits in the toolbar rather than the sheet: it is the one
+   filter with a count worth seeing without opening anything. */
+.starbtn{flex:none;min-height:44px;font-size:var(--f-label);font-weight:700;padding:0 16px}
+.starbtn[aria-pressed=true] svg.i{fill:currentColor}
+.starbtn:disabled{opacity:.45;cursor:default}
+.starbtn .nb{min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-pill);
+  display:inline-grid;place-items:center;font-size:var(--f-micro);font-weight:700;
+  background:var(--fill);color:inherit}
+.starbtn[aria-pressed=true] .nb{background:rgba(255,255,255,.24)}
+@media(max-width:720px){.starbtn .lbl{display:none}.starbtn{padding:0 12px}}
 .chip.stage[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#0a0c10}
 .chip.stage[aria-pressed=true] .dot{background:rgba(10,12,16,.55)}
 .chip .ct{font-size:var(--f-micro);opacity:.62;font-variant-numeric:tabular-nums}
@@ -466,8 +476,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
     gap:clamp(20px,2.4vw,34px);align-items:start}
   /* The bar and the plan run the whole width; only the list and the map share
      the two columns. */
-  body[data-view=agenda] .deck > .schedbar,
-  body[data-view=agenda] .deck > #secRoute{grid-column:1/-1}
+  body[data-view=agenda] .deck > .schedbar{grid-column:1/-1}
   /* The day row pins beneath the top bar, so the map column has to clear both
      or its first rows sit behind them. This is the desktop side-by-side layout
      only; on a phone the map is a normal block further down the page. */
@@ -1290,6 +1299,10 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
       <button id="vTimeline" aria-pressed="false"><svg class="i"><use href="#i-cols"/></svg>Timetable</button>
       <button id="vAgenda" aria-pressed="false"><svg class="i"><use href="#i-rows"/></svg>List</button>
     </div>
+    <button class="chip starbtn" id="starOnly" aria-pressed="false"
+      title="Show only the acts you have starred">
+      <svg class="i"><use href="#i-star"/></svg><span class="lbl">Starred</span>
+      <span class="nb" id="starCount" hidden>0</span></button>
     <span class="rel"><button class="iconbtn" id="fToggle" aria-pressed="false" aria-label="Filters">
       <svg class="i"><use href="#i-sliders"/></svg></button>
       <span class="fbadge" id="fBadge" hidden>0</span></span>
@@ -1300,6 +1313,8 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
     <div class="frow"><span class="flab">Genre</span><span class="chipset" id="fGenre"></span></div>
     <div class="frow"><span class="flab">Stage</span><span class="chipset" id="fStage"></span></div>
     <div class="fstat"><span id="matchCount"></span>
+      <button class="linkbtn" id="rCopy">Copy starred</button>
+      <button class="linkbtn" id="rClear">Clear stars</button>
       <button class="linkbtn" id="reset">Clear all</button></div>
   </div></div></div>
   </div>
@@ -1364,25 +1379,6 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
   </div>
 </section>
 
-<section class="blk" id="secRoute">
-  <div class="shead">
-    <h2>My plan <span id="routeCount" style="color:var(--tx3);font-weight:500"></span></h2>
-  </div>
-  <div class="routebox">
-    <div class="rlist" id="routeList"></div>
-    <div class="ract">
-      <span class="flab" style="align-self:center">Start from</span>
-      <button class="chip" id="pTour" title="A clash-free crawl touching as many stages as the timetable allows, with at least 10 minutes to walk between each">Stage crawl</button>
-      <button class="chip" id="pLive">Live bands</button>
-      <button class="chip" id="pRap">Rap Stage day</button>
-      <span class="tspacer"></span>
-      <a class="chip" id="rNav" href="#" target="_blank" rel="noopener" hidden><svg class="i"><use href="#i-nav"/></svg>Walking route in Google Maps</a>
-      <button class="chip" id="rCopy"><svg class="i"><use href="#i-copy"/></svg>Copy</button>
-      <button class="chip" id="rClear"><svg class="i"><use href="#i-trash"/></svg>Clear</button>
-    </div>
-  </div>
-</section>
-
 <footer>
   <div class="fgrid">
     <div class="fbrand">
@@ -1426,7 +1422,6 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
   <a class="navhome-m" href="../"><svg class="i"><use href="#i-logo"/></svg><span class="lbl">Home</span></a>
   <button id="nSched" class="on"><svg class="i"><use href="#i-rows"/></svg><span class="lbl">Schedule</span></button>
   <button id="nMap"><svg class="i"><use href="#i-pin"/></svg><span class="lbl">Map</span></button>
-  <button id="nRoute"><svg class="i"><use href="#i-route"/></svg><span class="lbl">My plan</span><span class="nb" id="navBadge" hidden>0</span></button>
   <button id="nSet"><svg class="i"><use href="#i-gear"/></svg><span class="lbl">Settings</span></button>
 </nav>
 
@@ -1625,7 +1620,7 @@ const routeFromStore = raw => {
 };
 
 const state = {
-  types: new Set(), genres: new Set(), stages: new Set(), q: '',
+  types: new Set(), genres: new Set(), stages: new Set(), q: '', starred: false,
   view: narrowVP() ? 'agenda' : 'timeline',
   route: new Set(),                    // filled once consent is read
 };
@@ -1962,6 +1957,7 @@ const setZoom = v => {
 
 /* ══ filtering ═════════════════════════════════════════ */
 function matches(a) {
+  if (state.starred && !state.route.has(a.key)) return false;
   if (state.types.size && !state.types.has(a.type)) return false;
   if (state.genres.size && !a.genres.some(g => state.genres.has(g))) return false;
   if (state.stages.size && !state.stages.has(a.stage.id)) return false;
@@ -1973,7 +1969,8 @@ function matches(a) {
   return true;
 }
 function apply() {
-  const nf = state.types.size + state.genres.size + state.stages.size + (state.q ? 1 : 0);
+  const nf = state.types.size + state.genres.size + state.stages.size +
+             (state.q ? 1 : 0) + (state.starred ? 1 : 0);
   const active = nf > 0;
   let n = 0; const perStage = {};
   allActs.forEach(a => {
@@ -2000,6 +1997,8 @@ function apply() {
 $('#q').oninput = e => { state.q = e.target.value.trim().toLowerCase(); apply(); };
 $('#reset').onclick = () => {
   state.types.clear(); state.genres.clear(); state.stages.clear(); state.q = '';
+  state.starred = false;
+  $('#starOnly').setAttribute('aria-pressed', 'false');
   $('#q').value = '';
   document.querySelectorAll('.chip[aria-pressed=true]').forEach(c => c.setAttribute('aria-pressed','false'));
   apply();
@@ -2428,19 +2427,6 @@ function setLayer(l) {
    phone. The offline map above stays the in-page reference. */
 const gPlace = s => `https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}`;
 const gWalk  = s => `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lon}&travelmode=walking`;
-function gRoute() {
-  const stops = [];
-  routeActs().forEach(a => { if (!stops.length || stops[stops.length-1].id !== a.stage.id) stops.push(a.stage); });
-  if (stops.length < 2) return null;
-  const pt = s => `${s.lat},${s.lon}`;
-  // The URL API takes at most 9 intermediate waypoints.
-  const mid = stops.slice(1, -1).slice(0, 9);
-  let u = `https://www.google.com/maps/dir/?api=1&origin=${pt(stops[0])}` +
-          `&destination=${pt(stops[stops.length-1])}&travelmode=walking`;
-  if (mid.length) u += `&waypoints=${encodeURIComponent(mid.map(pt).join('|'))}`;
-  return {url: u, stops: stops.length, dropped: Math.max(0, stops.length - 2 - 9)};
-}
-
 let selected = null;
 function selectStage(id, recentre = true) {
   selected = id;
@@ -2527,82 +2513,36 @@ $('#toastUndo').onclick = () => {
 const dayIndex = id => DAYS.findIndex(d => d.id === id);
 const routeActs = () => everyAct.filter(a => state.route.has(a.key))
   .sort((x, y) => dayIndex(x.day) - dayIndex(y.day) || x.sm - y.sm || x.em - y.em);
+
+/* A plan is not a place any more. Starring an act filters the timetable and
+   the list to what you starred, which is the same thing the old "My plan"
+   section showed — in the view you were already reading, at the time you were
+   reading it. What is left of it is two actions, in the filter sheet. */
 function renderRoute() {
-  const r = routeActs(), n = r.length;
-  $('#routeCount').textContent = n ? `· ${n} picked` : '';
-  const nb = $('#navBadge'); nb.hidden = !n; nb.textContent = n;
-  if (!n) {
-    $('#rNav').hidden = true;
-    $('#routeList').innerHTML = `<div class="rempty">Nothing picked yet.<br>
-      Tap the ${'★'} on any act — or start from one of the presets below.</div>`;
-    return;
-  }
-  let h = '', lastDay = null;
-  r.forEach((a, i) => {
-    const prev = r[i-1], clash = prev && prev.day === a.day && a.sm < prev.em;
-    if (DAYS.length > 1 && a.day !== lastDay) {
-      lastDay = a.day;
-      h += `<div class="rday">${esc((DAYS.find(d => d.id === a.day) || {}).label || '')}</div>`;
-    }
-    if (prev && prev.day === a.day && !clash && prev.stage.id !== a.stage.id) {
-      const gap = a.sm - prev.em;
-      h += `<div class="move${gap<10?' tight':''}">${ico('walk')} ${esc(prev.stage.short)} →
-        ${esc(a.stage.short)} · ${gap} min${gap<10?' — tight':''}</div>`;
-    }
-    h += `<div class="ri${clash?' clash':''}" style="${svar(a.stage)}">
-      <div class="tm">${a.s}–${a.e}</div>
-      <div><button class="nm" data-open="${esc(a.key)}">${esc(a.name)}${clash?`<span class="warn">overlaps ${esc(prev.name)}</span>`:''}</button>
-        <button class="st" data-goto="${a.stage.id}">${ico('pin')}${a.stage.num?a.stage.num+' · ':''}${esc(a.stage.name)}</button></div>
-      <button class="rm" data-rm="${esc(a.key)}" aria-label="Remove ${esc(a.name)}">${ico('x')}</button></div>`;
-  });
-  $('#routeList').innerHTML = h;
-  $('#routeList').querySelectorAll('[data-rm]').forEach(b => b.onclick = () => toggleRoute(b.dataset.rm));
-  $('#routeList').querySelectorAll('[data-goto]').forEach(b => b.onclick = () => gotoStage(b.dataset.goto));
-  $('#routeList').querySelectorAll('[data-open]').forEach(b => b.onclick = () => openCard(b.dataset.open));
-  const g = gRoute(), nav = $('#rNav');
-  nav.hidden = !g;
-  if (g) {
-    nav.href = g.url;
-    nav.title = g.dropped
-      ? `Walking route through the first 11 stage stops; ${g.dropped} more dropped — Google Maps takes 9 stops in between.`
-      : `Walking route through all ${g.stops} stage stops, in order.`;
-  }
+  const n = state.route.size;
+  const c = $('#starCount');
+  if (c) { c.hidden = !n; c.textContent = n; }
+  const star = $('#starOnly');
+  if (star) star.disabled = !n && !state.starred;
+  /* Nothing starred and the filter still on would show an empty page. */
+  if (!n && state.starred) { state.starred = false; if (star) star.setAttribute('aria-pressed', 'false'); }
+  apply();
 }
-function setRoute(keys) {
+$('#starOnly').onclick = () => {
+  state.starred = !state.starred;
+  $('#starOnly').setAttribute('aria-pressed', String(state.starred));
+  apply();
+};
+$('#rClear').onclick = () => {
   [...state.route].forEach(k => toggleRoute(k, true));
-  keys.forEach(k => { if (!state.route.has(k)) toggleRoute(k, true); });
   renderRoute();
-  scrollToSection('#secRoute');
-  showToast(`Route set · <b>${keys.length}</b> acts`);
-}
-function everyStageOnce() {
-  const pool = allActs.filter(a => !a.nomusic && !a.allday);
-  const grow = seed => {
-    const seen = new Set([seed.stage.id]); const out = [seed]; let t = seed.em + 10;
-    for (;;) {
-      const nx = pool.find(a => !seen.has(a.stage.id) && a.sm >= t);
-      if (!nx) break;
-      out.push(nx); seen.add(nx.stage.id); t = nx.em + 10;
-    }
-    return out;
-  };
-  let best = [];
-  pool.forEach(seed => {
-    const r = grow(seed);
-    if (r.length > best.length ||
-        (r.length === best.length && best.length && r[r.length-1].em < best[best.length-1].em)) best = r;
-  });
-  return best.map(a => a.key);
-}
-$('#pTour').onclick = () => setRoute(everyStageOnce());
-$('#pLive').onclick = () => setRoute(allActs.filter(a => a.stage.id === (DATA.presets?.live || 'alive')).map(a => a.key));
-$('#pRap').onclick = () => setRoute(allActs.filter(a => a.stage.id === (DATA.presets?.second || 'rap') && !a.nomusic).map(a => a.key));
-$('#rClear').onclick = () => { [...state.route].forEach(k => toggleRoute(k, true)); renderRoute();
-  showToast('Route cleared'); };
+  showToast('Stars cleared');
+};
 $('#rCopy').onclick = () => {
+  if (!state.route.size) { showToast('Nothing starred yet'); return; }
   const t = 'Kallio Block Party 2026 — my plan\n' + routeActs()
     .map(a => `${a.s}-${a.e}  ${a.name}  (${a.stage.name}${a.stage.num?', stage '+a.stage.num:''})`).join('\n');
-  navigator.clipboard.writeText(t).then(() => showToast('Route copied to clipboard'));
+  navigator.clipboard.writeText(t).then(() => showToast('Starred acts copied to clipboard'));
 };
 
 /* ══ theme ═════════════════════════════════════════════ */
@@ -2680,7 +2620,7 @@ function scrollToSection(sel, behavior = 'smooth') {
   scrollTo({top: Math.max(0, y), behavior});
 }
 
-const NAVMAP = {nSched:'#secSchedule', nMap:'#secMap', nRoute:'#secRoute'};
+const NAVMAP = {nSched:'#secSchedule', nMap:'#secMap'};
 function setActiveNav(id) {
   document.body.dataset.sec = id;
   if (typeof window.holdNavOpen === 'function') window.holdNavOpen();
