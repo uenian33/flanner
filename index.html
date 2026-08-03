@@ -296,42 +296,38 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   padding-top:clamp(18px,2.1vw,24px);
   border-top:1px solid color-mix(in srgb,var(--tx) 12%,transparent)}
 .facts .btn{flex:none;width:100%}
-/* The rail stands beside the card rather than under it: the card is one wide
-   object, and a control centred beneath it read as a caption belonging to the
-   picture. Its own column, so it cannot overhang the page's gutter.
+/* ── the page control ──────────────────────────────────
+   A row of dots on the picture, the current one solid — Apple's page control,
+   which is what this is: movement through an ordered list of peers. Three
+   findings decided it over the thumbnail rail that was here.
 
-   Each frame is a fifth of the card's height, and the stack starts at the top:
-   five festivals — the most the highlight will carry — make a rail exactly as
-   tall as the card, and two make one two-fifths as tall. The frames are the
-   control, so the arrows are only needed where the rail has to lie down. */
-.nav{grid-area:1/13/3/14;align-self:start;justify-self:end;width:56px;
-  margin-left:10px;
-  display:flex;flex-direction:column;align-items:stretch;gap:4px;
-  border:1px solid var(--line2);border-radius:10rem;padding:4px;background:var(--bg2)}
-.nav #prev,.nav #next{width:100%;height:36px}
-/* A frame is what is left of the card's height once the box's own furniture is
-   taken out: 2px of border, 8px of padding, two 36px arrows, the 4px either
-   side of the stack and the four 6px gaps inside it — 114px in all. Five
-   frames therefore make a box exactly as tall as the card beside it. */
-.nav .reelpips .pip{height:calc((var(--panelh,525px) - 114px) / 5)}
-.nav svg.i.up{transform:rotate(180deg)}
-.nav button{width:44px;height:44px;border-radius:10rem;display:grid;place-items:center;
-  font-size:13.6px;color:var(--tx2);transition:.15s var(--ease)}
-.nav button:hover:not(:disabled){background:var(--tx);color:var(--bg)}
-.nav button:disabled{opacity:.3;cursor:default}
-/* "2 of 5" tells you how many there are; the pictures tell you which ones.
-   Dimmed and desaturated until they are the slide on screen, so the row reads
-   as one current frame among faded neighbours rather than five thumbnails. */
-.nav .reelpips{display:flex;flex-direction:column;justify-content:flex-start;
-  align-items:stretch;gap:6px;padding:0}
-.nav .reelpips .pip{width:100%;flex:none;
-  border-radius:8px;overflow:hidden;padding:0;
-  position:relative;opacity:.4;filter:saturate(.45);transition:.2s var(--ease);
-  outline:1px solid transparent;outline-offset:1px}
-.nav .reelpips .pip img{width:100%;height:100%;object-fit:cover;display:block}
-.nav .reelpips .pip:hover{opacity:.75;filter:none}
-.nav .reelpips .pip.on{opacity:1;filter:none;outline-color:var(--tx)}
-@media(max-width:620px){.nav .reelpips .pip{width:32px;height:23px}}
+   Apple: centre it near the bottom of the view, keep indicators simple, and
+   "avoid complex shapes… negative space, text" — a photograph shrunk to 34px
+   is exactly that, and it was already on screen at full size anyway.
+
+   Material 3: a carousel item must stay large enough to recognise; 34px
+   frames of a crowd photograph are not. The vertically-scrolling page also
+   wants a way to reach every item without paging — the festival list below is
+   that, so the dots do not have to carry the whole job.
+
+   myhelsinki.fi, the city's own events site: no dots and no thumbnails at
+   all, just two round dark buttons over the edge of the row, hidden on
+   touch, where a swipe does the same work. The arrows here follow it. */
+.nav{grid-area:1/6/3/13;align-self:end;justify-self:center;z-index:4;
+  display:flex;align-items:center;gap:10px;margin:0 0 16px;
+  padding:6px 8px;border-radius:10rem;
+  background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.nav .dots{display:flex;align-items:center;gap:8px}
+.nav .dot{width:8px;height:8px;padding:0;border-radius:50%;
+  background:rgba(255,255,255,.45);transition:.2s var(--ease)}
+.nav .dot:hover{background:rgba(255,255,255,.75)}
+.nav .dot.on{background:#fff;width:22px;border-radius:10rem}
+/* The arrows are a pointer-device convenience: on a touch screen the swipe
+   across the picture already does it, and the dots are the tap target. */
+.nav .arw{display:none;width:28px;height:28px;border-radius:50%;
+  place-items:center;color:#fff;font-size:13px;transition:.15s var(--ease)}
+.nav .arw:hover{background:rgba(255,255,255,.22)}
+@media(hover:hover) and (pointer:fine){.nav .arw{display:grid}}
 
 /* the swap: everything that carries festival identity leaves in the direction
    of travel and the incoming one arrives from the far side */
@@ -349,24 +345,18 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   .stage{grid-template-columns:minmax(0,1fr);row-gap:0}
   .fig{grid-area:auto;aspect-ratio:16/10;min-height:0;border-radius:16px 16px 0 0}
   .side{grid-area:auto;align-self:auto}
-  /* One column: the rail goes back under the card, laid out across, and the
-     arrows come back because a row of frames alone reads as decoration. */
-  .nav{grid-area:auto;flex-direction:row;align-items:center;justify-self:center;
-    align-self:auto;gap:4px;margin-top:clamp(14px,1.8vw,20px);
-    border:1px solid var(--line2);border-radius:10rem;padding:4px;background:var(--bg2)}
-  .nav #prev,.nav #next{display:grid}
-  .nav .reelpips{flex:none;flex-direction:row;align-items:center;gap:6px;padding:0 8px}
-  .nav .reelpips .pip{width:38px;height:26px;flex:none}
-  .nav{width:auto}
-  .nav svg.i.up{transform:rotate(90deg)}
-  .nav #next svg.i{transform:rotate(-90deg)}
-  .panel{background:var(--bg2);border-radius:0 0 16px 16px;
-    border:1px solid var(--line2);border-top:none;
-    padding:clamp(20px,4vw,28px)}
-  .panel h3{font-size:clamp(24px,4.4vw,32px)}
-  .panel .fdesc{max-width:none}
   .facts .btn{width:100%}
-  .nav{grid-area:auto;margin-top:16px}
+  /* Stacked, the control leaves the picture and sits centred under the card,
+     which is where Apple puts it — so it loses the dark pill it needed to read
+     against a photograph and takes the page's own ink instead. */
+  .nav{grid-area:auto;justify-self:center;align-self:auto;
+    margin:14px 0 0;padding:0;background:none;
+    -webkit-backdrop-filter:none;backdrop-filter:none}
+  .nav .dot{background:color-mix(in srgb,var(--tx) 26%,transparent)}
+  .nav .dot:hover{background:color-mix(in srgb,var(--tx) 45%,transparent)}
+  .nav .dot.on{background:var(--tx)}
+  .nav .arw{color:var(--tx2)}
+  .nav .arw:hover{background:color-mix(in srgb,var(--tx) 10%,transparent)}
 }
 @media(max-width:430px){
   .facts{flex-direction:column;align-items:stretch}
@@ -1533,16 +1523,16 @@ if (reel.length) {
       </div>
     </div>
     </div>
-    ${reel.length > 1 ? `<div class="nav">
-      <button id="prev" aria-label="Previous festival">
-        <svg class="i up"><use href="#i-down"/></svg></button>
-      <span class="reelpips">${reel.map((rf, i) => `
-        <button class="pip${i === cur ? ' on' : ''}" data-go="${i}"
+    ${reel.length > 1 ? `<div class="nav" role="group" aria-label="Highlighted festivals">
+      <button class="arw" id="prev" aria-label="Previous festival">
+        <svg class="i"><use href="#i-left"/></svg></button>
+      <span class="dots">${reel.map((rf, i) => `
+        <button class="dot${i === cur ? ' on' : ''}" data-go="${i}"
           aria-label="${esc(rf.name)} ${esc(rf.year)}"
-          ${i === cur ? 'aria-current="true"' : ''}><img src="${rf.promoSrc}" alt=""></button>`
+          ${i === cur ? 'aria-current="true"' : ''}></button>`
       ).join('')}</span>
-      <button id="next" aria-label="Next festival">
-        <svg class="i"><use href="#i-down"/></svg></button>
+      <button class="arw" id="next" aria-label="Next festival">
+        <svg class="i"><use href="#i-right"/></svg></button>
     </div>` : ''}`;
   };
 
@@ -1607,8 +1597,8 @@ if (reel.length) {
     const pv = $('#prev'), nx = $('#next');
     if (pv) pv.onclick = e => { e.preventDefault(); go(cur - 1, true); nudge(); };
     if (nx) nx.onclick = e => { e.preventDefault(); go(cur + 1, true); nudge(); };
-    stage.querySelectorAll('.pip').forEach(p =>
-      p.onclick = e => { e.preventDefault(); go(+p.dataset.go); nudge(); });
+    stage.querySelectorAll('.dot').forEach(d =>
+      d.onclick = e => { e.preventDefault(); go(+d.dataset.go); nudge(); });
   }
 
   const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
