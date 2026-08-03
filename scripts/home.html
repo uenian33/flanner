@@ -180,7 +180,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    text needs rather than setting its own. */
 .fig{grid-area:1/6/3/13;position:relative;display:block;overflow:hidden;
   border-radius:0 18px 18px 0;height:100%;
-  min-height:clamp(260px,24vw,340px);background:var(--panel);
+  min-height:clamp(300px,27vw,400px);background:var(--panel);
   text-decoration:none;touch-action:pan-y}
 /* Laid over the box rather than filling it: as a normal child the picture's
    own proportions set the row's height, which made the band as tall as
@@ -208,7 +208,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* The panel is the left half of that object, so it carries the white and the
    rounding that the picture cannot. */
 .panel{position:relative;--tuck:0px;background:var(--bg2);
-  border-radius:18px 0 0 18px;padding:clamp(22px,2.2vw,30px);flex:1;
+  border-radius:18px 0 0 18px;padding:clamp(24px,2.6vw,34px);flex:1;
   /* Every slide's panel is as tall as the wordiest one — see sizePanels().
      The actions sit at the bottom of that box rather than floating up under
      a short festival's text. */
@@ -224,8 +224,8 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .fdate{background:var(--cat,var(--tx));color:var(--cat-ink,var(--bg2));
   padding:9px 18px 10px;border-radius:10rem;
   font-size:var(--f-sub);font-weight:700;line-height:1;white-space:nowrap}
-.panel h3{margin:0;font-size:clamp(26px,2.9vw,38px);font-weight:700;
-  line-height:1.1;letter-spacing:-.015em}
+.panel h3{margin:0;font-size:clamp(27px,3.1vw,40px);font-weight:700;
+  line-height:1.12;letter-spacing:-.015em}
 .panel .fwhere{margin:clamp(10px,1.2vw,14px) 0 0;display:flex;align-items:center;gap:8px;
   font-size:var(--f-body);line-height:var(--l-body);color:var(--tx)}
 .panel .fwhere svg.i{width:17px;height:17px;color:var(--tx2)}
@@ -233,17 +233,20 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   line-height:1.55;color:var(--tx2);max-width:46ch}
 /* Genres and the top of the bill, as outlined labels: enough to tell a techno
    street party from a jazz weekend without reading the sentence above. */
-.ftags{list-style:none;display:flex;flex-wrap:wrap;gap:7px;
-  margin:clamp(12px,1.3vw,16px) 0 0;padding:0}
+/* The bottom margin is a floor, not the whole gap: the actions are pushed to
+   the bottom of the panel, so usually there is more air than this. It stops
+   the labels touching the rule when a wordy festival leaves no slack. */
+.ftags{list-style:none;display:flex;flex-wrap:wrap;gap:8px;
+  margin:clamp(14px,1.5vw,18px) 0 clamp(16px,2vw,24px);padding:0}
 .ftags li{border:1px solid var(--tx);border-radius:10rem;background:var(--bg2);
   color:var(--tx);padding:4px 11px 5px;font-size:var(--f-caption);
   font-weight:700;line-height:1.2;white-space:nowrap;
   /* A headliner's name can be half a sentence — enough of it to recognise. */
   max-width:22ch;overflow:hidden;text-overflow:ellipsis}
 
-.facts{display:flex;flex-direction:column;gap:9px;align-items:stretch;
+.facts{display:flex;flex-direction:column;gap:10px;align-items:stretch;
   margin:clamp(16px,1.8vw,22px) 0 0;
-  padding-top:clamp(14px,1.6vw,18px);
+  padding-top:clamp(18px,2.1vw,24px);
   border-top:1px solid color-mix(in srgb,var(--tx) 12%,transparent)}
 .facts .btn{flex:none;width:100%}
 .nav{grid-area:3/1/4/13;margin-top:clamp(14px,1.8vw,20px);justify-self:center;display:flex;align-items:center;gap:4px;
@@ -806,7 +809,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
    expanded to the 44pt minimum both HIG and Material ask for */
 .offi::after{content:'';position:absolute;inset:-5px -6px}
 .offi:hover{color:var(--tx);border-color:var(--tx);
-  background:color-mix(in srgb,var(--cat,var(--tx)) 26%,transparent)}
+  background:color-mix(in srgb,var(--tx) 10%,transparent)}
 .offi svg{width:12px;height:12px}
 .ttl{padding-top:24px}
 /* The name is what a reader scans for, so it steps up two rungs from the
@@ -828,10 +831,13 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   white-space:nowrap;font-size:var(--f-body);font-weight:700;
   letter-spacing:var(--k-label);padding:12px 20px;border-radius:10rem;border:1.5px solid var(--tx);text-decoration:none;
   transition:.16s var(--ease);min-height:44px;color:var(--tx)}
-.btn:hover{background:color-mix(in srgb,var(--cat,var(--tx)) 26%,transparent)}
-.btn.primary{background:var(--cat,var(--tx));color:var(--cat-ink,var(--bg2));
-  border-color:var(--cat,var(--tx));flex:1 1 auto}
-.btn.primary:hover{filter:brightness(1.06) saturate(1.15)}
+/* Buttons are ink on paper or paper on ink — never the category's colour.
+   Colour is how a label is read at a glance, and a page that uses it for the
+   buttons too has spent it. */
+.btn:hover{background:color-mix(in srgb,var(--tx) 10%,transparent)}
+.btn.primary{background:var(--tx);color:var(--bg2);
+  border-color:var(--tx);flex:1 1 auto}
+.btn.primary:hover{background:var(--tx2);border-color:var(--tx2)}
 .acts .btn:not(.primary){flex:0 1 auto}
 .btn.free{border-style:dashed;color:var(--tx3);border-color:var(--line2)}
 /* below this width the two actions stop fitting side by side; a clean stack
