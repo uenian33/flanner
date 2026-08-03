@@ -214,7 +214,7 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
   border-radius:var(--r-pill);padding:2px;gap:3px}
 .seg button{display:inline-flex;flex:1 1 0;align-items:center;justify-content:center;gap:8px;
   font-size:var(--f-label);font-weight:650;padding:0 16px;border-radius:var(--r-pill);color:var(--md-sys-color-on-surface-variant);
-  transition:var(--md-sys-motion-duration-short3) var(--ease);min-height:44px;white-space:nowrap}
+  transition:var(--md-sys-motion-duration-short3) var(--ease);min-height:40px;white-space:nowrap}
 /* Day and view belong to the timetable, not to the whole page, so they live
    inside the schedule section. A sticky child only pins within its parent's
    box, which is exactly the behaviour wanted: they ride under the top bar
@@ -310,23 +310,26 @@ __SETTINGS_CSS__
 .frow:last-child{margin-bottom:0}
 .flab{width:100%;margin:0 0 1px;font-size:var(--f-micro);letter-spacing:.1em;text-transform:uppercase;
   color:var(--md-sys-color-on-surface-variant);font-weight:700}
-.chip{font-size:var(--f-over);padding:7px 14px;border-radius:var(--r-pill);border:1px solid var(--chip-line);
+/* M3 filter chip: 32dp tall, small corner, label-large. */
+.chip{font-size:var(--md-sys-typescale-label-large-size);padding:6px 16px;
+  border-radius:var(--md-sys-shape-corner-small);border:1px solid var(--chip-line);
   color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-duration-short3) var(--ease);white-space:nowrap;display:inline-flex;
-  align-items:center;gap:8px;min-height:36px}
+  align-items:center;gap:8px;min-height:32px}
 .chip:hover{border-color:var(--md-sys-color-on-surface-variant);color:var(--md-sys-color-on-surface)}
 .chip[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest);border-color:var(--md-sys-color-on-surface);
   font-weight:650}
 .chip .dot{width:8px;height:8px;border-radius:var(--r-pill);background:var(--c,currentColor);flex:none}
 /* The starred filter sits in the toolbar rather than the sheet: it is the one
    filter with a count worth seeing without opening anything. */
-.starbtn{flex:none;min-height:44px;font-size:var(--f-label);font-weight:700;padding:0 16px}
-.starbtn[aria-pressed=true] svg.i{fill:currentColor}
-.starbtn:disabled{opacity:.45;cursor:default}
-.starbtn .nb{min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-pill);
+.starfilter{flex:none;min-height:40px;font-size:var(--md-sys-typescale-label-large-size);
+  font-weight:var(--md-sys-typescale-title-weight);padding:0 16px}
+.starfilter[aria-pressed=true] svg.i{fill:currentColor}
+.starfilter:disabled{opacity:.45;cursor:default}
+.starfilter .nb{min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-pill);
   display:inline-grid;place-items:center;font-size:var(--f-micro);font-weight:700;
   background:var(--fill);color:inherit}
-.starbtn[aria-pressed=true] .nb{background:rgba(255,255,255,.24)}
-@media(max-width:839px){.starbtn .lbl{display:none}.starbtn{padding:0 12px}}
+.starfilter[aria-pressed=true] .nb{background:rgba(255,255,255,.24)}
+@media(max-width:839px){.starfilter .lbl{display:none}.starfilter{padding:0 12px}}
 .chip.stage[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#0a0c10}
 .chip.stage[aria-pressed=true] .dot{background:rgba(10,12,16,.55)}
 .chip .ct{font-size:var(--f-micro);opacity:.62;font-variant-numeric:tabular-nums}
@@ -1005,7 +1008,7 @@ __TICKER__
       <button id="vTimeline" aria-pressed="false"><svg class="i"><use href="#i-cols"/></svg>Timetable</button>
       <button id="vAgenda" aria-pressed="false"><svg class="i"><use href="#i-rows"/></svg>List</button>
     </div>
-    <button class="chip starbtn" id="starOnly" aria-pressed="false"
+    <button class="chip st starfilter" id="starOnly" aria-pressed="false"
       title="Show only the acts you have starred">
       <svg class="i"><use href="#i-star"/></svg><span class="lbl">Starred</span>
       <span class="nb" id="starCount" hidden>0</span></button>
@@ -1232,7 +1235,7 @@ const typeCounts = countBy(a => [a.type]), genreCounts = countBy(a => a.genres);
 
 function chips(host, entries, set, cls, colorOf) {
   host.innerHTML = entries.map(([k, label, n]) =>
-    `<button class="chip ${cls}" data-k="${esc(k)}" aria-pressed="false"` +
+    `<button class="chip st ${cls}" data-k="${esc(k)}" aria-pressed="false"` +
     (colorOf ? ` style="--c:${colorOf(k)}"><i class="dot"></i>` : '>') +
     esc(label) + (n != null ? ` <i class="ct">${n}</i>` : '') + '</button>').join(' ');
   host.querySelectorAll('.chip').forEach(b => b.onclick = () => {

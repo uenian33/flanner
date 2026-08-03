@@ -154,3 +154,29 @@
   color-scheme:light;
 }
 :root[data-theme=dark]{color-scheme:dark}
+
+/* ── state layers ──────────────────────────────────────
+   "A state layer is a semi-transparent covering… an overlay with a fixed
+   opacity for each state [that] uses the same color as the content."
+   One rule, applied by giving an element .st and a --st-on colour; the layer
+   is a pseudo-element so it never touches the element's own background. */
+.st{position:relative;isolation:isolate}
+.st::after{content:"";position:absolute;inset:0;border-radius:inherit;
+  background:var(--st-on,currentColor);opacity:0;pointer-events:none;z-index:0;
+  transition:opacity var(--md-sys-motion-duration-short2)
+             var(--md-sys-motion-easing-standard)}
+.st > *{position:relative;z-index:1}
+.st:hover::after{opacity:var(--md-sys-state-hover-opacity)}
+.st:focus-visible::after{opacity:var(--md-sys-state-focus-opacity)}
+.st:active::after{opacity:var(--md-sys-state-pressed-opacity)}
+.st:disabled::after,.st[aria-disabled=true]::after{opacity:0}
+
+/* Focus is never only a state layer: M3 pairs it with a visible indicator. */
+:focus-visible{outline:3px solid var(--md-sys-color-primary);outline-offset:2px}
+
+/* "The size of state layers is 40dp while the interactive target size is
+   48dp." Anything clickable gets the target even when it draws smaller. */
+button,a[href],[role=button],input,select{min-height:0}
+@media(pointer:coarse){
+  button,[role=button]{min-height:48px}
+}

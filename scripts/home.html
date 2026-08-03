@@ -400,7 +400,7 @@ __NAV_CSS__
 .sbox{position:relative;flex:1 1 280px;min-width:0}
 .sbox svg.i{position:absolute;left:17px;top:50%;transform:translateY(-50%);
   width:17px;height:17px;color:var(--md-sys-color-on-surface-variant);pointer-events:none}
-.sbox input{width:100%;height:50px;border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);
+.sbox input{width:100%;height:56px;border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);
   background:var(--md-sys-color-surface-container-lowest);padding:0 44px 0 44px;font:inherit;font-size:var(--f-body);
   color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-duration-short3) var(--ease)}
 .sbox input::placeholder{color:var(--md-sys-color-on-surface-variant)}
@@ -410,7 +410,7 @@ __NAV_CSS__
 .sbox .clr:hover{background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
 .sbox .clr[hidden]{display:none}
 .drop{position:relative;flex:none}
-.trig{display:inline-flex;align-items:center;gap:9px;height:50px;padding:0 20px;
+.trig{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;
   border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);background:var(--md-sys-color-surface-container-lowest);
   font-size:var(--f-body);font-weight:700;transition:var(--md-sys-motion-duration-short3) var(--ease);white-space:nowrap}
 .trig svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
@@ -815,14 +815,18 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   letter-spacing:var(--md-sys-typescale-label-large-tracking);
   font-weight:var(--md-sys-typescale-emphasized-weight);
   letter-spacing:var(--k-label);padding:12px 20px;border-radius:var(--md-sys-shape-corner-full);border:1.5px solid var(--md-sys-color-on-surface);text-decoration:none;
-  transition:var(--md-sys-motion-duration-short3) var(--ease);min-height:44px;color:var(--md-sys-color-on-surface)}
+  transition:var(--md-sys-motion-duration-short3) var(--ease);min-height:40px;color:var(--md-sys-color-on-surface)}
 /* Buttons are ink on paper or paper on ink — never the category's colour.
    Colour is how a label is read at a glance, and a page that uses it for the
    buttons too has spent it. */
-.btn:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 10%,transparent)}
+/* Filled button: primary container, on-primary label, state layer in the
+   label's own colour — M3's filled button, with our ink-on-paper palette
+   choice kept (DESIGN.md §9). */
 .btn.primary{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest);
-  border-color:var(--md-sys-color-on-surface);flex:1 1 auto}
-.btn.primary:hover{background:var(--md-sys-color-on-surface-variant);border-color:var(--md-sys-color-on-surface-variant)}
+  border-color:var(--md-sys-color-on-surface);flex:1 1 auto;
+  --st-on:var(--md-sys-color-surface-container-lowest)}
+.btn{--st-on:var(--md-sys-color-on-surface)}
+
 .acts .btn:not(.primary){flex:0 1 auto}
 .btn.free{border-style:dashed;color:var(--md-sys-color-on-surface-variant);border-color:var(--md-sys-color-outline)}
 /* below this width the two actions stop fitting side by side; a clean stack
@@ -917,7 +921,7 @@ __FOOTER_CSS__
   </div>
   <div class="dropset">
   <div class="drop">
-    <button class="trig" id="whenTrig" aria-expanded="false" aria-controls="whenSheet">
+    <button class="trig st" id="whenTrig" aria-expanded="false" aria-controls="whenSheet">
       <svg class="i"><use href="#i-cal"/></svg><span id="whenLabel">All</span>
       <svg class="i cv"><use href="#i-down"/></svg></button>
     <div class="sheet" id="whenSheet" hidden role="dialog" aria-label="Filter by date">
@@ -926,7 +930,7 @@ __FOOTER_CSS__
     </div>
   </div>
   <div class="drop">
-    <button class="trig" id="catTrig" aria-expanded="false" aria-controls="catSheet">
+    <button class="trig st" id="catTrig" aria-expanded="false" aria-controls="catSheet">
       <svg class="i"><use href="#i-tune"/></svg><span id="catLabel">All</span>
       <svg class="i cv"><use href="#i-down"/></svg></button>
     <div class="sheet" id="catSheet" hidden role="dialog" aria-label="Filter by category">
@@ -1150,10 +1154,10 @@ if (reel.length) {
       <ul class="ftags">${[...f.tags.slice(0, 3), f.stars[0]]
         .filter(Boolean).map(k => `<li>${esc(k)}</li>`).join('')}</ul>
       <div class="facts">
-      <a class="btn primary" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
+      <a class="btn primary st" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
       ${f.free
-        ? `<a class="btn" href="${esc(f.official)}" target="_blank" rel="noopener">Official ${ico('ext')}</a>`
-        : `<a class="btn" href="${esc(f.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
+        ? `<a class="btn st" href="${esc(f.official)}" target="_blank" rel="noopener">Official ${ico('ext')}</a>`
+        : `<a class="btn st" href="${esc(f.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
       </div>
     </div>
     </div>
@@ -1462,10 +1466,10 @@ function card(f) {
       <p class="stars"><b>${st.past ? 'Played' : 'Headlining'}:</b> ${esc(f.stars.slice(0, 4).join(' · '))}</p>
       <div class="cats">${esc(f.tags.join(', '))}</div>
       <div class="acts">
-        <a class="btn primary" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
+        <a class="btn primary st" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
         ${f.free
           ? `<span class="btn free">Free entry</span>`
-          : `<a class="btn" href="${esc(f.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
+          : `<a class="btn st" href="${esc(f.tickets)}" target="_blank" rel="noopener">Tickets ${ico('ticket')}</a>`}
       </div>
     </div>
   </article>`;
@@ -1527,7 +1531,7 @@ function paintPlace() {
     o.setAttribute('aria-checked', o.dataset.k === place));
 }
 $('#locOpts').innerHTML = PLACES.map(p =>
-  `<button class="opt" role="radio" data-k="${p.k}" aria-checked="false">${p.label}</button>`).join('');
+  `<button class="opt st" role="radio" data-k="${p.k}" aria-checked="false">${p.label}</button>`).join('');
 $('#locOpts').querySelectorAll('.opt').forEach(o => o.onclick = () => {
   place = Store.set('place', o.dataset.k);
   paintPlace();
@@ -1602,9 +1606,9 @@ const WHEN = [
 let when = 'any', cats = new Set(), draft = new Set(), q = '';
 
 $('#whenOpts').innerHTML = WHEN.map(w =>
-  `<button class="opt" role="radio" data-k="${w.k}" aria-checked="${w.k === when}">${w.label}</button>`).join('');
+  `<button class="opt st" role="radio" data-k="${w.k}" aria-checked="${w.k === when}">${w.label}</button>`).join('');
 $('#catOpts').innerHTML = CATEGORIES.map(c =>
-  `<button class="opt" data-c="${esc(c.id)}" aria-pressed="false"
+  `<button class="opt st" data-c="${esc(c.id)}" aria-pressed="false"
      title="${esc(c.blurb || '')}">${esc(c.label)}</button>`).join('');
 
 const haystack = f => [f.name, f.city, f.type, catOf(f).label, catOf(f).labelFi,
