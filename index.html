@@ -665,12 +665,8 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
    its own and the last card sat underneath it. */
 .endcap{display:grid;justify-items:center;gap:9px;text-align:center;
   padding:clamp(30px,5vw,46px) 0 0;color:var(--tx3)}
-/* Grey, not brand green: this mark closes the list rather than announcing
-   anything, and it sits directly above the same mark in the nav bar.
-   Desaturating alone leaves it near-white, since the mark is a pale gradient —
-   the brightness step is what brings it down to the weight of the line of text
-   underneath. */
-.endcap svg{width:34px;height:34px;opacity:.75;filter:grayscale(1) brightness(.62)}
+/* A line of text and nothing else. The mark that used to sit above it repeated
+   the one in the nav bar a few pixels below, which said nothing twice. */
 .endcap p{margin:0;font-size:var(--f-sub);font-weight:600;letter-spacing:.02em}
 .endcap[hidden]{display:none}
 @media(max-width:820px){
@@ -1191,7 +1187,6 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
      home page, and a reader who wants them knows to go looking. -->
 
 <div class="endcap" id="endCap">
-  <svg class="logo" aria-hidden="true"><use href="#i-logo"/></svg>
   <p>More to be discovered</p>
 </div>
 
