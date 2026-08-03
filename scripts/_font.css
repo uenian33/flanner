@@ -1,12 +1,20 @@
-/* Roboto — Material 3's reference typeface, from Google Fonts (Apache 2.0).
-   The variable face carries 100-900, so one file covers every weight the type
-   scale asks for. */
-@font-face{font-family:Roboto;src:url(__ROBOTO_LATIN__) format("woff2");
-  font-weight:100 900;font-style:normal;font-display:swap;
+/* Roboto Flex, from Google Fonts (SIL Open Font License).
+
+   Material names this font itself as the upgrade path: "Roboto can be replaced
+   with another font, like Roboto Flex." The reason to take it is the optical
+   size axis. This product sets type from 9px in a timetable cell to 36px in a
+   headline, and opsz is what keeps the small end from looking spindly and the
+   large end from looking loose — the applying-type page asks for it directly:
+   "If available, set the appropriate optical size to your usage."
+
+   One file per subset carries wght 100–1000, so the baseline and emphasized
+   sets both come out of it with no second download. */
+@font-face{font-family:"Roboto Flex";src:url(__ROBOTOFLEX_LATIN__) format("woff2");
+  font-weight:100 1000;font-stretch:100%;font-style:normal;font-display:swap;
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
     U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:Roboto;src:url(__ROBOTO_EXT__) format("woff2");
-  font-weight:100 900;font-style:normal;font-display:swap;
+@font-face{font-family:"Roboto Flex";src:url(__ROBOTOFLEX_EXT__) format("woff2");
+  font-weight:100 1000;font-stretch:100%;font-style:normal;font-display:swap;
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,
     U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,
     U+2113,U+2C60-2C7F,U+A720-A7FF}

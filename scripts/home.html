@@ -78,10 +78,10 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .mark{display:inline-flex;align-items:center;gap:clamp(11px,1.3vw,16px);
   text-decoration:none;white-space:nowrap}
 .wm{display:flex;flex-direction:column;gap:3px;min-width:0}
-.wm b{font-family:var(--title);font-weight:var(--md-sys-typescale-emphasized-weight);
+.wm b{font-family:var(--title);font-weight:var(--md-sys-typescale-emphasized-title-weight);
   font-size:var(--md-sys-typescale-headline-small-size);
   letter-spacing:var(--k-display);text-transform:uppercase;line-height:1}
-.wm i{font-style:normal;font-size:var(--md-sys-typescale-label-small-size);font-weight:400;
+.wm i{font-style:normal;font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-body-weight);
   letter-spacing:.22em;text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);line-height:1}
 .logo{width:clamp(21px,2.5vw,31px);height:clamp(21px,2.5vw,31px);flex:none;
   stroke:none;fill:none}
@@ -129,7 +129,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .hero{margin:0 0 clamp(30px,4vw,46px)}
 .shead{display:flex;align-items:baseline;gap:12px;margin-bottom:clamp(14px,1.8vw,20px);
   flex-wrap:wrap}
-.shead h2{margin:0;font-family:var(--title);font-weight:500;font-size:var(--f-h2);
+.shead h2{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--f-h2);
   line-height:var(--l-h2);letter-spacing:var(--k-h2);text-transform:uppercase}
 .shead p{margin:0;color:var(--md-sys-color-on-surface-variant);font-size:var(--f-label);line-height:var(--l-label);
   letter-spacing:var(--k-label)}
@@ -166,7 +166,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .fig .badge{position:absolute;right:18px;top:18px;z-index:2;display:inline-flex;align-items:center;
   background:var(--cat,#fff);color:var(--cat-ink,#000);
   padding:9px 18px 10px;border-radius:var(--md-sys-shape-corner-full);
-  font-size:var(--f-sub);font-weight:700;line-height:1;white-space:nowrap}
+  font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);line-height:1;white-space:nowrap}
 
 .side{grid-area:1/1/3/6;z-index:3;align-self:stretch;
   display:flex;flex-direction:column}
@@ -181,20 +181,20 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .panel .facts{margin-top:auto}
 .fline{margin:0 0 clamp(14px,1.6vw,20px);display:flex;align-items:center;
   gap:clamp(10px,1.4vw,18px);flex-wrap:wrap;
-  font-size:var(--f-sub);line-height:1.2;font-weight:700;color:var(--md-sys-color-on-surface-variant)}
+  font-size:var(--f-sub);line-height:1.2;font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface-variant)}
 .fline .dot{display:inline-block;width:3px;height:3px;border-radius:50%;
   background:currentColor;opacity:.55;vertical-align:middle;margin:0 5px}
 /* The date is the thing people scan for, so it is set as a filled pill in the
    category's colour rather than as one more item in a grey run-on line. */
 .fdate{background:var(--cat,var(--md-sys-color-on-surface));color:var(--cat-ink,var(--md-sys-color-surface-container-lowest));
   padding:9px 18px 10px;border-radius:var(--md-sys-shape-corner-full);
-  font-size:var(--f-sub);font-weight:700;line-height:1;white-space:nowrap}
+  font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);line-height:1;white-space:nowrap}
 /* The one display style on the page — M3 display-small, and headline-medium
    where the column is too narrow for it. */
 .panel h3{margin:0;font-size:var(--md-sys-typescale-display-small-size);
   line-height:var(--md-sys-typescale-display-small-line-height);
   letter-spacing:var(--md-sys-typescale-display-small-tracking);
-  font-weight:var(--md-sys-typescale-emphasized-weight)}
+  font-weight:var(--md-sys-typescale-emphasized-title-weight)}
 .panel .fwhere{margin:clamp(10px,1.2vw,14px) 0 0;display:flex;align-items:center;gap:8px;
   font-size:var(--f-body);line-height:var(--l-body);color:var(--md-sys-color-on-surface)}
 .panel .fwhere svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
@@ -211,7 +211,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   margin:clamp(14px,1.5vw,18px) 0 clamp(16px,2vw,24px);padding:0}
 .ftags li{border:1px solid var(--md-sys-color-on-surface);border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest);
   color:var(--md-sys-color-on-surface);padding:4px 11px 5px;font-size:var(--f-caption);
-  font-weight:700;line-height:1.2;white-space:nowrap;
+  font-weight:var(--md-sys-typescale-emphasized-label-weight);line-height:1.2;white-space:nowrap;
   /* A headliner's name can be half a sentence — enough of it to recognise. */
   max-width:22ch;overflow:hidden;text-overflow:ellipsis}
 
@@ -378,7 +378,7 @@ __NAV_CSS__
 @media(min-width:600px){
   .navhome-m{display:grid;place-content:center;gap:5px;justify-items:center;
     text-decoration:none;position:relative;z-index:1;color:var(--glass-tx);
-    border-radius:var(--md-sys-shape-corner-large-increased);padding:14px 0;font-size:8.4px;font-weight:600}
+    border-radius:var(--md-sys-shape-corner-large-increased);padding:14px 0;font-size:8.4px;font-weight:var(--md-sys-typescale-title-weight)}
   .navhome-m svg{width:22px;height:22px;stroke:none;fill:none}
   .navhome-m .lbl{display:block}
 }
@@ -415,9 +415,9 @@ __NAV_CSS__
 .tools.stuck .toolmark{max-width:220px;opacity:1;margin-right:2px}
 .toolmark svg{width:30px;height:30px;flex:none;stroke:none;fill:none}
 .toolmark .wm{display:flex;flex-direction:column;gap:2px;min-width:0}
-.toolmark .wm i{font-style:normal;font-size:var(--md-sys-typescale-label-small-size);font-weight:400;letter-spacing:.18em;
+.toolmark .wm i{font-style:normal;font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-body-weight);letter-spacing:.18em;
   text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);line-height:1;white-space:nowrap}
-.toolmark b{font-family:var(--title);font-weight:600;font-size:var(--md-sys-typescale-title-medium-size);letter-spacing:.05em;
+.toolmark b{font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--md-sys-typescale-title-medium-size);letter-spacing:.05em;
   text-transform:uppercase;line-height:1;color:var(--md-sys-color-on-surface)}
 .sbox{position:relative;flex:1 1 280px;min-width:0}
 .sbox svg.i{position:absolute;left:17px;top:50%;transform:translateY(-50%);
@@ -434,7 +434,7 @@ __NAV_CSS__
 .drop{position:relative;flex:none}
 .trig{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;
   border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);background:var(--md-sys-color-surface-container-lowest);
-  font-size:var(--f-body);font-weight:700;transition:var(--md-sys-motion-spring-fast-effects);white-space:nowrap}
+  font-size:var(--f-body);font-weight:var(--md-sys-typescale-emphasized-label-weight);transition:var(--md-sys-motion-spring-fast-effects);white-space:nowrap}
 .trig svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
 .trig:hover{border-color:var(--md-sys-color-on-surface)}
 .trig[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
@@ -450,20 +450,20 @@ __NAV_CSS__
 @starting-style{.sheet{opacity:0;transform:scale(.97) translateY(-4px)}}
 .sheet{transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-fast-spatial)}
 .sheet h4{margin:0 0 14px;font-size:var(--f-caption);letter-spacing:.1em;
-  text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);font-weight:700}
+  text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);font-weight:var(--md-sys-typescale-emphasized-title-weight)}
 .sheet .opts{display:flex;flex-wrap:wrap;gap:8px}
-.opt{font-size:var(--f-sub);font-weight:600;padding:9px 15px;border-radius:var(--md-sys-shape-corner-full);
+.opt{font-size:var(--f-sub);font-weight:var(--md-sys-typescale-title-weight);padding:9px 15px;border-radius:var(--md-sys-shape-corner-full);
   border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects);
   min-height:40px;text-align:left}
 .opt:hover{border-color:var(--md-sys-color-on-surface);color:var(--md-sys-color-on-surface)}
-.opt[aria-pressed=true],.opt[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
+.opt[aria-pressed=true],.opt[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight);
   border-color:var(--md-sys-color-on-surface)}
 .sheet .foot{display:flex;align-items:center;justify-content:flex-end;gap:14px;
   margin-top:18px;padding-top:15px;border-top:1px solid var(--md-sys-color-outline-variant)}
-.sheet .foot .lnk{font-size:var(--f-sub);color:var(--md-sys-color-on-surface-variant);font-weight:600;padding:8px 4px}
+.sheet .foot .lnk{font-size:var(--f-sub);color:var(--md-sys-color-on-surface-variant);font-weight:var(--md-sys-typescale-title-weight);padding:8px 4px}
 .sheet .foot .lnk:hover{color:var(--md-sys-color-on-surface)}
 .sheet .foot .go{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-radius:var(--md-sys-shape-corner-full);padding:11px 24px;
-  font-size:var(--f-sub);font-weight:700;min-height:44px}
+  font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);min-height:44px}
 
 .dropset{display:contents}
 
@@ -473,10 +473,10 @@ __NAV_CSS__
 .vseg{display:flex;flex:none;gap:3px;padding:3px;border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest)}
 .vseg button{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;
-  border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-sub);font-weight:700;color:var(--md-sys-color-on-surface-variant);
+  border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface-variant);
   transition:background var(--md-sys-motion-spring-fast-effects),color var(--md-sys-motion-spring-fast-effects)}
 .vseg button svg.i{width:17px;height:17px}
-.vseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
+.vseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
 .vseg button:hover:not([aria-pressed=true]){color:var(--md-sys-color-on-surface)}
 /* Icons only, at every width. The three shapes say what they do, the names
    said it a second time, and the width they cost is the width that decides
@@ -515,7 +515,7 @@ __NAV_CSS__
   padding:clamp(30px,5vw,46px) 0 0;color:var(--md-sys-color-on-surface-variant)}
 /* A line of text and nothing else. The mark that used to sit above it repeated
    the one in the nav bar a few pixels below, which said nothing twice. */
-.endcap p{margin:0;font-size:var(--f-sub);font-weight:600;letter-spacing:.02em}
+.endcap p{margin:0;font-size:var(--f-sub);font-weight:var(--md-sys-typescale-title-weight);letter-spacing:.02em}
 .endcap[hidden]{display:none}
 @media(max-width:839px){
   /* The bar's own height, the gap it stands off the edge, and the inset on a
@@ -536,7 +536,7 @@ body[data-view=cal] .empty{display:none}
   margin:0 0 14px}
 .calmonth{position:relative}
 .calpick{display:inline-flex;align-items:center;gap:9px;padding:6px 4px;
-  font-family:var(--title);font-weight:700;letter-spacing:.01em;
+  font-family:var(--title);font-weight:var(--md-sys-typescale-emphasized-label-weight);letter-spacing:.01em;
   font-size:var(--md-sys-typescale-headline-small-size);
   line-height:var(--md-sys-typescale-headline-small-line-height);
   text-transform:uppercase;color:var(--md-sys-color-on-surface)}
@@ -572,7 +572,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 }
 .calboxhead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
   justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--md-sys-color-surface-container-lowest)}
-.calboxhead h2{margin:0;font-family:var(--title);font-weight:600;font-size:var(--md-sys-typescale-title-medium-size);
+.calboxhead h2{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--md-sys-typescale-title-medium-size);
   letter-spacing:.02em;text-transform:uppercase}
 .yrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:4px 0 14px}
@@ -583,7 +583,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .yrow .i{width:15px;height:15px}
 .mons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .mons button{position:relative;min-height:46px;border:1px solid var(--md-sys-color-outline);
-  border-radius:var(--md-sys-shape-corner-medium);font-size:var(--md-sys-typescale-label-medium-size);font-weight:700;color:var(--md-sys-color-on-surface);
+  border-radius:var(--md-sys-shape-corner-medium);font-size:var(--md-sys-typescale-label-medium-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface);
   transition:var(--md-sys-motion-spring-fast-effects)}
 .mons button:hover{border-color:var(--md-sys-color-on-surface)}
 .mons button[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
@@ -599,7 +599,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 /* ── the day panel ─────────────────────────────────────*/
 .calday{margin-top:clamp(22px,3vw,32px)}
 .calday[hidden]{display:none}
-.cell.today .dn{color:var(--md-sys-color-on-surface);font-weight:800}
+.cell.today .dn{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
 .cell.today{box-shadow:inset 0 0 0 2px var(--md-sys-color-outline)}
 .cell.sel{box-shadow:inset 0 0 0 2px var(--md-sys-color-on-surface)}
 .cell.has{cursor:pointer}
@@ -607,21 +607,21 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .calhead{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
   margin-bottom:6px}
 .calhead span{font-size:var(--f-caption);letter-spacing:.08em;text-transform:uppercase;
-  color:var(--md-sys-color-on-surface-variant);font-weight:700;text-align:center}
+  color:var(--md-sys-color-on-surface-variant);font-weight:var(--md-sys-typescale-emphasized-label-weight);text-align:center}
 .calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
   border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large);overflow:hidden;
   background:var(--md-sys-color-outline);gap:1px}
 .cell{background:var(--md-sys-color-surface-container-lowest);min-height:88px;padding:6px 5px;display:flex;
   flex-direction:column;gap:3px}
 .cell.out{background:var(--md-sys-color-surface)}
-.cell .dn{font-size:var(--md-sys-typescale-label-small-size);font-weight:700;color:var(--md-sys-color-on-surface-variant);padding-left:2px}
+.cell .dn{font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface-variant);padding-left:2px}
 .cell.has .dn{color:var(--md-sys-color-on-surface)}
 /* A run of days reads as one bar: square edges in the middle, rounded only
    where the festival actually starts and ends. */
 .ev{position:relative;display:block;min-height:24px;padding:3px 6px;margin:0 -5px;
   background:color-mix(in srgb,var(--cat,var(--md-sys-color-on-surface)) 55%,var(--md-sys-color-surface-container-lowest));
   border-left:3px solid transparent;text-decoration:none;
-  font-size:var(--md-sys-typescale-label-medium-size);font-weight:700;line-height:1.3;color:var(--md-sys-color-on-surface)}
+  font-size:var(--md-sys-typescale-label-medium-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);line-height:1.3;color:var(--md-sys-color-on-surface)}
 .ev.st{margin-left:0;border-radius:var(--md-sys-shape-corner-extra-small) 0 0 var(--md-sys-shape-corner-extra-small);border-left-color:var(--cat,var(--md-sys-color-on-surface))}
 .ev.en{margin-right:0;border-radius:0 var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) 0}
 .ev.st.en{border-radius:var(--md-sys-shape-corner-extra-small)}
@@ -665,7 +665,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 /* The compact tile has no notch — the picture is too small to carry one — so
    the category chip is where its colour goes instead. */
 .grid.tile .card .kind{display:inline-block;margin-top:10px;padding:4px 11px;
-  border-radius:var(--md-sys-shape-corner-full);font-size:var(--md-sys-typescale-label-small-size);font-weight:700;letter-spacing:.04em;
+  border-radius:var(--md-sys-shape-corner-full);font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);letter-spacing:.04em;
   background:var(--cat,var(--md-sys-color-surface-container-high));color:var(--cat-ink,var(--md-sys-color-on-surface-variant));width:max-content}
 /* The whole tile is the target, since the buttons are gone. */
 .grid.tile .card{cursor:pointer}
@@ -742,7 +742,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   margin:0 0 clamp(16px,2vw,22px)}
 .active:empty{display:none}
 .active .tag{display:inline-flex;align-items:center;gap:7px;font-size:var(--f-caption);
-  font-weight:700;padding:7px 8px 7px 14px;border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-high);
+  font-weight:var(--md-sys-typescale-emphasized-label-weight);padding:7px 8px 7px 14px;border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-high);
   color:var(--md-sys-color-on-surface)}
 .active .tag button{width:20px;height:20px;border-radius:var(--md-sys-shape-corner-full);display:grid;place-items:center;
   font-size:9.6px;color:var(--md-sys-color-on-surface-variant)}
@@ -756,7 +756,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .mgroup{margin-bottom:clamp(28px,4vw,46px)}
 .mgroup[hidden]{display:none}
 .mhead{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-.mhead h3{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-emphasized-weight);
+.mhead h3{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-emphasized-title-weight);
   font-size:var(--md-sys-typescale-title-large-size);
   line-height:var(--md-sys-typescale-title-large-line-height);
   text-transform:uppercase;letter-spacing:.02em;line-height:1;white-space:nowrap}
@@ -786,7 +786,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
    It is the card's one piece of colour, and the colour says what kind of
    festival this is — music, film, art, culture or other. */
 .notch{position:absolute;right:0;bottom:0;z-index:2;background:var(--cat,var(--md-sys-color-on-surface));color:var(--cat-ink,var(--md-sys-color-surface-container-lowest));
-  font-family:var(--title);font-size:var(--f-caption);font-weight:700;
+  font-family:var(--title);font-size:var(--f-caption);font-weight:var(--md-sys-typescale-emphasized-label-weight);
   letter-spacing:var(--k-over);text-transform:uppercase;
   padding:11px 18px 12px;border-top-left-radius:22px}
 .notch::before,.notch::after{content:"";position:absolute;width:22px;height:22px;
@@ -802,7 +802,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .ttl{display:flex;align-items:flex-start;gap:12px}
 .ttl h4{flex:1;min-width:0}
 .offi{position:relative;flex:none;display:inline-flex;align-items:center;gap:5px;font-size:var(--f-caption);
-  letter-spacing:var(--k-caption);font-weight:700;
+  letter-spacing:var(--k-caption);font-weight:var(--md-sys-typescale-emphasized-label-weight);
   color:var(--md-sys-color-on-surface-variant);text-decoration:none;border:1.5px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
   padding:5px 11px;margin-top:1px;white-space:nowrap;transition:var(--md-sys-motion-spring-fast-effects)}
 /* the pill stays visually light beside the title, but its hit area is
@@ -818,24 +818,24 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   font-size:var(--md-sys-typescale-title-large-size);
   line-height:var(--md-sys-typescale-title-large-line-height);
   letter-spacing:var(--md-sys-typescale-title-large-tracking);
-  text-transform:none;font-weight:var(--md-sys-typescale-emphasized-weight);
+  text-transform:none;font-weight:var(--md-sys-typescale-emphasized-title-weight);
   color:var(--md-sys-color-on-surface)}
-.when{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface);font-weight:400;
+.when{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-body-weight);
   font-variant-numeric:tabular-nums}
 /* The date and the place are consecutive lines of one address on their card,
    not two blocks — so this one closes the stack gap rather than adding to it. */
 .where{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface-variant);margin-top:-12px}
 .stars{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface-variant)}
-.stars b{color:var(--md-sys-color-on-surface);font-weight:700}
-.cats{font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;font-weight:700;color:var(--md-sys-color-on-surface)}
+.stars b{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
+.cats{font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface)}
 .figs{display:flex;gap:18px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;color:var(--md-sys-color-on-surface-variant)}
-.figs b{color:var(--md-sys-color-on-surface);font-weight:700;font-variant-numeric:tabular-nums}
+.figs b{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight);font-variant-numeric:tabular-nums}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
   white-space:nowrap;font-size:var(--md-sys-typescale-label-large-size);
   line-height:var(--md-sys-typescale-label-large-line-height);
   letter-spacing:var(--md-sys-typescale-label-large-tracking);
-  font-weight:var(--md-sys-typescale-emphasized-weight);
+  font-weight:var(--md-sys-typescale-emphasized-title-weight);
   letter-spacing:var(--k-label);padding:12px 20px;border-radius:var(--md-sys-shape-corner-full);border:1.5px solid var(--md-sys-color-on-surface);text-decoration:none;
   transition:var(--md-sys-motion-spring-fast-effects);min-height:40px;color:var(--md-sys-color-on-surface)}
 /* Buttons are ink on paper or paper on ink — never the category's colour.
@@ -844,7 +844,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 /* Filled button: primary container, on-primary label, state layer in the
    label's own colour — M3's filled button, with our ink-on-paper palette
    choice kept (DESIGN.md §9). */
-.btn.primary{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest);
+.btn.primary{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest);font-weight:var(--md-sys-typescale-emphasized-label-weight);
   border-color:var(--md-sys-color-on-surface);flex:1 1 auto;
   --st-on:var(--md-sys-color-surface-container-lowest)}
 .btn{--st-on:var(--md-sys-color-on-surface)}

@@ -207,15 +207,24 @@ rail** from medium up. That is already roughly what we do — our breakpoints
 
 ## 9. Deliberate departures
 
-1. ~~Typeface.~~ Resolved: the pages now ship Roboto, Material's own
-   reference typeface, inlined as two woff2 subsets of the variable face
-   (Apache 2.0). Arial remains only as the fallback stack.
-2. **Category and stage colours.** These encode data (what kind of festival,
+1. ~~Typeface.~~ Resolved: the pages ship **Roboto Flex**, which the type
+   scale page nominates by name as the replacement for Roboto, subset per page
+   to the characters that page sets. Roboto and then Arial remain only as the
+   fallback stack.
+2. **Emphasized weights are derived, not copied.** The published emphasized
+   token table renders inside an interactive widget that does not expose its
+   values as text, so the five weights in `_tokens.css` are one step up the
+   standard 400/500/700 ladder rather than the exact tokens. The rule the page
+   states in prose is followed — higher weight, applied consistently across the
+   set — and adjusting axes is explicitly sanctioned once the typeface is
+   swapped, which shipping Roboto Flex does. Replace with the real values if
+   they ever become readable.
+3. **Category and stage colours.** These encode data (what kind of festival,
    which stage), not theme. They stay outside the role system and are checked
    for contrast against their own `on` colours.
-3. **Dot-grid ground.** Not an M3 pattern. It is the product's identity and
+4. **Dot-grid ground.** Not an M3 pattern. It is the product's identity and
    costs nothing in contrast; it fades out past the highlight.
-4. **No ripple.** M3's pressed state is a ripple on Android. On the web we use
+5. **No ripple.** M3's pressed state is a ripple on Android. On the web we use
    the pressed state layer only.
 
 ---

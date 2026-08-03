@@ -7,6 +7,7 @@ planners it links to.
 """
 import json, pathlib
 from build import ROOT, data_uri
+import fontsub
 import m3color
 import schema
 import seo
@@ -46,9 +47,7 @@ def main():
         ("__CATCSS__", schema.category_css(cfg)),
         ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
          (ROOT / "scripts" / "_tokens.css").read_text()),
-        ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()
-            .replace("__ROBOTO_LATIN__", data_uri(ROOT / "assets" / "font" / "roboto-latin.woff2"))
-            .replace("__ROBOTO_EXT__", data_uri(ROOT / "assets" / "font" / "roboto-latin-ext.woff2"))),
+        ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
         ("__SETTINGS__", (ROOT / "scripts" / "_settings.html").read_text()),
@@ -66,7 +65,7 @@ def main():
     left = [t for t in ("__DATA__", "__FONTCSS__", "__CONTACT__") if t in html]
     if left:
         raise SystemExit(f"unreplaced tokens: {left}")
-    OUT.write_text(html)
+    OUT.write_text(fontsub.inline(html))
     print(f"{OUT}\n  {len(cfg['festivals'])} festivals · {OUT.stat().st_size // 1024} KB")
 
 if __name__ == "__main__":

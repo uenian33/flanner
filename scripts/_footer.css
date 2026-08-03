@@ -17,7 +17,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
    sits at the weight of the text beside it rather than above it. */
 .fbrand .dot{width:24px;height:24px;flex:none;stroke:none;fill:none;
   opacity:.5;filter:grayscale(1)}
-.fbrand .fmark span{font-family:var(--title);font-weight:600;font-size:var(--md-sys-typescale-title-medium-size);
+.fbrand .fmark span{font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--md-sys-typescale-title-medium-size);
   letter-spacing:.13em;text-transform:uppercase;color:var(--md-sys-color-on-surface);line-height:1}
 .fbrand .tag{margin:0 0 18px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;color:var(--md-sys-color-on-surface-variant)}
 .flinks{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:20px}
@@ -30,12 +30,12 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
   color:color-mix(in srgb,var(--md-sys-color-on-surface) 58%,var(--md-sys-color-surface))}
 .fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px}
-.fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:700;padding:0 14px;min-height:32px;
+.fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);padding:0 14px;min-height:32px;
   border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .fcopy{margin:0;font-size:var(--md-sys-typescale-label-small-size);line-height:16.8px;color:var(--md-sys-color-on-surface-variant)}
 
-.fcol h5{margin:0 0 16px;font-size:9.6px;line-height:12.8px;font-weight:500;letter-spacing:.05em;
+.fcol h5{margin:0 0 16px;font-size:9.6px;line-height:12.8px;font-weight:var(--md-sys-typescale-title-weight);letter-spacing:.05em;
   text-transform:uppercase;color:color-mix(in srgb,var(--md-sys-color-on-surface) 58%,var(--md-sys-color-surface))}
 .fcol ul{list-style:none;margin:0;padding:0}
 .fcol li{margin:0;padding:0}
@@ -44,7 +44,7 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
   color:var(--md-sys-color-on-surface-variant);text-decoration:none;padding:5px 0;transition:color var(--md-sys-motion-spring-fast-effects)}
 .fcol a:hover{color:var(--md-sys-color-on-surface)}
 .fcol a svg{width:13px;height:13px;color:var(--md-sys-color-on-surface-variant)}
-.fcol a[aria-current]{color:var(--md-sys-color-on-surface);font-weight:700}
+.fcol a[aria-current]{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
 @media(pointer:coarse){.fcol a,.flinks a{padding:12px 0}}
 
 .fnote{margin:clamp(30px,4vw,44px) 0 0;padding-top:clamp(20px,2.4vw,26px);

@@ -7,6 +7,7 @@ guessed from third-party APIs.
 """
 import base64, json, pathlib, sys, urllib.parse
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import fontsub
 import m3color
 import seo
 from build import ROOT, data_uri, pack_lanes, GENRE_LABELS, TYPE_LABELS
@@ -140,9 +141,7 @@ def build():
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
          (ROOT / "scripts" / "_tokens.css").read_text()),
-        ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()
-            .replace("__ROBOTO_LATIN__", data_uri(ROOT / "assets" / "font" / "roboto-latin.woff2"))
-            .replace("__ROBOTO_EXT__", data_uri(ROOT / "assets" / "font" / "roboto-latin-ext.woff2"))),
+        ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()),
         ("__YEAR__", '2026'),
         ("__STAGES__", '10'),
         ("__WHEN__", '<b>14–16 August</b> <i>·</i> 3 days'),
@@ -186,7 +185,7 @@ def build():
         html = html.replace(tok, val)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(html)
+    OUT.write_text(fontsub.inline(html))
     n = sum(len(s["acts"]) for s in stages)
     print(f"{OUT}\n  {n} sets · {len(stages)} stages · {len(acts['days'])} days · "
           f"{len(art)} portraits · {OUT.stat().st_size//1024} KB")

@@ -10,8 +10,11 @@
    use all the styles" — the roles beneath the scale say which ones this one
    uses. */
 :root{
-  /* Material's own typeface, with the system stack behind it. */
-  --sans:Roboto,Arial,Helvetica,sans-serif;
+  /* Material's own typeface, with the system stack behind it. Roboto Flex is
+     what the type scale page nominates when Roboto is replaced; plain Roboto
+     stays next in the stack so a failed font load degrades to the baseline
+     face rather than to Arial. */
+  --sans:"Roboto Flex",Roboto,Arial,Helvetica,sans-serif;
   --title:var(--sans);
   --safe-b:env(safe-area-inset-bottom,0px);
 
@@ -63,9 +66,23 @@
   --md-sys-typescale-title-weight:500;
   --md-sys-typescale-label-weight:500;
   --md-sys-typescale-body-weight:400;
-  /* The emphasized set is the same scale at a heavier weight, "best applied
-     to bold, selection, and other areas of emphasis". */
-  --md-sys-typescale-emphasized-weight:700;
+  /* The emphasized set: the same 15 styles, one weight step up. "Use both
+     baseline and emphasized type styles together to achieve expressive
+     experiences… for selection, actions, headlines, and other editorial
+     treatments." Where it may be used is a closed list, quoted in §4 of
+     REDESIGN.md, and `.emph` below is the only way to reach it.
+
+     The weights are a step of the standard 400/500/700 ladder rather than the
+     published emphasized token values, which sit behind an interactive table
+     the page renders in a widget. Documented in DESIGN.md §9. The step follows
+     the rule the page does state in prose — higher weight, applied
+     consistently across the set — and customising axes is explicitly
+     sanctioned once the typeface is swapped, which shipping Roboto Flex does. */
+  --md-sys-typescale-emphasized-display-weight:500;
+  --md-sys-typescale-emphasized-headline-weight:500;
+  --md-sys-typescale-emphasized-title-weight:700;
+  --md-sys-typescale-emphasized-body-weight:500;
+  --md-sys-typescale-emphasized-label-weight:700;
 
   /* Which style each role in this product resolves to. Every element names a
      role; a role names an M3 style; nothing names a number. */
@@ -205,6 +222,36 @@
   --md-sys-motion-spring-default-spatial:500ms cubic-bezier(0.27,1.06,0.18,1.00);
   --md-sys-motion-spring-slow-spatial:750ms cubic-bezier(0.27,1.06,0.18,1.00);
 }
+
+/* ── emphasized type ───────────────────────────────────
+   "Material components don't use emphasized type styles by default. To use an
+   emphasized type style, swap the baseline token for the emphasized token of
+   the same style." One class does the swap, and the style it swaps into is
+   the one already in play — an emphasized headline stays a headline.
+
+   Where it is allowed, from the page's own list: badges, buttons for primary
+   actions, extended FAB, selected list items, selected menu items — plus
+   headlines, which the same page names as an editorial use. Anything else
+   wanting to look important uses colour or space instead. */
+.emph{font-weight:var(--emph-weight,var(--md-sys-typescale-emphasized-body-weight))}
+.emph-display{--emph-weight:var(--md-sys-typescale-emphasized-display-weight)}
+.emph-headline{--emph-weight:var(--md-sys-typescale-emphasized-headline-weight)}
+.emph-title{--emph-weight:var(--md-sys-typescale-emphasized-title-weight)}
+.emph-label{--emph-weight:var(--md-sys-typescale-emphasized-label-weight)}
+
+/* opsz follows the rendered size on its own, which is the whole reason for
+   shipping a font that carries the axis. */
+html{font-optical-sizing:auto}
+
+/* "Use tabular figures… in tables or places where values may change often,
+   such as clocks." A festival is mostly clocks. */
+.tnum,time,.tm,.hr{font-variant-numeric:tabular-nums}
+
+/* "For hyperlinked text appearing on top of a surface color, use primary…
+   Hyperlinks must also be underlined." Body copy only — a link that is drawn
+   as a button, card or navigation item is not hyperlinked text. */
+.prose a,.fnote a,p a{color:var(--md-sys-color-primary);text-decoration:underline;
+  text-underline-offset:2px}
 
 /* ── state layers ──────────────────────────────────────
    "A state layer is a semi-transparent covering… an overlay with a fixed

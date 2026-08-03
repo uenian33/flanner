@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import fontsub
 import m3color
 from build import data_uri
 import seo
@@ -42,9 +43,7 @@ def main() -> None:
     template = (ROOT / "scripts" / "info.html").read_text()
     footer = (ROOT / "scripts" / "_footer.html").read_text()
     footer_css = (ROOT / "scripts" / "_footer.css").read_text()
-    fontcss = ((ROOT / "scripts" / "_font.css").read_text()
-               .replace("__ROBOTO_LATIN__", data_uri(ROOT / "assets" / "font" / "roboto-latin.woff2"))
-               .replace("__ROBOTO_EXT__", data_uri(ROOT / "assets" / "font" / "roboto-latin-ext.woff2")))
+    fontcss = (ROOT / "scripts" / "_font.css").read_text()
 
     for page in info["pages"]:
         slug = page["slug"]
@@ -96,7 +95,7 @@ def main() -> None:
 
         out = ROOT / slug / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(html)
+        out.write_text(fontsub.inline(html))
         print(f"  {out.relative_to(ROOT)} · {len(html) / 1024:.0f} KB")
 
 

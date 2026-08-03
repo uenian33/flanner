@@ -20,23 +20,23 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 }
 .sethead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
   justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--md-sys-color-surface-container-lowest)}
-.sethead h2{margin:0;font-family:var(--title);font-weight:600;font-size:var(--md-sys-typescale-title-medium-size);
+.sethead h2{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--md-sys-typescale-title-medium-size);
   letter-spacing:.02em;text-transform:uppercase}
 .setclose{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
   display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .setclose:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
   padding:15px 0;border-top:1px solid var(--md-sys-color-outline-variant);flex-wrap:wrap}
-.setrow b{display:block;font-size:var(--md-sys-typescale-label-medium-size);font-weight:700}
+.setrow b{display:block;font-size:var(--md-sys-typescale-label-medium-size);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
 .setrow i{display:block;font-style:normal;font-size:var(--md-sys-typescale-label-small-size);color:var(--md-sys-color-on-surface-variant);margin-top:3px;
   max-width:42ch}
 .setbtn{min-height:38px;padding:0 18px;border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);
-  font-size:var(--md-sys-typescale-label-small-size);font-weight:650;color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-spring-fast-effects)}
+  font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-title-weight);color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-spring-fast-effects)}
 .setbtn:hover:not(:disabled){background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setbtn:disabled{opacity:.5}
 .fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px;flex:none}
-.fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:650;padding:0 16px;min-height:34px;
+.fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-title-weight);padding:0 16px;min-height:34px;
   border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
 .fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .setnote{margin:15px 0 0;font-size:var(--md-sys-typescale-label-small-size);line-height:1.6;color:var(--md-sys-color-on-surface-variant)}

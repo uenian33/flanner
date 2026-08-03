@@ -18,6 +18,7 @@ import json
 import sys
 from pathlib import Path as _P
 sys.path.insert(0, str(_P(__file__).resolve().parent))
+import fontsub
 import m3color
 import schema
 import seo
@@ -157,9 +158,7 @@ def main():
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
          (ROOT / "scripts" / "_tokens.css").read_text()),
-        ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()
-            .replace("__ROBOTO_LATIN__", data_uri(ROOT / "assets" / "font" / "roboto-latin.woff2"))
-            .replace("__ROBOTO_EXT__", data_uri(ROOT / "assets" / "font" / "roboto-latin-ext.woff2"))),
+        ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()),
         ("__YEAR__", '2026'),
         ("__STAGES__", '9'),
         ("__WHEN__", 'Sat <b>1 August</b> <i>·</i> 12:00–22:00'),
@@ -208,7 +207,7 @@ def main():
         raise SystemExit(f"unreplaced tokens: {leftover}")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(html)
+    OUT.write_text(fontsub.inline(html))
     n = sum(len(s["acts"]) for s in stages)
     print(f"{OUT}\n  {n} acts · {len(stages)} stages · {len(art_payload)} artworks "
           f"· {OUT.stat().st_size // 1024} KB")

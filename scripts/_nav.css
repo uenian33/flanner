@@ -27,15 +27,15 @@
     transform:translateY(calc(var(--i,0) * 100%));
     transition:transform var(--md-sys-motion-spring-slow-spatial)}
   .mnav button{display:grid;justify-items:center;align-content:center;gap:5px;padding:14px 0;
-    font-size:8.4px;font-weight:600;color:var(--glass-tx);position:relative;z-index:1;
+    font-size:8.4px;font-weight:var(--md-sys-typescale-title-weight);color:var(--glass-tx);position:relative;z-index:1;
     border-radius:var(--md-sys-shape-corner-large-increased);transition:color var(--md-sys-motion-spring-default-effects)}
   .mnav button svg{width:22px;height:22px;font-size:var(--md-sys-typescale-title-medium-size);stroke-width:1.8;
     transition:transform var(--md-sys-motion-spring-default-spatial)}
-  .mnav button.on{color:var(--glass-on)}
+  .mnav button.on{color:var(--glass-on);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
   .mnav button:active svg{transform:scale(.9)}
   .mnav .nb{position:absolute;top:9px;left:calc(50% + 11px);min-width:17px;height:17px;
     border-radius:var(--md-sys-shape-corner-extra-large);background:var(--accent);color:var(--on-accent);font-size:8px;
-    font-weight:800;display:grid;place-items:center;padding:0 4.5px;z-index:3}
+    font-weight:var(--md-sys-typescale-emphasized-label-weight);display:grid;place-items:center;padding:0 4.5px;z-index:3}
   .navhome-m{display:none}
   .navhome{left:var(--railx,16px);top:50%;width:76px;height:60px;border-radius:var(--md-sys-shape-corner-large-increased);
     transform:translateY(calc(-50% - (var(--navh,214px) / 2) - 10px - 30px))}
@@ -80,7 +80,7 @@
   body.nav-min .mnav button svg{transform:translateY(0) scale(.96)}
   .mnav button svg{width:24px;height:24px;font-size:var(--md-sys-typescale-title-large-size);stroke-width:1.8;
       transition:transform var(--md-sys-motion-spring-default-spatial)}
-  .mnav button.on{color:var(--glass-on)}
+  .mnav button.on{color:var(--glass-on);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
   .mnav button:active svg{transform:scale(.9)}
   /* Desktop only — on a phone Home is a cell inside the bar, and leaving this
      visible put a half-cut disc beside it. */
@@ -88,7 +88,7 @@
       transform:translate(calc(-50% - (var(--navw,360px) / 2) - 9px),var(--vvshift,0px))}
   body.nav-min .navhome{width:46px;height:46px}
   .mnav .nb{position:absolute;top:6px;left:calc(50% + 9px);min-width:17px;height:17px;
-      border-radius:var(--md-sys-shape-corner-extra-large);background:var(--accent);color:var(--on-accent);font-size:8px;font-weight:800;
+      border-radius:var(--md-sys-shape-corner-extra-large);background:var(--accent);color:var(--on-accent);font-size:8px;font-weight:var(--md-sys-typescale-emphasized-label-weight);
       display:grid;place-items:center;padding:0 4.5px;z-index:3;
       box-shadow:0 1px 4px rgba(0,0,0,.4)}
 }
