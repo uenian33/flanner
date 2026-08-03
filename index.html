@@ -715,8 +715,13 @@ body[data-view=cal] .grid{display:none}
      while a label with no icon still has. */
   .dropset{grid-area:filters;display:grid;gap:8px;
     grid-template-columns:repeat(3,minmax(0,1fr))}
-  .trig{width:100%;min-width:0;justify-content:center;gap:6px;padding:0 10px;
-    font-size:13.5px}
+  /* A third of a phone column has to hold an icon, a word and a chevron, and
+     the word is the part that must survive: every piece around it is trimmed
+     until "Upcoming" fits whole. */
+  .trig{width:100%;min-width:0;justify-content:center;gap:4px;padding:0 5px;
+    font-size:12.5px}
+  .trig svg.i{width:14px;height:14px}
+  .trig .cv{width:11px;height:11px}
   .trig > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .vseg{justify-self:stretch;width:100%}
   .vseg button{flex:1 1 0;min-width:0;width:auto}
@@ -960,7 +965,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
   <div class="dropset">
   <div class="drop">
     <button class="trig" id="whenTrig" aria-expanded="false" aria-controls="whenSheet">
-      <span id="whenLabel">All</span>
+      <svg class="i"><use href="#i-cal"/></svg><span id="whenLabel">All</span>
       <svg class="i cv"><use href="#i-down"/></svg></button>
     <div class="sheet" id="whenSheet" hidden role="dialog" aria-label="Filter by date">
       <h4>Filter by date</h4>
@@ -969,7 +974,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
   </div>
   <div class="drop">
     <button class="trig" id="catTrig" aria-expanded="false" aria-controls="catSheet">
-      <span id="catLabel">All</span>
+      <svg class="i"><use href="#i-tune"/></svg><span id="catLabel">All</span>
       <svg class="i cv"><use href="#i-down"/></svg></button>
     <div class="sheet" id="catSheet" hidden role="dialog" aria-label="Filter by category">
       <h4>Filter by category</h4>
