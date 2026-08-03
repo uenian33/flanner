@@ -210,26 +210,35 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    text needs rather than setting its own. */
 .fig{grid-area:1/6/3/13;position:relative;display:block;overflow:hidden;
   border-radius:0 18px 18px 0;height:100%;
-  min-height:clamp(300px,30vw,420px);background:var(--panel);
+  min-height:clamp(260px,24vw,340px);background:var(--panel);
   text-decoration:none;touch-action:pan-y}
-.fig img.pic{width:100%;height:100%;object-fit:cover;display:block}
+/* Laid over the box rather than filling it: as a normal child the picture's
+   own proportions set the row's height, which made the band as tall as
+   whatever artwork happened to be in it — a square poster ran 120px taller
+   than a landscape photograph for the same text. Absolute takes it off the
+   sizing path, so the text decides the height and the picture crops to it. */
+.fig img.pic{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block}
 .fig .veil{position:absolute;inset:0;background:linear-gradient(180deg,
   transparent 40%,rgba(0,0,0,.26) 66%,rgba(0,0,0,.7) 84%,rgba(0,0,0,.88) 100%)}
 .fig .lg{display:block;position:absolute;left:24px;bottom:22px;z-index:2;width:max-content;
   max-width:min(72%,340px)}
 .fig .lg img{height:clamp(38px,4.4vw,56px);width:auto;max-width:100%;display:block;
   filter:drop-shadow(0 2px 10px rgba(0,0,0,.7))}
-.fig .badge{position:absolute;left:18px;top:18px;z-index:2;display:inline-flex;align-items:center;
-  font-family:var(--title);font-weight:500;font-size:var(--f-over);letter-spacing:var(--k-over);
-  text-transform:uppercase;background:var(--cat,#fff);color:var(--cat-ink,#000);
-  padding:6px 14px 7px;border-radius:10rem}
+/* The picture's corner says what kind of festival it is, in the category's
+   own colour — the same pill as the date on the other side of the card, so the
+   two line up as a pair rather than as two different labels. */
+.fig .badge{position:absolute;right:18px;top:18px;z-index:2;display:inline-flex;align-items:center;
+  background:var(--cat,#fff);color:var(--cat-ink,#000);
+  padding:9px 18px 10px;border-radius:10rem;
+  font-size:var(--f-sub);font-weight:700;line-height:1;white-space:nowrap}
 
 .side{grid-area:1/1/3/6;z-index:3;align-self:stretch;
   display:flex;flex-direction:column}
 /* The panel is the left half of that object, so it carries the white and the
    rounding that the picture cannot. */
 .panel{position:relative;--tuck:0px;background:var(--bg2);
-  border-radius:18px 0 0 18px;padding:clamp(26px,2.8vw,40px);flex:1;
+  border-radius:18px 0 0 18px;padding:clamp(22px,2.2vw,30px);flex:1;
   /* Every slide's panel is as tall as the wordiest one — see sizePanels().
      The actions sit at the bottom of that box rather than floating up under
      a short festival's text. */
@@ -245,17 +254,26 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .fdate{background:var(--cat,var(--tx));color:var(--cat-ink,var(--bg2));
   padding:9px 18px 10px;border-radius:10rem;
   font-size:var(--f-sub);font-weight:700;line-height:1;white-space:nowrap}
-.panel h3{margin:0;font-size:clamp(28px,3.4vw,44px);font-weight:700;
-  line-height:1.08;letter-spacing:-.015em}
+.panel h3{margin:0;font-size:clamp(26px,2.9vw,38px);font-weight:700;
+  line-height:1.1;letter-spacing:-.015em}
 .panel .fwhere{margin:clamp(10px,1.2vw,14px) 0 0;display:flex;align-items:center;gap:8px;
   font-size:var(--f-body);line-height:var(--l-body);color:var(--tx)}
 .panel .fwhere svg.i{width:17px;height:17px;color:var(--tx2)}
-.panel .fdesc{margin:clamp(14px,1.6vw,20px) 0 0;font-size:var(--f-body);
-  line-height:1.6;color:var(--tx2);max-width:46ch}
+.panel .fdesc{margin:clamp(12px,1.3vw,16px) 0 0;font-size:var(--f-body);
+  line-height:1.55;color:var(--tx2);max-width:46ch}
+/* Genres and the top of the bill, as outlined labels: enough to tell a techno
+   street party from a jazz weekend without reading the sentence above. */
+.ftags{list-style:none;display:flex;flex-wrap:wrap;gap:7px;
+  margin:clamp(12px,1.3vw,16px) 0 0;padding:0}
+.ftags li{border:1px solid var(--tx);border-radius:10rem;background:var(--bg2);
+  color:var(--tx);padding:4px 11px 5px;font-size:var(--f-caption);
+  font-weight:700;line-height:1.2;white-space:nowrap;
+  /* A headliner's name can be half a sentence — enough of it to recognise. */
+  max-width:22ch;overflow:hidden;text-overflow:ellipsis}
 
-.facts{display:flex;flex-direction:column;gap:10px;align-items:stretch;
-  margin:clamp(20px,2.4vw,26px) 0 0;
-  padding-top:clamp(18px,2.2vw,24px);
+.facts{display:flex;flex-direction:column;gap:9px;align-items:stretch;
+  margin:clamp(16px,1.8vw,22px) 0 0;
+  padding-top:clamp(14px,1.6vw,18px);
   border-top:1px solid color-mix(in srgb,var(--tx) 12%,transparent)}
 .facts .btn{flex:none;width:100%}
 .nav{grid-area:3/1/4/13;margin-top:clamp(14px,1.8vw,20px);justify-self:center;display:flex;align-items:center;gap:4px;
@@ -375,7 +393,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   .fig{aspect-ratio:16/11}
   .panel{padding:16px 18px 18px;cursor:pointer}
   .panel h3{font-size:clamp(21px,5.6vw,26px)}
-  .panel .fmore,.panel .fstars,.panel .fdesc,.side .facts{display:none}
+  .panel .fmore,.panel .fstars,.panel .fdesc,.panel .ftags,.side .facts{display:none}
   .panel .fwhere{margin-top:9px}
   .fline{margin-bottom:9px}
 
@@ -1453,7 +1471,7 @@ if (reel.length) {
       <img class="pic" src="${f.promoSrc}" alt="">
       <span class="veil"></span>
       <span class="reelbar" id="reelBar" aria-hidden="true"><i></i></span>
-      <span class="badge">${esc(st.label)}</span>
+      <span class="badge">${esc(catOf(f).label)}</span>
       <span class="lg"><img src="${f.logoSrc}" alt="${esc(f.name)}"></span>
     </a>
     <div class="side">
@@ -1466,6 +1484,8 @@ if (reel.length) {
       <h3>${esc(f.name)} ${esc(f.year)}</h3>
       <p class="fwhere">${ico('pin')}<span class="fcity">${esc(f.city)}</span></p>
       <p class="fdesc">${esc(f.description)}</p>
+      <ul class="ftags">${[...f.tags.slice(0, 3), f.stars[0]]
+        .filter(Boolean).map(k => `<li>${esc(k)}</li>`).join('')}</ul>
       <div class="facts">
       <a class="btn primary" href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'} ${ico('arrow')}</a>
       ${f.free
@@ -1783,7 +1803,7 @@ function card(f) {
     <div class="shot">
       <img class="pic" src="${f.promoSrc}" alt="" loading="lazy">
       <span class="lg"><img src="${f.logoSrc}" alt="${esc(f.name)}"></span>
-      <span class="notch">${esc(st.past ? 'Finished' : st.label)}</span>
+      <span class="notch">${esc(catOf(f).label)}</span>
     </div>
     <div class="body">
       <div class="ttl">
