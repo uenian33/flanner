@@ -343,25 +343,28 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   .wm i{font-size:9px;letter-spacing:.16em}
   .logo{width:32px;height:32px}
 
-  /* The two controls occupy the same square and cross-fade between them. */
+  /* The two controls sit side by side. The place you are in stays on screen
+     while you browse; the search joins it once there is a list to search. */
   .hslot{position:relative;flex:none;margin-left:auto;justify-self:end;
-    display:grid;place-items:center end;min-width:44px;min-height:44px}
+    display:flex;align-items:center;justify-content:flex-end;min-height:44px}
   .hslot .loc{margin:0}
-  .hslot > *{grid-area:1/1;justify-self:end}
-  .locwrap{transition:opacity .28s var(--ease),transform .34s var(--ease)}
-  body.at-cards .locwrap{opacity:0;transform:scale(.86);pointer-events:none}
-  .hslot .sbox{width:44px;opacity:0;transform:scale(.86);pointer-events:none;
-    transition:width .38s cubic-bezier(.22,1,.36,1),opacity .28s var(--ease),
-               transform .34s var(--ease)}
-  body.at-cards .hslot .sbox{opacity:1;transform:none;pointer-events:auto}
+  .hslot .sbox{width:0;margin-left:0;opacity:0;transform:scale(.86);
+    pointer-events:none;
+    transition:width .38s cubic-bezier(.22,1,.36,1),
+               margin-left .38s cubic-bezier(.22,1,.36,1),
+               opacity .28s var(--ease),transform .34s var(--ease)}
+  body.at-cards .hslot .sbox{width:44px;margin-left:8px;opacity:1;transform:none;
+    pointer-events:auto}
   /* Open, the field claims the rest of the row instead of guessing at a
      viewport fraction — a guess is what pushed it past the column edge. The
-     wordmark steps aside for the duration and the disc holds the left. */
+     wordmark and the place selector both step aside for the duration, and the
+     disc holds the left. */
   .hslot{min-width:0}
   .mark{min-width:0}
   .top:has(#hslot .sbox.open) .hslot{flex:1 1 auto}
   .top:has(#hslot .sbox.open) .wm{display:none}
-  body.at-cards .hslot .sbox.open{width:100%}
+  .top:has(#hslot .sbox.open) .locwrap{display:none}
+  body.at-cards .hslot .sbox.open{width:100%;margin-left:0}
 
   /* With the field in the masthead the toolbar is just the two filters. */
   .tools{position:static;padding:0;margin:0 0 clamp(14px,2vw,20px)}
