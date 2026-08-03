@@ -665,7 +665,12 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
    its own and the last card sat underneath it. */
 .endcap{display:grid;justify-items:center;gap:9px;text-align:center;
   padding:clamp(30px,5vw,46px) 0 0;color:var(--tx3)}
-.endcap svg{width:34px;height:34px;opacity:.5}
+/* Grey, not brand green: this mark closes the list rather than announcing
+   anything, and it sits directly above the same mark in the nav bar.
+   Desaturating alone leaves it near-white, since the mark is a pale gradient —
+   the brightness step is what brings it down to the weight of the line of text
+   underneath. */
+.endcap svg{width:34px;height:34px;opacity:.75;filter:grayscale(1) brightness(.62)}
 .endcap p{margin:0;font-size:var(--f-sub);font-weight:600;letter-spacing:.02em}
 .endcap[hidden]{display:none}
 @media(max-width:820px){
