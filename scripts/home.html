@@ -419,6 +419,15 @@ __NAV_CSS__
   .sbox{flex:1 1 200px;min-width:120px}
   .trig{flex:none}
 }
+/* Between the rail appearing and the column being wide enough, five items do
+   not fit and nowrap pushed the switcher clean off the right edge. The two
+   pieces that repeat what is already on screen give up their width first: the
+   bar's wordmark (the masthead says it directly above) and the chosen view's
+   name (its icon is already lit). */
+@media(min-width:821px) and (max-width:1099px){
+  .tools .toolmark .wm{display:none}
+  .vseg button[aria-pressed=true] .lbl{display:none}
+}
 
 /* ── end of the list ───────────────────────────────────
    Says the list is finished, and on a phone it is also the clearance the
