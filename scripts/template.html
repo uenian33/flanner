@@ -213,8 +213,14 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
 .seg{display:flex;flex:1 1 auto;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--r-pill);padding:2px;gap:3px}
 .seg button{display:inline-flex;flex:1 1 0;align-items:center;justify-content:center;gap:8px;
-  font-size:var(--f-label);font-weight:var(--md-sys-typescale-title-weight);padding:0 16px;border-radius:var(--r-pill);color:var(--md-sys-color-on-surface-variant);
-  transition:var(--md-sys-motion-spring-fast-effects);min-height:40px;white-space:nowrap}
+  font-size:var(--f-label);font-weight:var(--md-sys-typescale-title-weight);padding:0 16px;
+  --shape:var(--md-sys-shape-corner-full);
+  --shape-pressed:var(--md-sys-shape-corner-pressed-m);
+  border-radius:var(--shape);color:var(--md-sys-color-on-surface-variant);
+  transition:var(--md-sys-motion-spring-fast-effects),
+             border-radius var(--md-sys-motion-spring-fast-spatial);
+  min-height:40px;white-space:nowrap}
+.seg button:active{--shape:var(--shape-pressed)}
 /* Day and view belong to the timetable, not to the whole page, so they live
    inside the schedule section. A sticky child only pins within its parent's
    box, which is exactly the behaviour wanted: they ride under the top bar
@@ -312,10 +318,15 @@ __SETTINGS_CSS__
   color:var(--md-sys-color-on-surface-variant);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
 /* M3 filter chip: 32dp tall, small corner, label-large. */
 .chip{font-size:var(--md-sys-typescale-label-large-size);padding:6px 16px;
-  border-radius:var(--md-sys-shape-corner-small);border:1px solid var(--chip-line);
-  color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects);white-space:nowrap;display:inline-flex;
+  --shape:var(--md-sys-shape-corner-small);
+  --shape-pressed:var(--md-sys-shape-corner-extra-small);
+  border-radius:var(--shape);border:1px solid var(--chip-line);
+  color:var(--md-sys-color-on-surface-variant);
+  transition:var(--md-sys-motion-spring-fast-effects),
+             border-radius var(--md-sys-motion-spring-fast-spatial);white-space:nowrap;display:inline-flex;
   align-items:center;gap:8px;min-height:32px}
 .chip:hover{border-color:var(--md-sys-color-on-surface-variant);color:var(--md-sys-color-on-surface)}
+.chip:active{--shape:var(--shape-pressed)}
 .chip[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest);font-weight:var(--md-sys-typescale-emphasized-label-weight);border-color:var(--md-sys-color-on-surface);
   font-weight:var(--md-sys-typescale-title-weight)}
 .chip .dot{width:8px;height:8px;border-radius:var(--r-pill);background:var(--c,currentColor);flex:none}
@@ -516,11 +527,20 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .ameta{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:5px}
 .astage{font-size:var(--f-micro);color:var(--cText);font-weight:var(--md-sys-typescale-title-weight);display:inline-flex;align-items:center;gap:4px}
 .astage .dot{width:6px;height:6px;border-radius:var(--r-pill);background:var(--c)}
-.astar{justify-self:end;width:46px;height:46px;border-radius:var(--r-box);border:1px solid var(--md-sys-color-outline);display:grid;
-  place-items:center;font-size:var(--f-title);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects);flex:none;
+.astar{justify-self:end;width:46px;height:46px;display:grid;
+  /* Round at rest, square once starred: the toggle's own shape says
+     whether the act is in the plan, before colour does. */
+  --shape:var(--md-sys-shape-corner-full);
+  --shape-selected:var(--md-sys-shape-corner-medium);
+  --shape-pressed:var(--md-sys-shape-corner-pressed-s);
+  border-radius:var(--shape);border:1px solid var(--md-sys-color-outline);
+  place-items:center;font-size:var(--f-title);color:var(--md-sys-color-on-surface-variant);
+  transition:var(--md-sys-motion-spring-fast-effects),
+             border-radius var(--md-sys-motion-spring-fast-spatial);flex:none;
   background:var(--md-sys-color-surface-container-lowest)}
 .astar:hover{color:var(--md-sys-color-on-surface);border-color:var(--md-sys-color-on-surface-variant)}
-.astar[aria-pressed=true]{color:#0a0c10;background:var(--c);border-color:var(--c)}
+.astar:active{--shape:var(--shape-pressed)}
+.astar[aria-pressed=true]{--shape:var(--shape-selected);color:#0a0c10;background:var(--c);border-color:var(--c)}
 .astar:active{transform:scale(.9)}
 @keyframes livedot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.72)}}
 @keyframes livering{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(2.3)}}

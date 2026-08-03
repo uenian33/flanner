@@ -126,7 +126,19 @@
   --md-sys-shape-corner-large:16px;
   --md-sys-shape-corner-large-increased:20px;
   --md-sys-shape-corner-extra-large:28px;
+  --md-sys-shape-corner-extra-large-increased:32px;
+  --md-sys-shape-corner-extra-extra-large:48px;
   --md-sys-shape-corner-full:9999px;
+
+  /* Pressed corners, from the button measurements table: a button squares off
+     while held, by an amount that depends on its size. Extra small and small
+     8dp, medium 12dp, large and extra large 16dp. The square variants rest at
+     12/12/16/28/28 and press to the same values. */
+  --md-sys-shape-corner-pressed-xs:var(--md-sys-shape-corner-small);
+  --md-sys-shape-corner-pressed-s:var(--md-sys-shape-corner-small);
+  --md-sys-shape-corner-pressed-m:var(--md-sys-shape-corner-medium);
+  --md-sys-shape-corner-pressed-l:var(--md-sys-shape-corner-large);
+  --md-sys-shape-corner-pressed-xl:var(--md-sys-shape-corner-large);
   --r-pill:var(--md-sys-shape-corner-full);
   --r-card:var(--md-sys-shape-corner-medium);
   --r-panel:var(--md-sys-shape-corner-large);
@@ -222,6 +234,47 @@
   --md-sys-motion-spring-default-spatial:500ms cubic-bezier(0.27,1.06,0.18,1.00);
   --md-sys-motion-spring-slow-spatial:750ms cubic-bezier(0.27,1.06,0.18,1.00);
 }
+
+/* ── shape morph ───────────────────────────────────────
+   "Shapes should morph to improve understanding and add moments of delight.
+   Use shape morph to better communicate: interaction states, like when a
+   button is selected." Two states are morphed here, both from the button
+   spec: pressed, where a round container squares off while held, and
+   selected, where a toggle's resting shape flips between round and square —
+   "If the resting unselected shape is square, the selected shape should be
+   round."
+
+   The corner is read out of a custom property so the states only have to
+   change one value, and border-radius transitions on the spatial spring,
+   which is the kind that moves things and overshoots. Give an element .morph
+   plus --shape, and optionally --shape-pressed and --shape-selected. */
+.morph{border-radius:var(--shape,var(--md-sys-shape-corner-full));
+  transition:border-radius var(--md-sys-motion-spring-fast-spatial)}
+.morph:active{--shape:var(--shape-pressed,var(--md-sys-shape-corner-medium))}
+.morph[aria-pressed=true],.morph[aria-checked=true],.morph.on{
+  --shape:var(--shape-selected,var(--md-sys-shape-corner-medium))}
+.morph[aria-pressed=true]:active,.morph[aria-checked=true]:active,.morph.on:active{
+  --shape:var(--shape-pressed,var(--md-sys-shape-corner-small))}
+
+/* ── wave divider ──────────────────────────────────────
+   A section rule drawn as a wave rather than a hairline. This is Expressive's
+   decorative licence used where it costs nothing: "Get creative when using
+   shape in graphics… and other non-interactive elements. Decorative moments
+   offer the most flexible and creative uses of shape."
+
+   The wave is a mask, not an image, so the colour is a role and follows the
+   theme in both directions — there is no pigment baked into the SVG. It is
+   mixed toward the surface so it reads as a tint rather than as a rule; a
+   full-strength primary line here would compete with the content it separates.
+
+   Used only between major sections. Inside dense lists the hairline stays,
+   because Material asks for dividers sparingly and a wave repeated every few
+   rows would be noise. */
+.wave{height:16px;border:0;margin:clamp(28px,4vw,44px) 0;
+  background:color-mix(in srgb,var(--md-sys-color-primary) 42%,var(--md-sys-color-surface));
+  -webkit-mask:var(--wave-src) repeat-x center/56px 16px;
+          mask:var(--wave-src) repeat-x center/56px 16px}
+:root{--wave-src:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='16' viewBox='0 0 56 16'%3E%3Cpath d='M0 8q7 -6 14 0t14 0 14 0 14 0' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")}
 
 /* ── emphasized type ───────────────────────────────────
    "Material components don't use emphasized type styles by default. To use an

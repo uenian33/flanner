@@ -473,9 +473,10 @@ __NAV_CSS__
 .vseg{display:flex;flex:none;gap:3px;padding:3px;border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest)}
 .vseg button{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;
-  border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface-variant);
+  border-radius:var(--shape,var(--md-sys-shape-corner-full));--shape-pressed:var(--md-sys-shape-corner-pressed-m);--shape-selected:var(--md-sys-shape-corner-full);transition:border-radius var(--md-sys-motion-spring-fast-spatial);font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface-variant);
   transition:background var(--md-sys-motion-spring-fast-effects),color var(--md-sys-motion-spring-fast-effects)}
 .vseg button svg.i{width:17px;height:17px}
+.vseg button:active{--shape:var(--shape-pressed)}
 .vseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
 .vseg button:hover:not([aria-pressed=true]){color:var(--md-sys-color-on-surface)}
 /* Icons only, at every width. The three shapes say what they do, the names
@@ -836,8 +837,18 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   line-height:var(--md-sys-typescale-label-large-line-height);
   letter-spacing:var(--md-sys-typescale-label-large-tracking);
   font-weight:var(--md-sys-typescale-emphasized-title-weight);
-  letter-spacing:var(--k-label);padding:12px 20px;border-radius:var(--md-sys-shape-corner-full);border:1.5px solid var(--md-sys-color-on-surface);text-decoration:none;
-  transition:var(--md-sys-motion-spring-fast-effects);min-height:40px;color:var(--md-sys-color-on-surface)}
+  letter-spacing:var(--k-label);padding:12px 20px;
+  /* Round by default, squaring off while held: "When pressed, buttons can
+     morph to become more square." The pressed corner is the one the
+     measurements table gives this size. */
+  --shape:var(--md-sys-shape-corner-full);
+  --shape-pressed:var(--md-sys-shape-corner-pressed-m);
+  border-radius:var(--shape);
+  border:1.5px solid var(--md-sys-color-on-surface);text-decoration:none;
+  transition:var(--md-sys-motion-spring-fast-effects),
+             border-radius var(--md-sys-motion-spring-fast-spatial);
+  min-height:40px;color:var(--md-sys-color-on-surface)}
+.btn:active{--shape:var(--shape-pressed)}
 /* Buttons are ink on paper or paper on ink — never the category's colour.
    Colour is how a label is read at a glance, and a page that uses it for the
    buttons too has spent it. */
@@ -1003,6 +1014,8 @@ __FOOTER_CSS__
 <!-- The questions are a page of their own now, linked from the footer's Info
      column: they were a wall of text between the festivals and the end of the
      home page, and a reader who wants them knows to go looking. -->
+
+<hr class="wave" aria-hidden="true">
 
 <div class="endcap" id="endCap">
   <p>More to be discovered</p>
