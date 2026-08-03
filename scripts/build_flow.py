@@ -137,6 +137,7 @@ def build():
         ("__THEME__", THEME),
         ("__HOME__", "../"),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
+        ("__TOKENS__", (ROOT / "scripts" / "_tokens.css").read_text()),
         ("__FONTCSS__", ""),
         ("__YEAR__", '2026'),
         ("__STAGES__", '10'),

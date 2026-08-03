@@ -50,31 +50,68 @@
 [data-cat="art"]{--cat:var(--cat-art);--cat-ink:var(--cat-art-ink)}
 [data-cat="culture"]{--cat:var(--cat-culture);--cat-ink:var(--cat-culture-ink)}
 [data-cat="others"]{--cat:var(--cat-others);--cat-ink:var(--cat-others-ink)}
+/* ── design tokens ─────────────────────────────────────
+   Every page inlines this file, so the home page and the planners cannot
+   drift apart on type, colour, corners or timing. A page adds only what is
+   its own (a planner's stage hues, the home page's category colours); it
+   never restates what is here.
+
+   The type scale is measured off myhelsinki.fi/tapahtumat, the city's own
+   events listing, then taken to 80%. It is short on purpose: nine rungs, a
+   flat 1.5 leading on anything that is a sentence and 1.0–1.1 on anything
+   that is a title, and no tracking except on uppercase runs, which set too
+   tight without it.
+
+   The bottom two rungs exist for the timetable. A grid of 30-minute cells is
+   denser than a list of cards, and that density is the point of the page —
+   but nothing that is a sentence is allowed down there. */
 :root{
-  --bg:#f5f5f5; --bg2:#fff; --panel:#fafafa; --panel2:#ececec;
-  --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.8);
-  --tx:#000; --tx2:#3a3a3a; --tx3:#5c5c5c;
   --sans:Arial,Helvetica,"Helvetica Neue",sans-serif;
   --title:var(--sans);
   --ease:cubic-bezier(.16,1,.3,1);
-  /* The bar is glass over whatever it covers, the same as on a planner. */
+  --safe-b:env(safe-area-inset-bottom,0px);
+
+  --f-display:clamp(19px,2.9vw,26.9px);  --l-display:1;     --k-display:.008em;
+  --f-h2:clamp(20.8px,2.4vw,27.2px);     --l-h2:1;          --k-h2:.03em;
+  --f-h3:clamp(17.6px,1.92vw,22.4px);    --l-h3:1.05;       --k-h3:.02em;
+  --f-title:14.4px;                      --l-title:1.5;     /* card title, 700 */
+  --f-body:14.4px;                       --l-body:1.5;      --k-body:normal;
+  --f-sub:12.8px;                        --l-sub:1.5;       --k-sub:normal;
+  --f-label:12.8px;                      --l-label:1.5;     --k-label:normal;
+  --f-caption:11.2px;                    --l-caption:1.5;   --k-caption:normal;
+  --f-over:9.6px;                        --l-over:1.33;     --k-over:.06em;
+  --f-micro:8.4px;                       --l-micro:1.3;     --k-micro:.04em;
+
+  /* Four corners for the whole site. A pill is a control, a card is a thing
+     you can open, a panel is a region, a box is everything small. */
+  --r-pill:10rem; --r-card:36px; --r-panel:18px; --r-box:10px;
+
+  /* Bright theme: paper, pure black ink, hairlines. */
+  --bg:#f5f5f5; --bg2:#fff; --panel:#fafafa; --panel2:#ececec;
+  --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.8);
+  --tx:#000; --tx2:#3a3a3a; --tx3:#5c5c5c;
+  --shade:rgba(0,0,0,.16);
+  /* A pinned bar is glass over whatever it covers, on every page. */
   --glass:rgba(255,255,255,.78); --glass-line:rgba(0,0,0,.16);
   --glass-pill:rgba(0,0,0,.09); --glass-tx:rgba(0,0,0,.55); --glass-on:#000;
-  --shade:rgba(0,0,0,.16);
-  --navn:4;      /* rail rows: Home, Festivals, My plan, Settings */
-  --navcols:4;   /* the phone bar holds the same four, Highlights included */
-  --pillbase:0;  /* Highlights is the first cell, not an extra beside it */
-  --safe-b:env(safe-area-inset-bottom,0px);
   color-scheme:light;
 }
 :root[data-theme=dark]{
   --bg:#0a0b0d; --bg2:#141518; --panel:#17181c; --panel2:#1f2126;
   --line:#25272d; --line2:#3a3d45;
   --tx:#f2f4f8; --tx2:#a3aab8; --tx3:#848b99;
+  --shade:rgba(0,0,0,.5);
   --glass:rgba(22,22,25,.7); --glass-line:rgba(255,255,255,.06);
   --glass-pill:rgba(255,255,255,.1); --glass-tx:rgba(255,255,255,.55); --glass-on:#fff;
-  --shade:rgba(0,0,0,.5);
   color-scheme:dark;
+}
+
+:root{
+  /* The rail's four rows and the phone bar's four cells — page-specific, so
+     they stay here rather than in the shared tokens. */
+  --navn:4;
+  --navcols:4;
+  --pillbase:0;  /* Highlights is the first cell, not an extra beside it */
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -164,31 +201,6 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* The place control stays on small screens — it is a control now, not a label —
    but the wordmark, the control and the theme toggle will not share one row at
    375px, so the control takes its own line. */
-
-/* ── type scale ────────────────────────────────────────
-   Measured off myhelsinki.fi/tapahtumat, the city's own events listing, which
-   is the closest thing to a house style for reading Helsinki event copy on a
-   phone. Its ramp is short and its body text is large: 18/27 for running text
-   and card titles, 16/24 for meta, 20/30 for a small heading, 32–48 set solid
-   for the big ones. Leading is a flat 1.5 on everything that is a sentence and
-   1.0 on everything that is a title. Tracking is normal throughout — none of
-   the size-dependent tracking a print scale would ask for.
-
-   Two departures, both deliberate. The uppercase condensed roles (wordmark,
-   badges, section heads) keep their tracking, because uppercase without it
-   sets tight enough to misread. And --f-over stays 12px: it labels things
-   rather than saying them. */
-:root{
-  --f-display:clamp(19px,2.9vw,26.9px);      --l-display:1;     --k-display:.008em;
-  --f-h2:clamp(20.8px,2.4vw,27.2px);          --l-h2:1;          --k-h2:.03em;
-  --f-h3:clamp(17.6px,1.92vw,22.4px);        --l-h3:1.05;       --k-h3:.02em;
-  --f-title:14.4px;                       --l-title:1.5;     /* card title, 700 */
-  --f-body:14.4px;                        --l-body:1.5;      --k-body:normal;
-  --f-sub:12.8px;                         --l-sub:1.5;       --k-sub:normal;
-  --f-label:12.8px;                       --l-label:1.5;     --k-label:normal;
-  --f-caption:11.2px;                     --l-caption:1.5;   --k-caption:normal;
-  --f-over:9.6px;                        --l-over:1.33;     --k-over:.06em;
-}
 
 /* ── hero ──────────────────────────────────────────────
    One festival at a time, as two plain columns: what it is on the left, what

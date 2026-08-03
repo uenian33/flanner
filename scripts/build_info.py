@@ -53,6 +53,7 @@ def main() -> None:
                                if slug == "faq" else [])
         html = html.replace("__BODY__", "\n  ".join(render(b) for b in body))
         for token, value in [
+            ("__TOKENS__", (ROOT / "scripts" / "_tokens.css").read_text()),
             ("__FONTCSS__", fontcss),
             ("__TITLE__", page["title"]),
             ("__BLURB__", page["blurb"]),
