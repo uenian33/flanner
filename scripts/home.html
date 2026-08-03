@@ -216,9 +216,15 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   max-width:22ch;overflow:hidden;text-overflow:ellipsis}
 
 .facts{display:flex;flex-direction:column;gap:10px;align-items:stretch;
-  margin:clamp(16px,1.8vw,22px) 0 0;
-  padding-top:clamp(18px,2.1vw,24px);
-  border-top:1px solid color-mix(in srgb,var(--md-sys-color-on-surface) 12%,transparent)}
+  margin:clamp(16px,1.8vw,22px) 0 0;border-top:0}
+/* The rule above the actions is the same wave as the section dividers, drawn
+   as a pseudo-element so it costs no markup. Same mask, same role-derived
+   colour, so it reads as one idea rather than as a second kind of line. */
+.facts::before{content:"";display:block;height:16px;
+  margin:0 0 clamp(14px,1.7vw,20px);
+  background:color-mix(in srgb,var(--md-sys-color-primary) 42%,var(--md-sys-color-surface));
+  -webkit-mask:var(--wave-src) repeat-x center/56px 16px;
+          mask:var(--wave-src) repeat-x center/56px 16px}
 .facts .btn{flex:none;width:100%}
 /* ── the page control ──────────────────────────────────
    A row of dots on the picture, the current one solid — Apple's page control,
