@@ -27,7 +27,7 @@ THEME = """
   --glass-pill:rgba(255,255,255,.11); --glass-tx:rgba(255,255,255,.58); --glass-on:#fff;
 }
 :root[data-theme=light]{
-  --bg:#e9e9e9; --bg2:#fff; --panel:#f2f2f2; --panel2:#eaeaea;
+  --bg:#f5f5f5; --bg2:#fff; --panel:#fafafa; --panel2:#ececec;
   --line:rgba(0,0,0,.13); --line2:rgba(0,0,0,.8);
   --tx:#000; --tx2:#3a3a3a; --tx3:#5c5c5c;
   --accent-ink:#6f6800; --on-accent:#000; --shade:rgba(0,0,0,.16);

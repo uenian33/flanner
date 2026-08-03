@@ -85,8 +85,8 @@ def main() -> None:
         "orientation": "any",
         "lang": "en",
         "dir": "ltr",
-        "background_color": "#e9e9e9",
-        "theme_color": "#e9e9e9",
+        "background_color": "#f5f5f5",
+        "theme_color": "#f5f5f5",
         "categories": ["music", "entertainment", "travel"],
         "icons": [
             {"src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
