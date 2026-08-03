@@ -72,7 +72,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
-body{margin:0;background:var(--bg);color:var(--tx);font:18px/1.5 var(--sans);
+body{margin:0;background:var(--bg);color:var(--tx);font:14.4px/1.5 var(--sans);
   -webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
 a{color:inherit}
 /* ── ground ────────────────────────────────────────────
@@ -117,7 +117,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .wm{display:flex;flex-direction:column;gap:3px;min-width:0}
 .wm b{font-family:var(--title);font-weight:600;font-size:var(--f-display);
   letter-spacing:var(--k-display);text-transform:uppercase;line-height:1}
-.wm i{font-style:normal;font-size:clamp(10px,.95vw,12px);font-weight:400;
+.wm i{font-style:normal;font-size:clamp(8px,0.76vw,9.6px);font-weight:400;
   letter-spacing:.22em;text-transform:uppercase;color:var(--tx2);line-height:1}
 .logo{width:clamp(30px,3.6vw,44px);height:clamp(30px,3.6vw,44px);flex:none;
   stroke:none;fill:none}
@@ -147,10 +147,10 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .opt.find{display:flex;align-items:center;gap:9px;width:100%;margin-top:10px;
   border-style:dashed;justify-content:center}
 .opt.find svg{width:15px;height:15px}
-.locnote{margin:12px 0 0;font-size:12px;line-height:17px;color:var(--tx3)}
+.locnote{margin:12px 0 0;font-size:9.6px;line-height:13.6px;color:var(--tx3)}
 .top .sp{flex:1}
 .tbtn{width:40px;height:40px;flex:none;border:1px solid var(--line2);border-radius:10rem;
-  display:grid;place-items:center;font-size:16px;transition:.16s var(--ease)}
+  display:grid;place-items:center;font-size:12.8px;transition:.16s var(--ease)}
 .tbtn:hover{background:var(--tx);color:var(--bg)}
 /* The place control stays on small screens — it is a control now, not a label —
    but the wordmark, the control and the theme toggle will not share one row at
@@ -170,15 +170,15 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    sets tight enough to misread. And --f-over stays 12px: it labels things
    rather than saying them. */
 :root{
-  --f-display:clamp(34px,5.2vw,48px);   --l-display:1;     --k-display:.008em;
-  --f-h2:clamp(26px,3vw,34px);          --l-h2:1;          --k-h2:.03em;
-  --f-h3:clamp(22px,2.4vw,28px);        --l-h3:1.05;       --k-h3:.02em;
-  --f-title:18px;                       --l-title:1.5;     /* card title, 700 */
-  --f-body:18px;                        --l-body:1.5;      --k-body:normal;
-  --f-sub:16px;                         --l-sub:1.5;       --k-sub:normal;
-  --f-label:16px;                       --l-label:1.5;     --k-label:normal;
-  --f-caption:14px;                     --l-caption:1.5;   --k-caption:normal;
-  --f-over:12px;                        --l-over:1.33;     --k-over:.06em;
+  --f-display:clamp(27.2px,4.16vw,38.4px);   --l-display:1;     --k-display:.008em;
+  --f-h2:clamp(20.8px,2.4vw,27.2px);          --l-h2:1;          --k-h2:.03em;
+  --f-h3:clamp(17.6px,1.92vw,22.4px);        --l-h3:1.05;       --k-h3:.02em;
+  --f-title:14.4px;                       --l-title:1.5;     /* card title, 700 */
+  --f-body:14.4px;                        --l-body:1.5;      --k-body:normal;
+  --f-sub:12.8px;                         --l-sub:1.5;       --k-sub:normal;
+  --f-label:12.8px;                       --l-label:1.5;     --k-label:normal;
+  --f-caption:11.2px;                     --l-caption:1.5;   --k-caption:normal;
+  --f-over:9.6px;                        --l-over:1.33;     --k-over:.06em;
 }
 
 /* ── hero ──────────────────────────────────────────────
@@ -225,9 +225,9 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    festival's own colour rather than as one more item in a grey run-on line. */
 .fdate{background:var(--fa,var(--tx));color:var(--fi,var(--bg2));
   padding:7px 13px 8px;border-radius:9px;margin-right:3px;
-  font-family:var(--title);font-weight:600;font-size:clamp(14px,1.45vw,18px);
+  font-family:var(--title);font-weight:600;font-size:clamp(11.2px,1.16vw,14.4px);
   letter-spacing:.03em;text-transform:uppercase;line-height:1;white-space:nowrap}
-.panel h3{margin:0;font-family:var(--title);font-weight:600;font-size:clamp(27px,3.2vw,40px);
+.panel h3{margin:0;font-family:var(--title);font-weight:600;font-size:clamp(21.6px,2.56vw,32px);
   line-height:1.02;letter-spacing:.014em;text-transform:uppercase}
 .panel .fwhere{margin:12px 0 0;font-size:var(--f-body);line-height:var(--l-body);color:var(--tx2)}
 .panel .fstars{margin:9px 0 0;font-size:var(--f-sub);line-height:var(--l-sub);
@@ -242,7 +242,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .nav{grid-area:3/1/4/13;margin-top:clamp(14px,1.8vw,20px);justify-self:center;display:flex;align-items:center;gap:4px;
   border:1px solid var(--line2);border-radius:10rem;padding:4px;background:var(--bg2)}
 .nav button{width:44px;height:44px;border-radius:10rem;display:grid;place-items:center;
-  font-size:17px;color:var(--tx2);transition:.15s var(--ease)}
+  font-size:13.6px;color:var(--tx2);transition:.15s var(--ease)}
 .nav button:hover:not(:disabled){background:var(--tx);color:var(--bg)}
 .nav button:disabled{opacity:.3;cursor:default}
 /* "2 of 5" tells you how many there are; the pictures tell you which ones.
@@ -303,26 +303,26 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 }
 .sethead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
   justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--bg2)}
-.sethead h2{margin:0;font-family:var(--title);font-weight:600;font-size:22px;
+.sethead h2{margin:0;font-family:var(--title);font-weight:600;font-size:17.6px;
   letter-spacing:.02em;text-transform:uppercase}
 .setclose{width:40px;height:40px;flex:none;border:1px solid var(--line2);border-radius:10rem;
   display:grid;place-items:center;color:var(--tx2);transition:.15s var(--ease)}
 .setclose:hover{background:var(--tx);color:var(--bg2)}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
   padding:15px 0;border-top:1px solid var(--line);flex-wrap:wrap}
-.setrow b{display:block;font-size:15px;font-weight:700}
-.setrow i{display:block;font-style:normal;font-size:12.5px;color:var(--tx3);margin-top:3px;
+.setrow b{display:block;font-size:12px;font-weight:700}
+.setrow i{display:block;font-style:normal;font-size:10px;color:var(--tx3);margin-top:3px;
   max-width:42ch}
 .setbtn{min-height:38px;padding:0 18px;border-radius:10rem;border:1px solid var(--line2);
-  font-size:14px;font-weight:650;color:var(--tx);transition:.15s var(--ease)}
+  font-size:11.2px;font-weight:650;color:var(--tx);transition:.15s var(--ease)}
 .setbtn:hover:not(:disabled){background:var(--tx);color:var(--bg2)}
 .setbtn:disabled{opacity:.5}
 .fseg{display:flex;background:var(--bg2);border:1px solid var(--line2);
   border-radius:10rem;padding:2px;gap:3px;flex:none}
-.fseg button{font-size:13.5px;font-weight:650;padding:0 16px;min-height:34px;
+.fseg button{font-size:10.8px;font-weight:650;padding:0 16px;min-height:34px;
   border-radius:10rem;color:var(--tx2);transition:.15s var(--ease)}
 .fseg button[aria-pressed=true]{background:var(--tx);color:var(--bg2)}
-.setnote{margin:15px 0 0;font-size:12.5px;line-height:1.6;color:var(--tx3)}
+.setnote{margin:15px 0 0;font-size:10px;line-height:1.6;color:var(--tx3)}
 .setnote a{color:var(--tx2)}
 @media(max-width:520px){.setrow .fseg{flex:1 1 100%}}
 
@@ -351,7 +351,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
      one tap away inside. */
   .fig{aspect-ratio:16/11}
   .panel{padding:16px 18px 18px;cursor:pointer}
-  .panel h3{font-size:clamp(22px,6.4vw,28px)}
+  .panel h3{font-size:clamp(17.6px,5.12vw,22.4px)}
   .panel .fmore,.panel .fstars,.side .facts{display:none}
   .panel .fwhere{margin-top:9px}
   .fline{margin-bottom:9px}
@@ -365,8 +365,8 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   body.scrolled header::before{opacity:1;border-bottom-color:var(--line)}
   header > *{position:relative;z-index:1}
   .top{padding-bottom:8px;border-bottom:none;gap:10px}
-  .wm b{font-size:clamp(22px,6.4vw,27px)}
-  .wm i{font-size:9px;letter-spacing:.16em}
+  .wm b{font-size:clamp(17.6px,5.12vw,21.6px)}
+  .wm i{font-size:7.2px;letter-spacing:.16em}
   .logo{width:32px;height:32px}
 
   /* The two controls sit side by side. The place you are in stays on screen
@@ -431,14 +431,14 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
     transform:translateY(calc(var(--i,0) * 100%));
     transition:transform .46s cubic-bezier(.32,.72,0,1)}
   .mnav button{display:grid;justify-items:center;align-content:center;gap:5px;padding:14px 0;
-    font-size:10.5px;font-weight:600;color:var(--glass-tx);position:relative;z-index:1;
+    font-size:8.4px;font-weight:600;color:var(--glass-tx);position:relative;z-index:1;
     border-radius:21px;transition:color .3s var(--ease)}
-  .mnav button svg{width:22px;height:22px;font-size:22px;stroke-width:1.8;
+  .mnav button svg{width:22px;height:22px;font-size:17.6px;stroke-width:1.8;
     transition:transform .42s var(--ease)}
   .mnav button.on{color:var(--glass-on)}
   .mnav button:active svg{transform:scale(.9)}
   .mnav .nb{position:absolute;top:9px;left:calc(50% + 11px);min-width:17px;height:17px;
-    border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:10px;
+    border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:8px;
     font-weight:800;display:grid;place-items:center;padding:0 4.5px;z-index:3}
   .navhome-m{display:none}
   .navhome{left:var(--railx,16px);top:50%;width:76px;height:60px;border-radius:24px;
@@ -447,7 +447,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 @media(max-width:820px){
   .navhome-m{display:grid;place-content:center;text-decoration:none;position:relative;
       height:100%;z-index:1;color:var(--glass-tx);border-radius:9999px;
-      font-size:11px;font-weight:500;letter-spacing:-.003em}
+      font-size:8.8px;font-weight:500;letter-spacing:-.003em}
   .navhome-m svg{width:24px;height:24px;transform:translateY(-7px);
       transition:transform .34s cubic-bezier(.34,1.56,.64,1)}
   body.nav-min .navhome-m svg{transform:translateY(0) scale(.96)}
@@ -466,7 +466,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
       box-shadow:inset 0 1px 0 var(--glass-line);
       transform:translateX(calc((var(--i,0) + var(--pillbase,1)) * 100%));
       transition:transform .42s cubic-bezier(.32,.72,0,1)}
-  .mnav button{display:grid;place-content:center;padding:0;font-size:11px;
+  .mnav button{display:grid;place-content:center;padding:0;font-size:8.8px;
       font-weight:500;color:var(--glass-tx);position:relative;height:100%;z-index:1;
       letter-spacing:-.003em;transition:color .3s var(--ease);border-radius:9999px}
   .mnav button svg{transform:translateY(-7px);
@@ -476,7 +476,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   body.nav-min .mnav{width:min(74vw,272px);height:48px}
   body.nav-min .mnav .lbl{opacity:0;transform:translateY(5px)}
   body.nav-min .mnav button svg{transform:translateY(0) scale(.96)}
-  .mnav button svg{width:24px;height:24px;font-size:24px;stroke-width:1.8;
+  .mnav button svg{width:24px;height:24px;font-size:19.2px;stroke-width:1.8;
       transition:transform .42s var(--ease)}
   .mnav button.on{color:var(--glass-on)}
   .mnav button:active svg{transform:scale(.9)}
@@ -486,7 +486,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
       transform:translate(calc(-50% - (var(--navw,360px) / 2) - 9px),var(--vvshift,0px))}
   body.nav-min .navhome{width:46px;height:46px}
   .mnav .nb{position:absolute;top:6px;left:calc(50% + 9px);min-width:17px;height:17px;
-      border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:10px;font-weight:800;
+      border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:8px;font-weight:800;
       display:grid;place-items:center;padding:0 4.5px;z-index:3;
       box-shadow:0 1px 4px rgba(0,0,0,.4)}
 }
@@ -496,7 +496,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 @media(min-width:821px){
   .navhome-m{display:grid;place-content:center;gap:5px;justify-items:center;
     text-decoration:none;position:relative;z-index:1;color:var(--glass-tx);
-    border-radius:21px;padding:14px 0;font-size:10.5px;font-weight:600}
+    border-radius:21px;padding:14px 0;font-size:8.4px;font-weight:600}
   .navhome-m svg{width:22px;height:22px;stroke:none;fill:none}
   .navhome-m .lbl{display:block}
 }
@@ -533,9 +533,9 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .tools.stuck .toolmark{max-width:220px;opacity:1;margin-right:2px}
 .toolmark svg{width:30px;height:30px;flex:none;stroke:none;fill:none}
 .toolmark .wm{display:flex;flex-direction:column;gap:2px;min-width:0}
-.toolmark .wm i{font-style:normal;font-size:10px;font-weight:400;letter-spacing:.18em;
+.toolmark .wm i{font-style:normal;font-size:8px;font-weight:400;letter-spacing:.18em;
   text-transform:uppercase;color:var(--tx2);line-height:1;white-space:nowrap}
-.toolmark b{font-family:var(--title);font-weight:600;font-size:19px;letter-spacing:.05em;
+.toolmark b{font-family:var(--title);font-weight:600;font-size:15.2px;letter-spacing:.05em;
   text-transform:uppercase;line-height:1;color:var(--tx)}
 .sbox{position:relative;flex:1 1 280px;min-width:0}
 .sbox svg.i{position:absolute;left:17px;top:50%;transform:translateY(-50%);
@@ -546,7 +546,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .sbox input::placeholder{color:var(--tx3)}
 .sbox input:focus{outline:none;border-color:var(--tx)}
 .sbox .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;
-  border-radius:10rem;display:grid;place-items:center;color:var(--tx3);font-size:15px}
+  border-radius:10rem;display:grid;place-items:center;color:var(--tx3);font-size:12px}
 .sbox .clr:hover{background:var(--panel2);color:var(--tx)}
 .sbox .clr[hidden]{display:none}
 .drop{position:relative;flex:none}
@@ -674,7 +674,7 @@ body[data-view=cal] .empty{display:none}
 .calmonth{position:relative}
 .calpick{display:inline-flex;align-items:center;gap:9px;padding:6px 4px;
   font-family:var(--title);font-weight:700;letter-spacing:.01em;
-  font-size:clamp(24px,3.4vw,34px);text-transform:uppercase;color:var(--tx)}
+  font-size:clamp(19.2px,2.72vw,27.2px);text-transform:uppercase;color:var(--tx)}
 .calpick .cv{width:15px;height:15px;opacity:.65;
   transition:transform .18s var(--ease)}
 .calpick[aria-expanded=true] .cv{transform:rotate(180deg)}
@@ -707,18 +707,18 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 }
 .calboxhead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
   justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--bg2)}
-.calboxhead h2{margin:0;font-family:var(--title);font-weight:600;font-size:22px;
+.calboxhead h2{margin:0;font-family:var(--title);font-weight:600;font-size:17.6px;
   letter-spacing:.02em;text-transform:uppercase}
 .yrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:4px 0 14px}
-.yrow b{font-family:var(--title);font-size:22px;letter-spacing:.02em}
+.yrow b{font-family:var(--title);font-size:17.6px;letter-spacing:.02em}
 .yrow button{width:38px;height:38px;border:1px solid var(--line2);border-radius:10rem;
   display:grid;place-items:center;color:var(--tx2);transition:.15s var(--ease)}
 .yrow button:hover{background:var(--tx);color:var(--bg);border-color:var(--tx)}
 .yrow .i{width:15px;height:15px}
 .mons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .mons button{position:relative;min-height:46px;border:1px solid var(--line2);
-  border-radius:14px;font-size:14.5px;font-weight:700;color:var(--tx);
+  border-radius:14px;font-size:11.6px;font-weight:700;color:var(--tx);
   transition:.15s var(--ease)}
 .mons button:hover{border-color:var(--tx)}
 .mons button[aria-checked=true]{background:var(--tx);color:var(--bg);
@@ -728,7 +728,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   transform:translateX(-50%);width:4px;height:4px;border-radius:50%;
   background:var(--tx)}
 .mons button[aria-checked=true].dot::after{background:var(--bg)}
-.calhint{margin:12px 0 0;text-align:center;font-size:12.5px;color:var(--tx3)}
+.calhint{margin:12px 0 0;text-align:center;font-size:10px;color:var(--tx3)}
 @media(hover:hover){.calhint{display:none}}
 
 /* ── the day panel ─────────────────────────────────────*/
@@ -749,14 +749,14 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .cell{background:var(--bg2);min-height:88px;padding:6px 5px;display:flex;
   flex-direction:column;gap:3px}
 .cell.out{background:var(--bg)}
-.cell .dn{font-size:12.5px;font-weight:700;color:var(--tx3);padding-left:2px}
+.cell .dn{font-size:10px;font-weight:700;color:var(--tx3);padding-left:2px}
 .cell.has .dn{color:var(--tx)}
 /* A run of days reads as one bar: square edges in the middle, rounded only
    where the festival actually starts and ends. */
 .ev{position:relative;display:block;min-height:20px;padding:3px 6px;margin:0 -5px;
   background:color-mix(in srgb,var(--fa,var(--tx)) 32%,var(--bg2));
   border-left:3px solid transparent;text-decoration:none;
-  font-size:11.5px;font-weight:700;line-height:1.25;color:var(--tx)}
+  font-size:9.2px;font-weight:700;line-height:1.25;color:var(--tx)}
 .ev.st{margin-left:0;border-radius:6px 0 0 6px;border-left-color:var(--fa,var(--tx))}
 .ev.en{margin-right:0;border-radius:0 6px 6px 0}
 .ev.st.en{border-radius:6px}
@@ -770,11 +770,11 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   z-index:2;pointer-events:none;white-space:nowrap;overflow:hidden;
   text-overflow:ellipsis;width:calc(var(--span,1) * 100% - 12px)}
 @media(max-width:620px){
-  .calhead span{font-size:9.5px;letter-spacing:.04em}
+  .calhead span{font-size:7.6px;letter-spacing:.04em}
   .cell{min-height:62px;padding:4px 3px}
-  .cell .dn{font-size:11px}
+  .cell .dn{font-size:8.8px}
   .ev{min-height:16px;padding:2px 4px;border-left-width:3px}
-  .ev span{font-size:9.5px;left:4px;width:calc(var(--span,1) * 100% - 8px)}
+  .ev span{font-size:7.6px;left:4px;width:calc(var(--span,1) * 100% - 8px)}
 }
 
 /* ── compact tiles ─────────────────────────────────────
@@ -786,14 +786,14 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .grid.tile .card .lg img{height:clamp(24px,3vw,30px)}
 .grid.tile .card .body{padding:14px 16px 16px;gap:0}
 .grid.tile .card .ttl{padding-top:0}
-.grid.tile .card h4{font-size:clamp(16px,1.5vw,19px);line-height:1.35}
+.grid.tile .card h4{font-size:clamp(12.8px,1.2vw,15.2px);line-height:1.35}
 .grid.tile .card .where{margin-top:4px}
 .grid.tile .card .offi,.grid.tile .card .figs,.grid.tile .card .stars,
 .grid.tile .card .acts,.grid.tile .card .cats{display:none}
 .grid.tile .card .when{margin-top:8px}
 .grid.tile .card .where{margin-top:4px}
 .grid.tile .card .kind{display:inline-block;margin-top:10px;padding:4px 11px;
-  border:1px solid var(--line2);border-radius:10rem;font-size:12.5px;font-weight:700;
+  border:1px solid var(--line2);border-radius:10rem;font-size:10px;font-weight:700;
   letter-spacing:.04em;color:var(--tx2);width:max-content}
 /* The whole tile is the target, since the buttons are gone. */
 .grid.tile .card{cursor:pointer}
@@ -823,7 +823,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   .tools .sbox{grid-area:search;flex:none;width:44px;justify-self:end;
     transition:width .38s cubic-bezier(.22,1,.36,1)}
   .tools .sbox.open{width:min(100%,calc(100vw - 96px))}
-  .sbox input{height:44px;padding:0 16px 0 38px;font-size:15px}
+  .sbox input{height:44px;padding:0 16px 0 38px;font-size:12px}
   .sbox:not(.open) input{padding:0;color:transparent;cursor:pointer}
   .sbox:not(.open) input::placeholder{color:transparent}
   .sbox svg.i{left:50%;transform:translate(-50%,-50%);
@@ -839,7 +839,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
      the word is the part that must survive: every piece around it is trimmed
      until "Upcoming" fits whole. */
   .trig{width:100%;min-width:0;justify-content:center;gap:3px;padding:0 4px;
-    font-size:12.5px}
+    font-size:10px}
   .trig svg.i{width:14px;height:14px}
   .trig .cv{width:11px;height:11px}
   .trig > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -854,10 +854,10 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   /* Two to a row leaves no space for the full 18/27, but nothing that is a
      sentence goes under 14px — the city's listing holds 16 for its meta and
      this is the same job at half the width. */
-  .grid.tile .card h4{font-size:16px}
-  .grid.tile .card .when{font-size:14px;line-height:1.5;margin-top:6px}
-  .grid.tile .card .where{font-size:14px;line-height:1.5}
-  .grid.tile .card .kind{font-size:12px;padding:3px 9px;margin-top:8px}
+  .grid.tile .card h4{font-size:12.8px}
+  .grid.tile .card .when{font-size:11.2px;line-height:1.5;margin-top:6px}
+  .grid.tile .card .where{font-size:11.2px;line-height:1.5}
+  .grid.tile .card .kind{font-size:9.6px;padding:3px 9px;margin-top:8px}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
   .sheet{left:0;right:0;width:auto;max-width:none}
@@ -873,7 +873,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   font-weight:700;padding:7px 8px 7px 14px;border-radius:10rem;background:var(--panel2);
   color:var(--tx)}
 .active .tag button{width:20px;height:20px;border-radius:10rem;display:grid;place-items:center;
-  font-size:12px;color:var(--tx2)}
+  font-size:9.6px;color:var(--tx2)}
 .active .tag button:hover{background:var(--tx);color:var(--bg)}
 
 /* ── month-grouped cards ──────────────────────────────
@@ -930,17 +930,17 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   background:color-mix(in srgb,var(--fa,var(--tx)) 26%,transparent)}
 .offi svg{width:12px;height:12px}
 .ttl{padding-top:24px}
-.body h4{margin:0;font-family:var(--sans);font-size:18px;line-height:27px;
+.body h4{margin:0;font-family:var(--sans);font-size:14.4px;line-height:21.6px;
   letter-spacing:normal;text-transform:none;font-weight:700;color:var(--tx)}
-.when{font-size:18px;line-height:27px;color:var(--tx);font-weight:400;
+.when{font-size:14.4px;line-height:21.6px;color:var(--tx);font-weight:400;
   font-variant-numeric:tabular-nums}
 /* The date and the place are consecutive lines of one address on their card,
    not two blocks — so this one closes the stack gap rather than adding to it. */
-.where{font-size:18px;line-height:27px;color:var(--tx2);margin-top:-12px}
-.stars{font-size:18px;line-height:27px;color:var(--tx2)}
+.where{font-size:14.4px;line-height:21.6px;color:var(--tx2);margin-top:-12px}
+.stars{font-size:14.4px;line-height:21.6px;color:var(--tx2)}
 .stars b{color:var(--tx);font-weight:700}
-.cats{font-size:16px;line-height:24px;font-weight:700;color:var(--tx)}
-.figs{display:flex;gap:18px;font-size:16px;line-height:24px;color:var(--tx2)}
+.cats{font-size:12.8px;line-height:19.2px;font-weight:700;color:var(--tx)}
+.figs{display:flex;gap:18px;font-size:12.8px;line-height:19.2px;color:var(--tx2)}
 .figs b{color:var(--tx);font-weight:700;font-variant-numeric:tabular-nums}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
@@ -976,30 +976,30 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 .fbrand{grid-column:1/3}
 .fbrand .fmark{display:flex;align-items:center;gap:11px;margin-bottom:14px}
 .fbrand .dot{width:24px;height:24px;flex:none;stroke:none;fill:none}
-.fbrand .fmark span{font-family:var(--title);font-weight:600;font-size:19px;
+.fbrand .fmark span{font-family:var(--title);font-weight:600;font-size:15.2px;
   letter-spacing:.13em;text-transform:uppercase;color:var(--tx);line-height:1}
-.fbrand .tag{margin:0 0 18px;font-size:16px;line-height:24px;color:var(--tx2)}
+.fbrand .tag{margin:0 0 18px;font-size:12.8px;line-height:19.2px;color:var(--tx2)}
 .flinks{display:flex;flex-direction:column;align-items:flex-start;margin-bottom:20px}
-.flinks a{display:inline-flex;align-items:center;gap:9px;font-size:16px;line-height:24px;
+.flinks a{display:inline-flex;align-items:center;gap:9px;font-size:12.8px;line-height:19.2px;
   color:var(--tx2);text-decoration:none;padding:5px 0;transition:color .15s var(--ease)}
 .flinks a:hover{color:var(--tx)}
 .flinks svg{width:15px;height:15px;flex:none;color:var(--tx3)}
 .fset{display:flex;align-items:center;gap:10px;margin:0 0 18px;flex-wrap:wrap}
-.fsetlab{font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+.fsetlab{font-size:9.6px;letter-spacing:.1em;text-transform:uppercase;
   color:color-mix(in srgb,var(--tx) 58%,var(--bg))}
 .fseg{display:flex;background:var(--bg2);border:1px solid var(--line2);
   border-radius:10rem;padding:2px;gap:3px}
-.fseg button{font-size:13px;font-weight:700;padding:0 14px;min-height:32px;
+.fseg button{font-size:10.4px;font-weight:700;padding:0 14px;min-height:32px;
   border-radius:10rem;color:var(--tx2);transition:.15s var(--ease)}
 .fseg button[aria-pressed=true]{background:var(--tx);color:var(--bg2)}
-.fcopy{margin:0;font-size:14px;line-height:21px;color:var(--tx3)}
+.fcopy{margin:0;font-size:11.2px;line-height:16.8px;color:var(--tx3)}
 
-.fcol h5{margin:0 0 16px;font-size:12px;line-height:16px;font-weight:500;letter-spacing:.05em;
+.fcol h5{margin:0 0 16px;font-size:9.6px;line-height:12.8px;font-weight:500;letter-spacing:.05em;
   text-transform:uppercase;color:color-mix(in srgb,var(--tx) 58%,var(--bg))}
 .fcol ul{list-style:none;margin:0;padding:0}
 .fcol li{margin:0;padding:0}
 .fcol li::before{display:none}
-.fcol a{display:inline-flex;align-items:center;gap:7px;font-size:16px;line-height:24px;
+.fcol a{display:inline-flex;align-items:center;gap:7px;font-size:12.8px;line-height:19.2px;
   color:var(--tx2);text-decoration:none;padding:5px 0;transition:color .15s var(--ease)}
 .fcol a:hover{color:var(--tx)}
 .fcol a svg{width:13px;height:13px;color:var(--tx3)}
@@ -1007,7 +1007,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 @media(pointer:coarse){.fcol a,.flinks a{padding:12px 0}}
 
 .fnote{margin:clamp(30px,4vw,44px) 0 0;padding-top:clamp(20px,2.4vw,26px);
-  border-top:1px solid var(--line);font-size:14px;line-height:21px;color:var(--tx3)}
+  border-top:1px solid var(--line);font-size:11.2px;line-height:16.8px;color:var(--tx3)}
 .fnote p{margin:0 0 9px;max-width:82ch}
 .fnote p:last-child{margin:0}
 @media(max-width:900px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 32px}
@@ -2442,7 +2442,7 @@ html.fx-in .fx-shell{opacity:0;transform:scale(1.014)}
   0%,100%{transform:translate(0,0)}
   50%{transform:translate(2.4px,-3.6px)}
 }
-.fx figcaption{position:absolute;bottom:calc(38% - 78px);font-size:12px;
+.fx figcaption{position:absolute;bottom:calc(38% - 78px);font-size:9.6px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--tx3)}
 
 @media(prefers-reduced-motion:reduce){

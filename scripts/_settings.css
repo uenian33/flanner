@@ -20,26 +20,26 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 }
 .sethead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
   justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--bg2)}
-.sethead h2{margin:0;font-family:var(--title);font-weight:600;font-size:22px;
+.sethead h2{margin:0;font-family:var(--title);font-weight:600;font-size:17.6px;
   letter-spacing:.02em;text-transform:uppercase}
 .setclose{width:40px;height:40px;flex:none;border:1px solid var(--line2);border-radius:10rem;
   display:grid;place-items:center;color:var(--tx2);transition:.15s var(--ease)}
 .setclose:hover{background:var(--tx);color:var(--bg2)}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
   padding:15px 0;border-top:1px solid var(--line);flex-wrap:wrap}
-.setrow b{display:block;font-size:15px;font-weight:700}
-.setrow i{display:block;font-style:normal;font-size:12.5px;color:var(--tx3);margin-top:3px;
+.setrow b{display:block;font-size:12px;font-weight:700}
+.setrow i{display:block;font-style:normal;font-size:10px;color:var(--tx3);margin-top:3px;
   max-width:42ch}
 .setbtn{min-height:38px;padding:0 18px;border-radius:10rem;border:1px solid var(--line2);
-  font-size:14px;font-weight:650;color:var(--tx);transition:.15s var(--ease)}
+  font-size:11.2px;font-weight:650;color:var(--tx);transition:.15s var(--ease)}
 .setbtn:hover:not(:disabled){background:var(--tx);color:var(--bg2)}
 .setbtn:disabled{opacity:.5}
 .fseg{display:flex;background:var(--bg2);border:1px solid var(--line2);
   border-radius:10rem;padding:2px;gap:3px;flex:none}
-.fseg button{font-size:13.5px;font-weight:650;padding:0 16px;min-height:34px;
+.fseg button{font-size:10.8px;font-weight:650;padding:0 16px;min-height:34px;
   border-radius:10rem;color:var(--tx2);transition:.15s var(--ease)}
 .fseg button[aria-pressed=true]{background:var(--tx);color:var(--bg2)}
-.setnote{margin:15px 0 0;font-size:12.5px;line-height:1.6;color:var(--tx3)}
+.setnote{margin:15px 0 0;font-size:10px;line-height:1.6;color:var(--tx3)}
 .setnote a{color:var(--tx2)}
 @media(max-width:520px){.setrow .fseg{flex:1 1 100%}}
 
