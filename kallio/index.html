@@ -1018,7 +1018,10 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 .fgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}
 .fbrand{grid-column:1/3}
 .fbrand .fmark{display:flex;align-items:center;gap:11px;margin-bottom:14px}
-.fbrand .dot{width:24px;height:24px;flex:none;stroke:none;fill:none}
+/* Grey and half there: the footer is where the page winds down, so the mark
+   sits at the weight of the text beside it rather than above it. */
+.fbrand .dot{width:24px;height:24px;flex:none;stroke:none;fill:none;
+  opacity:.5;filter:grayscale(1)}
 .fbrand .fmark span{font-family:var(--title);font-weight:600;font-size:15.2px;
   letter-spacing:.13em;text-transform:uppercase;color:var(--tx);line-height:1}
 .fbrand .tag{margin:0 0 18px;font-size:12.8px;line-height:19.2px;color:var(--tx2)}
