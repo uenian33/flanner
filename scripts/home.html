@@ -581,10 +581,10 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .cell.has .dn{color:var(--tx)}
 /* A run of days reads as one bar: square edges in the middle, rounded only
    where the festival actually starts and ends. */
-.ev{position:relative;display:block;min-height:20px;padding:3px 6px;margin:0 -5px;
+.ev{position:relative;display:block;min-height:24px;padding:3px 6px;margin:0 -5px;
   background:color-mix(in srgb,var(--fa,var(--tx)) 32%,var(--bg2));
   border-left:3px solid transparent;text-decoration:none;
-  font-size:9.2px;font-weight:700;line-height:1.25;color:var(--tx)}
+  font-size:12.5px;font-weight:700;line-height:1.3;color:var(--tx)}
 .ev.st{margin-left:0;border-radius:6px 0 0 6px;border-left-color:var(--fa,var(--tx))}
 .ev.en{margin-right:0;border-radius:0 6px 6px 0}
 .ev.st.en{border-radius:6px}
@@ -603,10 +603,10 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
    above the page's own small sizes on purpose. */
 @media(max-width:620px){
   .calhead span{font-size:11px;letter-spacing:.04em}
-  .cell{min-height:66px;padding:5px 4px}
+  .cell{min-height:70px;padding:5px 4px}
   .cell .dn{font-size:12px}
-  .ev{min-height:18px;padding:2px 4px;border-left-width:3px}
-  .ev span{font-size:11px;left:4px;width:calc(var(--span,1) * 100% - 8px)}
+  .ev{min-height:22px;padding:2px 4px;border-left-width:3px}
+  .ev span{font-size:12px;left:4px;width:calc(var(--span,1) * 100% - 8px)}
 }
 
 /* ── compact tiles ─────────────────────────────────────
