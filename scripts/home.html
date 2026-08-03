@@ -1928,9 +1928,18 @@ document.addEventListener('keydown', e => {
   }
 
   seg.querySelectorAll('[data-view]').forEach(b =>
-    b.onclick = () => paintView(b.dataset.view, true));
+    b.onclick = () => { chosen = b.dataset.view; paintView(chosen, true); });
+  /* No stored choice yet: a phone gets the compact grid, where two tiles per
+     row beat one tall card, and a pointer device gets the detailed cards it
+     has the width for. Until someone picks a shape, the default keeps
+     following the viewport — a rotated phone or a resized window lands on the
+     right one rather than on whichever was true at load. */
+  const phone = matchMedia('(max-width:620px)');
+  const fallback = () => (phone.matches ? 'tile' : 'full');
   const saved = readView();
-  paintView(VIEWS.includes(saved) ? saved : 'full', false);
+  let chosen = VIEWS.includes(saved) ? saved : '';
+  paintView(chosen || fallback(), false);
+  phone.addEventListener('change', () => { if (!chosen) paintView(fallback(), false); });
 
   /* A compact tile has no buttons, so the tile itself is the link. */
   document.querySelector('#months').addEventListener('click', e => {
