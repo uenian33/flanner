@@ -270,7 +270,11 @@
    Used only between major sections. Inside dense lists the hairline stays,
    because Material asks for dividers sparingly and a wave repeated every few
    rows would be noise. */
-.wave{height:16px;border:0;margin:clamp(28px,4vw,44px) 0;
+.wave{height:16px;border:0;
+  /* Short and centred, the way Material uses it: an ornament marking a break,
+     not a rule ruled across the page. Six periods is enough to read as a
+     wave and little enough to stay ornamental. */
+  width:clamp(168px,20vw,304px);margin:clamp(28px,4vw,44px) auto;
   background:color-mix(in srgb,var(--md-sys-color-primary) 42%,var(--md-sys-color-surface));
   -webkit-mask:var(--wave-src) repeat-x center/56px 16px;
           mask:var(--wave-src) repeat-x center/56px 16px}

@@ -89,31 +89,6 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* The spacer sits after this in the markup, so it needs its own auto margin
    to reach the end of the bar. */
 .hslot{margin-left:auto}
-/* At rail widths the place picker leaves the masthead and joins the rail's
-   utility foot, one step above the theme button. It stays a single element in
-   the markup — only its position and its shape change. */
-@media(min-width:600px){
-  /* No masthead once the rail is there. The rail already carries the mark and
-     the navigation, and a brand bar that only repeats the name is not what an
-     app bar is for — "focus on describing the current page". The header stays
-     in the markup at zero height because the place picker is its child and is
-     positioned into the rail below; on a phone, where there is no rail, the
-     masthead comes back. */
-  header{height:0;overflow:visible;margin:0;padding:0}
-  header .mark{display:none}
-  header .top{padding:0;border-bottom:0;min-height:0}
-  .hslot{position:fixed;left:20px;bottom:62px;z-index:61;margin:0}
-  .loc{width:40px;height:40px;min-height:40px;padding:0;justify-content:center;
-    border:1px solid var(--md-sys-color-outline-variant);
-    border-radius:var(--md-sys-shape-corner-full)}
-  .loc:hover{border-color:var(--md-sys-color-outline)}
-  .loc svg{width:20px;height:20px}
-  .loc #locLabel,.loc .cv{display:none}
-  /* The trigger is at the left edge now, so the panel opens from that edge
-     rather than hanging off the right. */
-  .locsheet{left:0;right:auto;bottom:calc(100% + 10px);top:auto;
-    transform-origin:bottom left}
-}
 .locwrap{position:relative;flex:none}
 .loc{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;
   border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
@@ -240,6 +215,20 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   /* A headliner's name can be half a sentence — enough of it to recognise. */
   max-width:22ch;overflow:hidden;text-overflow:ellipsis}
 
+/* Section headline, set to the metrics Material's own site uses for its
+   section headings ("Material at Google I/O 2026"): display-small at 36/44,
+   tracking normal, an 8px gap beneath, and weight 475 — a variable-font
+   weight between medium and regular, which is why the face has an axis.
+   The left inset is the panel's own padding, so the heading starts on the
+   same line as the card text under it rather than on the card's edge. */
+.shl{margin:0 0 8px;padding-left:clamp(24px,2.6vw,34px);
+  font-size:clamp(var(--md-sys-typescale-headline-medium-size),3.4vw,
+                  var(--md-sys-typescale-display-small-size));
+  line-height:1.22;
+  letter-spacing:var(--md-sys-typescale-display-small-tracking);
+  font-weight:475;
+  color:var(--md-sys-color-on-surface)}
+
 /* ── intro ─────────────────────────────────────────────
    One of the two hero moments the guidance allows: "Hero moments use multiple
    expressive tactics to break from predictable or uniformly applied design
@@ -282,7 +271,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    as a pseudo-element so it costs no markup. Same mask, same role-derived
    colour, so it reads as one idea rather than as a second kind of line. */
 .facts::before{content:"";display:block;height:16px;
-  margin:0 0 clamp(14px,1.7vw,20px);
+  width:clamp(140px,14vw,224px);margin:0 auto clamp(14px,1.7vw,20px);
   background:color-mix(in srgb,var(--md-sys-color-primary) 42%,var(--md-sys-color-surface));
   -webkit-mask:var(--wave-src) repeat-x center/56px 16px;
           mask:var(--wave-src) repeat-x center/56px 16px}
@@ -937,6 +926,46 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   line-height:var(--l-body)}
 
 __FOOTER_CSS__
+/* At rail widths the place picker leaves the masthead and joins the rail's
+   utility foot, one step above the theme button. It stays a single element in
+   the markup — only its position and its shape change. */
+@media(min-width:600px){
+  /* No masthead once the rail is there. The rail already carries the mark and
+     the navigation, and a brand bar that only repeats the name is not what an
+     app bar is for — "focus on describing the current page". The header stays
+     in the markup at zero height because the place picker is its child and is
+     positioned into the rail below; on a phone, where there is no rail, the
+     masthead comes back. */
+  header{height:0;overflow:visible;margin:0;padding:0}
+  header .mark{display:none}
+  header .top{padding:0;border-bottom:0;min-height:0}
+  /* The rail is 80px from the left edge, so the picker spans exactly that and
+     centres inside it — the same column the destinations sit in. */
+  .hslot{position:fixed;left:0;bottom:70px;z-index:61;margin:0;width:80px}
+  /* A selector, not a switch: the place it is set to is information, so the
+     icon keeps the circular icon-button shape and the value is written under
+     it the way a rail destination writes its label. */
+  .loc{display:grid;justify-items:center;gap:4px;width:80px;height:auto;
+    min-height:0;padding:0;border:0;border-radius:0;text-transform:none;
+    letter-spacing:var(--md-sys-typescale-label-small-tracking)}
+  .loc svg.i{width:40px;height:40px;padding:10px;box-sizing:border-box;
+    border:1px solid var(--md-sys-color-outline-variant);
+    border-radius:var(--md-sys-shape-corner-full)}
+  .loc:hover{background:none;color:var(--md-sys-color-on-surface)}
+  .loc:hover svg.i{border-color:var(--md-sys-color-outline)}
+  .loc[aria-expanded=true]{background:none;color:var(--md-sys-color-on-surface)}
+  .loc[aria-expanded=true] svg.i{background:var(--md-sys-color-secondary-container);
+    border-color:transparent;color:var(--md-sys-color-on-secondary-container)}
+  .loc #locLabel{font-size:var(--md-sys-typescale-label-small-size);
+    line-height:var(--md-sys-typescale-label-small-line-height);
+    max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .loc .cv{display:none}
+  /* The trigger is at the left edge now, so the panel opens from that edge
+     rather than hanging off the right. */
+  .locsheet{left:0;right:auto;bottom:calc(100% + 10px);top:auto;
+    transform-origin:bottom left}
+}
+
 @media(prefers-reduced-motion:reduce){*{animation-duration:var(--md-sys-motion-duration-short1)!important;transition-duration:var(--md-sys-motion-duration-short1)!important}}
 </style>
 </head>
@@ -1012,8 +1041,12 @@ __FOOTER_CSS__
 </section>
 
 <section class="hero" id="hero" hidden>
-  <!-- No heading: the card says what it is, and "Next up · 2 planners" was a
-       label for something already in plain view. -->
+  <!-- A headline, which is what M3 reserves them for: "marking primary
+       passages of text or important regions of content". It names the region
+       rather than describing the card inside it, which is why it survives
+       where "Next up · 2 planners" did not. It lives inside the section, so
+       it appears and disappears with the thing it titles. -->
+  <h2 class="shl">Highlights</h2>
   <div class="stage" id="stage"></div>
 </section>
 
@@ -1168,7 +1201,6 @@ const Store = (() => {
     theme: {values: ['light', 'dark'], def: 'light', legacy: 'fp-theme'},
     view:  {values: ['cal', 'tile', 'full'], def: null, legacy: 'fp-view'},
     place: {values: null, def: 'fi', legacy: 'fp-place'},  /* checked against PLACES */
-    intro: {values: ['seen'], def: null, legacy: null},    /* the welcome, once */
   };
 
   const readCookie = k => {
@@ -2263,10 +2295,11 @@ document.addEventListener('keydown', e => {
 (() => {
   const intro = $('#intro'), go = $('#introGo');
   if (!intro || !go) return;
-  if (Store.get('intro') === 'seen') { intro.remove(); return; }
+  /* Shown on every arrival, not once: it is the page's opening statement
+     rather than an onboarding step to get past, so a return visit gets the
+     same welcome. Dismissing it lasts for the visit and no longer. */
   intro.hidden = false;
   go.onclick = () => {
-    Store.set('intro', 'seen');
     /* From its measured height, so the collapse has somewhere to travel. */
     intro.style.maxHeight = intro.scrollHeight + 'px';
     requestAnimationFrame(() => intro.classList.add('gone'));

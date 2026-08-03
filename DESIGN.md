@@ -219,12 +219,17 @@ rail** from medium up. That is already roughly what we do — our breakpoints
    set — and adjusting axes is explicitly sanctioned once the typeface is
    swapped, which shipping Roboto Flex does. Replace with the real values if
    they ever become readable.
-3. **Category and stage colours.** These encode data (what kind of festival,
+3. **Section headings are set to 475, off the 400/500/700 ladder.** Measured
+   from Material's own site, where the section headings ("Material at Google
+   I/O 2026") are display-small at 36/44, tracking normal, 8px beneath, at
+   weight 475. Matching the reference beat matching our own rounding, and a
+   variable face has the axis precisely so intermediate weights are available.
+4. **Category and stage colours.** These encode data (what kind of festival,
    which stage), not theme. They stay outside the role system and are checked
    for contrast against their own `on` colours.
-4. **Dot-grid ground.** Not an M3 pattern. It is the product's identity and
+5. **Dot-grid ground.** Not an M3 pattern. It is the product's identity and
    costs nothing in contrast; it fades out past the highlight.
-5. **No ripple.** M3's pressed state is a ripple on Android. On the web we use
+6. **No ripple.** M3's pressed state is a ripple on Android. On the web we use
    the pressed state layer only.
 
 ---
