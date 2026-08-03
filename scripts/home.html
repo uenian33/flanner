@@ -357,9 +357,9 @@ __NAV_CSS__
 .trig:hover{border-color:var(--tx)}
 .trig[aria-expanded=true]{background:var(--tx);color:var(--bg);border-color:var(--tx)}
 .trig[aria-expanded=true] svg.i{color:var(--bg)}
-.trig .n{display:inline-grid;place-items:center;min-width:21px;height:21px;padding:0 6px;
-  border-radius:10rem;background:var(--tx);color:var(--bg);font-size:12px;font-weight:700}
-.trig[aria-expanded=true] .n{background:var(--bg);color:var(--tx)}
+.trig .cv{width:12px;height:12px;flex:none;opacity:.7;
+  transition:transform .18s var(--ease)}
+.trig[aria-expanded=true] .cv{transform:rotate(180deg)}
 .sheet{position:absolute;top:calc(100% + 8px);right:0;z-index:40;width:max-content;
   max-width:min(92vw,440px);background:var(--bg2);border:1px solid var(--line2);
   border-radius:18px;padding:18px;box-shadow:0 26px 60px -28px rgba(0,0,0,.5);
@@ -408,11 +408,20 @@ __NAV_CSS__
 .vseg button svg.i{width:17px;height:17px}
 .vseg button[aria-pressed=true]{background:var(--tx);color:var(--bg)}
 .vseg button:hover:not([aria-pressed=true]){color:var(--tx)}
-/* Four controls will only share the bar if the switcher stays narrow, so only
-   the chosen one says its name — the other two are unambiguous icons, and the
-   set stops being a row of three words competing with the two filters. */
+/* Icons only, at every width. The three shapes say what they do, the names
+   said it a second time, and the width they cost is the width that decides
+   whether the switcher shares the bar or is pushed off the end of it. The
+   label survives as the button's title and aria-label. */
 .vseg button .lbl{display:none}
-.vseg button[aria-pressed=true] .lbl{display:inline}
+.vseg button{padding:0;width:44px;justify-content:center;position:relative}
+/* Square buttons, so the pressed state has to be a disc — a pill on a 44x42
+   box reads as a squashed circle. */
+.vseg button[aria-pressed=true]{background:none;color:var(--bg)}
+.vseg button::before{content:"";position:absolute;left:0;right:0;top:50%;
+  transform:translateY(-50%);aspect-ratio:1;border-radius:50%;
+  background:transparent;transition:background .18s var(--ease)}
+.vseg button[aria-pressed=true]::before{background:var(--tx)}
+.vseg button svg.i{position:relative;z-index:1}
 @media(min-width:821px){
   /* The bar wrapped, which put the switcher on a second row underneath. */
   .tools{flex-wrap:nowrap}
@@ -426,7 +435,6 @@ __NAV_CSS__
    name (its icon is already lit). */
 @media(min-width:821px) and (max-width:1099px){
   .tools .toolmark .wm{display:none}
-  .vseg button[aria-pressed=true] .lbl{display:none}
 }
 
 /* ── end of the list ───────────────────────────────────
@@ -539,21 +547,11 @@ body[data-view=cal] .grid{display:none}
      while a label with no icon still has. */
   .dropset{grid-area:filters;display:grid;gap:8px;
     grid-template-columns:repeat(3,minmax(0,1fr))}
-  .trig{width:100%;min-width:0;justify-content:center;gap:0;padding:0 10px;
+  .trig{width:100%;min-width:0;justify-content:center;gap:6px;padding:0 10px;
     font-size:13.5px}
-  .trig svg.i{display:none}
-  .trig span:not(.n){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .trig > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .vseg{justify-self:stretch;width:100%}
-  .vseg button{flex:1 1 0;min-width:0;justify-content:center;padding:0;position:relative}
-  /* Labels are gone here, so a button is narrower than it is tall and the
-     pressed pill came out an ellipse. The highlight is drawn instead as a disc
-     the width of the button, which aspect-ratio makes exactly round. */
-  .vseg button[aria-pressed=true]{background:none;color:var(--bg)}
-  .vseg button::before{content:"";position:absolute;left:0;right:0;top:50%;
-    transform:translateY(-50%);aspect-ratio:1;border-radius:50%;
-    background:transparent;transition:background .18s var(--ease)}
-  .vseg button[aria-pressed=true]::before{background:var(--tx)}
-  .vseg button svg.i{position:relative;z-index:1}
+  .vseg button{flex:1 1 0;min-width:0;width:auto}
   .vseg button{height:42px;padding:0 11px}
   .vseg button .lbl{display:none}
   /* Two per row is the point of the compact view on a phone. */
@@ -741,7 +739,8 @@ __FOOTER_CSS__
   <div class="dropset">
   <div class="drop">
     <button class="trig" id="whenTrig" aria-expanded="false" aria-controls="whenSheet">
-      <svg class="i"><use href="#i-cal"/></svg><span id="whenLabel">All festivals</span></button>
+      <span id="whenLabel">All</span>
+      <svg class="i cv"><use href="#i-down"/></svg></button>
     <div class="sheet" id="whenSheet" hidden role="dialog" aria-label="Filter by date">
       <h4>Filter by date</h4>
       <div class="opts" id="whenOpts" role="radiogroup"></div>
@@ -749,7 +748,8 @@ __FOOTER_CSS__
   </div>
   <div class="drop">
     <button class="trig" id="catTrig" aria-expanded="false" aria-controls="catSheet">
-      <svg class="i"><use href="#i-tune"/></svg><span>Categories</span><span class="n" id="catN" hidden></span></button>
+      <span id="catLabel">All</span>
+      <svg class="i cv"><use href="#i-down"/></svg></button>
     <div class="sheet" id="catSheet" hidden role="dialog" aria-label="Filter by category">
       <h4>Filter by category</h4>
       <div class="opts" id="catOpts"></div>
@@ -1184,10 +1184,11 @@ const monthShort = m => {
   return `${MONTH[+mo - 1].slice(0, 3)} ${y}`;
 };
 const WHEN = [
-  {k: 'any',  label: 'All festivals', test: () => true},
-  {k: 'up',   label: 'Upcoming',      test: f => !status(f).past},
-  {k: 'past', label: 'Past',          test: f => status(f).past},
-  ...MONTHS_IN_DATA.map(m => ({k: 'm:' + m, label: monthName(m), short: monthShort(m),
+  /* label is what the sheet lists; trig is what the button reads once chosen. */
+  {k: 'any',  label: 'All festivals', trig: 'All',      test: () => true},
+  {k: 'up',   label: 'Upcoming',      trig: 'Upcoming', test: f => !status(f).past},
+  {k: 'past', label: 'Past',          trig: 'Past',     test: f => status(f).past},
+  ...MONTHS_IN_DATA.map(m => ({k: 'm:' + m, label: monthName(m), trig: monthShort(m),
                               test: f => f.month === m})),
 ];
 /* Four kinds, fixed. Deriving them from the data made the list swing between
@@ -1232,11 +1233,12 @@ function apply() {
   });
   $('#empty').hidden = shown > 0;
   $('#endCap').hidden = shown === 0;
+  /* The trigger says what the filter is set to, not what it filters — the
+     sheet it opens is already titled "Filter by date". */
   const w2 = WHEN.find(x => x.k === when);
-  $('#whenLabel').textContent =
-    (w2.short && matchMedia('(max-width:620px)').matches) ? w2.short : w2.label;
-  $('#catN').hidden = !cats.size;
-  $('#catN').textContent = cats.size;
+  $('#whenLabel').textContent = w2.trig || w2.label;
+  $('#catLabel').textContent =
+    cats.size === 0 ? 'All' : cats.size === 1 ? [...cats][0] : `${cats.size} kinds`;
   $('#activeTags').innerHTML = [...cats].map(c =>
     `<span class="tag">${esc(c)}<button data-drop="${esc(c)}" aria-label="Remove ${esc(c)}">
       <svg class="i"><use href="#i-close"/></svg></button></span>`).join('');
