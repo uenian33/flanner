@@ -461,9 +461,82 @@ __NAV_CSS__
 /* ── calendar view ─────────────────────────────────────
    Hidden until asked for, so the month grid costs nothing in the other two
    views beyond the markup that builds it. */
-.cal{display:none}
-body[data-view=cal] .cal{display:block}
-body[data-view=cal] .grid{display:none}
+.calview[hidden]{display:none}
+body[data-view=cal] #months{display:none}
+body[data-view=cal] .empty{display:none}
+
+/* The month heading is the control: its chevron says the date can be changed,
+   which a plain heading never did. */
+.calbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin:0 0 14px}
+.calmonth{position:relative}
+.calpick{display:inline-flex;align-items:center;gap:9px;padding:6px 4px;
+  font-family:var(--title);font-weight:700;letter-spacing:.01em;
+  font-size:clamp(24px,3.4vw,34px);text-transform:uppercase;color:var(--tx)}
+.calpick .cv{width:15px;height:15px;opacity:.65;
+  transition:transform .18s var(--ease)}
+.calpick[aria-expanded=true] .cv{transform:rotate(180deg)}
+.calarrows{display:flex;gap:6px;flex:none}
+.calarrows button{width:40px;height:40px;border:1px solid var(--line2);
+  border-radius:10rem;display:grid;place-items:center;color:var(--tx2);
+  transition:.15s var(--ease)}
+.calarrows button:hover{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.calarrows .i{width:17px;height:17px}
+/* ── the month picker ──────────────────────────────────
+   A card over the app rather than a panel hanging off the heading: at this
+   size a dropdown either ran off the screen or pushed the grid around. Native
+   modal, so the backdrop, the click-outside and Escape are the platform's. */
+dialog.caldlg{border:none;padding:0;background:transparent;max-width:none;
+  max-height:none;width:100%;height:100%;overflow:visible;color:var(--tx)}
+dialog.caldlg::backdrop{background:rgba(4,6,9,.55);
+  -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
+  opacity:0;transition:opacity .3s var(--ease)}
+dialog.caldlg.in::backdrop{opacity:1}
+.calbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
+  transform:translate(-50%,16px);opacity:0;width:min(420px,calc(100vw - 24px));
+  max-height:min(78svh,640px);overflow:auto;overscroll-behavior:contain;
+  background:var(--bg2);border:1px solid var(--line2);border-radius:22px;
+  padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:0 26px 70px -18px rgba(0,0,0,.5);
+  transition:opacity .28s var(--ease),transform .36s var(--ease)}
+dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
+@media(min-width:700px){
+  .calbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
+  dialog.caldlg.in .calbox{transform:translate(-50%,-50%)}
+}
+.calboxhead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--bg2)}
+.calboxhead h2{margin:0;font-family:var(--title);font-weight:600;font-size:22px;
+  letter-spacing:.02em;text-transform:uppercase}
+.yrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:4px 0 14px}
+.yrow b{font-family:var(--title);font-size:22px;letter-spacing:.02em}
+.yrow button{width:38px;height:38px;border:1px solid var(--line2);border-radius:10rem;
+  display:grid;place-items:center;color:var(--tx2);transition:.15s var(--ease)}
+.yrow button:hover{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.yrow .i{width:15px;height:15px}
+.mons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mons button{position:relative;min-height:46px;border:1px solid var(--line2);
+  border-radius:14px;font-size:14.5px;font-weight:650;color:var(--tx);
+  transition:.15s var(--ease)}
+.mons button:hover{border-color:var(--tx)}
+.mons button[aria-checked=true]{background:var(--tx);color:var(--bg);
+  border-color:var(--tx)}
+/* A month with something in it is worth telling apart before you open it. */
+.mons button.dot::after{content:"";position:absolute;left:50%;bottom:7px;
+  transform:translateX(-50%);width:4px;height:4px;border-radius:50%;
+  background:var(--tx)}
+.mons button[aria-checked=true].dot::after{background:var(--bg)}
+.calhint{margin:12px 0 0;text-align:center;font-size:12.5px;color:var(--tx3)}
+@media(hover:hover){.calhint{display:none}}
+
+/* ── the day panel ─────────────────────────────────────*/
+.calday{margin-top:clamp(22px,3vw,32px)}
+.calday[hidden]{display:none}
+.cell.today .dn{color:var(--tx);font-weight:800}
+.cell.today{box-shadow:inset 0 0 0 2px var(--line2)}
+.cell.sel{box-shadow:inset 0 0 0 2px var(--tx)}
+.cell.has{cursor:pointer}
+.cell{text-align:left;font:inherit;color:inherit}
 .calhead{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
   margin-bottom:6px}
 .calhead span{font-size:var(--f-caption);letter-spacing:.08em;text-transform:uppercase;
@@ -485,8 +558,8 @@ body[data-view=cal] .grid{display:none}
 .ev.st{margin-left:0;border-radius:6px 0 0 6px;border-left-color:var(--fa,var(--tx))}
 .ev.en{margin-right:0;border-radius:0 6px 6px 0}
 .ev.st.en{border-radius:6px}
-.ev:hover{background:color-mix(in srgb,var(--fa,var(--tx)) 52%,var(--bg2))}
-.ev[hidden]{display:none}
+.cell.has:hover .ev{background:color-mix(in srgb,var(--fa,var(--tx)) 52%,var(--bg2))}
+.ev{pointer-events:none}
 /* A day cell is far too narrow for a festival name, so the label is laid over
    the whole run instead of the one cell it lives in — --span is how many days
    the bar still has to go in this week row. */
@@ -788,12 +861,51 @@ __FOOTER_CSS__
 
 <div class="active" id="activeTags"></div>
 <section class="months" id="months"></section>
+
+<section class="calview" id="calView" hidden aria-label="Festival calendar">
+  <div class="calbar">
+    <button class="calpick" id="calPick" aria-haspopup="dialog" aria-expanded="false">
+      <span id="calTitle">&nbsp;</span>
+      <svg class="i cv"><use href="#i-down"/></svg></button>
+    <div class="calarrows">
+      <button id="calPrev" aria-label="Previous month">
+        <svg class="i"><use href="#i-left"/></svg></button>
+      <button id="calNext" aria-label="Next month">
+        <svg class="i"><use href="#i-right"/></svg></button>
+    </div>
+  </div>
+  <div class="calhead" id="calHead"></div>
+  <div class="calgrid" id="calGrid"></div>
+  <p class="calhint">Swipe the grid to change month &middot; tap a day to see what is on</p>
+  <div class="calday" id="calDay" hidden>
+    <div class="mhead"><h3 id="calDayTitle"></h3><span class="ct" id="calDayCt"></span><hr></div>
+    <div class="grid tile" id="calDayGrid"></div>
+  </div>
+</section>
 <p class="empty" id="empty" hidden>No festivals match that filter.</p>
 
 <div class="endcap" id="endCap">
   <svg class="logo" aria-hidden="true"><use href="#i-logo"/></svg>
   <p>More to be discovered</p>
 </div>
+
+<dialog class="caldlg" id="calDlg" aria-labelledby="calDlgTitle">
+  <div class="calbox">
+    <div class="calboxhead">
+      <h2 id="calDlgTitle">Jump to</h2>
+      <button class="setclose" id="calDlgClose" aria-label="Close">
+        <svg class="i"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="yrow">
+      <button id="yrDown" aria-label="Previous year">
+        <svg class="i"><use href="#i-left"/></svg></button>
+      <b id="yrLabel">&nbsp;</b>
+      <button id="yrUp" aria-label="Next year">
+        <svg class="i"><use href="#i-right"/></svg></button>
+    </div>
+    <div class="mons" id="monOpts"></div>
+  </div>
+</dialog>
 
 <nav class="mnav" aria-label="Sections">
   <span class="pill" id="navPill" aria-hidden="true"></span>
@@ -1006,19 +1118,37 @@ const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const iso = (y, m, d) =>
   `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 
-function calendar(month, list) {
-  const [y, mo] = month.split('-').map(Number);
+/* One calendar, any month, driven by state rather than by which months happen
+   to hold a festival — a month picker that could only offer months with
+   something in them would be a strange picker. */
+let calY = 0, calM = 0, calSel = '';
+
+function calKey() {
+  return `${calY}-${String(calM + 1).padStart(2, '0')}`;
+}
+
+function evsOn(key) {
+  return DATA.festivals.filter(f => matches(f) && f.start <= key && key <= f.end);
+}
+
+function paintCal() {
+  const head = $('#calHead'), grid = $('#calGrid');
+  if (!head || !grid) return;
+  head.innerHTML = DOW.map(d => `<span>${d}</span>`).join('');
+  $('#calTitle').textContent = `${MONTH[calM]} ${calY}`;
+
   /* UTC throughout: a local-time Date shifts the first of the month across a
      day boundary in any zone behind UTC, and the grid silently rotates. */
-  const lead = (new Date(Date.UTC(y, mo - 1, 1)).getUTCDay() + 6) % 7;
-  const days = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+  const lead = (new Date(Date.UTC(calY, calM, 1)).getUTCDay() + 6) % 7;
+  const days = new Date(Date.UTC(calY, calM + 1, 0)).getUTCDate();
+  const today = new Date().toISOString().slice(0, 10);
 
   const cells = [];
   for (let i = 0; i < lead; i++) cells.push('<div class="cell out"></div>');
   for (let d = 1; d <= days; d++) {
-    const key = iso(y, mo, d);
+    const key = iso(calY, calM + 1, d);
     const col = (lead + d - 1) % 7;
-    const evs = list.filter(f => f.start <= key && key <= f.end).map(f => {
+    const evs = evsOn(key).map(f => {
       /* The name is written once per week row — on the opening day, or on the
          Monday a run carries into. Repeating it in every cell was noise. */
       const label = key === f.start || col === 0;
@@ -1027,19 +1157,45 @@ function calendar(month, list) {
          into the week below. */
       const left = Math.round((Date.parse(f.end) - Date.parse(key)) / 864e5) + 1;
       const span = Math.max(1, Math.min(left, 7 - col));
-      return `<a class="${cls}" style="${fvars(f)};--span:${span}" href="${esc(f.planner)}"
-                 data-id="${esc(f.id)}" title="${esc(f.name)} ${esc(f.year)} · ${esc(f.dates)}">
-        <span>${label ? esc(f.name) : ''}</span></a>`;
+      return `<span class="${cls}" style="${fvars(f)};--span:${span}"
+                 data-id="${esc(f.id)}"><span>${label ? esc(f.name) : ''}</span></span>`;
     }).join('');
-    cells.push(`<div class="cell${evs ? ' has' : ''}" data-d="${key}">
-      <span class="dn">${d}</span>${evs}</div>`);
+    const flags = [evs ? 'has' : '', key === today ? 'today' : '',
+                   key === calSel ? 'sel' : ''].join(' ').trim();
+    cells.push(`<button class="cell ${flags}" data-d="${key}"
+      aria-label="${d} ${MONTH[calM]} ${calY}">
+      <span class="dn">${d}</span>${evs}</button>`);
   }
   while (cells.length % 7) cells.push('<div class="cell out"></div>');
+  grid.innerHTML = cells.join('');
 
-  return `<div class="cal" aria-label="${MONTH[mo - 1]} ${y}">
-    <div class="calhead">${DOW.map(d => `<span>${d}</span>`).join('')}</div>
-    <div class="calgrid">${cells.join('')}</div>
-  </div>`;
+  if (calSel) paintCalDay(calSel, false);
+}
+
+/* The grid is small on a phone, so the day you tap opens as cards underneath
+   it — the compact ones, since the calendar has already said the date. */
+function paintCalDay(key, scroll) {
+  const box = $('#calDay'), list = evsOn(key);
+  calSel = key;
+  document.querySelectorAll('#calGrid .cell').forEach(c =>
+    c.classList.toggle('sel', c.dataset.d === key));
+  if (!list.length) { box.hidden = true; return; }
+  const [y, m, d] = key.split('-').map(Number);
+  $('#calDayTitle').textContent = `${d} ${MONTH[m - 1]} ${y}`;
+  $('#calDayCt').textContent =
+    `${list.length} festival${list.length > 1 ? 's' : ''}`;
+  $('#calDayGrid').innerHTML = list.map(card).join('');
+  box.hidden = false;
+  if (scroll) box.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function calGo(delta) {
+  const t = calM + delta;
+  calY += Math.floor(t / 12);
+  calM = ((t % 12) + 12) % 12;
+  calSel = '';
+  $('#calDay').hidden = true;
+  paintCal();
 }
 
 /* ── month groups ─────────────────────────────────────── */
@@ -1060,7 +1216,6 @@ $('#months').innerHTML = Object.keys(groups).sort().map(m => {
       <hr>
     </div>
     <div class="grid">${list.map(card).join('')}</div>
-    ${calendar(m, list)}
   </div>`;
 }).join('');
 
@@ -1240,18 +1395,23 @@ $('#catOpts').innerHTML = KINDS.map(c =>
 const haystack = f => [f.name, f.city, f.type, f.category, ...f.tags, ...f.stars, f.description]
   .join(' ').toLowerCase();
 
-function apply() {
+/* One predicate, asked by the list and by the calendar, so the two can never
+   disagree about what the filters currently allow. */
+function matches(f) {
   const w = WHEN.find(x => x.k === when);
   const needle = q.trim().toLowerCase();
+  return w.test(f)
+    && (!needle || haystack(f).includes(needle))
+    && (!cats.size || cats.has(f.category || 'Others'));
+}
+
+function apply() {
   let shown = 0;
   DATA.festivals.forEach(f => {
     const el = document.querySelector(`.card[data-id="${f.id}"]`);
     if (!el) return;
-    const ok = w.test(f)
-      && (!needle || haystack(f).includes(needle))
-      && (!cats.size || cats.has(f.category || 'Others'));
+    const ok = matches(f);
     el.hidden = !ok;
-    document.querySelectorAll(`.ev[data-id="${f.id}"]`).forEach(ev => ev.hidden = !ok);
     if (ok) shown++;
   });
   document.querySelectorAll('.mgroup').forEach(g => {
@@ -1263,8 +1423,9 @@ function apply() {
       : `${n} of ${total} shown`;
     g.hidden = !n;
   });
-  $('#empty').hidden = shown > 0;
+  $('#empty').hidden = shown > 0 || document.body.dataset.view === 'cal';
   $('#endCap').hidden = shown === 0;
+  if (window.paintCal) paintCal();
   /* The trigger says what the filter is set to, not what it filters — the
      sheet it opens is already titled "Filter by date". */
   const w2 = WHEN.find(x => x.k === when);
@@ -1449,6 +1610,109 @@ document.addEventListener('keydown', e => {
   dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
 })();
 
+/* ── calendar behaviour ────────────────────────────────*/
+(() => {
+  const grid = $('#calGrid');
+  if (!grid) return;
+
+  /* Open on the month you are in, unless nothing is on then and something is
+     on soon — an empty grid is a poor first impression. */
+  const now = new Date();
+  const here = now.toISOString().slice(0, 7);
+  const withData = [...new Set(DATA.festivals.map(f => f.month))].sort();
+  const start = withData.includes(here)
+    ? here
+    : (withData.find(m => m > here) || withData[withData.length - 1] || here);
+  calY = +start.slice(0, 4);
+  calM = +start.slice(5, 7) - 1;
+  window.paintCal = paintCal;
+  paintCal();
+
+  $('#calPrev').onclick = () => calGo(-1);
+  $('#calNext').onclick = () => calGo(1);
+
+  grid.addEventListener('click', e => {
+    const cell = e.target.closest('.cell[data-d]');
+    if (!cell) return;
+    if (!evsOn(cell.dataset.d).length) return;
+    paintCalDay(cell.dataset.d, true);
+  });
+
+  /* ── month by gesture ───────────────────────────────
+     A wheel or a swipe over the grid moves through months. Both need a
+     threshold and a cooldown: a trackpad emits dozens of small deltas per
+     flick, and without one a single gesture would run through a year. */
+  let armed = true;
+  const step = d => {
+    if (!armed) return;
+    armed = false;
+    calGo(d);
+    setTimeout(() => { armed = true; }, 420);
+  };
+
+  let acc = 0;
+  grid.addEventListener('wheel', e => {
+    /* Only claim the gesture when it is clearly vertical, so a horizontal
+       trackpad swipe still belongs to the page. */
+    if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    e.preventDefault();
+    acc += e.deltaY;
+    if (Math.abs(acc) > 40) { step(acc > 0 ? 1 : -1); acc = 0; }
+  }, {passive: false});
+
+  let sy = 0, sx = 0, tracking = false;
+  grid.addEventListener('touchstart', e => {
+    sy = e.touches[0].clientY; sx = e.touches[0].clientX; tracking = true;
+  }, {passive: true});
+  grid.addEventListener('touchend', e => {
+    if (!tracking) return;
+    tracking = false;
+    const dy = e.changedTouches[0].clientY - sy;
+    const dx = e.changedTouches[0].clientX - sx;
+    /* Swiping the grid upward pulls the next month into view, the way a page
+       of a wall calendar turns. */
+    if (Math.abs(dy) > 46 && Math.abs(dy) > Math.abs(dx) * 1.4) step(dy < 0 ? 1 : -1);
+  }, {passive: true});
+
+  /* ── the month picker ───────────────────────────────*/
+  const dlg = $('#calDlg'), pick = $('#calPick');
+  let pickY = calY;
+
+  function paintPicker() {
+    $('#yrLabel').textContent = pickY;
+    $('#monOpts').innerHTML = MONTH.map((m, i) => {
+      const key = `${pickY}-${String(i + 1).padStart(2, '0')}`;
+      const has = DATA.festivals.some(f => matches(f) && f.month === key);
+      const on = pickY === calY && i === calM;
+      return `<button class="${has ? 'dot' : ''}" data-m="${i}"
+        aria-checked="${on}" role="radio">${m.slice(0, 3)}</button>`;
+    }).join('');
+    $('#monOpts').querySelectorAll('[data-m]').forEach(b => b.onclick = () => {
+      calY = pickY; calM = +b.dataset.m;
+      calSel = ''; $('#calDay').hidden = true;
+      paintCal(); close();
+    });
+  }
+
+  const open = () => {
+    pickY = calY; paintPicker();
+    dlg.showModal();
+    requestAnimationFrame(() => dlg.classList.add('in'));
+    pick.setAttribute('aria-expanded', 'true');
+  };
+  const close = () => {
+    dlg.classList.remove('in');
+    pick.setAttribute('aria-expanded', 'false');
+    setTimeout(() => { if (dlg.open) dlg.close(); }, 260);
+  };
+  pick.onclick = () => open();
+  $('#calDlgClose').onclick = close;
+  dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
+  dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
+  $('#yrDown').onclick = () => { pickY--; paintPicker(); };
+  $('#yrUp').onclick = () => { pickY++; paintPicker(); };
+})();
+
 /* ── card size ─────────────────────────────────────────
    Compact trades the artwork and the buttons for density — two per row on a
    phone, name, date, place and category only. The choice is remembered, since
@@ -1473,7 +1737,12 @@ document.addEventListener('keydown', e => {
 
   function paintView(v, remember) {
     document.body.dataset.view = v;
-    document.querySelectorAll('.grid').forEach(g => g.classList.toggle('tile', v === 'tile'));
+    const cal = document.querySelector('#calView');
+    if (cal) cal.hidden = v !== 'cal';
+    /* The day panel below the calendar is always compact; the month groups
+       follow the switcher. */
+    document.querySelectorAll('#months .grid').forEach(g =>
+      g.classList.toggle('tile', v === 'tile'));
     seg.querySelectorAll('[data-view]').forEach(b =>
       b.setAttribute('aria-pressed', b.dataset.view === v));
     if (remember) writeView(v);
