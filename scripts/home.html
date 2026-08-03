@@ -1684,9 +1684,18 @@ document.addEventListener('keydown', e => {
      offsetTop — so reading it grew the boundary as the page scrolled, and the
      snap band grew along with it right into the festivals. */
   const mark = document.querySelector('#toolsMark');
+  /* On a phone the masthead is sticky above the bar. Resting with the bar's
+     document position at the very top puts the bar where it pins anyway, but
+     hides the height of the masthead worth of content underneath it — which
+     is the calendar's month heading and its arrows. The rest position backs
+     off by exactly that much, so the bar lands where it would pin and the
+     content below it starts where the eye expects. */
+  const headH = () => parseFloat(getComputedStyle(document.documentElement)
+    .getPropertyValue('--headh')) || 0;
   const anchor = () => {
     const max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
-    const b = mark ? Math.round(mark.getBoundingClientRect().top + scrollY) : 0;
+    const raw = mark ? Math.round(mark.getBoundingClientRect().top + scrollY) : 0;
+    const b = Math.max(0, raw - headH());
     return b > 0 && b <= max ? b : 0;
   };
 
