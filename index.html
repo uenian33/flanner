@@ -116,9 +116,11 @@ svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:
    A defined band rather than three items floating in white space: wordmark
    left, descriptor after a short rule, controls right, hairline underneath.
    The deck sits below the rule at a readable measure. */
-header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
+/* Nothing in this bar is a fixed height: the row is as tall as the lockup
+   plus its padding, so shrinking the wordmark shortens the bar with it. */
+header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .top{display:flex;align-items:center;gap:14px;
-  padding-bottom:clamp(14px,1.8vw,18px);border-bottom:1px solid var(--line)}
+  padding-bottom:clamp(10px,1.3vw,14px);border-bottom:1px solid var(--line)}
 .mark{display:inline-flex;align-items:center;gap:clamp(11px,1.3vw,16px);
   text-decoration:none;white-space:nowrap}
 .wm{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -126,7 +128,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   letter-spacing:var(--k-display);text-transform:uppercase;line-height:1}
 .wm i{font-style:normal;font-size:clamp(8px,0.76vw,9.6px);font-weight:400;
   letter-spacing:.22em;text-transform:uppercase;color:var(--tx2);line-height:1}
-.logo{width:clamp(30px,3.6vw,44px);height:clamp(30px,3.6vw,44px);flex:none;
+.logo{width:clamp(21px,2.5vw,31px);height:clamp(21px,2.5vw,31px);flex:none;
   stroke:none;fill:none}
 .top .div{width:1px;height:clamp(20px,2.4vw,28px);background:var(--line2);flex:none}
 /* The spacer sits after this in the markup, so it needs its own auto margin
@@ -177,7 +179,7 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    sets tight enough to misread. And --f-over stays 12px: it labels things
    rather than saying them. */
 :root{
-  --f-display:clamp(27.2px,4.16vw,38.4px);   --l-display:1;     --k-display:.008em;
+  --f-display:clamp(19px,2.9vw,26.9px);      --l-display:1;     --k-display:.008em;
   --f-h2:clamp(20.8px,2.4vw,27.2px);          --l-h2:1;          --k-h2:.03em;
   --f-h3:clamp(17.6px,1.92vw,22.4px);        --l-h3:1.05;       --k-h3:.02em;
   --f-title:14.4px;                       --l-title:1.5;     /* card title, 700 */
@@ -409,9 +411,9 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   body.scrolled header::before{opacity:1;border-bottom-color:var(--line)}
   header > *{position:relative;z-index:1}
   .top{padding-bottom:8px;border-bottom:none;gap:10px}
-  .wm b{font-size:clamp(17.6px,5.12vw,21.6px)}
+  .wm b{font-size:clamp(12.3px,3.6vw,15.1px)}
   .wm i{font-size:7.2px;letter-spacing:.16em}
-  .logo{width:32px;height:32px}
+  .logo{width:23px;height:23px}
 
   /* The two controls sit side by side. The place you are in stays on screen
      while you browse; the search joins it once there is a list to search. */
@@ -935,7 +937,8 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .mgroup{margin-bottom:clamp(28px,4vw,46px)}
 .mgroup[hidden]{display:none}
 .mhead{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-.mhead h3{margin:0;font-family:var(--title);font-weight:500;font-size:var(--f-h2);letter-spacing:var(--k-h2);
+.mhead h3{margin:0;font-family:var(--title);font-weight:700;
+  font-size:calc(var(--f-h2) * .8);
   text-transform:uppercase;letter-spacing:.02em;line-height:1;white-space:nowrap}
 .mhead .ct{font-size:var(--f-label);line-height:var(--l-label);letter-spacing:var(--k-label);
   color:var(--tx2);white-space:nowrap}
