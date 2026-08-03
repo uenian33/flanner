@@ -14,11 +14,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Flanner">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="robots" content="index,follow">
 <link rel="canonical" href="https://uenian33.github.io/flanner/about/">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="geo.region" content="FI-18">
+<meta name="geo.placename" content="Helsinki">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Flanner">
 <meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="fi_FI">
 <meta property="og:url" content="https://uenian33.github.io/flanner/about/">
 <meta property="og:title" content="About us — Flanner">
 <meta property="og:description" content="Why Festival Planner exists, how it is built, and who is behind it.">
@@ -246,7 +249,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
 
 <article>
   <h1>About us</h1>
-  <p class="upd">Last updated 2 August 2026</p>
+  <p class="upd">Last updated 3 August 2026</p>
   <p class="lead">Festival Planner turns Helsinki festival schedules into something you can actually plan against.</p>
   <h2>The problem</h2>
   <p>Most festivals publish their timetable as a poster — a single image, or a PDF laid out for print. It looks good and it is nearly useless on the day. You cannot search it, you cannot tell which of two sets you would have to give up, and you certainly cannot work out whether you can get from one stage to another in the eight minutes between them.</p>
@@ -256,9 +259,17 @@ footer{border-top:1px solid var(--line);margin-top:clamp(40px,6vw,72px);
   <h2>How it is built</h2>
   <p>Each planner is a <strong>single self-contained HTML file</strong>. Fonts, maps, artwork and code are all embedded in it. That has one consequence that matters at a festival: once the page has loaded, it keeps working with no signal at all — in a basement, in a field, or on a phone with a dead data plan.</p>
   <p>It also means nothing is watching you use it. There is no server, no account and no analytics. Your plan is saved on your own device and goes nowhere. The <a href="../privacy/">EU data policy</a> sets out exactly what that means.</p>
-  <h2>Where the data comes from</h2>
-  <p>Timetables are transcribed from each organiser's own published schedule and cross-checked against secondary listings; where sources disagree, the organiser's own material wins. Artist links and artwork come from public music catalogues and the artists' own pages. Maps are built from OpenStreetMap data, with stage positions checked by hand against the streets they actually sit on.</p>
-  <p>This is an independent project and is not affiliated with any festival. See the <a href="../terms/">Terms and Conditions</a>.</p>
+  <h2>Sources and rights</h2>
+  <p>Everything here is compiled from material each organiser has already published openly on their own website. Nothing is taken from behind a login or a paywall, and no schedule is republished wholesale: set times are re-laid-out as a grid you can plan against, and every listing points back to the organiser's own page. Where a source and the organiser disagree, the organiser wins.</p>
+  <p><strong>Per festival, in detail:</strong></p>
+  <ul><li><strong>Flow Festival 2026</strong> — timetable, stage names and set times from the published schedule at <a href="https://www.flowfestival.com/en/schedule/" target="_blank" rel="noopener">flowfestival.com/en/schedule</a>. Artist descriptions, streaming links and portraits come from each act's own page on the same site. Ticket links go to the official shop; we sell nothing and take no commission.</li><li><strong>Kallio Block Party 2026</strong> — timetable, stage list and lineup from the published programme at <a href="https://www.kallioblockparty.org/" target="_blank" rel="noopener">kallioblockparty.org</a>. The festival is free and volunteer-run, and there is no ticketing to link to.</li></ul>
+  <p><strong>Shared sources, used across every planner:</strong></p>
+  <ul><li><strong>Artist links and genre tags</strong> — the public <a href="https://musicbrainz.org/" target="_blank" rel="noopener">MusicBrainz</a> database and Deezer's public API, with cover art from the iTunes Search API. A match is only accepted when the returned artist name is an exact match for the booked name, so an unmatched act gets a generated cover rather than a stranger's face.</li><li><strong>Maps</strong> — map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>, tiles by <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>, both used under their own licences. Stage pins are placed by hand against the streets the stages actually sit on.</li><li><strong>Fonts and code</strong> — open-licensed typefaces, embedded in the page. No third-party scripts, no ad network, no analytics.</li></ul>
+  <p>Festival names, logos, posters and artist photographs remain the property of their owners. They appear here only to identify the festival or artist a listing refers to — a descriptive use — and no ownership, endorsement or affiliation is claimed or implied. See the <a href="../terms/">Terms and Conditions</a> for the full position.</p>
+  <h2>Corrections and takedown requests</h2>
+  <p>If you are an organiser, an artist, a photographer or any other rights holder and you want something changed, credited differently or taken down, you do not need a lawyer and you do not need to explain yourself at length. One email is enough.</p>
+  <div class="callout"><p><strong>Write to <a href="mailto:flanner47@gmail.com?subject=Takedown%20request">flanner47@gmail.com</a></strong> with the subject line <em>Takedown request</em>. It helps if you can include the page and the exact item (an image, a listing, a stage name, or the whole festival), and one line on what you would like done — removed, replaced, or credited a particular way.</p><p>Every request is actioned in good faith: an acknowledgement within <strong>3 days</strong> and the change published within <strong>7 days</strong>, normally the same day. Removal is not conditional on you proving ownership — if you ask, it comes down, and any disagreement can be sorted out afterwards.</p></div>
+  <p>The same address takes ordinary corrections. A wrong set time, a misspelled artist, a stage pin in the wrong place — all worth reporting, and all get fixed.</p>
   <h2>Get in touch</h2>
   <p>Corrections are genuinely welcome — a wrong set time is worth reporting, and it will be fixed. Requests for a festival that is not covered yet are welcome too.</p>
   <p>Write to <a href="mailto:flanner47@gmail.com?subject=Festival%20Planner">flanner47@gmail.com</a>.</p>

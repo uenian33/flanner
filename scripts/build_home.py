@@ -33,12 +33,16 @@ def main():
         ("__BASE__", seo.BASE),
         ("__OG__", seo.head(
             f"{seo.BASE}/",
-            "Flanner — Helsinki festival timetables you can plan with",
-            "Free stage grids, set times, artist previews and maps for Flow Festival "
-            "and Kallio Block Party. One page per festival, works offline once loaded.",
+            "Flanner — Helsinki festival timetables & aikataulut you can plan with",
+            "Free stage grids, set times and maps for Flow Festival and Kallio Block Party "
+            "2026 — aikataulut, esiintyjät ja lavakartat. One page per festival, "
+            "works offline once loaded.",
             f"{seo.BASE}/assets/og/home.jpg",
-            jsonld=seo.site_jsonld(cfg["festivals"]) + [seo.festival_event(f) for f in cfg["festivals"]],
+            jsonld=seo.site_jsonld(cfg["festivals"])
+                   + [seo.festival_event(f) for f in cfg["festivals"]]
+                   + [seo.site_faq(cfg["festivals"])],
         )),
+        ("__FAQHTML__", seo.site_faq_html(cfg["festivals"])),
         ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),

@@ -25,7 +25,14 @@ python3 scripts/build_home.py   # index.html
 python3 scripts/build_info.py   # about, terms, privacy
 python3 scripts/build_og.py     # social cards
 cd scripts && python3 build_pwa.py   # icons, manifest, service worker
+python3 scripts/build_seo.py    # robots.txt, sitemap.xml, IndexNow key — run last
 ```
+
+`build_seo.py --submit` additionally pushes the six URLs to IndexNow (Bing,
+Yandex, Seznam, Naver). Google has no equivalent ping and picks changes up by
+crawling, or immediately if the URL is submitted in Search Console. To verify
+ownership there, paste the token into `GOOGLE_VERIFY` in `scripts/seo.py` and
+rebuild — every page then carries the meta tag.
 
 Shared pieces are single files both templates include — `_nav.css`,
 `_footer.html`, `_settings.html`, `_pagefx.html`, `_offline.html` — so the bar,

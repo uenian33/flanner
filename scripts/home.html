@@ -14,7 +14,6 @@
 <title>Flanner — Helsinki festival timetables</title>
 <meta name="description" content="Free, plannable timetables for Helsinki festivals: Flow Festival and Kallio Block Party. Set times, stage maps and your own route. Works offline.">
 <meta name="keywords" content="Helsinki festivals, Flow Festival 2026, Kallio Block Party 2026, festival timetable, set times, lineup, stage map, festival planner">
-<meta name="robots" content="index,follow,max-image-preview:large">
 __OG__
 <style>
 __FONTCSS__
@@ -454,6 +453,11 @@ __NAV_CSS__
    Says the list is finished, and on a phone it is also the clearance the
    floating bar needs: the bar is fixed, so it does not reserve any space of
    its own and the last card sat underneath it. */
+.faqsec{margin:clamp(30px,4vw,52px) 0 0}
+.faqbox{columns:2 320px;column-gap:34px}
+.faqq{break-inside:avoid;margin:0 0 20px}
+.faqq h3{margin:0 0 5px;font-size:var(--f-sub);font-weight:700;color:var(--tx)}
+.faqq p{margin:0;font-size:var(--f-body);line-height:1.55;color:var(--tx2)}
 .endcap{display:grid;justify-items:center;gap:9px;text-align:center;
   padding:clamp(30px,5vw,46px) 0 0;color:var(--tx3)}
 .endcap svg{width:34px;height:34px;opacity:.5}
@@ -895,6 +899,15 @@ __FOOTER_CSS__
   </div>
 </section>
 <p class="empty" id="empty" hidden>No festivals match that filter.</p>
+
+<!-- Crawlable, bilingual. The site answers these questions in the UI, but a
+     search engine can only rank what it can read as text. -->
+<section class="faqsec" id="secFaq">
+  <div class="shead"><h2>Questions &middot; Kysyttyä</h2></div>
+  <div class="faqbox">
+__FAQHTML__
+  </div>
+</section>
 
 <div class="endcap" id="endCap">
   <svg class="logo" aria-hidden="true"><use href="#i-logo"/></svg>

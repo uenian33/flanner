@@ -19,14 +19,34 @@ def _esc(v: str) -> str:
             .replace(">", "&gt;").replace('"', "&quot;"))
 
 
+# A verification token pastes in here once, and every page carries it. Google
+# Search Console and Bing Webmaster Tools both accept the meta-tag method, which
+# survives a rebuild in a way an uploaded HTML file does not.
+GOOGLE_VERIFY = ""
+BING_VERIFY = ""
+
+# Told to every crawler on every page. The defaults are conservative — image
+# previews are capped and snippets truncated — and a festival planner wants the
+# opposite: a large thumbnail in Discover and a full answer in the snippet.
+ROBOTS = ("index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1")
+
+
 def head(url: str, title: str, desc: str, image: str,
          kind: str = "website", jsonld: dict | list | None = None) -> str:
     """The block that goes under <title>: canonical, Open Graph, X, JSON-LD."""
     tags = [
         f'<link rel="canonical" href="{_esc(url)}">',
+        f'<meta name="robots" content="{ROBOTS}">',
+        # The audience is in Finland and searches in both languages, so the page
+        # advertises Finnish as an alternate locale even though it is written in
+        # English. No hreflang: there is no separate Finnish URL to point at, and
+        # a self-referential hreflang would be a lie about a translation.
+        '<meta name="geo.region" content="FI-18">',
+        '<meta name="geo.placename" content="Helsinki">',
         f'<meta property="og:type" content="{kind}">',
         f'<meta property="og:site_name" content="{SITE}">',
         f'<meta property="og:locale" content="en_GB">',
+        f'<meta property="og:locale:alternate" content="fi_FI">',
         f'<meta property="og:url" content="{_esc(url)}">',
         f'<meta property="og:title" content="{_esc(title)}">',
         f'<meta property="og:description" content="{_esc(desc)}">',
@@ -39,6 +59,10 @@ def head(url: str, title: str, desc: str, image: str,
         f'<meta name="twitter:description" content="{_esc(desc)}">',
         f'<meta name="twitter:image" content="{_esc(image)}">',
     ]
+    if GOOGLE_VERIFY:
+        tags.append(f'<meta name="google-site-verification" content="{_esc(GOOGLE_VERIFY)}">')
+    if BING_VERIFY:
+        tags.append(f'<meta name="msvalidate.01" content="{_esc(BING_VERIFY)}">')
     if jsonld is not None:
         tags.append('<script type="application/ld+json">'
                     + json.dumps(jsonld, ensure_ascii=False, separators=(",", ":"))
@@ -87,8 +111,15 @@ def site_jsonld(festivals: list[dict]) -> list:
             "name": SITE,
             "alternateName": "Flanner — Festival Planner",
             "url": f"{BASE}/",
-            "description": "Plannable timetables for Helsinki festivals.",
-            "inLanguage": "en",
+            "description": "Plannable timetables for Helsinki festivals — "
+                           "aikataulut, esiintyjät ja lavakartat.",
+            "inLanguage": ["en", "fi"],
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": {"@type": "EntryPoint",
+                           "urlTemplate": f"{BASE}/?q={{search_term_string}}"},
+                "query-input": "required name=search_term_string",
+            },
         },
         {
             "@context": "https://schema.org",
@@ -104,10 +135,31 @@ def site_jsonld(festivals: list[dict]) -> list:
     ]
 
 
+# IndexNow: Bing, Yandex, Seznam and Naver accept a push instead of waiting to
+# be crawled. The key is not a secret — it is published at the URL below purely
+# to prove the submitter controls the host. Google does not participate.
+INDEXNOW_KEY = "b7f4e2a91c8d45f6ae30b25c7d914e08"
+
+
 def write_robots_and_sitemap(pages: list[tuple[str, str]]) -> None:
     """pages: (path, lastmod) — path relative to BASE, e.g. '' or 'kallio/'."""
+    (ROOT / f"{INDEXNOW_KEY}.txt").write_text(INDEXNOW_KEY + "\n")
     (ROOT / "robots.txt").write_text(
+        "# Flanner — https://uenian33.github.io/flanner/\n"
         "User-agent: *\n"
+        "Allow: /\n\n"
+        "# Nothing here is worth hiding, but these paths are build inputs, not\n"
+        "# pages, and a crawler that indexes them wastes its budget on this host.\n"
+        "Disallow: /scripts/\n"
+        "Disallow: /tools/\n\n"
+        "# The generative crawlers are welcome: an assistant that can read the\n"
+        "# timetable is another way somebody finds a set they would have missed.\n"
+        "User-agent: GPTBot\n"
+        "User-agent: OAI-SearchBot\n"
+        "User-agent: ChatGPT-User\n"
+        "User-agent: PerplexityBot\n"
+        "User-agent: ClaudeBot\n"
+        "User-agent: Google-Extended\n"
         "Allow: /\n\n"
         f"Sitemap: {BASE}/sitemap.xml\n"
     )
@@ -125,32 +177,140 @@ def write_robots_and_sitemap(pages: list[tuple[str, str]]) -> None:
     print(f"  robots.txt · sitemap.xml ({len(pages)} urls)")
 
 
-def faq(f: dict) -> dict:
-    """The questions people type into a search box before a festival."""
+_FI_MONTH = {1: "tammikuuta", 2: "helmikuuta", 3: "maaliskuuta", 4: "huhtikuuta",
+             5: "toukokuuta", 6: "kesäkuuta", 7: "heinäkuuta", 8: "elokuuta",
+             9: "syyskuuta", 10: "lokakuuta", 11: "marraskuuta", 12: "joulukuuta"}
+
+
+def _fi_dates(f: dict) -> str:
+    """'14.–16. elokuuta 2026' from the ISO start/end already in the data."""
+    from datetime import date
+    a = date.fromisoformat(f["start"][:10])
+    b = date.fromisoformat(f["end"][:10])
+    if a == b:
+        return f"{a.day}. {_FI_MONTH[a.month]} {a.year}"
+    if a.month == b.month:
+        return f"{a.day}.–{b.day}. {_FI_MONTH[a.month]} {a.year}"
+    return f"{a.day}. {_FI_MONTH[a.month]} – {b.day}. {_FI_MONTH[b.month]} {b.year}"
+
+
+def _qa(f: dict) -> list[tuple[str, str, str]]:
+    """(lang, question, answer) — what people actually type before a festival.
+
+    Half of these are in Finnish. The audience is in Helsinki and searches for
+    'aikataulu' and 'esiintyjät' at least as often as for 'timetable', and a
+    page written only in English never surfaces for those queries at all.
+    """
     n = f"{f['name']} {f['year']}"
-    qa = [
-        (f"When is {n}?",
+    st, days = f["stats"], f["stats"]["days"]
+    stars4 = ", ".join(f["stars"][:4])
+    fi_dates = _fi_dates(f)
+    return [
+        ("en", f"When is {n}?",
          f"{n} runs {f['dates']} at {f['city']}."),
-        (f"What time do {f['name']} set times start?",
-         f"Flanner lists every set time for all {f['stats']['stages']} stages — "
-         f"{f['stats']['acts']} acts across {f['stats']['days']} "
-         f"day{'s' if f['stats']['days'] > 1 else ''}. Open the planner to see the full grid."),
-        (f"Who is playing {f['name']} {f['year']}?",
-         "Headliners include " + ", ".join(f["stars"][:4]) +
-         f", plus {f['stats']['acts'] - 4} more acts."),
-        (f"Is there a {f['name']} timetable I can plan with?",
+        ("fi", f"Milloin {n} järjestetään?",
+         f"{n} järjestetään {fi_dates}, paikkana {f['city']}."),
+        ("en", f"What time do {f['name']} set times start?",
+         f"Flanner lists every set time for all {st['stages']} stages — "
+         f"{st['acts']} acts across {days} day{'s' if days > 1 else ''}. "
+         "Open the planner to see the full grid."),
+        ("fi", f"Mistä löydän {n} aikataulun?",
+         f"Flanner näyttää koko aikataulun: {st['acts']} esiintyjää {st['stages']} lavalla "
+         f"{days} päivän aikana. Voit suodattaa esiintyjiä genren mukaan, hakea artistia "
+         "nimellä ja koota oman ohjelmasi."),
+        ("en", f"Who is playing {n}?",
+         f"Headliners include {stars4}, plus {st['acts'] - 4} more acts."),
+        ("fi", f"Ketkä esiintyvät {n} -festivaalilla?",
+         f"Esiintyjiin kuuluvat {stars4} sekä {st['acts'] - 4} muuta artistia. "
+         "Koko esiintyjälista löytyy planner-sivulta aakkosjärjestyksessä."),
+        ("en", f"Is there a {f['name']} timetable I can plan with?",
          "Yes — Flanner turns the official schedule into a grid you can filter by genre, "
          "search by artist, and save your own route from. It works offline once loaded."),
+        ("fi", "Toimiiko aikataulu ilman nettiyhteyttä?",
+         "Kyllä. Koko sivu tallentuu selaimeesi, joten aikataulu, kartta ja oma ohjelmasi "
+         "toimivat myös silloin kun festivaalialueella ei ole kenttää."),
     ]
+
+
+def faq(f: dict) -> dict:
+    """schema.org/FAQPage — the same questions the page shows, for rich results."""
     return {
         "@context": "https://schema.org",
         "@type": "FAQPage",
+        "inLanguage": ["en", "fi"],
         "mainEntity": [
-            {"@type": "Question", "name": q,
+            {"@type": "Question", "name": q, "inLanguage": lang,
              "acceptedAnswer": {"@type": "Answer", "text": a}}
-            for q, a in qa
+            for lang, q, a in _qa(f)
         ],
     }
+
+
+def faq_html(f: dict) -> str:
+    """The same Q&A as crawlable markup.
+
+    Structured data alone is not indexable content — Google will show it as a
+    rich result but will not rank the page on words that appear nowhere in the
+    document. The Finnish answers have to exist as real text to do any work.
+    """
+    return "\n".join(
+        f'<div class="faqq" lang="{lang}"><h3>{_esc(q)}</h3><p>{_esc(a)}</p></div>'
+        for lang, q, a in _qa(f)
+    )
+
+
+def _site_qa(festivals: list[dict]) -> list[tuple[str, str, str]]:
+    """Site-level questions — the ones that are about Flanner, not one festival."""
+    names = ", ".join(f"{f['name']} {f['year']}" for f in festivals)
+    fi_names = " ja ".join(f"{f['name']} {f['year']}" for f in festivals)
+    return [
+        ("en", "What is Flanner?",
+         "Flanner turns a Helsinki festival's official timetable into a grid you can plan "
+         "against: filter by genre, search for an artist, see where two sets clash, and "
+         "save your own route. It is free, has no accounts and runs no analytics."),
+        ("fi", "Mikä Flanner on?",
+         "Flanner muuttaa helsinkiläisfestivaalien viralliset aikataulut muotoon, jota voi "
+         "oikeasti suunnitella: suodata genren mukaan, hae artistia nimellä, näe milloin kaksi "
+         "keikkaa menevät päällekkäin ja kokoa oma ohjelmasi. Ilmainen, ei tunnuksia."),
+        ("en", "Which festivals are covered?",
+         f"Right now {names}. More are added as their timetables are published — "
+         "a request for one is welcome."),
+        ("fi", "Mitkä festivaalit ovat mukana?",
+         f"Tällä hetkellä {fi_names}. Lisää tulee sitä mukaa kun aikataulut julkaistaan."),
+        ("en", "Is Flanner official?",
+         "No. It is an independent, unofficial planner, not affiliated with any festival. "
+         "Timetables come from each organiser's own published schedule, and where they "
+         "disagree with anything shown here, the organiser is right."),
+        ("fi", "Onko Flanner virallinen?",
+         "Ei. Flanner on riippumaton, epävirallinen aikataulusovellus, joka ei ole sidoksissa "
+         "mihinkään festivaaliin. Aikataulut perustuvat järjestäjien omiin julkaisuihin."),
+        ("en", "Does it work without a signal?",
+         "Yes. Every page is one self-contained file and can be installed to your home screen, "
+         "so the timetable, the stage map and your own plan keep working with no connection."),
+        ("fi", "Toimiiko se ilman verkkoyhteyttä?",
+         "Kyllä. Jokainen sivu on yksi itsenäinen tiedosto, jonka voi asentaa puhelimen "
+         "aloitusnäytölle. Aikataulu, kartta ja oma ohjelmasi toimivat ilman kenttää."),
+    ]
+
+
+def site_faq(festivals: list[dict]) -> dict:
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "inLanguage": ["en", "fi"],
+        "mainEntity": [
+            {"@type": "Question", "name": q, "inLanguage": lang,
+             "acceptedAnswer": {"@type": "Answer", "text": a}}
+            for lang, q, a in _site_qa(festivals)
+        ],
+    }
+
+
+def site_faq_html(festivals: list[dict]) -> str:
+    return "\n".join(
+        f'<div class="faqq" lang="{lang}"><h3>{_esc(q)}</h3><p>{_esc(a)}</p></div>'
+        for lang, q, a in _site_qa(festivals)
+    )
 
 
 def breadcrumb(f: dict) -> dict:

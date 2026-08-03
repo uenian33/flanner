@@ -487,6 +487,10 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .nowline::before{content:"NOW";position:absolute;left:2px;top:-8px;font-size:9px;font-weight:800;
   color:#fff;background:var(--live);padding:2px 5px;border-radius:4px;font-family:var(--disp)}
 
+.faqbox{columns:2 320px;column-gap:34px}
+.faqq{break-inside:avoid;margin:0 0 20px}
+.faqq h3{margin:0 0 5px;font-size:15px;font-weight:700;letter-spacing:-.01em;color:var(--tx)}
+.faqq p{margin:0;font-size:13.5px;line-height:1.55;color:var(--tx2)}
 .lineup{columns:3 220px;column-gap:26px}
 .lineup p{margin:0 0 7px;font-size:13px;line-height:1.45;color:var(--tx2);break-inside:avoid}
 .lineup b{color:var(--tx);font-weight:650}
@@ -1077,6 +1081,16 @@ __TICKER__
 <section class="blk" id="secLineup">
   <div class="shead"><h2>Line-up A–Z</h2></div>
   <div class="lineup" id="lineup"></div>
+</section>
+
+<!-- Real text, not just JSON-LD: the answers have to appear in the document
+     before the page can rank on the words they contain. Half are in Finnish
+     because that is how most of this festival's audience searches. -->
+<section class="blk" id="secFaq">
+  <div class="shead"><h2>Questions · Kysyttyä</h2></div>
+  <div class="faqbox">
+__FAQHTML__
+  </div>
 </section>
 
 <section class="blk" id="secRoute">
