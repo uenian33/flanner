@@ -356,7 +356,7 @@ header{padding:clamp(20px,3vw,34px) 0 18px}
 @media(prefers-reduced-motion:reduce){.dx{animation:none}.dx.rise svg{opacity:.4}}
 /* Phones get their own placement and a smaller scale, tucked into the margins
    either side of the centred lockup rather than hidden. */
-@media(max-width:640px){
+@media(max-width:599px){
   .dx{left:var(--mx,var(--x));top:var(--my,var(--y));
     --sz:calc(clamp(24px,7vw,34px) * var(--ms,var(--s,1)))}
 }
@@ -422,7 +422,7 @@ body.past-head .toolbar::before{opacity:1}
 .brandmini b{font-family:var(--sans);font-weight:700;
   font-size:clamp(27.2px,4.16vw,41.6px);letter-spacing:.008em;text-transform:uppercase;
   line-height:1;white-space:nowrap;color:var(--md-sys-color-on-surface)}
-@media(max-width:720px){.brandmini b{display:none}}
+@media(max-width:839px){.brandmini b{display:none}}
 /* On a phone the identity is not something to reveal on scroll — with the
    masthead far below the fold, the bar is the only place the festival is
    named. It takes its own row so the search keeps its width. */
@@ -430,7 +430,7 @@ body.past-head .toolbar::before{opacity:1}
    masthead far below the fold, the bar is the only place the festival is
    named. Everything stays on one row: the mark and the two buttons hold their
    size and the search field absorbs whatever is left, down to a stub. */
-@media(max-width:620px){
+@media(max-width:599px){
   .toolbar .tbar:not(.tbar2){gap:8px}
   .brandmini{width:auto;margin:0;opacity:1;transform:none;overflow:visible;flex:none}
   /* The home page's phone masthead, to the number. */
@@ -472,7 +472,7 @@ body.scrolled .logo img{transform:scale(.72);opacity:.55}
 .tbar2{padding:8px 0 10px;flex-wrap:wrap;row-gap:8px}
 .daybar{flex:1 1 auto}
 .daybar .dshort{display:none}
-@media(max-width:700px){
+@media(max-width:839px){
   .tbar2{flex-wrap:wrap}
   .daybar{flex:1 1 100%;margin-bottom:8px}
   .daybar .dlong{display:none}
@@ -538,7 +538,7 @@ dialog.setdlg.in::backdrop{opacity:1}
   padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:var(--md-sys-elevation-3);
   transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
 dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
-@media(min-width:700px){
+@media(min-width:600px){
   .setbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
   dialog.setdlg.in .setbox{transform:translate(-50%,-50%)}
 }
@@ -574,7 +574,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   padding:16px 0 0}
 .setfoot .fgrid{grid-template-columns:minmax(0,1fr);gap:20px}
 .setfoot .fbrand{grid-column:auto}
-@media(max-width:820px){
+@media(max-width:839px){
   .setfoot{display:block}
   /* The planner's footer is nested, so a child selector missed it. */
   footer{display:none}
@@ -597,7 +597,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .chipset{display:flex;flex-wrap:wrap;gap:11px 10px;width:100%}
 /* On a phone three wrapped chip fields run to most of a screen, so each group
    becomes one swipeable row instead. The mask hints that it scrolls. */
-@media(max-width:900px){
+@media(max-width:839px){
   .chipset{flex-wrap:nowrap;overflow-x:auto;gap:9px;padding:2px 22px 4px 0;
     scrollbar-width:none;-webkit-overflow-scrolling:touch;
     overscroll-behavior-inline:contain;overscroll-behavior-y:auto;
@@ -628,7 +628,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
   display:inline-grid;place-items:center;font-size:var(--f-micro);font-weight:700;
   background:var(--fill);color:inherit}
 .starbtn[aria-pressed=true] .nb{background:rgba(255,255,255,.24)}
-@media(max-width:720px){.starbtn .lbl{display:none}.starbtn{padding:0 12px}}
+@media(max-width:839px){.starbtn .lbl{display:none}.starbtn{padding:0 12px}}
 .chip.stage[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#0a0c10}
 .chip.stage[aria-pressed=true] .dot{background:rgba(10,12,16,.55)}
 .chip .ct{font-size:var(--f-micro);opacity:.62;font-variant-numeric:tabular-nums}
@@ -639,7 +639,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 
 /* ── section frames ───────────────────────────────────── */
 .deck{display:block}
-@media(min-width:1100px){
+@media(min-width:1200px){
   /* In list view the timetable is a narrow column, so the map earns the space
      beside it. The grid view already spans the full width. */
   body[data-view=agenda] .deck{display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,42%);
@@ -889,7 +889,7 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .maplayers button{font-size:var(--f-over);font-weight:650;padding:6px 11px;border-radius:var(--r-box);
   color:var(--md-sys-color-on-surface-variant);min-height:32px}
 .maplayers button[aria-pressed=true]{background:var(--md-sys-color-surface-container-lowest);color:var(--md-sys-color-on-surface)}
-@media(max-width:560px){
+@media(max-width:599px){
   .maplayers{left:8px;right:8px;overflow-x:auto;scrollbar-width:none;
     overscroll-behavior-inline:contain}
   .maplayers button{flex:1 0 auto}
@@ -921,7 +921,7 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .gbtn:hover{color:var(--md-sys-color-on-surface);border-color:var(--c);background:var(--md-sys-color-surface-container-lowest)}
 .gbtn.solid{background:var(--c);color:#0a0c10;border-color:var(--c)}
 .gbtn.solid:hover{filter:brightness(1.1);color:#0a0c10}
-@media(max-width:560px){.stagebar{grid-template-columns:auto 1fr}.stagebar .gacts{grid-column:1/-1}}
+@media(max-width:599px){.stagebar{grid-template-columns:auto 1fr}.stagebar .gacts{grid-column:1/-1}}
 .mapcap{font-size:var(--f-over);color:var(--md-sys-color-on-surface-variant);margin-top:10px;line-height:1.5}
 .mapcap a{color:var(--md-sys-color-on-surface-variant)}
 
@@ -1047,7 +1047,7 @@ h3.ch{font-size:var(--f-caption);letter-spacing:.02em;color:var(--lab3);margin:2
 .cadd[aria-pressed="true"]{background:var(--fill);color:var(--lab)}
 .cadd[aria-pressed="true"]:hover{background:var(--fill2)}
 
-@media(min-width:900px) and (min-aspect-ratio:1/1){
+@media(min-width:840px) and (min-aspect-ratio:1/1){
   /* Match the card's proportions to the window's: artwork beside the detail
      rather than a phone sheet floating in the middle of a wide screen. */
   .cardbox{width:min(900px,92vw);height:min(78vh,580px);max-height:min(78vh,580px);
@@ -1076,7 +1076,7 @@ dialog.consent.in::backdrop{opacity:1}
   box-shadow:0 26px 70px -18px rgba(0,0,0,.8);
   transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium4) var(--ease)}
 dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
-@media(min-width:700px){
+@media(min-width:600px){
   .consentbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 14px))}
   dialog.consent.in .consentbox{transform:translate(-50%,-50%)}
 }
@@ -1125,7 +1125,7 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
 /* Lifted out of the planner so the home page can use the identical bar.
    --navn is the number of section tabs beside the Home button. */
 .mnav{display:none}
-@media(min-width:821px){
+@media(min-width:600px){
   body{padding-left:96px}
   .mnav{display:grid;grid-template-rows:repeat(var(--navn,4),1fr);position:fixed;left:var(--railx,16px);top:50%;
     transform:translateY(-50%);width:76px;z-index:60;padding:5px;border-radius:var(--md-sys-shape-corner-extra-large);
@@ -1152,7 +1152,7 @@ dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
   .navhome{left:var(--railx,16px);top:50%;width:76px;height:60px;border-radius:var(--md-sys-shape-corner-large-increased);
     transform:translateY(calc(-50% - (var(--navh,214px) / 2) - 10px - 30px))}
 }
-@media(max-width:820px){
+@media(max-width:839px){
   .navhome-m{display:grid;place-content:center;text-decoration:none;position:relative;
       height:100%;z-index:1;color:var(--glass-tx);border-radius:var(--md-sys-shape-corner-extra-large);
       font-size:8.8px;font-weight:500;letter-spacing:-.003em}
@@ -1253,17 +1253,17 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
   border-top:1px solid var(--md-sys-color-outline-variant);font-size:var(--md-sys-typescale-label-small-size);line-height:16.8px;color:var(--md-sys-color-on-surface-variant)}
 .fnote p{margin:0 0 9px;max-width:82ch}
 .fnote p:last-child{margin:0}
-@media(max-width:900px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 32px}
+@media(max-width:839px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 32px}
   .fbrand{grid-column:1/-1}}
-@media(max-width:560px){.fgrid{grid-template-columns:minmax(0,1fr);gap:34px}}
+@media(max-width:599px){.fgrid{grid-template-columns:minmax(0,1fr);gap:34px}}
 
 
 
 /* ── responsive ───────────────────────────────────────── */
-@media (max-width:1100px){
+@media (max-width:1199px){
   .maplayout{grid-template-columns:1fr}
 }
-@media (max-width:820px){
+@media (max-width:839px){
   :root{--gutter:46px; --colw:148px}
   header{padding:18px 0 16px}
   .brandline{gap:14px}
@@ -1747,7 +1747,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':
 const pct = m => (m - D0) / DSPAN * 100;
 const ico = n => `<svg class="i"><use href="#i-${n}"/></svg>`;
 const isTouch = matchMedia('(hover:none)').matches;
-const narrowVP = () => matchMedia('(max-width:820px)').matches;
+const narrowVP = () => matchMedia('(max-width:839px)').matches;
 
 const everyAct = [];
 DATA.stages.forEach(s => s.acts.forEach(a => {
@@ -2125,7 +2125,7 @@ function applyBreakpointDefaults() {
   if (!Store.get('viewPinned'))
     setView(narrow ? 'agenda' : 'timeline');
 }
-matchMedia('(max-width:820px)').addEventListener('change', applyBreakpointDefaults);
+matchMedia('(max-width:839px)').addEventListener('change', applyBreakpointDefaults);
 
 
 /* Zoom stretches the time axis. Rebuilding is cheap and keeps every block,
@@ -3000,7 +3000,7 @@ document.addEventListener('keydown', e => {
    rather than be clipped mid-word. */
 (() => {
   const q = $('#q');
-  const narrow = matchMedia('(max-width:620px)');
+  const narrow = matchMedia('(max-width:599px)');
   const set = () => { q.placeholder = narrow.matches ? 'Search artists…' : 'Search artist, stage, genre…'; };
   narrow.addEventListener ? narrow.addEventListener('change', set) : narrow.addListener(set);
   addEventListener('resize', set, {passive: true});

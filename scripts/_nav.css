@@ -13,7 +13,7 @@
 /* Lifted out of the planner so the home page can use the identical bar.
    --navn is the number of section tabs beside the Home button. */
 .mnav{display:none}
-@media(min-width:821px){
+@media(min-width:600px){
   body{padding-left:96px}
   .mnav{display:grid;grid-template-rows:repeat(var(--navn,4),1fr);position:fixed;left:var(--railx,16px);top:50%;
     transform:translateY(-50%);width:76px;z-index:60;padding:5px;border-radius:var(--md-sys-shape-corner-extra-large);
@@ -40,7 +40,7 @@
   .navhome{left:var(--railx,16px);top:50%;width:76px;height:60px;border-radius:var(--md-sys-shape-corner-large-increased);
     transform:translateY(calc(-50% - (var(--navh,214px) / 2) - 10px - 30px))}
 }
-@media(max-width:820px){
+@media(max-width:839px){
   .navhome-m{display:grid;place-content:center;text-decoration:none;position:relative;
       height:100%;z-index:1;color:var(--glass-tx);border-radius:var(--md-sys-shape-corner-extra-large);
       font-size:8.8px;font-weight:500;letter-spacing:-.003em}

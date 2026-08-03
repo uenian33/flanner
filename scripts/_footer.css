@@ -51,6 +51,6 @@ footer{border-top:1px solid var(--md-sys-color-outline-variant);margin-top:clamp
   border-top:1px solid var(--md-sys-color-outline-variant);font-size:var(--md-sys-typescale-label-small-size);line-height:16.8px;color:var(--md-sys-color-on-surface-variant)}
 .fnote p{margin:0 0 9px;max-width:82ch}
 .fnote p:last-child{margin:0}
-@media(max-width:900px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 32px}
+@media(max-width:839px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 32px}
   .fbrand{grid-column:1/-1}}
-@media(max-width:560px){.fgrid{grid-template-columns:minmax(0,1fr);gap:34px}}
+@media(max-width:599px){.fgrid{grid-template-columns:minmax(0,1fr);gap:34px}}

@@ -263,7 +263,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .stage.out.back .side{transform:translateX(16px)}
 .stage.out.fwd  .side{transform:translateX(-16px)}
 
-@media(max-width:900px){
+@media(max-width:839px){
   /* Stacked, picture first — the panel keeps its card here, because on one
      column a bare block of type under a photograph has nothing holding it. */
   .stage{grid-template-columns:minmax(0,1fr);row-gap:0}
@@ -282,7 +282,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   .nav .arw{color:var(--md-sys-color-on-surface-variant)}
   .nav .arw:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 10%,transparent)}
 }
-@media(max-width:430px){
+@media(max-width:599px){
   .facts{flex-direction:column;align-items:stretch}
   .facts .btn{flex:none}
 }
@@ -292,7 +292,7 @@ __SETTINGS_CSS__
    top for the whole page, and its right-hand slot holds the place control
    until you reach the festival cards, where it becomes the search. One bar,
    one position, so nothing jumps as you scroll. */
-@media(max-width:620px){
+@media(max-width:599px){
   /* The highlight card is a summary, not the whole record: date, name, venue,
      and the card itself opens the planner. Everything it used to spell out is
      one tap away inside. */
@@ -353,7 +353,7 @@ __SETTINGS_CSS__
 __NAV_CSS__
 /* The planner keeps its Home button as a separate pill above the rail; here
    the rail is short enough to hold it as an ordinary item at every width. */
-@media(min-width:821px){
+@media(min-width:600px){
   .navhome-m{display:grid;place-content:center;gap:5px;justify-items:center;
     text-decoration:none;position:relative;z-index:1;color:var(--glass-tx);
     border-radius:var(--md-sys-shape-corner-large-increased);padding:14px 0;font-size:8.4px;font-weight:600}
@@ -470,7 +470,7 @@ __NAV_CSS__
   background:transparent;transition:background var(--md-sys-motion-duration-short4) var(--ease)}
 .vseg button[aria-pressed=true]::before{background:var(--md-sys-color-on-surface)}
 .vseg button svg.i{position:relative;z-index:1}
-@media(min-width:821px){
+@media(min-width:600px){
   /* The bar wrapped, which put the switcher on a second row underneath. */
   .tools{flex-wrap:nowrap}
   .sbox{flex:1 1 200px;min-width:120px}
@@ -481,7 +481,7 @@ __NAV_CSS__
    pieces that repeat what is already on screen give up their width first: the
    bar's wordmark (the masthead says it directly above) and the chosen view's
    name (its icon is already lit). */
-@media(min-width:821px) and (max-width:1099px){
+@media(min-width:600px) and (max-width:1199px){
   .tools .toolmark .wm{display:none}
 }
 
@@ -495,7 +495,7 @@ __NAV_CSS__
    the one in the nav bar a few pixels below, which said nothing twice. */
 .endcap p{margin:0;font-size:var(--f-sub);font-weight:600;letter-spacing:.02em}
 .endcap[hidden]{display:none}
-@media(max-width:820px){
+@media(max-width:839px){
   /* The bar's own height, the gap it stands off the edge, and the inset on a
      phone with a home indicator. */
   .endcap{padding-bottom:calc(67px + 18px + var(--safe-b,0px) + 18px)}
@@ -544,7 +544,7 @@ dialog.caldlg.in::backdrop{opacity:1}
   padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:var(--md-sys-elevation-3);
   transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium3) var(--ease)}
 dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
-@media(min-width:700px){
+@media(min-width:600px){
   .calbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
   dialog.caldlg.in .calbox{transform:translate(-50%,-50%)}
 }
@@ -616,7 +616,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
    screen is narrow, but a date is two digits and a weekday is three letters,
    so neither needs the width that the rest of the page was saving. These sit
    above the page's own small sizes on purpose. */
-@media(max-width:620px){
+@media(max-width:599px){
   .calhead span{font-size:var(--md-sys-typescale-label-small-size);letter-spacing:.04em}
   .cell{min-height:70px;padding:5px 4px}
   .cell .dn{font-size:var(--md-sys-typescale-label-medium-size)}
@@ -656,7 +656,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
    trigger-anchored sheet hangs off the viewport at this width. .tools keeps
    position:sticky — an earlier version set position:relative for exactly this
    anchoring, which silently cancelled the sticky and let the bar scroll away. */
-@media(max-width:620px){
+@media(max-width:599px){
   /* Same shape as a planner's bar: the lockup holds the left, the field is a
      circle on the right until it is asked for, and the filters take the row
      underneath. */
@@ -827,7 +827,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .btn.free{border-style:dashed;color:var(--md-sys-color-on-surface-variant);border-color:var(--md-sys-color-outline)}
 /* below this width the two actions stop fitting side by side; a clean stack
    beats one full-width button with an orphan beneath it */
-@media(max-width:430px){.acts{flex-direction:column;align-items:stretch}
+@media(max-width:599px){.acts{flex-direction:column;align-items:stretch}
   .acts .btn{width:100%}}
 .empty{padding:40px 0;text-align:center;color:var(--md-sys-color-on-surface-variant);font-size:var(--f-body);
   line-height:var(--l-body)}
@@ -1487,7 +1487,7 @@ function readStuck() {
   /* On a phone the masthead is sticky too, so the toolbar pins beneath it
      rather than at zero. Publishing the measured height keeps the offset
      honest when the bar's own contents change size. */
-  const phone = matchMedia('(max-width:620px)').matches;
+  const phone = matchMedia('(max-width:599px)').matches;
   const h = phone && headEl ? Math.round(headEl.getBoundingClientRect().height) : 0;
   if (phone) document.documentElement.style.setProperty('--headh', h + 'px');
   else document.documentElement.style.removeProperty('--headh');
@@ -1713,7 +1713,7 @@ $('#qClr').onclick = () => { $('#q').value = ''; q = ''; $('#qClr').hidden = tru
 /* On a phone the field folds away when empty, the same as on a planner. */
 (() => {
   const box = document.querySelector('.sbox'), input = $('#q');
-  const narrow = matchMedia('(max-width:620px)');
+  const narrow = matchMedia('(max-width:599px)');
   const open = () => { box.classList.add('open'); input.focus(); };
   box.addEventListener('click', () => {
     if (narrow.matches && !box.classList.contains('open')) open();
@@ -1787,7 +1787,7 @@ document.addEventListener('keydown', e => {
 
   /* The field belongs in the masthead on a phone and in the toolbar on a
      pointer device — the same element, moved, rather than two of them. */
-  const phone = matchMedia('(max-width:620px)');
+  const phone = matchMedia('(max-width:599px)');
   const slot = $('#hslot'), bar = $('#tools'), field = document.querySelector('.sbox');
   const loc = document.querySelector('.locwrap');
   window.placeControls = () => place();
@@ -2106,7 +2106,7 @@ document.addEventListener('keydown', e => {
      has the width for. Until someone picks a shape, the default keeps
      following the viewport — a rotated phone or a resized window lands on the
      right one rather than on whichever was true at load. */
-  const phone = matchMedia('(max-width:620px)');
+  const phone = matchMedia('(max-width:599px)');
   const fallback = () => (phone.matches ? 'tile' : 'full');
   const saved = Store.get('view', VIEWS);
   let chosen = saved || '';
