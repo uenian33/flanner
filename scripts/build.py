@@ -157,7 +157,9 @@ def main():
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
          (ROOT / "scripts" / "_tokens.css").read_text()),
-        ("__FONTCSS__", ""),
+        ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()
+            .replace("__ROBOTO_LATIN__", data_uri(ROOT / "assets" / "font" / "roboto-latin.woff2"))
+            .replace("__ROBOTO_EXT__", data_uri(ROOT / "assets" / "font" / "roboto-latin-ext.woff2"))),
         ("__YEAR__", '2026'),
         ("__STAGES__", '9'),
         ("__WHEN__", 'Sat <b>1 August</b> <i>·</i> 12:00–22:00'),

@@ -207,8 +207,9 @@ rail** from medium up. That is already roughly what we do — our breakpoints
 
 ## 9. Deliberate departures
 
-1. **Typeface.** M3's reference font is Roboto. We use Arial by explicit
-   request. The scale, weights and tracking still come from M3.
+1. ~~Typeface.~~ Resolved: the pages now ship Roboto, Material's own
+   reference typeface, inlined as two woff2 subsets of the variable face
+   (Apache 2.0). Arial remains only as the fallback stack.
 2. **Category and stage colours.** These encode data (what kind of festival,
    which stage), not theme. They stay outside the role system and are checked
    for contrast against their own `on` colours.
@@ -234,5 +235,6 @@ a commit. Nothing merges on "it looks right".
 | 6 | Components, home page (§8) | 48dp targets, roles correct |
 | 7 | Components, planner pages | as above, plus grid legibility |
 | 8 | Info pages, settings, footer | as above |
+| 9 | Motion patterns: lateral, top-level, container transform | each transition names its pattern |
 
 Stages 1–5 are mechanical and touch every page; 6–8 are per-page.

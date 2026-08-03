@@ -10,6 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import m3color
+from build import data_uri
 import seo
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -41,7 +42,9 @@ def main() -> None:
     template = (ROOT / "scripts" / "info.html").read_text()
     footer = (ROOT / "scripts" / "_footer.html").read_text()
     footer_css = (ROOT / "scripts" / "_footer.css").read_text()
-    fontcss = ""  # Arial everywhere; no webfont to inline
+    fontcss = ((ROOT / "scripts" / "_font.css").read_text()
+               .replace("__ROBOTO_LATIN__", data_uri(ROOT / "assets" / "font" / "roboto-latin.woff2"))
+               .replace("__ROBOTO_EXT__", data_uri(ROOT / "assets" / "font" / "roboto-latin-ext.woff2")))
 
     for page in info["pages"]:
         slug = page["slug"]

@@ -46,7 +46,9 @@ def main():
         ("__CATCSS__", schema.category_css(cfg)),
         ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
          (ROOT / "scripts" / "_tokens.css").read_text()),
-        ("__FONTCSS__", ""),
+        ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()
+            .replace("__ROBOTO_LATIN__", data_uri(ROOT / "assets" / "font" / "roboto-latin.woff2"))
+            .replace("__ROBOTO_EXT__", data_uri(ROOT / "assets" / "font" / "roboto-latin-ext.woff2"))),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
         ("__SETTINGS__", (ROOT / "scripts" / "_settings.html").read_text()),

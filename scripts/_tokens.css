@@ -10,7 +10,8 @@
    use all the styles" — the roles beneath the scale say which ones this one
    uses. */
 :root{
-  --sans:Arial,Helvetica,"Helvetica Neue",sans-serif;
+  /* Material's own typeface, with the system stack behind it. */
+  --sans:Roboto,Arial,Helvetica,sans-serif;
   --title:var(--sans);
   --safe-b:env(safe-area-inset-bottom,0px);
 

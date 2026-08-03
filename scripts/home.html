@@ -253,10 +253,19 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .nav .arw:hover{background:rgba(255,255,255,.22)}
 @media(hover:hover) and (pointer:fine){.nav .arw{display:grid}}
 
-/* the swap: everything that carries festival identity leaves in the direction
-   of travel and the incoming one arrives from the far side */
+/* Slide change: M3's lateral transition, which is the pattern for moving
+   between peers. Outgoing content accelerates away and fades over short4;
+   incoming decelerates in over medium1. The offset is small because Android's
+   own forward/backward "uses a fade as screens slide… since the screens don't
+   have to slide the full width". */
 .fig img.pic,.side,.fig .lg,.fig .badge{
-  transition:opacity var(--md-sys-motion-duration-medium2) var(--ease),transform var(--md-sys-motion-duration-medium2) var(--ease)}
+  transition:opacity var(--md-sys-motion-duration-medium1)
+               var(--md-sys-motion-easing-standard-decelerate),
+             transform var(--md-sys-motion-duration-medium1)
+               var(--md-sys-motion-easing-standard-decelerate)}
+.stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{
+  transition-duration:var(--md-sys-motion-duration-short4);
+  transition-timing-function:var(--md-sys-motion-easing-standard-accelerate)}
 .stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{opacity:0}
 .stage.out.back .fig img.pic{transform:scale(1.03) translateX(3%)}
 .stage.out.fwd  .fig img.pic{transform:scale(1.03) translateX(-3%)}
@@ -286,6 +295,19 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   .facts{flex-direction:column;align-items:stretch}
   .facts .btn{flex:none}
 }
+/* Top-level switch (calendar / compact / detailed) is M3's top-level
+   transition: the outgoing view fades out, the incoming one fades in while
+   growing from 92%. Nothing slides, because these are peers with no direction
+   between them. */
+@keyframes m3-fade-through-in{
+  from{opacity:0;transform:scale(.92)}
+  to{opacity:1;transform:none}}
+body.switching #months,body.switching #calView{
+  animation:m3-fade-through-in var(--md-sys-motion-duration-medium1)
+            var(--md-sys-motion-easing-standard-decelerate) both}
+@media(prefers-reduced-motion:reduce){
+  body.switching #months,body.switching #calView{animation:none}}
+
 __SETTINGS_CSS__
 /* ── the phone masthead ────────────────────────────────
    Desktop is untouched. On a phone the masthead is the bar: it stays at the
@@ -2090,8 +2112,15 @@ document.addEventListener('keydown', e => {
   if (!seg) return;
   const VIEWS = ['cal', 'tile', 'full'];
 
+  let fadeT = 0;
   function paintView(v, remember) {
     document.body.dataset.view = v;
+    /* Re-trigger the fade-through on every switch. */
+    document.body.classList.remove('switching');
+    void document.body.offsetWidth;
+    document.body.classList.add('switching');
+    clearTimeout(fadeT);
+    fadeT = setTimeout(() => document.body.classList.remove('switching'), 300);
     const cal = document.querySelector('#calView');
     if (cal) cal.hidden = v !== 'cal';
     /* The day panel below the calendar is always compact; the month groups
