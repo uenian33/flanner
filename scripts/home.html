@@ -210,10 +210,16 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .facts .btn{flex:none;width:100%}
 /* The rail stands beside the card rather than under it: the card is one wide
    object, and a control centred beneath it read as a caption belonging to the
-   picture. Its own column, so it cannot overhang the page's gutter. */
-.nav{grid-area:1/12/3/13;align-self:center;justify-self:end;
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  border:1px solid var(--line2);border-radius:10rem;padding:4px;background:var(--bg2)}
+   picture. Its own column, so it cannot overhang the page's gutter.
+
+   Each frame is a fifth of the card's height, and the stack starts at the top:
+   five festivals — the most the highlight will carry — make a rail exactly as
+   tall as the card, and two make one two-fifths as tall. The frames are the
+   control, so the arrows are only needed where the rail has to lie down. */
+.nav{grid-area:1/12/3/13;align-self:stretch;justify-self:end;
+  display:flex;flex-direction:column;align-items:stretch;gap:0;
+  border:none;border-radius:0;padding:0;background:none}
+.nav #prev,.nav #next{display:none}
 .nav svg.i.up{transform:rotate(180deg)}
 .nav button{width:44px;height:44px;border-radius:10rem;display:grid;place-items:center;
   font-size:13.6px;color:var(--tx2);transition:.15s var(--ease)}
@@ -222,8 +228,11 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* "2 of 5" tells you how many there are; the pictures tell you which ones.
    Dimmed and desaturated until they are the slide on screen, so the row reads
    as one current frame among faded neighbours rather than five thumbnails. */
-.nav .reelpips{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 0}
-.nav .reelpips .pip{width:34px;height:44px;border-radius:8px;overflow:hidden;padding:0;
+.nav .reelpips{flex:1;display:flex;flex-direction:column;justify-content:flex-start;
+  align-items:stretch;gap:var(--pipgap,8px);padding:0}
+.nav .reelpips .pip{width:100%;
+  flex:0 0 calc((100% - 4 * var(--pipgap,8px)) / 5);
+  border-radius:8px;overflow:hidden;padding:0;
   position:relative;opacity:.4;filter:saturate(.45);transition:.2s var(--ease);
   outline:1px solid transparent;outline-offset:1px}
 .nav .reelpips .pip img{width:100%;height:100%;object-fit:cover;display:block}
@@ -247,11 +256,14 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   .stage{grid-template-columns:minmax(0,1fr);row-gap:0}
   .fig{grid-area:auto;aspect-ratio:16/10;min-height:0;border-radius:16px 16px 0 0}
   .side{grid-area:auto;align-self:auto}
-  /* One column: the rail goes back under the card, laid out across. */
-  .nav{grid-area:auto;flex-direction:row;justify-self:center;
-    margin-top:clamp(14px,1.8vw,20px)}
-  .nav .reelpips{flex-direction:row;padding:0 8px}
-  .nav .reelpips .pip{width:38px;height:26px}
+  /* One column: the rail goes back under the card, laid out across, and the
+     arrows come back because a row of frames alone reads as decoration. */
+  .nav{grid-area:auto;flex-direction:row;align-items:center;justify-self:center;
+    align-self:auto;gap:4px;margin-top:clamp(14px,1.8vw,20px);
+    border:1px solid var(--line2);border-radius:10rem;padding:4px;background:var(--bg2)}
+  .nav #prev,.nav #next{display:grid}
+  .nav .reelpips{flex:none;flex-direction:row;align-items:center;gap:6px;padding:0 8px}
+  .nav .reelpips .pip{width:38px;height:26px;flex:none}
   .nav svg.i.up{transform:rotate(90deg)}
   .nav #next svg.i{transform:rotate(-90deg)}
   .panel{background:var(--bg2);border-radius:0 0 16px 16px;
@@ -1084,7 +1096,12 @@ const catOf = f => CAT_BY_ID.get(f.category) || CAT_BY_ID.get(CAT_FALLBACK);
    One festival on screen at a time. Every image is already a data URI in the
    document, so swapping src is instant and the crossfade never shows a gap. */
 const byDate = DATA.festivals.slice().sort((a, b) => a.start.localeCompare(b.start));
-const reel = [...byDate.filter(f => !status(f).past), ...byDate.filter(f => status(f).past)];
+/* Upcoming first, then the ones that have been. Five at most: the rail beside
+   the card is built on a fifth of its height per frame, and a sixth festival
+   would either shrink them all or run past the card's bottom edge. */
+const REEL_MAX = 5;
+const reel = [...byDate.filter(f => !status(f).past),
+              ...byDate.filter(f => status(f).past)].slice(0, REEL_MAX);
 let cur = 0;
 
 if (reel.length) {
