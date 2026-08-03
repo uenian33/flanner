@@ -24,20 +24,22 @@
    navigation rail should always run vertically along the side of a layout",
    on the leading edge, full height, with the destinations grouped at the top.
 
-   The container fill is on, one tonal step off the page, and the trailing
-   divider does the rest — the alternative the spec allows is no fill at all,
-   which needs every item to clear 3:1 against the page and buys nothing here.
+   The container fill is on, one tonal step off the page, and that step is the
+   whole separation — no trailing divider. The fill and the rule were doing the
+   same job twice, and the rule read as a seam down the side of the page. The
+   alternative the spec allows is no fill at all, which needs every item to
+   clear 3:1 against the page and buys nothing here.
 
    Utilities live at the foot: where the destinations answer "what am I
    looking at", the place picker and the theme answer "how do I want to see
    it", and Material's own rail groups them the same way. */
 @media(min-width:600px){
   body{padding-left:96px}
-  .mnav{display:flex;flex-direction:column;align-items:stretch;gap:4px;
+  .mnav{display:flex;flex-direction:column;align-items:stretch;gap:var(--railgap,4px);
     position:fixed;left:0;top:0;bottom:0;width:80px;z-index:60;
     padding:20px 0 16px;overflow:visible;
     background:var(--md-sys-color-surface-container);
-    border-right:1px solid var(--md-sys-color-outline-variant)}
+    border-right:0}
   /* The active indicator is a pill behind the icon only — "the active
      indicator hugs contents" — so it is sized to the icon row, not to the
      whole cell, and slides between destinations on the spatial spring. */
@@ -45,7 +47,10 @@
     border-radius:var(--md-sys-shape-corner-full);
     background:var(--md-sys-color-secondary-container);z-index:0;
     box-shadow:none;
-    transform:translateY(calc(var(--i,0) * var(--railstep,60px)));
+    /* One row is the button plus the flex gap. Stepping by the button height
+       alone left the pill 4px short per row, which the seventh destination
+       wore as a visible offset. Both read the same pair of variables now. */
+    transform:translateY(calc(var(--i,0) * (var(--railstep,60px) + var(--railgap,4px))));
     transition:transform var(--md-sys-motion-spring-default-spatial)}
   .mnav button{display:grid;justify-items:center;align-content:start;gap:4px;
     padding:0;height:var(--railstep,60px);
@@ -129,7 +134,7 @@
       transform:translate(calc(-50% - (var(--navw,360px) / 2) - 9px),var(--vvshift,0px))}
   body.nav-min .navhome{width:46px;height:46px}
   .mnav .nb{position:absolute;top:6px;left:calc(50% + 9px);min-width:17px;height:17px;
-      border-radius:var(--md-sys-shape-corner-extra-large);background:var(--accent);color:var(--on-accent);font-size:8px;font-weight:var(--md-sys-typescale-emphasized-label-weight);
+      border-radius:var(--md-sys-shape-corner-extra-large);background:var(--accent);color:var(--on-accent);font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);
       display:grid;place-items:center;padding:0 4.5px;z-index:3;
       box-shadow:0 1px 4px rgba(0,0,0,.4)}
 }

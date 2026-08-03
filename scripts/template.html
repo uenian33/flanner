@@ -75,7 +75,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;
 svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;
   stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.13em}
 svg.i.fill{fill:currentColor;stroke:currentColor;stroke-width:1.2}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-box)}
+/* The focus indicator is in scripts/_tokens.css. A second rule lived here on
+   --accent, which is the poster green: 1.18:1 against the light surface, and
+   it won on source order, so keyboard focus was unmarked in the default theme. */
 .wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
@@ -102,11 +104,14 @@ header{padding:clamp(20px,3vw,34px) 0 18px}
   --sz:calc(clamp(26px,3.4vw,38px) * var(--s,1));
   animation-delay:var(--d);animation-iteration-count:infinite}
 .dx svg{width:var(--sz);height:var(--sz);stroke-width:1.5;opacity:.55}
-.dx.bob{animation-name:o-bob;animation-duration:var(--md-sys-motion-duration-long4);animation-timing-function:ease-in-out}
-.dx.sway{animation-name:o-sway;animation-duration:var(--md-sys-motion-duration-long4);animation-timing-function:ease-in-out}
-.dx.spin{animation-name:o-spin;animation-duration:var(--md-sys-motion-duration-long4);animation-timing-function:linear}
-.dx.rise{animation-name:o-rise;animation-duration:var(--md-sys-motion-duration-long4);animation-timing-function:ease-out}
-.dx.twinkle{animation-name:o-twinkle;animation-duration:var(--md-sys-motion-duration-long4);animation-timing-function:ease-in-out}
+/* Ambient loops, not transitions. The duration tokens top out at 600ms because
+   they time a component changing state; an ornament drifting across a masthead
+   is measured in seconds, so these stay literal. */
+.dx.bob{animation-name:o-bob;animation-duration:3.4s;animation-timing-function:ease-in-out}
+.dx.sway{animation-name:o-sway;animation-duration:4.1s;animation-timing-function:ease-in-out}
+.dx.spin{animation-name:o-spin;animation-duration:14s;animation-timing-function:linear}
+.dx.rise{animation-name:o-rise;animation-duration:5s;animation-timing-function:ease-out}
+.dx.twinkle{animation-name:o-twinkle;animation-duration:3.8s;animation-timing-function:ease-in-out}
 :root[data-theme=light] .dx{color:color-mix(in srgb,var(--c) 58%,#0d1208)}
 :root[data-theme=light] .dx svg{opacity:.62;stroke-width:1.7}
 @media(prefers-reduced-motion:reduce){.dx{animation:none}.dx.rise svg{opacity:.4}}
@@ -120,9 +125,17 @@ header{padding:clamp(20px,3vw,34px) 0 18px}
 .logo{display:block;line-height:0}
 .logo img{width:clamp(132px,20vw,208px);height:auto;display:block;transition:var(--md-sys-motion-spring-default-effects)}
 .logo:hover img{transform:rotate(-1.5deg) scale(1.035)}
-h1{margin:0 auto;font-family:var(--title);font-size:clamp(23.2px,5.6vw,44.8px);font-weight:var(--md-sys-typescale-body-weight);
-  letter-spacing:.006em;line-height:.98;color:var(--md-sys-color-on-surface);text-transform:uppercase;
+/* Every size on this page is a step of the scale, so the masthead grows by
+   changing style at a breakpoint rather than by interpolating between two
+   of them: headline-small on a phone, display-small from the medium window
+   up, display-medium on the widest. */
+h1{margin:0 auto;font-family:var(--title);font-size:var(--md-sys-typescale-headline-small-size);line-height:var(--md-sys-typescale-headline-small-line-height);font-weight:var(--md-sys-typescale-body-weight);
+  letter-spacing:.006em;color:var(--md-sys-color-on-surface);text-transform:uppercase;
   max-width:min(100%,18ch);text-wrap:balance}
+@media(min-width:600px){h1{font-size:var(--md-sys-typescale-display-small-size);
+  line-height:var(--md-sys-typescale-display-small-line-height)}}
+@media(min-width:1200px){h1{font-size:var(--md-sys-typescale-display-medium-size);
+  line-height:var(--md-sys-typescale-display-medium-line-height)}}
 .meta{color:var(--md-sys-color-on-surface-variant);font-size:var(--f-caption);margin:12px auto 0;display:flex;gap:5px 18px;flex-wrap:wrap;
   align-items:center;justify-content:center;line-height:1.6}
 .meta b{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-title-weight)}
@@ -170,13 +183,13 @@ body.past-head .toolbar::before{opacity:1}
 .brandmini{display:inline-flex;align-items:center;gap:clamp(11px,1.3vw,16px);
   text-decoration:none;white-space:nowrap;flex:none}
 .wm{display:flex;flex-direction:column;gap:3px;min-width:0}
-.wm i{font-style:normal;font-size:clamp(8px,0.76vw,9.6px);font-weight:var(--md-sys-typescale-body-weight);
+.wm i{font-style:normal;font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-body-weight);
   letter-spacing:.22em;text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);line-height:1}
 
 .brandmini .fpmark{width:clamp(30px,3.6vw,44px);height:clamp(30px,3.6vw,44px);flex:none;
   stroke:none;fill:none}
 .brandmini b{font-family:var(--sans);font-weight:var(--md-sys-typescale-emphasized-label-weight);
-  font-size:clamp(27.2px,4.16vw,41.6px);letter-spacing:.008em;text-transform:uppercase;
+  font-size:var(--md-sys-typescale-headline-medium-size);letter-spacing:.008em;text-transform:uppercase;
   line-height:1;white-space:nowrap;color:var(--md-sys-color-on-surface)}
 @media(max-width:839px){.brandmini b{display:none}}
 /* On a phone the identity is not something to reveal on scroll — with the
@@ -190,7 +203,7 @@ body.past-head .toolbar::before{opacity:1}
   .toolbar .tbar:not(.tbar2){gap:8px}
   .brandmini{width:auto;margin:0;opacity:1;transform:none;overflow:visible;flex:none}
   /* The home page's phone masthead, to the number. */
-  .brandmini b{display:block;font-size:clamp(20.8px,6.08vw,27.2px)}
+  .brandmini b{display:block;font-size:var(--md-sys-typescale-headline-small-size)}
   .brandmini .wm i{letter-spacing:.18em}
   /* 44px here, matching the phone-sized buttons. Scoped through .toolbar
      because this block sits above the base rule in the sheet and would
@@ -548,9 +561,9 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
   letter-spacing:.07em;color:#fff;background:var(--live);padding:2.5px 8px 2.5px 6px;
   border-radius:var(--r-pill);font-family:var(--disp);position:relative;flex:none}
 .live i{width:6px;height:6px;border-radius:var(--r-pill);background:#fff;position:relative;
-  animation:livedot var(--md-sys-motion-duration-long4) ease-in-out infinite}
+  animation:livedot 1.5s ease-in-out infinite}
 .live i::after{content:"";position:absolute;inset:0;border-radius:var(--r-pill);background:#fff;
-  animation:livering var(--md-sys-motion-duration-long4) ease-out infinite}
+  animation:livering 1.5s ease-out infinite}
 .arow.now .arowin{border-color:var(--live)}
 .blk-act.now{box-shadow:0 0 0 1.5px var(--live)}
 .blk-act .live{position:absolute;left:8px;bottom:6px;transform:scale(.85);transform-origin:left}
@@ -561,7 +574,7 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .nowbtn.on{display:inline-flex}
 .nowbtn:hover{filter:brightness(1.1)}
 .nowbtn i{width:7px;height:7px;border-radius:var(--r-pill);background:#fff;
-  animation:livedot var(--md-sys-motion-duration-long4) ease-in-out infinite}
+  animation:livedot 1.5s ease-in-out infinite}
 .agenda-empty{color:var(--md-sys-color-on-surface-variant);text-align:center;padding:44px 0;font-size:var(--f-caption)}
 
 /* ── map ──────────────────────────────────────────────── */
@@ -628,8 +641,8 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .lgi .lnm{display:block;font-family:var(--disp);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--f-caption);letter-spacing:-.012em}
 .lgi .lds{display:block;color:var(--md-sys-color-on-surface-variant);font-size:var(--f-over);line-height:1.42;margin-top:3px}
 .stagebar{display:grid;grid-template-columns:auto 1fr auto;gap:13px;align-items:center;
-  margin-top:11px;padding:12px 14px;background:var(--md-sys-color-surface-container-low);border:1px solid var(--c);
-  border-radius:var(--r-box)}
+  margin-top:11px;padding:12px 14px;background:var(--md-sys-color-surface-container-low);border:0;
+  border-radius:var(--r-card)}
 .stagebar[hidden]{display:none}
 .stagebar .n{width:26px;height:26px;border-radius:var(--r-box);background:var(--c);color:#0a0c10;
   display:grid;place-items:center;font-weight:var(--md-sys-typescale-emphasized-label-weight);font-size:var(--f-over);font-family:var(--disp)}
@@ -647,7 +660,9 @@ section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
 .mapcap a{color:var(--md-sys-color-on-surface-variant)}
 
 /* ── route ────────────────────────────────────────────── */
-.routebox{background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--r-box);
+/* A card: same treatment as the home page's, from the reference — the
+   extra-large corner and a fill one step under the page, no outline. */
+.routebox{background:var(--md-sys-color-surface-container-low);border:0;border-radius:var(--r-card);
   padding:clamp(15px,2vw,22px)}
 .rlist{display:flex;flex-direction:column}
 .ri{display:grid;grid-template-columns:74px 1fr auto;gap:12px;align-items:center;padding:11px 0;
@@ -683,7 +698,7 @@ dialog.card::backdrop{background:rgba(4,6,9,.66);backdrop-filter:blur(9px) satur
 dialog.card.in::backdrop{opacity:var(--dim,1)}
 .cardpos{position:fixed;inset:0;display:grid;place-items:center;padding:20px;pointer-events:none}
 .cardbox{position:relative;width:min(440px,100%);max-height:min(88vh,780px);background:var(--sheet);
-  border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--r-panel);overflow:hidden auto;
+  border:0;border-radius:var(--r-card);overflow:hidden auto;
   pointer-events:auto;color:var(--lab);
   box-shadow:0 34px 90px -20px rgba(0,0,0,.92);
   opacity:0;transform:translateY(14px) scale(.965);
@@ -852,35 +867,10 @@ __FOOTER_CSS__
   .sloc{display:none}
   .snm{font-size:var(--f-over)}
   input[type=search]{width:100%}
-
-
-  /* Collapses on scroll-down and springs back on scroll-up, matching the
-     kinoon.fi bar: width and height on cubic-bezier(.34,1.56,.64,1) over var(--md-sys-motion-duration-medium4). */
-    height:100%;z-index:1;color:var(--glass-tx);border-radius:var(--r-pill);
-    font-size:var(--f-over);font-weight:var(--md-sys-typescale-title-weight);letter-spacing:-.003em}
-    transition:transform var(--md-sys-motion-spring-default-spatial) cubic-bezier(.34,1.56,.64,1)}
-    bottom:calc(18px + var(--safe-b));transform:translate(-50%,var(--vvshift));
-    width:min(94vw,430px);max-width:calc(100vw - 32px);height:67px;overflow:hidden;
-    contain:layout style;
-    transition:width var(--md-sys-motion-spring-default-spatial) cubic-bezier(.34,1.56,.64,1),height var(--md-sys-motion-spring-default-spatial) cubic-bezier(.34,1.56,.64,1);
-    z-index:60;padding:4px;isolation:isolate;
-    border-radius:var(--r-pill);background:var(--glass);
-    -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
-    border:1px solid var(--glass-line);
-    box-shadow:0 8px 32px var(--shade),inset 0 1px 0 var(--glass-line)}
-    border-radius:var(--r-pill);background:var(--glass-pill);z-index:0;
-    box-shadow:inset 0 1px 0 var(--glass-line);
-    transform:translateX(calc((var(--i,0) + 1) * 100%));
-    transition:transform var(--md-sys-motion-spring-default-spatial) cubic-bezier(.32,.72,0,1)}
-    font-weight:var(--md-sys-typescale-title-weight);color:var(--glass-tx);position:relative;height:100%;z-index:1;
-    letter-spacing:-.003em;transition:color var(--md-sys-motion-spring-default-effects);border-radius:var(--r-pill)}
-    transition:transform var(--md-sys-motion-spring-default-spatial) cubic-bezier(.34,1.56,.64,1)}
-    transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-default-spatial)}
-    transition:transform var(--md-sys-motion-spring-default-spatial)}
-    transform:translate(calc(-50% - (var(--navw,360px) / 2) - 9px),var(--vvshift))}
-    border-radius:var(--r-pill);background:var(--accent);color:var(--on-accent);font-size:var(--f-micro);font-weight:var(--md-sys-typescale-emphasized-label-weight);
-    display:grid;place-items:center;padding:0 4.5px;z-index:3;
-    box-shadow:0 1px 4px rgba(0,0,0,.4)}
+  /* The phone bottom bar and the Home button live in scripts/_nav.css. An
+     earlier copy of those rules sat here and lost its selectors when they were
+     extracted; the leftover declarations closed this media query early, which
+     dropped everything below and leaked the phone sheet to every width. */
   .cardpos{padding:0;place-items:end center}
   /* The sheet is always full height and the detent is a translate, so moving
      between detents is a compositor transform rather than a height reflow. */
@@ -904,7 +894,13 @@ __FOOTER_CSS__
   .blk-act{padding-right:30px}
 }
 @media (prefers-reduced-motion:reduce){
-  *{animation-duration:var(--md-sys-motion-duration-short1)!important;transition-duration:var(--md-sys-motion-duration-short1)!important}
+  /* Shortening the duration is the wrong lever for a loop: an infinite
+     animation at 50ms is a 20Hz strobe, which is the opposite of what was
+     asked for. Anything that repeats stops outright; one-shot transitions
+     collapse to nothing. */
+  *{animation-iteration-count:1!important;animation-duration:.01ms!important;
+    transition-duration:.01ms!important}
+  .live i,.live i::after,.nowbtn i{animation:none!important;opacity:1;transform:none}
 }
 @media print{
   .toolbar,.filters,.mnav,.navhome,.ract,.mapctl,.maplayers,.starbtn{display:none!important}
@@ -921,7 +917,7 @@ __THEME__
 <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
 <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
 <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></symbol>
-<symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 var(--md-sys-motion-duration-long4)-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
 <symbol id="i-rows" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
 <symbol id="i-cols" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10M15 10v10"/></symbol>
 <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.5"/></symbol>

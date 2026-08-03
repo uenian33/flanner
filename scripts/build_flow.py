@@ -39,7 +39,12 @@ THEME = """
   --glass-pill:rgba(0,0,0,.09); --glass-tx:rgba(20,20,20,.6); --glass-on:#000;
 }
 .logo img{width:clamp(150px,24vw,260px)}
-h1{font-size:clamp(26px,6.2vw,50px)}
+h1{font-size:var(--md-sys-typescale-headline-small-size);
+  line-height:var(--md-sys-typescale-headline-small-line-height)}
+@media(min-width:600px){h1{font-size:var(--md-sys-typescale-display-small-size);
+  line-height:var(--md-sys-typescale-display-small-line-height)}}
+@media(min-width:1200px){h1{font-size:var(--md-sys-typescale-display-medium-size);
+  line-height:var(--md-sys-typescale-display-medium-line-height)}}
 
 /* ── Flow's own visual language ───────────────────────────
    Their site is grey paper, black hairlines, one electric yellow, condensed
@@ -61,9 +66,10 @@ h1{font-size:clamp(26px,6.2vw,50px)}
 .ticker{position:relative;overflow:hidden;border-top:1px solid var(--line2);
   border-bottom:1px solid var(--line2);background:var(--accent);margin-top:16px}
 .ticker div{display:flex;gap:0;width:max-content;animation:tick 32s linear infinite}
-.ticker span{font-family:var(--title);font-size:13px;letter-spacing:.06em;
+.ticker span{font-family:var(--title);font-size:var(--md-sys-typescale-title-small-size);letter-spacing:.06em;
   text-transform:uppercase;color:#000;padding:7px 0;white-space:nowrap}
-.ticker span::after{content:"◆";margin:0 18px;font-size:9px;vertical-align:2px}
+.ticker span::after{content:"◆";margin:0 18px;
+  font-size:var(--md-sys-typescale-label-small-size);vertical-align:2px}
 @keyframes tick{to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.ticker div{animation:none}}
 

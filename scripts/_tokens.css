@@ -66,6 +66,40 @@
   --md-sys-typescale-title-weight:500;
   --md-sys-typescale-label-weight:500;
   --md-sys-typescale-body-weight:400;
+  /* The per-style -font and -weight names the Material Web typography doc
+     defines, for all 15 styles rather than the one the buttons happened to
+     read. A component that asks for a token by its documented name gets this
+     scheme's value; nothing has to know about the roles below. */
+  --md-sys-typescale-display-large-font:var(--sans);
+  --md-sys-typescale-display-medium-font:var(--sans);
+  --md-sys-typescale-display-small-font:var(--sans);
+  --md-sys-typescale-headline-large-font:var(--sans);
+  --md-sys-typescale-headline-medium-font:var(--sans);
+  --md-sys-typescale-headline-small-font:var(--sans);
+  --md-sys-typescale-title-large-font:var(--sans);
+  --md-sys-typescale-title-medium-font:var(--sans);
+  --md-sys-typescale-title-small-font:var(--sans);
+  --md-sys-typescale-body-large-font:var(--sans);
+  --md-sys-typescale-body-medium-font:var(--sans);
+  --md-sys-typescale-body-small-font:var(--sans);
+  --md-sys-typescale-label-large-font:var(--sans);
+  --md-sys-typescale-label-medium-font:var(--sans);
+  --md-sys-typescale-label-small-font:var(--sans);
+  --md-sys-typescale-display-large-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-display-medium-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-display-small-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-headline-large-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-headline-medium-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-headline-small-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-title-large-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-title-medium-weight:var(--md-sys-typescale-title-weight);
+  --md-sys-typescale-title-small-weight:var(--md-sys-typescale-title-weight);
+  --md-sys-typescale-body-large-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-body-medium-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-body-small-weight:var(--md-sys-typescale-body-weight);
+  --md-sys-typescale-label-large-weight:var(--md-sys-typescale-label-weight);
+  --md-sys-typescale-label-medium-weight:var(--md-sys-typescale-label-weight);
+  --md-sys-typescale-label-small-weight:var(--md-sys-typescale-label-weight);
   /* The emphasized set: the same 15 styles, one weight step up. "Use both
      baseline and emphasized type styles together to achieve expressive
      experiences… for selection, actions, headlines, and other editorial
@@ -112,9 +146,13 @@
   --f-over:var(--md-sys-typescale-label-small-size);
     --l-over:var(--md-sys-typescale-label-small-line-height);
     --k-over:var(--md-sys-typescale-label-small-tracking);
-  /* Below the scale on purpose — a 30-minute timetable cell has no room for
-     11px. Documented in DESIGN.md §9. */
-  --f-micro:9px; --l-micro:1.3; --k-micro:.04em;
+  /* This used to be 9px, below the scale, on the argument that a 30-minute
+     timetable cell has no room for 11px. Every size in the product comes from
+     the scale now, so it is label-small like every other smallest thing; the
+     cell gives up a line of text rather than the type giving up the scale. */
+  --f-micro:var(--md-sys-typescale-label-small-size);
+    --l-micro:var(--md-sys-typescale-label-small-line-height);
+    --k-micro:var(--md-sys-typescale-label-small-tracking);
 
   /* Shape: the M3 corner scale. Components take the corner their spec gives
      them — cards medium, chips small, dialogs and sheets extra-large, buttons
@@ -140,7 +178,11 @@
   --md-sys-shape-corner-pressed-l:var(--md-sys-shape-corner-large);
   --md-sys-shape-corner-pressed-xl:var(--md-sys-shape-corner-large);
   --r-pill:var(--md-sys-shape-corner-full);
-  --r-card:var(--md-sys-shape-corner-medium);
+  /* Cards take the extra-large corner, matching the cards on Material's own
+     site (24px there; 28 is the nearest value on the M3 shape scale, and the
+     scale wins over the pixel). They also drop their outline: the reference
+     card separates from the page by fill alone, with no border and no shadow. */
+  --r-card:var(--md-sys-shape-corner-extra-large);
   --r-panel:var(--md-sys-shape-corner-large);
   --r-box:var(--md-sys-shape-corner-small);
 
@@ -271,14 +313,17 @@
    because Material asks for dividers sparingly and a wave repeated every few
    rows would be noise. */
 .wave{height:16px;border:0;
-  /* Short and centred, the way Material uses it: an ornament marking a break,
-     not a rule ruled across the page. Six periods is enough to read as a
-     wave and little enough to stay ornamental. */
-  width:clamp(168px,20vw,304px);margin:clamp(28px,4vw,44px) auto;
-  background:color-mix(in srgb,var(--md-sys-color-primary) 42%,var(--md-sys-color-surface));
+  /* The full width of the column it divides, so it reads as the end of the
+     page rather than as a small ornament floating in the middle of it. */
+  width:100%;margin:clamp(20px,2.4vw,28px) 0;
+  /* Drawn in the page's own ink rather than in the brand colour. Run the full
+     width of the column, a tinted primary read as a green rule across the
+     page; at a third of the ink it is a grey hairline in either theme, which
+     is what a divider is. */
+  background:color-mix(in srgb,var(--md-sys-color-on-surface) 38%,transparent);
   -webkit-mask:var(--wave-src) repeat-x center/56px 16px;
           mask:var(--wave-src) repeat-x center/56px 16px}
-:root{--wave-src:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='16' viewBox='0 0 56 16'%3E%3Cpath d='M0 8q7 -6 14 0t14 0 14 0 14 0' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E")}
+:root{--wave-src:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='16' viewBox='0 0 56 16'%3E%3Cpath d='M0 8q7 -6 14 0t14 0 14 0 14 0' fill='none' stroke='%23000' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E")}
 
 /* ── emphasized type ───────────────────────────────────
    "Material components don't use emphasized type styles by default. To use an

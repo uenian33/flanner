@@ -17,37 +17,8 @@
 __OG__
 <style>
 __FONTCSS__
+__TOKENS__
 
-:root{
-  --bg:#f5f5f5; --bg2:#fff; --panel:#fafafa; --panel2:#ececec;
-  --tx:#111; --tx2:#4a4a4a; --tx3:#767676;
-  --line:#d6d6d6; --line2:#c4c4c4;
-  --sans:Arial,Helvetica,"Helvetica Neue",sans-serif;
-  --title:var(--sans);
-  --ease:var(--md-sys-motion-easing-standard);
-  --safe-b:env(safe-area-inset-bottom,0px);
-
-  --f-display:clamp(27.2px,4.16vw,41.6px);   --k-display:.008em;
-  --f-h2:clamp(20px,2.4vw,27.2px);          --k-h2:.03em;
-  --f-h3:clamp(16px,1.76vw,20px);        --k-h3:.02em;
-  --f-title:13.6px;
-  --f-body:12.8px;                        --k-body:.005em;
-  --f-sub:12px;                         --k-sub:.008em;
-  --f-label:11.2px;                       --k-label:.01em;
-  --f-caption:10.4px;                     --k-caption:.02em;
-}
-:root[data-theme=dark]{
-  --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
-  --tx:#f2f2f2; --tx2:#b6b6b6; --tx3:#8b8b8b;
-  --line:#2c2c2c; --line2:#3a3a3a;
-}
-@media(prefers-color-scheme:dark){
-  :root:not([data-theme=light]){
-    --bg:#101010; --bg2:#191919; --panel:#1f1f1f; --panel2:#2a2a2a;
-    --tx:#f2f2f2; --tx2:#b6b6b6; --tx3:#8b8b8b;
-    --line:#2c2c2c; --line2:#3a3a3a;
-  }
-}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--md-sys-color-surface);color:var(--md-sys-color-on-surface);
@@ -79,7 +50,7 @@ body::after{
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;
   stroke-linecap:round;stroke-linejoin:round;vertical-align:-.13em}
-:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:3px;border-radius:var(--md-sys-shape-corner-extra-small)}
+/* One focus indicator for the whole site, in scripts/_tokens.css. */
 .wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
@@ -129,7 +100,12 @@ article li::before{content:"";position:absolute;left:2px;top:.62em;width:5px;hei
 .callout p:last-child{margin:0}
 
 __FOOTER_CSS__
-@media(prefers-reduced-motion:reduce){*{animation-duration:var(--md-sys-motion-duration-short1)!important;transition-duration:var(--md-sys-motion-duration-short1)!important}}
+@media(prefers-reduced-motion:reduce){
+  /* An infinite animation at a shortened duration is a strobe, not a calmer
+     page. Loops stop; one-shot transitions collapse. */
+  *{animation-iteration-count:1!important;animation-duration:.01ms!important;
+    transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body class="fx-shell">

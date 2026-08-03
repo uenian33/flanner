@@ -55,7 +55,7 @@ def main() -> None:
         body = page["body"] + (seo.site_faq_blocks(cfg["festivals"])
                                if slug == "faq" else [])
         html = html.replace("__BODY__", "\n  ".join(render(b) for b in body))
-        for token, value in [
+        tokens = [
             ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
          (ROOT / "scripts" / "_tokens.css").read_text()),
             ("__FONTCSS__", fontcss),
@@ -81,7 +81,8 @@ def main() -> None:
                         "isPartOf": {"@type": "WebSite", "name": seo.SITE,
                                      "url": f"{seo.BASE}/"}},
             )),
-        ]:
+        ]
+        for token, value in tokens:
             html = html.replace(token, value)
         # mark the current page in the Info column, and un-link it
         for other in ("privacy", "terms", "about", "faq"):
@@ -89,7 +90,10 @@ def main() -> None:
                 f"__CUR_{other.upper()}__", ' aria-current="page"' if other == slug else ""
             )
 
-        left = [t for t in ("__FONTCSS__", "__CONTACT__", "__BODY__") if t in html]
+        # __TOKENS__ was absent from the template for a while, so the scheme was
+        # computed and dropped and every var(--md-sys-*) on these pages resolved
+        # to nothing. Every token this loop substitutes is checked here now.
+        left = [t for t, _ in tokens if t in html]
         if left:
             raise SystemExit(f"unreplaced tokens in {slug}: {left}")
 

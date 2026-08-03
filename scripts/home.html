@@ -22,11 +22,18 @@ __FONTCSS__
 __CATCSS__
 __TOKENS__
 :root{
-  /* The rail's four rows and the phone bar's four cells — page-specific, so
-     they stay here rather than in the shared tokens. */
-  --navn:4;
-  --navcols:4;
-  --pillbase:0;  /* Highlights is the first cell, not an extra beside it */
+  /* The rail's seven rows, matching the reference rail's destination list.
+     The phone bar cannot hold seven cells at a readable size, so it keeps the
+     four it can show — page-specific, so they stay here rather than in the
+     shared tokens. */
+  --navn:3;
+  --navcols:3;
+  --pillbase:0;  /* Home is the first cell, not an extra beside it */
+  --railstep:56px;
+  --railw:104px;     /* wide enough for "Festivals" at label-medium */
+  /* One inner inset for everything in the content column. */
+  --card-pad:clamp(24px,2.6vw,34px);
+  --hslot-h:108px;   /* measured at runtime; this is the fallback */
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -56,13 +63,28 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     color-mix(in srgb,var(--md-sys-color-on-surface) 10%,transparent) 1px,transparent 0);
   background-size:26px 26px}
 body.past-hero::before{opacity:0}
+/* "The size of state layers is 40dp while the interactive target size is
+   48dp." The small button is 40dp and that is the right size to draw — but on
+   a touch screen it is not the right size to hit, and the Material Web
+   elements are custom elements, so the shared coarse-pointer rule in
+   _tokens.css never reached them. The container grows to the target; the label
+   and the corner do not change. */
+@media(pointer:coarse){
+  md-filled-button{--md-filled-button-container-height:48px}
+  md-outlined-button{--md-outlined-button-container-height:48px}
+  .offi{min-height:48px}
+  /* The dot carries its own 48×48 target as a pseudo-element, so the shared
+     min-height would only make the indicator itself the wrong size. */
+  .carousel-dot{min-height:0}
+}
+
 @media(prefers-reduced-motion:reduce){body::before{transition:none}}
 
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
 svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;
   stroke-linecap:round;stroke-linejoin:round;vertical-align:-.13em}
-:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:3px;border-radius:var(--md-sys-shape-corner-extra-small)}
+/* One focus indicator for the whole site, in scripts/_tokens.css. */
 .wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
@@ -111,7 +133,7 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .opt.find{display:flex;align-items:center;gap:9px;width:100%;margin-top:10px;
   border-style:dashed;justify-content:center}
 .opt.find svg{width:15px;height:15px}
-.locnote{margin:12px 0 0;font-size:9.6px;line-height:13.6px;color:var(--md-sys-color-on-surface-variant)}
+.locnote{margin:12px 0 0;font-size:var(--md-sys-typescale-label-small-size);line-height:13.6px;color:var(--md-sys-color-on-surface-variant)}
 .top .sp{flex:1}
 .tbtn{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
   display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-spring-fast-effects)}
@@ -126,7 +148,6 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    corner, which read as a poster; side by side it reads as a record — a date,
    a name, a place, a sentence about it, and the two things you can do next.
    Below 900px the columns stack, picture first. */
-.hero{margin:0 0 clamp(30px,4vw,46px)}
 .shead{display:flex;align-items:baseline;gap:12px;margin-bottom:clamp(14px,1.8vw,20px);
   flex-wrap:wrap}
 .shead h2{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--f-h2);
@@ -134,74 +155,33 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .shead p{margin:0;color:var(--md-sys-color-on-surface-variant);font-size:var(--f-label);line-height:var(--l-label);
   letter-spacing:var(--k-label)}
 
-/* Twelve columns for the card, then one auto column for the rail beside it.
-   The rail used to share the card's last column, which left an accidental
-   36px of air between them; now the gap is one declaration. */
-.stage{display:grid;grid-template-columns:repeat(12,minmax(0,1fr)) auto;
-  column-gap:0;row-gap:clamp(14px,1.8vw,20px);align-items:stretch}
 /* Panel and picture are one object: no gap between them, the rounding on the
    outside corners only, and both stretched to the row's height so they start
    and finish on the same two lines. The picture crops to whatever height the
    text needs rather than setting its own. */
-.fig{grid-area:1/6/3/13;position:relative;display:block;overflow:hidden;
-  border-radius:0 var(--r-card) var(--r-card) 0;height:100%;
-  min-height:clamp(300px,27vw,400px);background:var(--md-sys-color-surface-container-low);
-  text-decoration:none;touch-action:pan-y}
 /* Laid over the box rather than filling it: as a normal child the picture's
    own proportions set the row's height, which made the band as tall as
    whatever artwork happened to be in it — a square poster ran 120px taller
    than a landscape photograph for the same text. Absolute takes it off the
    sizing path, so the text decides the height and the picture crops to it. */
-.fig img.pic{position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;display:block}
-.fig .veil{position:absolute;inset:0;background:linear-gradient(180deg,
-  transparent 40%,rgba(0,0,0,.26) 66%,rgba(0,0,0,.7) 84%,rgba(0,0,0,.88) 100%)}
-.fig .lg{display:block;position:absolute;left:24px;bottom:22px;z-index:2;width:max-content;
-  max-width:min(72%,340px)}
-.fig .lg img{height:clamp(38px,4.4vw,56px);width:auto;max-width:100%;display:block;
-  filter:drop-shadow(0 2px 10px rgba(0,0,0,.7))}
 /* The picture's corner says what kind of festival it is, in the category's
    own colour — the same pill as the date on the other side of the card, so the
    two line up as a pair rather than as two different labels. */
-.fig .badge{position:absolute;right:18px;top:18px;z-index:2;display:inline-flex;align-items:center;
-  background:var(--cat,#fff);color:var(--cat-ink,#000);
-  padding:9px 18px 10px;border-radius:var(--md-sys-shape-corner-full);
-  font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);line-height:1;white-space:nowrap}
 
-.side{grid-area:1/1/3/6;z-index:3;align-self:stretch;
-  display:flex;flex-direction:column}
 /* The panel is the left half of that object, so it carries the white and the
    rounding that the picture cannot. */
-.panel{position:relative;--tuck:0px;background:var(--md-sys-color-surface-container-lowest);
-  border-radius:var(--r-card) 0 0 var(--r-card);padding:clamp(24px,2.6vw,34px);flex:1;
-  /* Every slide's panel is as tall as the wordiest one — see sizePanels().
-     The actions sit at the bottom of that box rather than floating up under
-     a short festival's text. */
-  min-height:var(--panelh,auto);display:flex;flex-direction:column}
-.panel .facts{margin-top:auto}
 .fline{margin:0 0 clamp(14px,1.6vw,20px);display:flex;align-items:center;
   gap:clamp(10px,1.4vw,18px);flex-wrap:wrap;
-  font-size:var(--f-sub);line-height:1.2;font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface-variant)}
+  /* label-large: this line and the date beside it are the card's supporting
+     labels, and body-small under a display-small title left a three-times
+     jump with nothing in between. */
+  font-size:var(--md-sys-typescale-label-large-size);line-height:1.2;font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface-variant)}
 .fline .dot{display:inline-block;width:3px;height:3px;border-radius:50%;
   background:currentColor;opacity:.55;vertical-align:middle;margin:0 5px}
 /* The date is the thing people scan for, so it is set as a filled pill in the
    category's colour rather than as one more item in a grey run-on line. */
-.fdate{background:var(--cat,var(--md-sys-color-on-surface));color:var(--cat-ink,var(--md-sys-color-surface-container-lowest));
-  padding:9px 18px 10px;border-radius:var(--md-sys-shape-corner-full);
-  font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);line-height:1;white-space:nowrap}
 /* The one display style on the page — M3 display-small, and headline-medium
    where the column is too narrow for it. */
-.panel h3{margin:0;font-size:var(--md-sys-typescale-display-small-size);
-  line-height:var(--md-sys-typescale-display-small-line-height);
-  letter-spacing:var(--md-sys-typescale-display-small-tracking);
-  font-weight:var(--md-sys-typescale-emphasized-title-weight)}
-.panel .fwhere{margin:clamp(10px,1.2vw,14px) 0 0;display:flex;align-items:center;gap:8px;
-  font-size:var(--f-body);line-height:var(--l-body);color:var(--md-sys-color-on-surface)}
-.panel .fwhere svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
-.panel .fdesc{margin:clamp(12px,1.3vw,16px) 0 0;
-  font-size:var(--md-sys-typescale-body-large-size);
-  line-height:var(--md-sys-typescale-body-large-line-height);
-  letter-spacing:var(--md-sys-typescale-body-large-tracking);color:var(--md-sys-color-on-surface-variant);max-width:46ch}
 /* Genres and the top of the bill, as outlined labels: enough to tell a techno
    street party from a jazz weekend without reading the sentence above. */
 /* The bottom margin is a floor, not the whole gap: the actions are pushed to
@@ -209,9 +189,20 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    the labels touching the rule when a wordy festival leaves no slack. */
 .ftags{list-style:none;display:flex;flex-wrap:wrap;gap:8px;
   margin:clamp(14px,1.5vw,18px) 0 clamp(16px,2vw,24px);padding:0}
-.ftags li{border:1px solid var(--md-sys-color-on-surface);border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest);
-  color:var(--md-sys-color-on-surface);padding:4px 11px 5px;font-size:var(--f-caption);
-  font-weight:var(--md-sys-typescale-emphasized-label-weight);line-height:1.2;white-space:nowrap;
+/* Stroke on outline-variant, not outline: the chips spec's Aug 2024 update
+   softened it "to improve visual hierarchy between chips and buttons", and
+   these sit directly above the two buttons in the same panel. */
+.ftags li{border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest);
+  color:var(--md-sys-color-on-surface);padding:6px 16px;
+  /* label-large and 32dp tall, which is what the chip spec asks for and what
+     the planners' filter chips already use. These were label-medium in a
+     26px box: off-spec, and adrift from the 36px title above them. */
+  font-size:var(--md-sys-typescale-label-large-size);
+  /* 20px of label-large line box plus 6px either side is the 32dp container,
+     kept as inline-block so the long-headliner ellipsis below still works —
+     as a flex item the text node has no width to truncate against. */
+  line-height:var(--md-sys-typescale-label-large-line-height);display:inline-block;
+  font-weight:var(--md-sys-typescale-emphasized-label-weight);white-space:nowrap;
   /* A headliner's name can be half a sentence — enough of it to recognise. */
   max-width:22ch;overflow:hidden;text-overflow:ellipsis}
 
@@ -245,12 +236,6 @@ md-filled-button:active,md-outlined-button:active{--shape:var(--shape-pressed)}
 .facts md-filled-button,.facts md-outlined-button,
 .acts md-filled-button,.acts md-outlined-button{width:100%}
 .acts{display:flex;flex-direction:column;gap:8px}
-/* The welcome's action is the large size: the sizes exist to say which action
-   on a screen is the primary one. */
-.btn-lg{--md-filled-button-container-height:56px;
-  --md-filled-button-label-text-size:var(--md-sys-typescale-title-medium-size);
-  --shape-pressed:var(--md-sys-shape-corner-pressed-l);
-  align-self:flex-start}
 md-filled-button span[slot=icon],md-outlined-button span[slot=icon]{
   display:inline-grid;place-items:center}
 md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
@@ -276,56 +261,368 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
 .tools .sbox input:focus{border:0;outline:2px solid var(--md-sys-color-primary);
   outline-offset:-2px}
 
-/* Section title, set to the tab label on Material's own component pages:
-   16/24 at weight 500 with normal tracking — title-medium — beside a 24px
-   symbol. It labels the region rather than shouting it, which is why it sits
-   below the festival name in size instead of above it. The icon is the same
-   mark the rail's Highlights destination uses, so the title and the way back
-   to it are the same thing. */
-.shl{display:flex;align-items:center;gap:8px;margin:0 0 12px;
-  padding-left:clamp(24px,2.6vw,34px);
-  font-size:var(--md-sys-typescale-title-medium-size);
-  line-height:var(--md-sys-typescale-title-medium-line-height);
-  letter-spacing:normal;
-  font-weight:var(--md-sys-typescale-title-weight);
-  color:var(--md-sys-color-on-surface)}
-.shl svg{width:24px;height:24px;flex:none;stroke:none;fill:none}
+/* ── highlight banner ──────────────────────────────────
+   highlight-events.html, copied as it stands: its tokens, its type scale, its
+   shapes, its motion and every measurement in it. Three things differ, and
+   only because the reference is a page on its own and this is a section of
+   one:
 
-/* ── intro ─────────────────────────────────────────────
-   One of the two hero moments the guidance allows: "Hero moments use multiple
-   expressive tactics to break from predictable or uniformly applied design
-   ideas… meant to make a stand-alone statement." Display type, a container
-   one tonal step off the page, and the extra-large-increased corner that
-   nothing else on the page uses — the break in the shape story is what makes
-   it read as a beginning rather than as another card. */
-.intro{background:var(--md-sys-color-surface-container);
-  border-radius:var(--md-sys-shape-corner-extra-large-increased);
-  padding:clamp(28px,4.4vw,56px);margin-bottom:clamp(16px,2vw,24px);
-  overflow:hidden}
-.intro h1{margin:0 0 clamp(10px,1.4vw,16px);
-  font-size:clamp(var(--md-sys-typescale-headline-large-size),7vw,
-                  var(--md-sys-typescale-display-medium-size));
-  line-height:1.05;letter-spacing:var(--md-sys-typescale-display-medium-tracking);
-  font-weight:var(--md-sys-typescale-emphasized-display-weight);
-  color:var(--md-sys-color-on-surface)}
-.intro p{margin:0 0 clamp(20px,2.6vw,30px);max-width:52ch;
-  font-size:var(--md-sys-typescale-body-large-size);
-  line-height:var(--md-sys-typescale-body-large-line-height);
-  letter-spacing:var(--md-sys-typescale-body-large-tracking);
-  color:var(--md-sys-color-on-surface-variant)}
-/* The large button size, since this is the page's primary action and the
-   sizes exist to say so: 96dp tall with the large corner when pressed. */
-.intro .btn.lg{min-height:56px;padding:0 32px;flex:none;align-self:flex-start;
-  --shape-pressed:var(--md-sys-shape-corner-pressed-l);
-  font-size:var(--md-sys-typescale-title-medium-size)}
-/* Leaving: opacity on an effects spring, the collapse on a spatial one, which
-   is the split the two kinds of spring exist for. */
-.intro{transition:opacity var(--md-sys-motion-spring-default-effects),
-                  margin var(--md-sys-motion-spring-default-spatial),
-                  padding var(--md-sys-motion-spring-default-spatial),
-                  max-height var(--md-sys-motion-spring-default-spatial);
-  max-height:80svh}
-.intro.gone{opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-bottom:0}
+   · Its tokens are declared on the section rather than on :root, so the
+     mockup's pinks paint the banner and nothing else on the page.
+   · Its horizontal padding is 0. The page's own column already supplies the
+     gutter, and the reference's 24px exists to put the headline and the card
+     on the same left edge — which is what dropping it achieves here.
+   · Its two icons are the page's inline Material Symbols paths rather than
+     the webfont, because this page has to render with no network at all.
+
+   One thing is ours: each festival ships one photograph and one wordmark, so
+   the front tile is a white plate holding the wordmark where the reference
+   puts a second photo. */
+
+/* Design tokens (Material 3 naming) */
+.highlight-events{
+  /* Colour — pink tonal palette sampled from the banner mockup */
+  --md-sys-color-surface:                 #ffffff;
+  --md-sys-color-surface-container-low:   #fdf2f8;  /* card background      */
+  --md-sys-color-primary-container:       #f6cee3;  /* pink media panel     */
+  --md-sys-color-on-surface:              #1f1f1f;  /* headline, icons      */
+  --md-sys-color-on-surface-variant:      #49454f;  /* date, body copy      */
+  --md-sys-color-outline-variant:         #cac4d0;
+
+  /* Typography — Roboto, three sizes: 35 / 18 / 11 */
+  /* 700 rather than the reference's 400: this headline names the product,
+     not just the section. Every other value on the scale is unchanged. */
+  --md-sys-typescale-headline-font:       700 35px/40px "Roboto Flex","Roboto",system-ui,sans-serif;
+  --md-sys-typescale-title-font:          400 18px/24px "Roboto Flex","Roboto",system-ui,sans-serif;
+  --md-sys-typescale-body-font:           400 11px/16px "Roboto Flex","Roboto",system-ui,sans-serif;
+  --md-sys-typescale-label-font:          500 11px/16px "Roboto Flex","Roboto",system-ui,sans-serif;
+
+  /* Card copy runs 20% above the base scale: 18 → 21.6, 11 → 13.2 */
+  --card-type-scale: 1.2;
+  --card-title-size: calc(18px * var(--card-type-scale));
+  --card-title-line: calc(24px * var(--card-type-scale));
+  --card-body-size:  calc(11px * var(--card-type-scale));
+  --card-body-line:  calc(16px * var(--card-type-scale));
+
+  /* Shape */
+  --md-sys-shape-corner-large:            16px;
+  --md-sys-shape-corner-extra-large:      28px;
+
+  /* Motion */
+  --md-sys-motion-easing-emphasized:      cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-standard:        cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-duration-medium:        400ms;
+  --md-sys-motion-duration-short:         250ms;
+
+  /* State layer opacities */
+  --md-sys-state-hover-opacity:           0.08;
+  --md-sys-state-focus-opacity:           0.12;
+  --md-sys-state-pressed-opacity:         0.12;
+
+  color:var(--md-sys-color-on-surface);
+  font:var(--md-sys-typescale-body-font);
+}
+
+/* Section — the top padding is a variable only so the rail can start its
+   first destination on the same line as the headline. The values are the
+   reference's, unchanged. */
+:root{--hl-pad-top:48px}
+.highlight-events{padding:var(--hl-pad-top) 0 40px}
+
+.highlight-events__headline{
+  font: var(--md-sys-typescale-headline-font);
+  letter-spacing: 0;
+  color: var(--md-sys-color-on-surface);
+  margin: 0 0 28px;
+}
+
+/* The two glyphs the reference takes from Material Symbols Outlined, drawn
+   from the same outlines as paths so they cost no font and no request. */
+.highlight-events svg.ms{display:inline-block;flex:none;fill:currentColor;stroke:none}
+
+/* Carousel */
+.carousel__viewport{overflow:hidden}
+
+.carousel__track{
+  display:flex;
+  align-items:stretch;
+  margin:0;
+  padding:0;
+  list-style:none;
+  transition:transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized);
+  will-change:transform;
+}
+
+.carousel__slide{flex:0 0 100%;min-width:0;display:flex}
+
+/* Dots ------------------------------------------------------- */
+.carousel-dots{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin-top:24px;
+}
+
+.carousel-dot{
+  position:relative;
+  appearance:none;
+  border:0;
+  padding:0;
+  inline-size:10px;
+  block-size:10px;
+  border-radius:999px;
+  background:var(--md-sys-color-outline-variant);
+  cursor:pointer;
+  transition:
+    inline-size var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+/* 48×48 touch target without changing the visual size */
+.carousel-dot::after{
+  content:"";
+  position:absolute;
+  inset:-19px -8px;
+}
+
+.carousel-dot:hover{background:#b5aeb9}
+
+.carousel-dot[aria-pressed="true"]{
+  inline-size:32px;
+  background:var(--md-sys-color-on-surface);
+}
+
+.carousel-dot:focus-visible{
+  outline:3px solid var(--md-sys-color-on-surface);
+  outline-offset:3px;
+}
+
+/* Event card */
+.event-card{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr;
+  background:var(--md-sys-color-surface-container-low);
+  border-radius:var(--md-sys-shape-corner-extra-large);
+  overflow:hidden;
+}
+
+/* Media panel ------------------------------------------------ */
+.event-card__media{
+  display:grid;
+  place-items:center;
+  background:var(--md-sys-color-primary-container);
+  aspect-ratio:608 / 289;
+}
+
+/* Bounding box of the two overlapping photos — keeps their proportions
+   no matter how tall the panel has to stretch */
+.event-card__stack{
+  position:relative;
+  block-size:86%;
+  inline-size:auto;
+  aspect-ratio:516 / 290;
+}
+
+.event-card__photo{
+  position:absolute;
+  margin:0;
+  inline-size:56%;
+  aspect-ratio:29 / 27;
+  overflow:hidden;
+  background-color:#e7c3d6;
+}
+
+/* Back photo — the festival's own photograph */
+.event-card__photo--back{
+  inset-block-start:0;
+  inset-inline-start:0;
+  background-image:linear-gradient(160deg, #a8c8dd 0%, #d9c3a8 55%, #c68b7a 100%);
+}
+
+/* Front tile — the wordmark on a white plate, offset down/right so it overlaps */
+.event-card__photo--front{
+  inset-block-start:6%;
+  inset-inline-start:44%;
+  background-color:var(--md-sys-color-surface);
+  z-index:1;
+  display:grid;
+  place-items:center;
+  padding:clamp(8px,1vw,14px);
+}
+
+.event-card__photo img{
+  inline-size:100%;
+  block-size:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* The wordmark is a logotype, not a photograph: it fits inside its tile. */
+.event-card__photo--front img{block-size:auto;max-block-size:100%;object-fit:contain}
+
+/* Keeps the gradient placeholder visible if the photo is missing */
+.event-card__photo img.is-missing{opacity:0}
+
+/* Body ------------------------------------------------------- */
+.event-card__body{
+  display:flex;
+  flex-direction:column;
+  padding:24px;
+}
+
+.event-card__date{
+  font-family:"Roboto Flex","Roboto",system-ui,sans-serif;
+  font-weight:400;
+  font-size:var(--card-body-size);
+  line-height:var(--card-body-line);
+  letter-spacing:0.3px;
+  color:var(--md-sys-color-on-surface-variant);
+  margin:0 0 14px;
+}
+
+.event-card__title{
+  font-family:"Roboto Flex","Roboto",system-ui,sans-serif;
+  font-weight:400;
+  font-size:var(--card-title-size);
+  line-height:var(--card-title-line);
+  letter-spacing:0.15px;
+  color:var(--md-sys-color-on-surface);
+  margin:0 0 12px;
+}
+
+.event-card__supporting{
+  font-family:"Roboto Flex","Roboto",system-ui,sans-serif;
+  font-weight:400;
+  font-size:var(--card-body-size);
+  line-height:var(--card-body-line);
+  letter-spacing:0.4px;
+  color:var(--md-sys-color-on-surface-variant);
+  margin:0 0 18px;
+  max-width:62ch;
+}
+
+.event-card__place{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:"Roboto Flex","Roboto",system-ui,sans-serif;
+  font-weight:500;
+  font-size:var(--card-body-size);
+  line-height:var(--card-body-line);
+  letter-spacing:0.5px;
+  color:var(--md-sys-color-on-surface);
+  margin:0;
+}
+
+.event-card__place svg.ms{
+  width:20px;
+  height:20px;
+  color:var(--md-sys-color-on-surface);
+}
+
+.event-card__actions{
+  margin-top:auto;
+  padding-top:20px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+/* Icon button ------------------------------------------------ */
+.icon-button{
+  position:relative;
+  display:grid;
+  place-items:center;
+  inline-size:48px;
+  block-size:48px;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:var(--md-sys-color-on-surface);
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.icon-button svg.ms{width:24px;height:24px}
+
+.icon-button::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:currentColor;
+  opacity:0;
+  transition:opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.icon-button:hover::before  {opacity:var(--md-sys-state-hover-opacity)}
+.icon-button:active::before {opacity:var(--md-sys-state-pressed-opacity)}
+
+.icon-button:focus-visible{
+  outline:3px solid var(--md-sys-color-on-surface);
+  outline-offset:2px;
+}
+
+/* Expanded (desktop) layout — media left, content right */
+@media (min-width: 840px){
+  :root{--hl-pad-top:64px}
+  .highlight-events{padding:var(--hl-pad-top) 0 48px}
+  .highlight-events__headline{margin-bottom:32px}
+
+  /* No padding: the media panel is flush with the left, top and bottom
+     edges of the card, and the grid row stretches it to full height. */
+  .event-card{
+    grid-template-columns:48% 1fr;
+    padding:0;
+  }
+
+  .event-card__media{
+    aspect-ratio:auto;
+    block-size:100%;
+    min-block-size:320px;
+    /* left corners follow the card, right corners stay large */
+    border-radius:
+      var(--md-sys-shape-corner-extra-large)
+      var(--md-sys-shape-corner-large)
+      var(--md-sys-shape-corner-large)
+      var(--md-sys-shape-corner-extra-large);
+  }
+
+  .event-card__stack{
+    inline-size:85%;
+    block-size:auto;
+  }
+
+  .event-card__body{padding:40px 40px 24px}
+  .event-card__date{margin-bottom:18px}
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce){
+  .carousel__track,
+  .carousel-dot,
+  .icon-button::before{transition:none}
+}
+
+/* The reference is a page of its own, and its #1f1f1f is specified against the
+   white it paints behind everything. The card carries that white with it, so
+   every word inside the card reads in either theme — but the headline and the
+   dots sit on this page's background, which is nearly black in the dark theme,
+   and there they disappear. Those two take the page's own ink instead, and
+   only there: in the bright theme every value below is the reference's. */
+:root{--hl-ink:#1f1f1f;--hl-ink-dim:#cac4d0}
+:root[data-theme=dark]{--hl-ink:var(--md-sys-color-on-surface);
+  --hl-ink-dim:var(--md-sys-color-outline-variant)}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme=light]){--hl-ink:var(--md-sys-color-on-surface);
+    --hl-ink-dim:var(--md-sys-color-outline-variant)}
+}
+.highlight-events__headline{color:var(--hl-ink)}
+.carousel-dot{background:var(--hl-ink-dim)}
+.carousel-dot[aria-pressed="true"]{background:var(--hl-ink)}
+.carousel-dot:focus-visible{outline-color:var(--hl-ink)}
+
 
 .facts{display:flex;flex-direction:column;gap:10px;align-items:stretch;
   margin:clamp(16px,1.8vw,22px) 0 0;border-top:0}
@@ -338,76 +635,10 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   -webkit-mask:var(--wave-src) repeat-x center/56px 16px;
           mask:var(--wave-src) repeat-x center/56px 16px}
 .facts .btn{flex:none;width:100%}
-/* ── the page control ──────────────────────────────────
-   A row of dots on the picture, the current one solid — Apple's page control,
-   which is what this is: movement through an ordered list of peers. Three
-   findings decided it over the thumbnail rail that was here.
-
-   Apple: centre it near the bottom of the view, keep indicators simple, and
-   "avoid complex shapes… negative space, text" — a photograph shrunk to 34px
-   is exactly that, and it was already on screen at full size anyway.
-
-   Material 3: a carousel item must stay large enough to recognise; 34px
-   frames of a crowd photograph are not. The vertically-scrolling page also
-   wants a way to reach every item without paging — the festival list below is
-   that, so the dots do not have to carry the whole job.
-
-   myhelsinki.fi, the city's own events site: no dots and no thumbnails at
-   all, just two round dark buttons over the edge of the row, hidden on
-   touch, where a swipe does the same work. The arrows here follow it. */
-.nav{grid-area:1/6/3/13;align-self:end;justify-self:center;z-index:4;
-  display:flex;align-items:center;gap:10px;margin:0 0 16px;
-  padding:6px 8px;border-radius:var(--md-sys-shape-corner-full);
-  background:rgba(0,0,0,.45);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.nav .dots{display:flex;align-items:center;gap:8px}
-.nav .dot{width:8px;height:8px;padding:0;border-radius:50%;
-  background:rgba(255,255,255,.45);transition:var(--md-sys-motion-spring-fast-effects)}
-.nav .dot:hover{background:rgba(255,255,255,.75)}
-.nav .dot.on{background:#fff;width:22px;border-radius:var(--md-sys-shape-corner-full)}
-/* The arrows are a pointer-device convenience: on a touch screen the swipe
-   across the picture already does it, and the dots are the tap target. */
-.nav .arw{display:none;width:28px;height:28px;border-radius:50%;
-  place-items:center;color:#fff;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-spring-fast-effects)}
-.nav .arw:hover{background:rgba(255,255,255,.22)}
-@media(hover:hover) and (pointer:fine){.nav .arw{display:grid}}
-
-/* Slide change: the lateral pattern, for moving between peers. Under the
-   physics system there is no accelerate/decelerate pair to swap between — the
-   spring is the model, and the only dial is speed. So the outgoing half runs
-   on the fast springs and the incoming half on default, which reads the same
-   way round as the old curve pair did: leaving is brisk, arriving settles.
-   The offset stays small because Android's own forward/backward "uses a fade
-   as screens slide… since the screens don't have to slide the full width". */
-.fig img.pic,.side,.fig .lg,.fig .badge{
-  transition:opacity var(--md-sys-motion-spring-default-effects),
-             transform var(--md-sys-motion-spring-default-spatial)}
-.stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{
-  transition:opacity var(--md-sys-motion-spring-fast-effects),
-             transform var(--md-sys-motion-spring-fast-spatial)}
-.stage.out .fig img.pic,.stage.out .side,.stage.out .fig .lg,.stage.out .fig .badge{opacity:0}
-.stage.out.back .fig img.pic{transform:scale(1.03) translateX(3%)}
-.stage.out.fwd  .fig img.pic{transform:scale(1.03) translateX(-3%)}
-.stage.out.back .side{transform:translateX(16px)}
-.stage.out.fwd  .side{transform:translateX(-16px)}
-
 @media(max-width:839px){
-  /* Stacked, picture first — the panel keeps its card here, because on one
-     column a bare block of type under a photograph has nothing holding it. */
-  .stage{grid-template-columns:minmax(0,1fr);row-gap:0}
   .fig{grid-area:auto;aspect-ratio:16/10;min-height:0;border-radius:var(--r-card) var(--r-card) 0 0}
   .side{grid-area:auto;align-self:auto}
   .facts .btn{width:100%}
-  /* Stacked, the control leaves the picture and sits centred under the card,
-     which is where Apple puts it — so it loses the dark pill it needed to read
-     against a photograph and takes the page's own ink instead. */
-  .nav{grid-area:auto;justify-self:center;align-self:auto;
-    margin:14px 0 0;padding:0;background:none;
-    -webkit-backdrop-filter:none;backdrop-filter:none}
-  .nav .dot{background:color-mix(in srgb,var(--md-sys-color-on-surface) 26%,transparent)}
-  .nav .dot:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 45%,transparent)}
-  .nav .dot.on{background:var(--md-sys-color-on-surface)}
-  .nav .arw{color:var(--md-sys-color-on-surface-variant)}
-  .nav .arw:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 10%,transparent)}
 }
 @media(max-width:599px){
   .facts{flex-direction:column;align-items:stretch}
@@ -453,9 +684,13 @@ __SETTINGS_CSS__
   body.scrolled header::before{opacity:1;border-bottom-color:var(--md-sys-color-outline-variant)}
   header > *{position:relative;z-index:1}
   .top{padding-bottom:8px;border-bottom:none;gap:10px}
-  .wm b{font-size:var(--md-sys-typescale-title-large-size)}
-  .wm i{font-size:var(--md-sys-typescale-label-small-size);letter-spacing:.16em}
-  .logo{width:23px;height:23px}
+  /* The mark alone. On a phone the bar is one row shared with the place
+     control and the search, and the wordmark plus its descriptor took most of
+     it to say what the logo already says. It stays in the accessibility tree,
+     because it is the name of the link back to the top — hidden, not deleted. */
+  .wm{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
+    white-space:nowrap}
+  .logo{width:28px;height:28px}
 
   /* The two controls sit side by side. The place you are in stays on screen
      while you browse; the search joins it once there is a list to search. */
@@ -496,13 +731,12 @@ __NAV_CSS__
 @media(min-width:600px){
   .navhome-m{display:grid;place-content:center;gap:5px;justify-items:center;
     text-decoration:none;position:relative;z-index:1;color:var(--glass-tx);
-    border-radius:var(--md-sys-shape-corner-large-increased);padding:14px 0;font-size:8.4px;font-weight:var(--md-sys-typescale-title-weight)}
+    border-radius:var(--md-sys-shape-corner-large-increased);padding:14px 0;font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-title-weight)}
   .navhome-m svg{width:22px;height:22px;stroke:none;fill:none}
   .navhome-m .lbl{display:block}
 }
 @media(prefers-reduced-motion:reduce){
   .fig img.pic,.side,.fig .lg,.fig .badge{transition:opacity var(--md-sys-motion-spring-fast-effects)}
-  .stage.out .fig img.pic{transform:none}
 }
 
 /* ── search and filters ────────────────────────────────
@@ -542,7 +776,7 @@ __NAV_CSS__
   color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-spring-fast-effects)}
 .sbox input::placeholder{color:var(--md-sys-color-on-surface-variant)}
 .sbox input:focus{outline:none;border-color:var(--md-sys-color-on-surface)}
-.sbox .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;
+.sbox .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:40px;height:40px;
   border-radius:var(--md-sys-shape-corner-full);display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);font-size:var(--md-sys-typescale-label-medium-size)}
 .sbox .clr:hover{background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
 .sbox .clr[hidden]{display:none}
@@ -567,7 +801,7 @@ __NAV_CSS__
 .sheet h4{margin:0 0 14px;font-size:var(--f-caption);letter-spacing:.1em;
   text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);font-weight:var(--md-sys-typescale-emphasized-title-weight)}
 .sheet .opts{display:flex;flex-wrap:wrap;gap:8px}
-.opt{font-size:var(--f-sub);font-weight:var(--md-sys-typescale-title-weight);padding:9px 15px;border-radius:var(--md-sys-shape-corner-full);
+.opt{font-size:var(--md-sys-typescale-label-large-size);font-weight:var(--md-sys-typescale-label-weight);min-height:40px;padding:0 16px;border-radius:var(--md-sys-shape-corner-full);
   border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects);
   min-height:40px;text-align:left}
 .opt:hover{border-color:var(--md-sys-color-on-surface);color:var(--md-sys-color-on-surface)}
@@ -575,10 +809,14 @@ __NAV_CSS__
   border-color:var(--md-sys-color-on-surface)}
 .sheet .foot{display:flex;align-items:center;justify-content:flex-end;gap:14px;
   margin-top:18px;padding-top:15px;border-top:1px solid var(--md-sys-color-outline-variant)}
-.sheet .foot .lnk{font-size:var(--f-sub);color:var(--md-sys-color-on-surface-variant);font-weight:var(--md-sys-typescale-title-weight);padding:8px 4px}
+/* A text button, so it takes the button label and the pill the others do —
+   it was a square-cornered 12px link sitting beside a 40dp filled button. */
+.sheet .foot .lnk{font-size:var(--md-sys-typescale-label-large-size);color:var(--md-sys-color-on-surface-variant);
+  font-weight:var(--md-sys-typescale-label-weight);padding:0 12px;min-height:40px;
+  border-radius:var(--md-sys-shape-corner-full)}
 .sheet .foot .lnk:hover{color:var(--md-sys-color-on-surface)}
-.sheet .foot .go{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-radius:var(--md-sys-shape-corner-full);padding:11px 24px;
-  font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);min-height:44px}
+.sheet .foot .go{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-radius:var(--md-sys-shape-corner-full);padding:0 24px;
+  font-size:var(--md-sys-typescale-label-large-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);min-height:44px}
 
 .dropset{display:contents}
 
@@ -845,7 +1083,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   .grid.tile .card h4{font-size:var(--md-sys-typescale-label-medium-size)}
   .grid.tile .card .when{font-size:var(--md-sys-typescale-label-small-size);line-height:1.5;margin-top:6px}
   .grid.tile .card .where{font-size:var(--md-sys-typescale-label-small-size);line-height:1.5}
-  .grid.tile .card .kind{font-size:9.6px;padding:3px 9px;margin-top:8px}
+  .grid.tile .card .kind{font-size:var(--md-sys-typescale-label-small-size);padding:3px 9px;margin-top:8px}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
   .sheet{left:0;right:0;width:auto;max-width:none}
@@ -861,7 +1099,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   font-weight:var(--md-sys-typescale-emphasized-label-weight);padding:7px 8px 7px 14px;border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-high);
   color:var(--md-sys-color-on-surface)}
 .active .tag button{width:20px;height:20px;border-radius:var(--md-sys-shape-corner-full);display:grid;place-items:center;
-  font-size:9.6px;color:var(--md-sys-color-on-surface-variant)}
+  font-size:var(--md-sys-typescale-label-small-size);color:var(--md-sys-color-on-surface-variant)}
 .active .tag button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
 
 /* ── month-grouped cards ──────────────────────────────
@@ -887,7 +1125,13 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 /* The festival's own colour is confined to the label on the picture. The card
    underneath is the site's surface, so a row of cards reads as one list rather
    than as a set of differently tinted objects. */
-.card{background:var(--md-sys-color-surface-container-lowest);border-radius:var(--r-card);overflow:hidden;display:flex;
+/* ── card ──────────────────────────────────────────────
+   Built to the cards on Material's own site: extra-large corner, a
+   surface-container-low fill that sits one step *under* the page rather than
+   above it, no outline and no resting shadow — the fill is the whole
+   separation — media full-bleed to the top edge, and 24dp of padding round the
+   text. Title headline-small, supporting text body-large. */
+.card{background:var(--md-sys-color-surface-container-low);border-radius:var(--r-card);overflow:hidden;display:flex;
   flex-direction:column;transition:transform var(--md-sys-motion-spring-default-spatial),box-shadow var(--md-sys-motion-spring-default-effects)}
 .card[hidden]{display:none}
 .card:hover{transform:translateY(-2px);box-shadow:var(--md-sys-elevation-2)}
@@ -919,7 +1163,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .ttl h4{flex:1;min-width:0}
 .offi{position:relative;flex:none;display:inline-flex;align-items:center;gap:5px;font-size:var(--f-caption);
   letter-spacing:var(--k-caption);font-weight:var(--md-sys-typescale-emphasized-label-weight);
-  color:var(--md-sys-color-on-surface-variant);text-decoration:none;border:1.5px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
+  color:var(--md-sys-color-on-surface-variant);text-decoration:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
   padding:5px 11px;margin-top:1px;white-space:nowrap;transition:var(--md-sys-motion-spring-fast-effects)}
 /* the pill stays visually light beside the title, but its hit area is
    expanded to the 44pt minimum both HIG and Material ask for */
@@ -931,9 +1175,9 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 /* The name is what a reader scans for, so it steps up two rungs from the
    14.4px the rest of the card runs at rather than sharing their size. */
 .body h4{margin:0;font-family:var(--sans);
-  font-size:var(--md-sys-typescale-title-large-size);
-  line-height:var(--md-sys-typescale-title-large-line-height);
-  letter-spacing:var(--md-sys-typescale-title-large-tracking);
+  font-size:var(--md-sys-typescale-headline-small-size);
+  line-height:var(--md-sys-typescale-headline-small-line-height);
+  letter-spacing:var(--md-sys-typescale-headline-tracking);
   text-transform:none;font-weight:var(--md-sys-typescale-emphasized-title-weight);
   color:var(--md-sys-color-on-surface)}
 .when{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-body-weight);
@@ -998,34 +1242,125 @@ __FOOTER_CSS__
   header{height:0;overflow:visible;margin:0;padding:0}
   header .mark{display:none}
   header .top{padding:0;border-bottom:0;min-height:0}
-  /* The rail is 80px from the left edge, so the picker spans exactly that and
-     centres inside it — the same column the destinations sit in. */
-  .hslot{position:fixed;left:0;bottom:70px;z-index:61;margin:0;width:80px}
-  /* A selector, not a switch: the place it is set to is information, so the
-     icon keeps the circular icon-button shape and the value is written under
-     it the way a rail destination writes its label. */
-  .loc{display:grid;justify-items:center;gap:4px;width:80px;height:auto;
-    min-height:0;padding:0;border:0;border-radius:0;text-transform:none;
-    letter-spacing:var(--md-sys-typescale-label-small-tracking)}
-  .loc svg.i{width:40px;height:40px;padding:10px;box-sizing:border-box;
-    border:1px solid var(--md-sys-color-outline-variant);
-    border-radius:var(--md-sys-shape-corner-full)}
-  .loc:hover{background:none;color:var(--md-sys-color-on-surface)}
-  .loc:hover svg.i{border-color:var(--md-sys-color-outline)}
-  .loc[aria-expanded=true]{background:none;color:var(--md-sys-color-on-surface)}
-  .loc[aria-expanded=true] svg.i{background:var(--md-sys-color-secondary-container);
-    border-color:transparent;color:var(--md-sys-color-on-secondary-container)}
-  .loc #locLabel{font-size:var(--md-sys-typescale-label-small-size);
-    line-height:var(--md-sys-typescale-label-small-line-height);
-    max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .loc .cv{display:none}
+  /* The picker spans the rail's column and centres in it, the same column the
+     destinations sit in. What it looks like is set with the other utilities,
+     in the rail block below. */
+  .hslot{position:fixed;left:0;z-index:61;margin:0;width:var(--railw)}
   /* The trigger is at the left edge now, so the panel opens from that edge
      rather than hanging off the right. */
   .locsheet{left:0;right:auto;bottom:calc(100% + 10px);top:auto;
     transform-origin:bottom left}
 }
 
-@media(prefers-reduced-motion:reduce){*{animation-duration:var(--md-sys-motion-duration-short1)!important;transition-duration:var(--md-sys-motion-duration-short1)!important}}
+/* ── rail, copied from the reference ───────────────────
+   material-design-home.html's rail, measurement for measurement: a 96px
+   column with 20px/14px of padding, 16px between destinations, a 48×32
+   indicator holding a 24px icon, a 12/16 label 4px under it, and 48dp
+   outlined circles at the foot 10px apart. Its active state is a tonal
+   background on the indicator and a 500-weight label — not the filled glyph
+   and travelling pill this page had, so the pill has nothing to do here and
+   is switched off.
+
+   Only the colours are ours. The reference names the same M3 roles; they just
+   resolve against this site's generated scheme rather than its violets. Two
+   substitutions are deliberate: its --md-sys-color-surface-rail is a bespoke
+   tint, which is surface-container here, and its --md-sys-color-outline is
+   #cac4d0 — an outline-variant value under a variant's name, so the hairline
+   reads as outline-variant here rather than as our much darker outline.
+
+   Scoped to this page so the planners keep their own rail. */
+@media(min-width:600px){
+  :root{--railw:96px}
+  body{padding-left:var(--railw)}
+  .mnav{width:var(--railw);inline-size:var(--railw);
+    display:flex;flex-direction:column;align-items:center;
+    /* The reference's rail starts its first destination 20px down. Here it
+       starts on the same line as the Highlights headline instead, which is
+       the one measurement of its rail this page does not take literally —
+       the two columns read as one row rather than as two stacks that happen
+       to share an edge. The foot keeps the reference's 20px. */
+    padding:var(--hl-pad-top) 14px 20px;
+    background:var(--md-sys-color-surface-container);
+    overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+  .mnav::-webkit-scrollbar{display:none}
+  /* The indicator is the item's own background here, so nothing travels. */
+  .mnav .pill{display:none}
+
+  .mnav .railnav{display:flex;flex-direction:column;align-items:center;
+    gap:16px;inline-size:100%}
+  .mnav button{inline-size:100%;height:auto;padding:0;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    color:var(--md-sys-color-on-surface);background:none;border-radius:0}
+  .mnav .ind{inline-size:48px;block-size:32px;border-radius:999px;
+    display:grid;place-items:center;
+    transition:background 200ms cubic-bezier(0.2, 0, 0, 1)}
+  /* The shared rail nudges its glyphs down 4px to sit under a label. Nothing
+     in this rail wants that: the destination icons are centred in their
+     indicator and the utility icons in their circle, so the nudge is cleared
+     and every glyph is placed by its own container. */
+  .mnav .ind svg{width:24px;height:24px;margin:0;place-self:center}
+  .mnav button:hover .ind{
+    background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}
+  .mnav button.on .ind{background:var(--md-sys-color-secondary-container);
+    color:var(--md-sys-color-on-secondary-container)}
+  .mnav .lbl{font-size:12px;line-height:16px;letter-spacing:.3px;font-weight:400;
+    text-align:center;max-inline-size:100%;overflow-wrap:break-word;
+    max-width:none;overflow:visible;white-space:normal}
+  .mnav button.on .lbl{font-weight:500}
+  .mnav button:focus-visible{outline:3px solid var(--md-sys-color-primary);
+    outline-offset:4px;border-radius:12px}
+  /* A destination with nowhere to go yet reads as unavailable, not broken. */
+  .mnav [aria-disabled=true]{opacity:.38;cursor:default}
+
+  /* Utilities: the reference's .rail__utils and .icon-toggle. The place
+     picker is one of them, so it takes the same circle — it is fixed rather
+     than in the flow, so the rail reserves its measured height plus the
+     column's own gap and it pins to the rail's own 20px bottom padding. */
+  .mnav .railfoot{margin-top:auto;padding-top:32px;
+    display:flex;flex-direction:column;gap:10px;
+    padding-bottom:calc(var(--hslot-h) + 10px)}
+  .mnav .railfoot > *,.hslot .loc{inline-size:48px;block-size:48px;min-height:0;
+    padding:0;border-radius:50%;border:1px solid var(--md-sys-color-outline-variant);
+    background:transparent;color:var(--md-sys-color-on-surface);
+    /* place-content, not only place-items: the shared rail sets
+       align-content:start on .mnav button, which pins the single auto row to
+       the top of the 48px circle and leaves the glyph riding high no matter
+       how the item inside that row is aligned. */
+    display:grid;place-content:center;place-items:center;position:relative;
+    transition:background 200ms cubic-bezier(0.2, 0, 0, 1)}
+  .mnav .railfoot > *:hover,.hslot .loc:hover{
+    background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent);
+    color:var(--md-sys-color-on-surface)}
+  .mnav .railfoot svg,.hslot .loc svg.i{width:22px;height:22px;
+    margin:0;place-self:center;padding:0;border:0;border-radius:0}
+  .mnav .railfoot > *:focus-visible,.hslot .loc:focus-visible{
+    outline:3px solid var(--md-sys-color-primary);outline-offset:2px}
+
+  .hslot{width:var(--railw);bottom:20px;display:grid;place-items:center}
+  .loc{width:auto;gap:0;text-transform:none}
+  .loc[aria-expanded=true]{background:var(--md-sys-color-secondary-container);
+    border-color:transparent;color:var(--md-sys-color-on-secondary-container)}
+  /* Kept in the accessibility tree — it is the button's name — but off the
+     rail, where the reference has no text under its utility circles. */
+  .loc #locLabel{position:absolute;width:1px;height:1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap}
+  .loc .cv{display:none}
+}
+/* The wrapper is a rail-only grouping: on the phone bar the buttons must stay
+   direct grid items. */
+@media(max-width:839px){ .railnav{display:contents} }
+
+/* The rail's motion hold, which is the same request the media query below
+   makes, asked for by hand. */
+html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms!important;
+  transition-duration:.01ms!important}
+
+@media(prefers-reduced-motion:reduce){
+  /* An infinite animation at a shortened duration is a strobe, not a calmer
+     page. Loops stop; one-shot transitions collapse. */
+  *{animation-iteration-count:1!important;animation-duration:.01ms!important;
+    transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body id="top" class="fx-shell">
@@ -1054,7 +1389,7 @@ __FOOTER_CSS__
 <symbol id="i-left" viewBox="0 0 24 24"><path d="m14.4 6-6 6 6 6"/></symbol>
 <symbol id="i-right" viewBox="0 0 24 24"><path d="m9.6 6 6 6-6 6"/></symbol>
 <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.4 6.4 11.2 11.2M17.6 6.4 6.4 17.6"/></symbol>
-<symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10.4c0 5-7 11-7 var(--md-sys-motion-duration-long4)-7-6-7-11a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10.2" r="2.6"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10.4c0 5-7 11-7 11s-7-6-7-11a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10.2" r="2.6"/></symbol>
 <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9.6 6 6 6-6"/></symbol>
 <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.4" y="3.4" width="7.2" height="7.2" rx="2"/><rect x="13.4" y="3.4" width="7.2" height="7.2" rx="2"/><rect x="3.4" y="13.4" width="7.2" height="7.2" rx="2"/><rect x="13.4" y="13.4" width="7.2" height="7.2" rx="2"/></symbol>
 <symbol id="i-rows" viewBox="0 0 24 24"><path d="M3.6 6.4h16.8M3.6 12h16.8M3.6 17.6h16.8"/></symbol>
@@ -1063,6 +1398,21 @@ __FOOTER_CSS__
 <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.4" width="18" height="13.2" rx="2.2"/><path d="m3.6 6.6 8.4 6 8.4-6"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.3M12 19.1v2.3M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.6 12h2.3M19.1 12h2.3M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.7 8.7 0 1 0 10.8 10.8z"/></symbol>
+<!-- The rail's destination glyphs, drawn to match m3.material.io's own set. -->
+<symbol id="i-dots" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="6" cy="6" r="1.7"/><circle cx="12" cy="6" r="1.7"/><circle cx="18" cy="6" r="1.7"/><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/><circle cx="6" cy="18" r="1.7"/><circle cx="12" cy="18" r="1.7"/><circle cx="18" cy="18" r="1.7"/></g></symbol>
+<symbol id="i-code" viewBox="0 0 24 24"><path d="m8.6 8.4-4 3.6 4 3.6M15.4 8.4l4 3.6-4 3.6"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M6.6 3.6h10.8v16.8l-5.4-4-5.4 4z"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3.2a8.8 8.8 0 0 0 0 17.6c1.2 0 1.9-.8 1.9-1.7 0-.5-.2-.8-.5-1.2-.3-.4-.5-.7-.5-1.2 0-.9.8-1.6 1.7-1.6h1.2a4.9 4.9 0 0 0 5-4.9c0-3.9-3.9-7-8.8-7z"/><circle cx="7.6" cy="11.4" r="1.1" fill="currentColor" stroke="none"/><circle cx="10.4" cy="7.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="8" r="1.1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-plus-c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 8.2v7.6M8.2 12h7.6"/></symbol>
+<symbol id="i-star-sq" viewBox="0 0 24 24"><rect x="3.6" y="3.6" width="16.8" height="16.8" rx="2.6"/><path d="m12 7.6 1.5 3.1 3.4.5-2.5 2.4.6 3.4-3-1.6-3 1.6.6-3.4-2.5-2.4 3.4-.5z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M9.6 6.4v11.2M14.4 6.4v11.2"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M3.6 12h16.8M12 3.6a13.2 13.2 0 0 1 0 16.8M12 3.6a13.2 13.2 0 0 0 0 16.8"/></symbol>
+<!-- The banner's two glyphs, taken from Material Symbols Outlined at
+     FILL 0, wght 400, GRAD 0, opsz 24 — the same axis settings the reference
+     page asks the webfont for. As paths they need no font and no request,
+     which is what this page's offline promise costs. -->
+<symbol id="i-ms-location" viewBox="0 -960 960 960"><path d="M480-301q99-80 149.5-154T680-594q0-90-56-148t-144-58q-88 0-144 58t-56 148q0 65 50.5 139T480-301Zm0 101Q339-304 269.5-402T200-594q0-121 79.5-193.5T480-860q121 0 200.5 72.5T760-594q0 94-69.5 192T480-200Zm0-320q33 0 56.5-23.5T560-600q0-33-23.5-56.5T480-680q-33 0-56.5 23.5T400-600q0 33 23.5 56.5T480-520Z"/></symbol>
+<symbol id="i-ms-arrow-forward" viewBox="0 -960 960 960"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></symbol>
 </defs></svg>
 
 <div class="wrap">
@@ -1089,24 +1439,18 @@ __FOOTER_CSS__
   </div>
 </header>
 
-<!-- The page's one editorial moment: a display-size name, a sentence, and the
-     only way past it. It is shown once — dismissing it is remembered with the
-     view and the theme, so a returning reader lands on the festivals. -->
-<section class="intro" id="intro" hidden>
-  <h1>Flanner</h1>
-  <p>Set times, stage maps and running orders for Helsinki's festivals — each
-     one a single page that keeps working after the signal doesn't.</p>
-  <md-filled-button class="btn-lg" id="introGo">Get started</md-filled-button>
-</section>
+<!-- The reference's section, shell for shell. The track and the dots are the
+     only things filled in from the festival data. -->
+<section class="highlight-events" id="hero" hidden aria-labelledby="highlight-events-headline">
+  <h2 class="highlight-events__headline" id="highlight-events-headline">Flanner Highlights</h2>
 
-<section class="hero" id="hero" hidden>
-  <!-- A headline, which is what M3 reserves them for: "marking primary
-       passages of text or important regions of content". It names the region
-       rather than describing the card inside it, which is why it survives
-       where "Next up · 2 planners" did not. It lives inside the section, so
-       it appears and disappears with the thing it titles. -->
-  <h2 class="shl"><svg class="i" aria-hidden="true"><use href="#i-logo"/></svg>Highlights</h2>
-  <div class="stage" id="stage"></div>
+  <div class="carousel" id="highlight-carousel">
+    <div class="carousel__viewport">
+      <ul class="carousel__track" id="carousel-track"></ul>
+    </div>
+
+    <nav class="carousel-dots" id="carousel-dots" aria-label="Choose highlight event"></nav>
+  </div>
 </section>
 
 <div id="toolsMark" aria-hidden="true"></div>
@@ -1184,7 +1528,8 @@ __FOOTER_CSS__
      column: they were a wall of text between the festivals and the end of the
      home page, and a reader who wants them knows to go looking. -->
 
-<hr class="wave" aria-hidden="true">
+<!-- One wave at the end of the page, not two: the footer carries it, and a
+     second one a line of text above said the same break twice. -->
 
 <div class="endcap" id="endCap">
   <p>More to be discovered</p>
@@ -1208,20 +1553,40 @@ __FOOTER_CSS__
   </div>
 </dialog>
 
+<!-- The destination list is m3.material.io's own, copied at the user's request:
+     same seven labels in the same order, the same glyphs, the same leading
+     search action and the same pair of utility circles at the foot. The names
+     describe a documentation site rather than a festival planner, so each one
+     is wired to the section of this page that sits in the same position —
+     nothing here is a dead target. The mark stays Flanner's. -->
 <nav class="mnav" aria-label="Sections">
   <span class="pill" id="navPill" aria-hidden="true"></span>
-  <button id="nTop"><svg class="i"><use href="#i-logo"/></svg><span class="lbl">Highlights</span></button>
-  <button id="nFest"><svg class="i"><use href="#i-grid"/></svg><span class="lbl">Festivals</span></button>
-  <button id="nPlan"><svg class="i"><use href="#i-route"/></svg><span class="lbl">My plan</span></button>
-  <button id="nSet"><svg class="i"><use href="#i-gear"/></svg><span class="lbl">Settings</span></button>
+  <!-- Three destinations, which is what this site has: the top of the page,
+       the festivals, and the plan you build out of them. The reference rail's
+       seven documentation labels were borrowed positions rather than places —
+       they are gone, and with them the search action that sat above them,
+       since the toolbar already owns the field. -->
+  <!-- The reference wraps its destinations in a list so the 16px between them
+       is theirs alone and the utilities keep their own margin. On a phone the
+       wrapper steps out of the way with display:contents, so the bar's grid
+       still sees the buttons as its cells. -->
+  <div class="railnav">
+    <button id="nTop"><span class="ind"><svg class="i"><use href="#i-logo"/></svg></span><span class="lbl">Home</span></button>
+    <button id="nFest"><span class="ind"><svg class="i"><use href="#i-ticket"/></svg></span><span class="lbl">Festivals</span></button>
+    <button id="nPlan" aria-disabled="true" title="My plan — not built yet">
+      <span class="ind"><svg class="i"><use href="#i-star-sq"/></svg></span><span class="lbl">My plan</span></button>
+  </div>
   <!-- Utilities, not destinations: they change how the page looks rather than
        what it shows, so they sit at the foot of the rail rather than in the
-       list above. The place picker joins them from the masthead, positioned
-       here at rail widths. On a phone the rail is a bottom bar with no room
-       for either, and both stay where they were. -->
+       list above. The place picker pins below them as a third row. -->
   <div class="railfoot">
     <button id="railTheme" aria-label="Switch to dark theme" title="Theme">
       <svg class="i"><use href="#i-moon"/></svg></button>
+    <button id="railSet" aria-label="Settings" title="Settings">
+      <svg class="i"><use href="#i-gear"/></svg></button>
+    <button id="railLang" aria-disabled="true" aria-label="Language"
+            title="Language — English only for now">
+      <svg class="i"><use href="#i-globe"/></svg></button>
   </div>
 </nav>
 
@@ -1330,215 +1695,158 @@ const catOf = f => CAT_BY_ID.get(f.category) || CAT_BY_ID.get(CAT_FALLBACK);
 
 
 /* ── the hero ──────────────────────────────────────────
-   One festival on screen at a time. Every image is already a data URI in the
-   document, so swapping src is instant and the crossfade never shows a gap. */
+   The reference's carousel, script for script: one track that translates by a
+   whole slide, dots that drive it, arrow keys from the dot group, and a swipe
+   across the track. Every image is already a data URI in the document, so a
+   slide is fully painted long before it is scrolled to. */
 const byDate = DATA.festivals.slice().sort((a, b) => a.start.localeCompare(b.start));
-/* Upcoming first, then the ones that have been. Five at most: the rail beside
-   the card is built on a fifth of its height per frame, and a sixth festival
-   would either shrink them all or run past the card's bottom edge. */
+/* Upcoming first, then the ones that have been. Five at most: past a handful
+   the dots stop being a way of reaching a particular festival, and the list
+   below is already that. */
 const REEL_MAX = 5;
 const reel = [...byDate.filter(f => !status(f).past),
               ...byDate.filter(f => status(f).past)].slice(0, REEL_MAX);
-let cur = 0;
 
 if (reel.length) {
   $('#hero').hidden = false;
-  const stage = $('#stage');
 
-  const shell = f => {
-    const st = status(f);
-    return `
-    <a class="fig" href="${esc(f.planner)}" aria-label="Open the ${esc(f.name)} planner">
-      <img class="pic" src="${f.promoSrc}" alt="">
-      <span class="veil"></span>
-      <span class="badge">${esc(catOf(f).label)}</span>
-      <span class="lg"><img src="${f.logoSrc}" alt="${esc(f.name)}"></span>
-    </a>
-    <div class="side">
-    <div class="panel" data-open="${esc(f.planner)}">
-      <p class="fline">
-        <span class="fdate">${esc(f.dates)}</span>
-        <span class="fmeta">${f.stats.acts} artists <span class="dot"></span>
-          ${f.stats.stages} stages</span>
-      </p>
-      <h3>${esc(f.name)} ${esc(f.year)}</h3>
-      <p class="fwhere">${ico('pin')}<span class="fcity">${esc(f.city)}</span></p>
-      <p class="fdesc">${esc(f.description)}</p>
-      <ul class="ftags">${[...f.tags.slice(0, 3), f.stars[0]]
-        .filter(Boolean).map(k => `<li>${esc(k)}</li>`).join('')}</ul>
-      <div class="facts">
-      <md-filled-button trailing-icon href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'}<span slot="icon">${ico('arrow')}</span></md-filled-button>
-      ${f.free
-        ? `<md-outlined-button trailing-icon href="${esc(f.official)}" target="_blank">Official<span slot="icon">${ico('ext')}</span></md-outlined-button>`
-        : `<md-outlined-button trailing-icon href="${esc(f.tickets)}" target="_blank">Tickets<span slot="icon">${ico('ticket')}</span></md-outlined-button>`}
-      </div>
-    </div>
-    </div>
-    ${reel.length > 1 ? `<div class="nav" role="group" aria-label="Highlighted festivals">
-      <button class="arw" id="prev" aria-label="Previous festival">
-        <svg class="i"><use href="#i-left"/></svg></button>
-      <span class="dots">${reel.map((rf, i) => `
-        <button class="dot${i === cur ? ' on' : ''}" data-go="${i}"
-          aria-label="${esc(rf.name)} ${esc(rf.year)}"
-          ${i === cur ? 'aria-current="true"' : ''}></button>`
-      ).join('')}</span>
-      <button class="arw" id="next" aria-label="Next festival">
-        <svg class="i"><use href="#i-right"/></svg></button>
-    </div>` : ''}`;
-  };
+  /* The reference's <span class="material-symbols-outlined">, as the sprite
+     symbol that carries the same outline. */
+  const ms = n => `<svg class="ms" aria-hidden="true"><use href="#i-ms-${n}"/></svg>`;
 
-  /* Festivals have different amounts to say, so the panel changed height on
-     every rotation and shoved the whole page up and down under the reader —
-     and moved the boundary the section snapping measures from. The stage keeps
-     the tallest height it has needed so far. */
-  let tallest = 0;
-  const holdHeight = () => {
-    const h = Math.ceil(stage.getBoundingClientRect().height);
-    if (h > tallest) { tallest = h; stage.style.minHeight = tallest + 'px'; }
-  };
+  $('#carousel-track').innerHTML = reel.map((f, i) => `
+    <li class="carousel__slide" role="group" aria-roledescription="slide"
+        aria-label="Event ${i + 1} of ${reel.length}">
+      <article class="event-card">
+        <div class="event-card__media">
+          <div class="event-card__stack">
+            <figure class="event-card__photo event-card__photo--back">
+              <img src="${f.promoSrc}" alt="">
+            </figure>
+            <figure class="event-card__photo event-card__photo--front">
+              <img src="${f.logoSrc}" alt="${esc(f.name)}">
+            </figure>
+          </div>
+        </div>
 
-  /* The panel itself is sized the same way, but measured across every slide
-     up front rather than learned as they come round: growing on the third
-     rotation is the jump this is meant to prevent. Each festival is rendered
-     once, off-screen at the real width, and the tallest wins. */
-  let panelH = 0;
-  const sizePanels = () => {
-    if (reel.length < 2) return;
-    const ghost = document.createElement('div');
-    ghost.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;' +
-      'width:' + stage.getBoundingClientRect().width + 'px';
-    ghost.className = stage.className;
-    stage.parentElement.appendChild(ghost);
-    let max = 0;
-    for (const f of reel) {
-      ghost.innerHTML = shell(f);
-      const p = ghost.querySelector('.panel');
-      if (p) max = Math.max(max, Math.ceil(p.getBoundingClientRect().height));
+        <div class="event-card__body">
+          <p class="event-card__date">
+            <time datetime="${esc(f.start)}">${esc(f.dates)}</time>
+          </p>
+          <h3 class="event-card__title">${esc(f.name)} ${esc(f.year)}</h3>
+          <p class="event-card__supporting">${esc(f.description)}</p>
+          <p class="event-card__place">
+            ${ms('location')}
+            ${esc(f.city)}
+          </p>
+
+          <div class="event-card__actions">
+            <a class="icon-button" href="${esc(f.planner)}"
+               aria-label="Open ${esc(f.name)} ${esc(f.year)}">
+              ${ms('arrow-forward')}
+            </a>
+          </div>
+        </div>
+      </article>
+    </li>`).join('');
+
+  /* One dot per slide, as the reference asks for at the foot of its own
+     markup. A single festival needs no way of choosing between festivals. */
+  $('#carousel-dots').innerHTML = reel.length < 2 ? '' : reel.map((f, i) => `
+    <button type="button" class="carousel-dot" data-slide-index="${i}"
+      aria-label="Show event ${i + 1} of ${reel.length}"
+      aria-pressed="${i === 0}"${i === 0 ? ' aria-current="true"' : ''}></button>`).join('');
+
+  (function () {
+    const carousel = document.getElementById('highlight-carousel');
+    const track    = document.getElementById('carousel-track');
+    const slides   = Array.from(track.children);
+    const dots     = Array.from(carousel.querySelectorAll('.carousel-dot'));
+    let index = 0;
+
+    /* ── autoplay ────────────────────────────────────────
+       Not in the reference, which is a page showing one component. Here the
+       banner is the top of a list, and it rotates so a first-time reader sees
+       every festival without touching anything.
+
+       It holds still whenever moving would be wasted or unwelcome: one
+       festival, reduced motion, a backgrounded tab, the banner scrolled out of
+       view, a pointer resting on it, or the keyboard focus inside it — a slide
+       that changes under the cursor or mid-tab is the thing an auto-rotating
+       carousel is usually blamed for. The dwell restarts on every change, so a
+       reader who picks a dot gets the full 15s on what they picked. */
+    const DWELL = 15000;
+    const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let timer = 0, hovering = false, onscreen = true;
+
+    const canRun = () => slides.length > 1 && motionOK && !document.hidden &&
+                         onscreen && !hovering && !carousel.contains(document.activeElement);
+
+    function nudge() {
+      clearTimeout(timer); timer = 0;
+      if (!canRun()) return;
+      timer = setTimeout(() => show((index + 1) % slides.length), DWELL);
     }
-    ghost.remove();
-    panelH = max;
-    if (max) stage.style.setProperty('--panelh', max + 'px');
-  };
-  /* Only a real width change invalidates the held height. A phone fires resize
-     every time its address bar slides, and resetting on those threw the
-     measurement away constantly. */
-  let heldAt = innerWidth;
-  addEventListener('resize', () => {
-    if (innerWidth === heldAt) return;
-    heldAt = innerWidth;
-    tallest = 0;
-    panelH = 0;
-    stage.style.minHeight = '';
-    stage.style.removeProperty('--panelh');
-    sizePanels();
-    holdHeight();
-  }, {passive: true});
 
-  function paint() {
-    const f = reel[cur], st = status(f);
-    /* This replaces the whole style attribute, so the two held measurements
-       have to be written back after it rather than before. */
-    stage.setAttribute('style', fvars(f));
-    if (tallest) stage.style.minHeight = tallest + 'px';
-    if (panelH) stage.style.setProperty('--panelh', panelH + 'px');
-    /* Colour comes from the category, the same as on a card. */
-    stage.dataset.cat = catOf(f).id;
-    stage.innerHTML = shell(f);
-    holdHeight();
-    const pv = $('#prev'), nx = $('#next');
-    if (pv) pv.onclick = e => { e.preventDefault(); go(cur - 1, true); nudge(); };
-    if (nx) nx.onclick = e => { e.preventDefault(); go(cur + 1, true); nudge(); };
-    stage.querySelectorAll('.dot').forEach(d =>
-      d.onclick = e => { e.preventDefault(); go(+d.dataset.go); nudge(); });
-  }
+    carousel.addEventListener('pointerenter', () => { hovering = true; nudge(); });
+    carousel.addEventListener('pointerleave', () => { hovering = false; nudge(); });
+    carousel.addEventListener('focusin', nudge);
+    carousel.addEventListener('focusout', () => setTimeout(nudge));
+    document.addEventListener('visibilitychange', nudge);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => { onscreen = e.isIntersecting; nudge(); },
+        {threshold: 0.35}).observe(carousel);
+    }
 
-  const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let busy = false;
+    function show(next) {
+      index = Math.max(0, Math.min(next, slides.length - 1));
+      track.style.transform = `translateX(-${index * 100}%)`;
 
-  function go(i, wrap) {
-    const n = reel.length;
-    const next = wrap ? ((i % n) + n) % n : Math.max(0, Math.min(n - 1, i));
-    if (next === cur || busy) return;
-    const dir = next > cur ? 'fwd' : 'back';
-    if (!motionOK) { cur = next; paint(); return; }
-    busy = true;
-    stage.classList.add('out', dir);
-    setTimeout(() => {
-      cur = next;
-      paint();
-      /* let the fresh nodes land in their offset state, then release */
-      stage.classList.remove(dir);
-      stage.classList.add(dir === 'fwd' ? 'back' : 'fwd');
-      /* Two frames let the fresh nodes settle in their offset state before
-         the class comes off. A backgrounded tab serves no frames at all, so a
-         timer races the frames and releases the lock either way — without it
-         one transition in a hidden tab wedged the reel for good. */
-      let freed = false;
-      const release = () => {
-        if (freed) return;
-        freed = true;
-        stage.classList.remove('out', 'fwd', 'back');
-        busy = false;
-      };
-      requestAnimationFrame(() => requestAnimationFrame(release));
-      setTimeout(release, 120);
-    }, 300);
-  }
+      dots.forEach((dot, i) => {
+        dot.setAttribute('aria-pressed', String(i === index));
+        if (i === index) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      });
 
-  /* a swipe across the picture moves between festivals; the threshold keeps a
-     vertical scroll that starts on the image from stealing the gesture */
-  let sx = 0, sy = 0, tracking = false;
-  stage.addEventListener('touchstart', e => {
-    if (!e.target.closest('.fig')) return;
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
-  }, {passive: true});
-  stage.addEventListener('touchend', e => {
-    if (!tracking) return;
-    tracking = false;
-    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.6) { go(cur + (dx < 0 ? 1 : -1), true); nudge(); }
-  }, {passive: true});
+      slides.forEach((slide, i) => {
+        slide.toggleAttribute('inert', i !== index);
+        slide.setAttribute('aria-hidden', String(i !== index));
+      });
 
-  document.addEventListener('keydown', e => {
-    if (e.target.closest('input,textarea,[role=dialog]')) return;
-    if (e.key === 'ArrowLeft') { go(cur - 1); nudge(); }
-    if (e.key === 'ArrowRight') { go(cur + 1); nudge(); }
-  });
+      nudge();
+    }
 
-  /* ── autoplay ──────────────────────────────────────────
-     The hero rotates on its own so a first-time visitor sees every festival
-     without touching anything. It holds still whenever showing it would be
-     wasted or unwelcome: one festival, reduced motion, a backgrounded tab, the
-     hero scrolled out of view, or a pointer resting on it. */
-  const DWELL = 6000;
-  let timer = 0, hovering = false, onscreen = true;
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => show(Number(dot.dataset.slideIndex)));
+    });
 
-  const canRun = () => reel.length > 1 && motionOK && !document.hidden &&
-                       onscreen && !hovering;
+    // Arrow-key navigation from the dot group
+    carousel.querySelector('.carousel-dots').addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      const next = index + (event.key === 'ArrowRight' ? 1 : -1);
+      show((next + slides.length) % slides.length);
+      dots[index].focus();
+    });
 
+    // Swipe
+    let startX = null;
+    track.addEventListener('pointerdown', (e) => { startX = e.clientX; });
+    track.addEventListener('pointerup', (e) => {
+      if (startX === null) return;
+      const delta = e.clientX - startX;
+      if (Math.abs(delta) > 48) show(index + (delta < 0 ? 1 : -1));
+      startX = null;
+    });
 
-  function nudge() {
-    clearInterval(timer); timer = 0;
-    if (!canRun()) return;
-    timer = setInterval(() => {
-      if (!canRun()) { clearInterval(timer); timer = 0; return; }
-      go(cur + 1, true);
-    }, DWELL);
-  }
+    // Hide the gradient placeholder only when a real photo loads
+    track.querySelectorAll('.event-card__photo img').forEach(img => {
+      img.addEventListener('error', () => img.classList.add('is-missing'));
+      if (img.complete && img.naturalWidth === 0) img.classList.add('is-missing');
+    });
 
-  const hero = stage.closest('section') || stage.parentElement;
-  hero.addEventListener('pointerenter', () => { hovering = true; nudge(); });
-  hero.addEventListener('pointerleave', () => { hovering = false; nudge(); });
-  document.addEventListener('visibilitychange', nudge);
-
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => { onscreen = e.isIntersecting; nudge(); },
-      {threshold: 0.35}).observe(stage);
-  }
-
-  paint();
-  sizePanels();
-  nudge();
+    show(0);
+  })();
 }
 
 /* ── calendar ──────────────────────────────────────────
@@ -1718,6 +2026,45 @@ function readStuck() {
 addEventListener('scroll', readStuck, {passive: true});
 addEventListener('resize', readStuck, {passive: true});
 readStuck();
+
+/* ── the toolbar brings its section with it ────────────
+   Every control in this bar acts on the list below it, and on a long page the
+   list is usually off screen when you reach for one — you filter, and the
+   result lands somewhere you cannot see. So touching any of the bar's own
+   controls first brings the section up: the bar goes where it pins, and the
+   festivals start directly underneath it.
+
+   Bound to the controls themselves rather than to the bar, because the search
+   field is one element that moves — it lives in the toolbar on a pointer
+   device and in the masthead on a phone, and a listener on the bar would lose
+   it at the width where it travels. The filter sheets are left out: they hang
+   off their trigger, and scrolling on every chip inside an open sheet would
+   drag the page out from under the sheet. */
+/* Lands the bar exactly where it pins — at the top on a pointer device, under
+   the masthead on a phone — so the highlight above it goes completely out of
+   view and the festivals read as a page of their own. The rail's Festivals
+   destination uses this too, rather than the generic 90px-short offset every
+   other jump takes. */
+function scrollToTools() {
+  const phone = matchMedia('(max-width:599px)').matches;
+  const h = phone && headEl ? Math.round(headEl.getBoundingClientRect().height) : 0;
+  const top = tools.getBoundingClientRect().top;
+  /* Already resting where it pins — scrolling anyway would jitter the page on
+     every second click. */
+  if (Math.abs(top - h) <= 1.5) return;
+  scrollTo({top: Math.max(0, top + scrollY - h), behavior: 'smooth'});
+}
+
+(() => {
+  const bringUp = scrollToTools;
+  const field = document.querySelector('.sbox');
+  const parts = [field, $('#whenTrig'), $('#catTrig'), $('#viewSeg')].filter(Boolean);
+  for (const el of parts) {
+    el.addEventListener('pointerdown', bringUp);
+    /* So the keyboard gets the same view as the pointer. */
+    el.addEventListener('focusin', bringUp);
+  }
+})();
 
 /* ── place ─────────────────────────────────────────────
    Finland by default, because that is everything the site covers. The browser
@@ -1944,18 +2291,18 @@ document.addEventListener('keydown', e => {
 });
 
 /* ── bottom bar ────────────────────────────────────────
-   The same component as the planners': Home returns to the top, Settings opens
-   the card, and My plan is reserved for a page that does not exist yet, so it
-   says so rather than doing nothing. */
+   The same component as the planners': Home returns to the top, Festivals goes
+   to the list, and My plan is reserved for a page that does not exist yet, so
+   it says so rather than doing nothing. */
 (() => {
-  /* Two of these are places on the page, so the bar shows which one you are
-     reading rather than only what you last tapped. */
-  const SPOTS = [{id: 'nTop', sel: '.hero'}, {id: 'nFest', sel: '.months'}];
+  /* Both destinations are places on the page, so the bar shows which one you
+     are reading rather than only what you last tapped. */
+  const SPOTS = [{id: 'nTop', sel: '#hero'}, {id: 'nFest', sel: '.months'}];
   const pill = $('#navPill');
+  const ALL = ['nTop', 'nFest', 'nPlan'];
   const setActive = id => {
-    const all = ['nTop', 'nFest', 'nPlan', 'nSet'];
-    all.forEach(k => $('#' + k) && $('#' + k).classList.toggle('on', k === id));
-    const i = all.indexOf(id);
+    ALL.forEach(k => $('#' + k) && $('#' + k).classList.toggle('on', k === id));
+    const i = ALL.indexOf(id);
     if (i >= 0 && pill) pill.style.setProperty('--i', i);
   };
   const goto = (sel, id) => {
@@ -1965,9 +2312,18 @@ document.addEventListener('keydown', e => {
     scrollTo({top: Math.max(0, el.getBoundingClientRect().top + scrollY - 90), behavior: 'smooth'});
   };
   $('#nTop').onclick = () => { setActive('nTop'); scrollTo({top: 0, behavior: 'smooth'}); };
-  /* The toolbar is where the festivals section begins in every view; .months
-     is hidden outright when the calendar is showing. */
-  $('#nFest').onclick = () => goto('#tools', 'nFest');
+  /* The toolbar is where the festivals section begins in every view — .months
+     is hidden outright when the calendar is showing, the bar never is. It
+     lands flush at the pin rather than 90px short of it, so the highlight
+     leaves the screen entirely and the festivals arrive as a page. */
+  const festBtn = $('#nFest');
+  if (festBtn) festBtn.onclick = () => { setActive('nFest'); scrollToTools(); };
+
+  /* My plan has no page yet. The button is in the rail because the plan is
+     part of what this site is for, and it is aria-disabled rather than absent
+     so it says that rather than silently doing nothing. */
+  const planBtn = $('#nPlan');
+  if (planBtn) planBtn.onclick = e => e.preventDefault();
 
   /* Whichever section owns the middle of the screen is the one you are on. */
   if ('IntersectionObserver' in window) {
@@ -1989,18 +2345,23 @@ document.addEventListener('keydown', e => {
      too short to scroll. The margin lets the last sliver go before the fade
      starts, so it reads as a handover rather than a light switch. */
   if ('IntersectionObserver' in window) {
-    const hero = document.querySelector('.hero');
+    const hero = document.querySelector('#hero');
     if (hero) new IntersectionObserver(([e]) =>
       document.body.classList.toggle('past-hero', !e.isIntersecting),
       {rootMargin: '-12% 0px 0px 0px'}).observe(hero);
   }
 
   /* The masthead's right slot follows the same signal as the bar: over the
-     cards it is the search, everywhere else the place control. */
+     cards it is the search, everywhere else the place control. Festivals is
+     the cell the observer activates over the list, so it is the one to
+     watch — the old rail watched a cell nothing ever activated, which is why
+     scrolling down to the festivals left the search behind. */
   const atCards = on => document.body.classList.toggle('at-cards', on);
-  const spy = new MutationObserver(() => atCards($('#nFest').classList.contains('on')));
-  spy.observe($('#nFest'), {attributes: true, attributeFilter: ['class']});
-  atCards(false);
+  const cardsTabs = ['#nFest'].map($).filter(Boolean);
+  const syncCards = () => atCards(cardsTabs.some(t => t.classList.contains('on')));
+  const spy = new MutationObserver(syncCards);
+  cardsTabs.forEach(t => spy.observe(t, {attributes: true, attributeFilter: ['class']}));
+  syncCards();
 
   /* The field belongs in the masthead on a phone and in the toolbar on a
      pointer device — the same element, moved, rather than two of them. */
@@ -2022,25 +2383,10 @@ document.addEventListener('keydown', e => {
   phone.addEventListener('change', place);
   place();
 
-  /* On a phone the summary card is the affordance, so tapping anywhere on it
-     opens the planner. The buttons it replaces are hidden at that width. */
-  $('#stage').addEventListener('click', e => {
-    if (!phone.matches) return;
-    if (e.target.closest('a,button')) return;
-    const panel = e.target.closest('.panel[data-open]');
-    if (panel) location.href = panel.dataset.open;
-  });
-
   /* Scrolled at all is enough to earn the frosted panel behind the masthead. */
   const frost = () => document.body.classList.toggle('scrolled', scrollY > 8);
   addEventListener('scroll', frost, {passive: true});
   frost();
-  const plan = $('#nPlan');
-  if (plan) plan.onclick = () => {
-    plan.classList.add('on');
-    setTimeout(() => plan.classList.remove('on'), 900);
-    alert('Your plan lives inside each festival planner for now — open one and star the sets you want.');
-  };
   const dlg = $('#setDlg');
   const open = () => { dlg.showModal(); requestAnimationFrame(() => dlg.classList.add('in')); };
   const close = () => { dlg.classList.remove('in');
@@ -2049,10 +2395,18 @@ document.addEventListener('keydown', e => {
      column, both derived from the rail's measured box — the same sync the
      planners run, since they share the stylesheet. */
   const nav = document.querySelector('.mnav'), wrap = document.querySelector('.wrap');
+  const hslot = document.querySelector('.hslot');
   const sync = () => {
     const r = nav.getBoundingClientRect(), st = document.documentElement.style;
     st.setProperty('--navh', Math.round(r.height) + 'px');
     st.setProperty('--navw', Math.round(r.width) + 'px');
+    /* The rail's foot has to clear the place picker pinned beneath it. The
+       picker's height depends on how long the place name is, so it is measured
+       rather than guessed — a fixed reserve is what let the two overlap. */
+    if (hslot) {
+      const h = hslot.getBoundingClientRect().height;
+      st.setProperty('--hslot-h', (h ? Math.ceil(h) : 64) + 'px');
+    }
     if (innerWidth > 820) {
       st.setProperty('--railx',
         Math.max(16, Math.round(wrap.getBoundingClientRect().left - r.width - 20)) + 'px');
@@ -2062,132 +2416,25 @@ document.addEventListener('keydown', e => {
   if (window.ResizeObserver) new ResizeObserver(sync).observe(nav);
   addEventListener('resize', sync, {passive: true});
 
-  const set = $('#nSet');
+  /* The destination list is the reference's seven, so Settings is no longer
+     one of them; it opens from the rail's foot instead, beside the other two
+     controls that change how the page looks rather than what it shows. */
+  const set = $('#railSet');
   if (set) set.onclick = open;
   $('#setClose').onclick = close;
   dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
   dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
 })();
 
-/* ── section snapping ──────────────────────────────────
-   The highlight and the festivals read as two screens, so the page settles on
-   one or the other rather than halfway between. This waits for a gesture to
-   finish and then commits, instead of fighting the scroll while it happens —
-   hijacking the wheel is what makes a page feel broken rather than app-like.
+/* The page scrolls like a document.
 
-   The two thresholds are deliberately far apart: coming down, 40% of the way
-   is enough to commit; going back up, you have to return above 60% before it
-   lets go. That gap is what makes a small scroll fall back to where it started
-   and a committed one stay put, so switching sections takes a real gesture. */
-(() => {
-  const tools = $('#tools');
-  if (!tools || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const DOWN = 0.35, UP = 0.90, QUIET = 60;
-  let timer = 0, last = scrollY, touching = false, cooling = false, raf = 0;
-
-  /* Two screens only exist if the festivals can actually come to rest at the
-     top. With few festivals the page is barely taller than the window, the
-     toolbar never reaches it, and there is nothing to snap between — so this
-     reports no boundary at all rather than clamping to the end of the
-     document, which would have turned the whole page into one snap band and
-     forced the scroll everywhere. */
-  /* Measured from a zero-height marker sitting just before the bar. The bar
-     itself is position:sticky, and a stuck element reports its *displaced*
-     offsetTop — so reading it grew the boundary as the page scrolled, and the
-     snap band grew along with it right into the festivals. */
-  const mark = document.querySelector('#toolsMark');
-  /* On a phone the masthead is sticky above the bar. Resting with the bar's
-     document position at the very top puts the bar where it pins anyway, but
-     hides the height of the masthead worth of content underneath it — which
-     is the calendar's month heading and its arrows. The rest position backs
-     off by exactly that much, so the bar lands where it would pin and the
-     content below it starts where the eye expects. */
-  const headH = () => parseFloat(getComputedStyle(document.documentElement)
-    .getPropertyValue('--headh')) || 0;
-  const anchor = () => {
-    const max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
-    const raw = mark ? Math.round(mark.getBoundingClientRect().top + scrollY) : 0;
-    const b = Math.max(0, raw - headH());
-    return b > 0 && b <= max ? b : 0;
-  };
-
-  /* The platform's smooth scroll is tuned for jumping across a document and
-     takes about half a second to cross a few hundred pixels, which is what
-     read as lag. This is a short ease-out sized to the distance — the move is
-     over before it can feel like waiting. */
-  function glide(to) {
-    const from = scrollY, d = to - from;
-    if (!d) return;
-    const dur = Math.min(340, Math.max(150, Math.abs(d) * 0.4));
-    const t0 = performance.now();
-    cancelAnimationFrame(raf);
-    cooling = true;
-    const done = () => { cooling = false; last = scrollY; };
-    const step = now => {
-      const pr = Math.min(1, (now - t0) / dur);
-      scrollTo(0, from + d * (1 - Math.pow(1 - pr, 3)));
-      if (pr < 1) raf = requestAnimationFrame(step); else done();
-    };
-    raf = requestAnimationFrame(step);
-    /* A backgrounded tab serves no frames, and without this the lock would
-       latch and the page would never settle again. */
-    setTimeout(() => { if (cooling) { cancelAnimationFrame(raf); scrollTo(0, to); done(); } },
-      dur + 120);
-  }
-
-  const settle = () => {
-    if (touching || cooling) return;
-    if (document.querySelector('dialog[open]')) return;
-    if (document.activeElement && document.activeElement.closest('input,textarea')) return;
-
-    const b = anchor();
-    const y = scrollY;
-    /* The only boundary this handles is the one between the highlight and the
-       festivals. Below the toolbar the page is an ordinary document — the
-       month list, the calendar, a day's cards — and scrolls like one. */
-    if (b < 80 || y <= 0 || y >= b) return;
-
-    const down = y > last;
-    const ratio = y / b;
-    /* Coming down, a third of the way commits. Going back up, almost anything
-       releases: being shoved back toward the festivals while scrolling away
-       from them is the one thing that reads as the page fighting you. The
-       small holdout near the edge is there so a stray pixel of overscroll does
-       not throw you to the top. */
-    const target = down ? (ratio >= DOWN ? b : 0) : (ratio >= UP ? b : 0);
-    if (Math.round(target) === Math.round(y)) return;
-    glide(target);
-  };
-
-  addEventListener('scroll', () => {
-    clearTimeout(timer);
-    timer = setTimeout(() => { settle(); last = scrollY; }, QUIET);
-  }, {passive: true});
-
-  /* Reaching for a filter, the view switcher or the search box says you are
-     done with the highlight — everything they change is in the list below, and
-     leaving the page up here would have hidden the result of the tap. Capture,
-     so it runs before the control's own handler opens a sheet. */
-  const toFestivals = () => {
-    const b = anchor();
-    if (scrollY < b - 2) glide(b);
-  };
-  tools.addEventListener('pointerdown', e => {
-    if (e.target.closest('.toolmark')) return;   /* that one goes back to the top */
-    toFestivals();
-  }, true);
-  const field = document.querySelector('.sbox');
-  if (field) field.addEventListener('focusin', toFestivals);
-
-  /* A finger still on the glass is a gesture in progress, not a resting page. */
-  addEventListener('touchstart', () => { touching = true; }, {passive: true});
-  addEventListener('touchend', () => {
-    touching = false;
-    clearTimeout(timer);
-    timer = setTimeout(() => { settle(); last = scrollY; }, QUIET);
-  }, {passive: true});
-})();
+   There used to be a snapping pass here: 60ms after any scroll stopped it
+   glided you to the top or to the festivals boundary, depending on how far
+   you had travelled. It made the page feel uncontrollable — a small scroll
+   was taken away from you — and it fought every other scroll on the page,
+   including the welcome's return to the top, which is why that read as a
+   jerk rather than a glide. Removed rather than tuned: the reader decides
+   where the page rests. */
 
 /* ── calendar behaviour ────────────────────────────────*/
 (() => {
@@ -2343,29 +2590,6 @@ document.addEventListener('keydown', e => {
     const href = card && card.querySelector('.acts a.primary');
     if (href) location.href = href.getAttribute('href');
   });
-})();
-
-/* ── the welcome ───────────────────────────────────────
-   Shown until it is dismissed, then never again on this device. The exit is
-   M3's exit pattern — the panel leaves, nothing arrives to replace it — so it
-   fades while it collapses and the page closes the gap behind it. */
-(() => {
-  const intro = $('#intro'), go = $('#introGo');
-  if (!intro || !go) return;
-  /* Shown on every arrival, not once: it is the page's opening statement
-     rather than an onboarding step to get past, so a return visit gets the
-     same welcome. Dismissing it lasts for the visit and no longer. */
-  intro.hidden = false;
-  go.onclick = () => {
-    /* From its measured height, so the collapse has somewhere to travel. */
-    intro.style.maxHeight = intro.scrollHeight + 'px';
-    requestAnimationFrame(() => intro.classList.add('gone'));
-    intro.addEventListener('transitionend', e => {
-      if (e.propertyName === 'max-height') intro.remove();
-    }, {once: true});
-    /* Belt and braces: a hidden tab never fires the transition. */
-    setTimeout(() => intro.remove(), 900);
-  };
 })();
 
 /* ── theme ─────────────────────────────────────────────── */
