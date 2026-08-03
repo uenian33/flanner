@@ -40,7 +40,7 @@ def main() -> None:
     template = (ROOT / "scripts" / "info.html").read_text()
     footer = (ROOT / "scripts" / "_footer.html").read_text()
     footer_css = (ROOT / "scripts" / "_footer.css").read_text()
-    fontcss = (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()
+    fontcss = ""  # Arial everywhere; no webfont to inline
 
     for page in info["pages"]:
         slug = page["slug"]

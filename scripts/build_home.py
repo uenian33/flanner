@@ -43,7 +43,7 @@ def main():
                    + [seo.festival_event(f) for f in cfg["festivals"]]
         )),
         ("__CATCSS__", schema.category_css(cfg)),
-        ("__FONTCSS__", (ROOT / "assets" / "font" / "festiplannr.css").read_text().strip()),
+        ("__FONTCSS__", ""),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
         ("__SETTINGS__", (ROOT / "scripts" / "_settings.html").read_text()),

@@ -17,16 +17,6 @@
 <meta name="keywords" content="__KEYWORDS__">
 __OG__
 <style>
-@font-face{font-family:"KBP Title";src:url(__FONT_TITLE__) format("woff2");
-  font-weight:400;font-style:normal;font-display:swap;
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2122}
-@font-face{font-family:"Bricolage Grotesque";src:url(__FONT_LATIN__) format("woff2");
-  font-weight:500 700;font-style:normal;font-display:swap;
-  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2122,U+2212}
-@font-face{font-family:"Bricolage Grotesque";src:url(__FONT_EXT__) format("woff2");
-  font-weight:500 700;font-style:normal;font-display:swap;
-  unicode-range:U+0100-02BA,U+02BD-02C5,U+1E00-1E9F,U+2C60-2C7F,U+A720-A7FF}
-
 /* Palette sampled from the organiser's own artwork: the poster's neon green,
    its sky blue, and the orange-red of the 01.08. date. */
 :root{
@@ -45,9 +35,9 @@ __OG__
   --cText:var(--tx); --bgc:var(--panel); --accent-ink:var(--kbp-green);
   --gutter:58px; --colw:172px; --radius:10px;
   --navn:4;   /* Schedule, Map, My plan, Settings */
-  --sans:ui-sans-serif,-apple-system,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
-  --disp:"Bricolage Grotesque",var(--sans);
-  --title:"KBP Title","Bricolage Grotesque",var(--sans);
+  --sans:Arial,Helvetica,"Helvetica Neue",sans-serif;
+  --disp:var(--sans);
+  --title:var(--sans);
   --ease:cubic-bezier(.16,1,.3,1);
   --safe-b:env(safe-area-inset-bottom,0px); --vvshift:0px;
   color-scheme:dark;
@@ -185,7 +175,7 @@ body.past-head .toolbar::before{opacity:1}
 .tbar{display:flex;gap:10px;align-items:center;padding:13px 0;flex-wrap:nowrap}
 /* The bar borrows the home page's two faces so the two read as one product.
    Scoped to the bar: the rest of the planner keeps its own typography. */
-.toolbar{font-family:"Planner Sans",var(--sans)}
+.toolbar{font-family:var(--sans)}
 .tbar2{flex-wrap:nowrap}
 
 /* ── the Flanner mark, docked to the section nav ───────
@@ -205,7 +195,7 @@ body.past-head .toolbar::before{opacity:1}
 
 .brandmini .fpmark{width:clamp(30px,3.6vw,44px);height:clamp(30px,3.6vw,44px);flex:none;
   stroke:none;fill:none}
-.brandmini b{font-family:"Planner Title",var(--sans);font-weight:600;
+.brandmini b{font-family:var(--sans);font-weight:700;
   font-size:clamp(27.2px,4.16vw,41.6px);letter-spacing:.008em;text-transform:uppercase;
   line-height:1;white-space:nowrap;color:var(--tx)}
 @media(max-width:720px){.brandmini b{display:none}}
@@ -1671,7 +1661,7 @@ function generativeCover(a) {
     <rect width="160" height="90" fill="url(#g${h})"/>
     <circle cx="${cx1}" cy="${cy1}" r="${r1}" fill="${c}" opacity=".13"/>
     <circle cx="${cx2+62}" cy="${cy2}" r="${r2}" fill="${c}" opacity=".17"/>
-    <text x="80" y="52" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif"
+    <text x="80" y="52" text-anchor="middle" font-family="Arial,Helvetica,sans-serif"
       font-size="30" font-weight="700" letter-spacing="-1.4" fill="${c}" opacity=".92"
       >${esc(initials(a.name))}</text></svg>`;
 }

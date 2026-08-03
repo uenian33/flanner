@@ -22,8 +22,8 @@ __FONTCSS__
   --bg:#f5f5f5; --bg2:#fff; --panel:#fafafa; --panel2:#ececec;
   --tx:#111; --tx2:#4a4a4a; --tx3:#767676;
   --line:#d6d6d6; --line2:#c4c4c4;
-  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  --title:"Planner Title",var(--sans);
+  --sans:Arial,Helvetica,"Helvetica Neue",sans-serif;
+  --title:var(--sans);
   --ease:cubic-bezier(.22,1,.36,1);
   --safe-b:env(safe-area-inset-bottom,0px);
 
@@ -51,7 +51,7 @@ __FONTCSS__
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--tx);
-  font-family:"Planner Sans",var(--sans);font-size:var(--f-body);line-height:1.5;
+  font-family:var(--sans);font-size:var(--f-body);line-height:1.5;
   -webkit-font-smoothing:antialiased}
 a{color:inherit}
 /* ── ground ────────────────────────────────────────────
