@@ -97,6 +97,9 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .logo{width:clamp(30px,3.6vw,44px);height:clamp(30px,3.6vw,44px);flex:none;
   stroke:none;fill:none}
 .top .div{width:1px;height:clamp(20px,2.4vw,28px);background:var(--line2);flex:none}
+/* The spacer sits after this in the markup, so it needs its own auto margin
+   to reach the end of the bar. */
+.hslot{margin-left:auto}
 .locwrap{position:relative;flex:none}
 .loc{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;
   border-radius:10rem;font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
@@ -120,16 +123,6 @@ header{padding:clamp(20px,2.6vw,28px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* The place control stays on small screens — it is a control now, not a label —
    but the wordmark, the control and the theme toggle will not share one row at
    375px, so the control takes its own line. */
-@media(max-width:620px){
-  .top{flex-wrap:wrap;row-gap:10px}
-  .top .div{display:none}
-  .mark{flex:1 1 auto}
-  .wm b{font-size:clamp(26px,7.6vw,34px)}
-  .wm i{letter-spacing:.18em}
-  .top .sp{order:2}
-  .tbtn{order:3}
-  .locwrap{order:4;flex-basis:100%}
-  .loc{margin-left:-12px}}
 
 /* ── type scale ────────────────────────────────────────
    Sizes and leading follow the Material 3 type scale, with the roles named
@@ -257,8 +250,7 @@ __SETTINGS_CSS__
   .panel .fwhere{margin-top:9px}
   .fline{margin-bottom:9px}
 
-  header{position:sticky;top:0;z-index:70;margin-bottom:0;
-    padding-top:clamp(10px,2vw,14px)}
+  header{position:sticky;top:0;z-index:70;margin-bottom:0;padding-top:8px}
   header::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
     background:color-mix(in srgb,var(--bg) 86%,transparent);
     -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
@@ -266,20 +258,30 @@ __SETTINGS_CSS__
     transition:opacity .26s var(--ease),border-color .26s var(--ease)}
   body.scrolled header::before{opacity:1;border-bottom-color:var(--line)}
   header > *{position:relative;z-index:1}
-  .top{padding-bottom:clamp(10px,2vw,14px);border-bottom:none}
-  .top .div{display:none}
+  .top{padding-bottom:8px;border-bottom:none;gap:10px}
+  .wm b{font-size:clamp(22px,6.4vw,27px)}
+  .wm i{font-size:9px;letter-spacing:.16em}
+  .logo{width:32px;height:32px}
 
   /* The two controls occupy the same square and cross-fade between them. */
-  .hslot{position:relative;flex:none;display:grid;place-items:center end;
-    min-width:44px;min-height:44px}
-  .hslot > *{grid-area:1/1}
+  .hslot{position:relative;flex:none;margin-left:auto;justify-self:end;
+    display:grid;place-items:center end;min-width:44px;min-height:44px}
+  .hslot .loc{margin:0}
+  .hslot > *{grid-area:1/1;justify-self:end}
   .locwrap{transition:opacity .28s var(--ease),transform .34s var(--ease)}
   body.at-cards .locwrap{opacity:0;transform:scale(.86);pointer-events:none}
   .hslot .sbox{width:44px;opacity:0;transform:scale(.86);pointer-events:none;
     transition:width .38s cubic-bezier(.22,1,.36,1),opacity .28s var(--ease),
                transform .34s var(--ease)}
   body.at-cards .hslot .sbox{opacity:1;transform:none;pointer-events:auto}
-  body.at-cards .hslot .sbox.open{width:min(72vw,320px)}
+  /* Open, the field claims the rest of the row instead of guessing at a
+     viewport fraction — a guess is what pushed it past the column edge. The
+     wordmark steps aside for the duration and the disc holds the left. */
+  .hslot{min-width:0}
+  .mark{min-width:0}
+  .top:has(#hslot .sbox.open) .hslot{flex:1 1 auto}
+  .top:has(#hslot .sbox.open) .wm{display:none}
+  body.at-cards .hslot .sbox.open{width:100%}
 
   /* With the field in the masthead the toolbar is just the two filters. */
   .tools{position:static;padding:0;margin:0 0 clamp(14px,2vw,20px)}
@@ -398,9 +400,9 @@ __NAV_CSS__
     grid-template-areas:"mark search" "filters filters"}
   .toolmark{grid-area:mark;max-width:none;opacity:1}
   .tools.stuck .toolmark{max-width:none}
-  .sbox{grid-area:search;flex:none;width:44px;justify-self:end;
+  .tools .sbox{grid-area:search;flex:none;width:44px;justify-self:end;
     transition:width .38s cubic-bezier(.22,1,.36,1)}
-  .sbox.open{width:min(100%,calc(100vw - 96px))}
+  .tools .sbox.open{width:min(100%,calc(100vw - 96px))}
   .sbox input{height:44px;padding:0 16px 0 38px;font-size:15px}
   .sbox:not(.open) input{padding:0;color:transparent;cursor:pointer}
   .sbox:not(.open) input::placeholder{color:transparent}
@@ -550,7 +552,6 @@ __FOOTER_CSS__
   <div class="top">
     <a class="mark" href="./"><svg class="logo" aria-hidden="true"><use href="#i-logo"/></svg>
       <span class="wm"><b>Flanner</b><i>Festival planner</i></span></a>
-    <span class="div"></span>
     <div class="hslot" id="hslot">
     <div class="drop locwrap">
       <button class="loc" id="locTrig" aria-expanded="false" aria-controls="locSheet">
@@ -565,7 +566,6 @@ __FOOTER_CSS__
       </div>
     </div>
     </div>
-    <span class="sp"></span>
   </div>
 </header>
 
@@ -700,15 +700,16 @@ if (reel.length) {
     stage.setAttribute('style', fvars(f));
     stage.innerHTML = shell(f);
     const pv = $('#prev'), nx = $('#next');
-    if (pv) pv.onclick = e => { e.preventDefault(); go(cur - 1); };
-    if (nx) nx.onclick = e => { e.preventDefault(); go(cur + 1); };
+    if (pv) pv.onclick = e => { e.preventDefault(); go(cur - 1, true); nudge(); };
+    if (nx) nx.onclick = e => { e.preventDefault(); go(cur + 1, true); nudge(); };
   }
 
   const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
   let busy = false;
 
-  function go(i) {
-    const next = Math.max(0, Math.min(reel.length - 1, i));
+  function go(i, wrap) {
+    const n = reel.length;
+    const next = wrap ? ((i % n) + n) % n : Math.max(0, Math.min(n - 1, i));
     if (next === cur || busy) return;
     const dir = next > cur ? 'fwd' : 'back';
     if (!motionOK) { cur = next; paint(); return; }
@@ -720,10 +721,19 @@ if (reel.length) {
       /* let the fresh nodes land in their offset state, then release */
       stage.classList.remove(dir);
       stage.classList.add(dir === 'fwd' ? 'back' : 'fwd');
-      requestAnimationFrame(() => requestAnimationFrame(() => {
+      /* Two frames let the fresh nodes settle in their offset state before
+         the class comes off. A backgrounded tab serves no frames at all, so a
+         timer races the frames and releases the lock either way — without it
+         one transition in a hidden tab wedged the reel for good. */
+      let freed = false;
+      const release = () => {
+        if (freed) return;
+        freed = true;
         stage.classList.remove('out', 'fwd', 'back');
         busy = false;
-      }));
+      };
+      requestAnimationFrame(() => requestAnimationFrame(release));
+      setTimeout(release, 120);
     }, 300);
   }
 
@@ -738,16 +748,47 @@ if (reel.length) {
     if (!tracking) return;
     tracking = false;
     const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.6) go(cur + (dx < 0 ? 1 : -1));
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.6) { go(cur + (dx < 0 ? 1 : -1), true); nudge(); }
   }, {passive: true});
 
   document.addEventListener('keydown', e => {
     if (e.target.closest('input,textarea,[role=dialog]')) return;
-    if (e.key === 'ArrowLeft') go(cur - 1);
-    if (e.key === 'ArrowRight') go(cur + 1);
+    if (e.key === 'ArrowLeft') { go(cur - 1); nudge(); }
+    if (e.key === 'ArrowRight') { go(cur + 1); nudge(); }
   });
 
+  /* ── autoplay ──────────────────────────────────────────
+     The hero rotates on its own so a first-time visitor sees every festival
+     without touching anything. It holds still whenever showing it would be
+     wasted or unwelcome: one festival, reduced motion, a backgrounded tab, the
+     hero scrolled out of view, or a pointer resting on it. */
+  const DWELL = 6000;
+  let timer = 0, hovering = false, onscreen = true;
+
+  const canRun = () => reel.length > 1 && motionOK && !document.hidden &&
+                       onscreen && !hovering;
+
+  function nudge() {
+    clearInterval(timer); timer = 0;
+    if (!canRun()) return;
+    timer = setInterval(() => {
+      if (!canRun()) { clearInterval(timer); timer = 0; return; }
+      go(cur + 1, true);
+    }, DWELL);
+  }
+
+  const hero = stage.closest('section') || stage.parentElement;
+  hero.addEventListener('pointerenter', () => { hovering = true; nudge(); });
+  hero.addEventListener('pointerleave', () => { hovering = false; nudge(); });
+  document.addEventListener('visibilitychange', nudge);
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => { onscreen = e.isIntersecting; nudge(); },
+      {threshold: 0.35}).observe(stage);
+  }
+
   paint();
+  nudge();
 }
 
 /* ── month groups ─────────────────────────────────────── */
