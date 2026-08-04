@@ -6,7 +6,7 @@ rail on top. Everything is inlined so the page is a single file like the
 planners it links to.
 """
 import json, pathlib
-from build import ROOT, data_uri
+from assets import ROOT, data_uri
 import fontsub
 import m3color
 import mwc

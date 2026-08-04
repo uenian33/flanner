@@ -19,9 +19,8 @@ without browser chrome.
 Everything under `scripts/` generates the pages; never edit the built HTML.
 
 ```bash
-python3 scripts/build.py        # kallio/index.html
-python3 scripts/build_flow.py   # flow/index.html
-python3 scripts/build_home.py   # index.html
+python3 scripts/build_planner.py   # kallio/index.html, flow/index.html
+python3 scripts/build_home.py      # index.html
 python3 scripts/build_info.py   # about, terms, privacy
 python3 scripts/build_og.py     # social cards
 cd scripts && python3 build_pwa.py   # icons, manifest, service worker
@@ -34,9 +33,18 @@ crawling, or immediately if the URL is submitted in Search Console. To verify
 ownership there, paste the token into `GOOGLE_VERIFY` in `scripts/seo.py` and
 rebuild — every page then carries the meta tag.
 
-Shared pieces are single files both templates include — `_nav.css`,
+Shared pieces are single files the home and info pages include — `_nav.css`,
 `_footer.html`, `_settings.html`, `_pagefx.html`, `_offline.html` — so the bar,
-footer and settings card cannot drift between pages.
+footer and settings card cannot drift between them.
+
+The two planners are one design, held in `scripts/planner.artifact.html`
+exactly as it was exported: a template with `{{ }}` bindings, the component
+that feeds them, and the runtime that compiles the one against the other.
+Nothing in it is edited by hand — `build_planner.py` unpacks it and substitutes
+each festival's stages, sets, days and facts, and every substitution is
+anchored to a string in the design and fails the build if that string moves.
+Re-exporting the design and dropping the new file in place is the whole update
+procedure.
 
 ## Data
 

@@ -11,7 +11,7 @@ import json
 import pathlib
 
 import sys
-from build import DATA, ROOT, STAGE_COLORS, data_uri
+from assets import DATA, ROOT, STAGE_COLORS, data_uri
 
 FLOW = "--flow" in sys.argv
 OUT = ROOT / "tools" / ("calibrate-flow.html" if FLOW else "calibrate.html")

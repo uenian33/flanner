@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fontsub
 import m3color
-from build import data_uri
+from assets import data_uri
 import seo
 
 ROOT = Path(__file__).resolve().parent.parent
