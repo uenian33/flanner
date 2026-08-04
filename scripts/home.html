@@ -108,13 +108,15 @@ svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:
 /* One measure for the page, at the width the redesign draws the banner to, so
    the banner and the list it introduces line up down both edges. */
 .wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
-/* The measure holds until a window is wide enough that four compact cards in
-   it would still be narrow columns. Past that the page opens up rather than
-   taking a fifth column, so the card grows into a landscape shape instead of
-   staying a tall sliver — and the fifth column waits until it, too, can be
-   broader than it is tall. */
-@media(min-width:1900px){.wrap{max-width:2040px}}
-@media(min-width:2800px){.wrap{max-width:2740px}}
+/* Past the width the redesign is drawn to, the measure follows the window
+   instead of standing still: 1100px was a third of a large display, and the
+   page read as a column adrift in it. 88vw, taken from 1250px — the width at
+   which 88vw is exactly the 1100px it holds below, so the measure grows out
+   of its fixed value rather than jumping at a breakpoint — and stopped at
+   2740px, past which a line of body text is too long to track back to the
+   start of. The card grids add their columns over the same stretch, so the
+   cards keep their shape while the page fills. */
+@media(min-width:1250px){.wrap{max-width:min(88vw,2740px)}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 /* ── masthead ─────────────────────────────────────────
@@ -1196,23 +1198,24 @@ body[data-view=tile] #months,
 body[data-view=full] #months{display:grid;gap:clamp(16px,2vw,24px);
   grid-template-columns:minmax(0,1fr)}
 /* ── how many to a row ─────────────────────────────────
-   Two for the detailed card and three for the compact one, from the tablet
-   all the way up an ordinary desktop: at those counts each card sits close to
-   the width it is drawn at — 400px detailed, 320px compact — and a further
-   column would only be bought by making every card narrower.
+   Two for the detailed card and three for the compact one, from the tablet up
+   through an ordinary desktop: at those counts each card sits close to the
+   width it is drawn at — 400px detailed, 320px compact.
 
-   The count rises where the page's own measure does. Between 1100px and
-   1900px the window grows but .wrap does not, so a column added in there
-   would take its width out of the cards; at 1900px and again at 2800px the
-   measure opens up and there is room for a real one. */
+   Above that the measure grows with the window, so a column is added every
+   time the cards would otherwise stretch past about 1.6× that drawn width —
+   at 1600px, 2100px and 2600px, the same three steps for both grids. The
+   count follows the measure rather than being bought out of the cards. */
 @media(min-width:600px){body[data-view=full] #months{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(min-width:1900px){body[data-view=full] #months{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:2800px){body[data-view=full] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1600px){body[data-view=full] #months{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:2100px){body[data-view=full] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:2600px){body[data-view=full] #months{grid-template-columns:repeat(5,minmax(0,1fr))}}
 body[data-view=tile] #months{gap:clamp(12px,1.6vw,18px);
   grid-template-columns:repeat(2,minmax(0,1fr))}
 @media(min-width:600px){body[data-view=tile] #months{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:1900px){body[data-view=tile] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media(min-width:2800px){body[data-view=tile] #months{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(min-width:1600px){body[data-view=tile] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:2100px){body[data-view=tile] #months{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(min-width:2600px){body[data-view=tile] #months{grid-template-columns:repeat(6,minmax(0,1fr))}}
 /* M3's compact window class: 16dp margins and 16dp gutters. The margins are
    .wrap's; this is the gutter, which had been running at 10. */
 @media(max-width:599px){body[data-view=tile] #months{gap:16px}}
@@ -1994,6 +1997,17 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
    their headings and each grid sets its own. */
 body[data-rows=on] #months{grid-template-columns:minmax(0,1fr);gap:12px}
 .grid.list{grid-template-columns:minmax(0,1fr);gap:12px}
+/* The rows take a second and a third column at the same widths the cards do:
+   a row that spans a 2000px measure is three words and then a great deal of
+   nothing between them and the toggle at the far end. */
+@media(min-width:1600px){
+  body[data-rows=on] #months,
+  .grid.list{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:2600px){
+  body[data-rows=on] #months,
+  .grid.list{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
 
 .grid.list .card{
   --media-radius:16px;
