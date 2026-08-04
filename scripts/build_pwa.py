@@ -26,52 +26,68 @@ SHELL = ["./", "./manifest.webmanifest",
          "./assets/icons/icon-192.png", "./assets/icons/icon-512.png"]
 
 
-def disc(size: int, pad: float = 0.0, bg: str | None = None) -> Image.Image:
-    """The Flanner mark: a gradient disc cut on the diagonal, halves pulled apart."""
+PLATE = "#2E4B12"      # the "In your plan" chip green
+PETAL = "#B1D18A"
+ACCENT = "#EDF6DA"     # the petal you have added, and the centre
+
+# The mark on its 96 grid: one petal is a lobe of radius 10 centred at
+# (48, 18) closing to a point at (48, 40), and the other five are that same
+# shape turned in 60-degree steps about the centre. Nothing is drawn by hand,
+# so the six lobes are identical and the outer edge lands on r 40 all round.
+_LOBE_C, _LOBE_R = (48.0, 18.0), 10.0
+_WEDGE = [(48.0, 40.0), (39.09, 22.55), (56.91, 22.55)]
+
+
+def _turn(p, deg):
+    """A point rotated about the mark's centre, the way SVG's rotate() does."""
+    import math
+    a = math.radians(deg)
+    x, y = p[0] - 48.0, p[1] - 48.0
+    return (48.0 + x * math.cos(a) - y * math.sin(a),
+            48.0 + x * math.sin(a) + y * math.cos(a))
+
+
+def _petal(d: ImageDraw.ImageDraw, deg: float, k: float, fill: str) -> None:
+    cx, cy = _turn(_LOBE_C, deg)
+    d.ellipse([(cx - _LOBE_R) * k, (cy - _LOBE_R) * k,
+               (cx + _LOBE_R) * k, (cy + _LOBE_R) * k], fill=fill)
+    d.polygon([(x * k, y * k) for x, y in (_turn(p, deg) for p in _WEDGE)], fill=fill)
+
+
+def mark(size: int, pad: float = 0.0, plate: bool = True) -> Image.Image:
+    """The Flanner mark, on its plate — the app icon at any size."""
     s = size * 4
-    grad = Image.new("RGB", (s, s))
-    px = grad.load()
-    ca, cb = (0xB6, 0xFC, 0x46), (0xFF, 0xF2, 0x03)
-    for y in range(s):
-        for x in range(s):
-            t = (x / s * 0.5) + ((s - y) / s * 0.5)
-            px[x, y] = tuple(int(ca[i] + (cb[i] - ca[i]) * t) for i in range(3))
-
-    mark = Image.new("RGBA", (s, s), (0, 0, 0, 0))
-    for dx, dy, half in ((0.055, -0.083, "up"), (-0.055, 0.083, "dn")):
-        mask = Image.new("L", (s, s), 0)
-        d = ImageDraw.Draw(mask)
-        c, r = s / 2, s * 0.46
-        d.ellipse([c + dx * s - r, c + dy * s - r, c + dx * s + r, c + dy * s + r], fill=255)
-        cut = Image.new("L", (s, s), 0)
-        ImageDraw.Draw(cut).polygon(
-            [(-s, c + s * 1.0118), (2 * s, c - s * 1.0118), (2 * s, -s), (-s, -s)], fill=255)
-        if half == "dn":
-            cut = Image.eval(cut, lambda v: 255 - v)
-        mask = Image.composite(mask, Image.new("L", (s, s), 0), cut)
-        mark.paste(grad, (0, 0), mask)
-    mark = mark.resize((size, size), Image.LANCZOS)
-
-    if pad <= 0 and bg is None:
-        return mark
-    canvas = Image.new("RGBA", (size, size), bg or (0, 0, 0, 0))
+    k = s / 96.0
+    img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    if plate:
+        d.rounded_rectangle([0, 0, s - 1, s - 1], radius=24 * k, fill=PLATE)
+    for deg in (60, 120, 180, 240, 300):
+        _petal(d, deg, k, PETAL)
+    _petal(d, 0, k, ACCENT)
+    d.ellipse([(48 - 5) * k, (48 - 5) * k, (48 + 5) * k, (48 + 5) * k], fill=ACCENT)
+    img = img.resize((size, size), Image.LANCZOS)
+    if pad <= 0:
+        return img
+    # A maskable icon may be cropped to a circle, so the mark is inset and the
+    # plate is redrawn full-bleed underneath it.
+    canvas = Image.new("RGBA", (size, size), PLATE)
     inner = int(size * (1 - pad * 2))
-    off = (size - inner) // 2
-    canvas.paste(mark.resize((inner, inner), Image.LANCZOS), (off, off), mark.resize((inner, inner), Image.LANCZOS))
+    small = mark(inner, plate=False)
+    canvas.paste(small, ((size - inner) // 2, (size - inner) // 2), small)
     return canvas
 
 
 def main() -> None:
     ICONS.mkdir(parents=True, exist_ok=True)
-    INK = (16, 16, 16, 255)
 
-    # Plain icons sit on the ink square so the mark reads on any home screen.
+    # The mark comes with its own plate, at the corner radius the brand draws.
     for n in (192, 512):
-        disc(n, pad=0.16, bg=INK).save(ICONS / f"icon-{n}.png", optimize=True)
+        mark(n).save(ICONS / f"icon-{n}.png", optimize=True)
     # A maskable icon may be cropped to a circle, so it needs a wider safe zone.
-    disc(512, pad=0.26, bg=INK).save(ICONS / "icon-maskable-512.png", optimize=True)
+    mark(512, pad=0.20).save(ICONS / "icon-maskable-512.png", optimize=True)
     # Apple ignores maskable and does not round transparent corners itself.
-    disc(180, pad=0.16, bg=INK).save(ICONS / "apple-touch-icon.png", optimize=True)
+    mark(180).save(ICONS / "apple-touch-icon.png", optimize=True)
     print(f"  icons → {len(list(ICONS.glob('*.png')))} files")
 
     manifest = {

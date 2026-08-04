@@ -39,12 +39,15 @@ MONTHS = ["January", "February", "March", "April", "May", "June", "July",
 # field -> type, for the flat part of a festival record. Anything not listed
 # here is either derived (see normalise) or structured (stats, tags, stars).
 REQUIRED = {
-    "id": str, "name": str, "year": str, "planner": str,
-    "logo": str, "promo": str, "start": str, "end": str,
+    "id": str, "name": str, "year": str, "start": str, "end": str,
     "city": str, "type": str, "accent": str, "ink": str,
     "description": str, "official": str, "free": bool,
     "highlight": bool, "category": str,
 }
+# A festival the site lists but has not built a planner for carries none of
+# these: no planner directory, no poster, no wordmark. It shows as a card with
+# the category's own artwork and a link to the festival's own site.
+OPTIONAL = {"planner": str, "logo": str, "promo": str, "linkLabel": str}
 DERIVED = ("month", "dates", "stats.days")
 
 
@@ -99,6 +102,10 @@ def normalise(f: dict, cats: dict, problems: list[str]) -> dict:
         elif not isinstance(f[key], kind):
             problems.append(f"{where}: {key} should be {kind.__name__}, "
                             f"got {type(f[key]).__name__}")
+    for key, kind in OPTIONAL.items():
+        if key in f and f[key] is not None and not isinstance(f[key], kind):
+            problems.append(f"{where}: {key} should be {kind.__name__} or absent, "
+                            f"got {type(f[key]).__name__}")
 
     if not SLUG.match(str(f.get("id", ""))):
         problems.append(f"{where}: id must be a lowercase slug")
@@ -113,8 +120,12 @@ def normalise(f: dict, cats: dict, problems: list[str]) -> dict:
             problems.append(f"{where}: {key} must be an https URL")
     if not f.get("free") and not f.get("tickets"):
         problems.append(f"{where}: a ticketed festival needs a tickets URL")
-    if not str(f.get("planner", "")).endswith("/"):
+    if f.get("planner") and not str(f["planner"]).endswith("/"):
         problems.append(f"{where}: planner should be a directory path ending in /")
+    # A planner page is built from a poster and a wordmark, so a festival that
+    # has one needs both; one without needs neither.
+    if f.get("planner") and not (f.get("promo") and f.get("logo")):
+        problems.append(f"{where}: a festival with a planner needs promo and logo")
 
     ids = {c["id"] for c in cats["categories"]}
     # Accepts the label people actually type ("Music") as well as the id.
@@ -125,16 +136,27 @@ def normalise(f: dict, cats: dict, problems: list[str]) -> dict:
     else:
         f["category"] = given
 
-    for key in ("tags", "stars"):
-        if not isinstance(f.get(key), list) or not f[key]:
-            problems.append(f"{where}: {key} must be a non-empty list")
-    stats = f.get("stats")
+    if not isinstance(f.get("tags"), list) or not f["tags"]:
+        problems.append(f"{where}: tags must be a non-empty list")
+    # The line-up and the counts belong to a festival we have the programme
+    # for. A listed festival without a planner states its own facts instead.
+    if f.get("planner") and (not isinstance(f.get("stars"), list) or not f["stars"]):
+        problems.append(f"{where}: stars must be a non-empty list")
+    stats = f.setdefault("stats", {})
     if not isinstance(stats, dict):
         problems.append(f"{where}: stats must be an object")
         stats = f["stats"] = {}
     for key in ("acts", "stages"):
-        if not isinstance(stats.get(key), int) or stats[key] < 1:
+        if key in stats and (not isinstance(stats[key], int) or stats[key] < 1):
             problems.append(f"{where}: stats.{key} must be a positive integer")
+    if f.get("planner") and not (stats.get("acts") and stats.get("stages")):
+        problems.append(f"{where}: a festival with a planner needs stats.acts and stats.stages")
+
+    facts = f.get("facts")
+    if facts is not None and (not isinstance(facts, dict)
+                              or any(not isinstance(v, str) for v in facts.values())
+                              or set(facts) - {"time", "place", "price"}):
+        problems.append(f"{where}: facts must be an object of time/place/price strings")
 
     if problems:
         return f

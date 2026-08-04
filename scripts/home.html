@@ -17,6 +17,26 @@
 __OG__
 <style>
 __FONTCSS__
+/* Inter, from Google Fonts (SIL Open Font License), for the cards.
+
+   The card component names Inter and nothing else on the page does, so it is
+   inlined here rather than in the shared font file — the planners set Roboto
+   Flex throughout and are not charged for a face they never use. One variable
+   file per subset carries wght 100–900, which covers everything the cards ask
+   for: 700 titles, 550 buttons, 500 chips, 450 dates, 400 body.
+
+   Inlined, like every other asset here, because the page is one self-contained
+   file that works with no network — a <link> to fonts.googleapis.com would be
+   its only request, and would send a reader's address to a third party. */
+@font-face{font-family:"Inter";src:url(__INTER_LATIN__) format("woff2");
+  font-weight:100 900;font-style:normal;font-display:swap;
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
+    U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Inter";src:url(__INTER_EXT__) format("woff2");
+  font-weight:100 900;font-style:normal;font-display:swap;
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,
+    U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,
+    U+2113,U+2C60-2C7F,U+A720-A7FF}
 /* Category colours, generated from data/categories.json by schema.py. Adding
    a category is a data edit, not a stylesheet edit. */
 __CATCSS__
@@ -85,7 +105,16 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;
 svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;
   stroke-linecap:round;stroke-linejoin:round;vertical-align:-.13em}
 /* One focus indicator for the whole site, in scripts/_tokens.css. */
-.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
+/* One measure for the page, at the width the redesign draws the banner to, so
+   the banner and the list it introduces line up down both edges. */
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
+/* The measure holds until a window is wide enough that four compact cards in
+   it would still be narrow columns. Past that the page opens up rather than
+   taking a fifth column, so the card grows into a landscape shape instead of
+   staying a tall sliver — and the fifth column waits until it, too, can be
+   broader than it is tall. */
+@media(min-width:1900px){.wrap{max-width:2040px}}
+@media(min-width:2800px){.wrap{max-width:2740px}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 /* ── masthead ─────────────────────────────────────────
@@ -262,294 +291,61 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   outline-offset:-2px}
 
 /* ── highlight banner ──────────────────────────────────
-   highlight-events.html, copied as it stands: its tokens, its type scale, its
-   shapes, its motion and every measurement in it. Three things differ, and
-   only because the reference is a page on its own and this is a section of
-   one:
+   The redesign, taken as it stands: the card system scaled up to a banner —
+   the same media, notch and chip, the same plan toggle — with a header that
+   carries the section's name and the two arrows, and dots underneath.
 
-   · Its tokens are declared on the section rather than on :root, so the
-     mockup's pinks paint the banner and nothing else on the page.
-   · Its horizontal padding is 0. The page's own column already supplies the
-     gutter, and the reference's 24px exists to put the headline and the card
-     on the same left edge — which is what dropping it achieves here.
-   · Its two icons are the page's inline Material Symbols paths rather than
-     the webfont, because this page has to render with no network at all.
+   The palette is the active festival's. The redesign swaps the section to any
+   category by changing one class, so that is what the carousel does on every
+   slide: the eyebrow, the arrows, the dots and the card all follow whichever
+   festival is on screen. --primary and --surface-card are what a card theme
+   already calls --accent and --surface.
 
-   One thing is ours: each festival ships one photograph and one wordmark, so
-   the front tile is a white plate holding the wordmark where the reference
-   puts a second photo. */
+   .icon-button and .text-button are scoped to the section, because both names
+   belong to other components on this page. */
+/* The rail reads this so its first destination starts on the same line as the
+   section's first — the banner's own top padding, published as a variable. */
+:root{--hl-pad-top:64px}
+@media(min-width:840px){:root{--hl-pad-top:80px}}
+@media(max-width:599px){:root{--hl-pad-top:28px}}
 
-/* Design tokens (Material 3 naming) */
-.highlight-events{
-  /* Colour — pink tonal palette sampled from the banner mockup */
-  --md-sys-color-surface:                 #ffffff;
-  --md-sys-color-surface-container-low:   #fdf2f8;  /* card background      */
-  --md-sys-color-primary-container:       #f6cee3;  /* pink media panel     */
-  --md-sys-color-on-surface:              #1f1f1f;  /* headline, icons      */
-  --md-sys-color-on-surface-variant:      #49454f;  /* date, body copy      */
-  --md-sys-color-outline-variant:         #cac4d0;
-
-  /* Typography — Roboto, three sizes: 35 / 18 / 11. The headline style is
-     gone from this scale: the heading above the card follows the other
-     reference's section title now, set on the rule itself below. */
-  --md-sys-typescale-title-font:          400 18px/24px "Roboto Flex","Roboto",system-ui,sans-serif;
-  --md-sys-typescale-body-font:           400 11px/16px "Roboto Flex","Roboto",system-ui,sans-serif;
-  --md-sys-typescale-label-font:          500 11px/16px "Roboto Flex","Roboto",system-ui,sans-serif;
-
-  /* Card copy runs 20% above the base scale: 18 → 21.6, 11 → 13.2 */
-  --card-type-scale: 1.2;
-  --card-title-size: calc(18px * var(--card-type-scale));
-  --card-title-line: calc(24px * var(--card-type-scale));
-  --card-body-size:  calc(11px * var(--card-type-scale));
-  --card-body-line:  calc(16px * var(--card-type-scale));
-
-  /* Shape */
-  --md-sys-shape-corner-large:            16px;
-  --md-sys-shape-corner-extra-large:      28px;
-
-  /* Motion */
-  --md-sys-motion-easing-emphasized:      cubic-bezier(0.2, 0, 0, 1);
-  --md-sys-motion-easing-standard:        cubic-bezier(0.2, 0, 0, 1);
-  --md-sys-motion-duration-medium:        400ms;
-  --md-sys-motion-duration-short:         250ms;
-
-  /* State layer opacities */
-  --md-sys-state-hover-opacity:           0.08;
-  --md-sys-state-focus-opacity:           0.12;
-  --md-sys-state-pressed-opacity:         0.12;
-
-  color:var(--md-sys-color-on-surface);
-  font:var(--md-sys-typescale-body-font);
+.highlights{
+  --primary: var(--accent);
+  --surface-card: var(--surface);
+  padding:var(--hl-pad-top) 0 0;
+  font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
 }
 
-/* Section — the top padding is a variable only so the rail can start its
-   first destination on the same line as the headline. The values are the
-   reference's, unchanged. */
-/* Compact on a phone, where the masthead sits right above the heading and the
-   screen is the scarce thing. The wide window keeps the reference's own 64px,
-   set in the 840px block below. */
-:root{--hl-pad-top:28px}
-.highlight-events{padding:var(--hl-pad-top) 0 0}
+.highlights *, .highlights *::before, .highlights *::after{box-sizing:border-box}
+.highlights[hidden]{display:none}
 
-
-/* The heading is material-design-home's .section__title — the one over
-   "Material at Google I/O 2026" — rather than highlight-events' own 35px
-   headline: same family, same clamped size, same 1.05 leading and -0.02em
-   tracking, and the same clamped margin beneath it, which the size needs to
-   keep its proportion. The family resolves through Roboto Flex, since that is
-   the Roboto this page carries. Weight stays 700. */
-.highlight-events__headline,
-.section-headline{
-  font-family: "Roboto Flex","Roboto",system-ui,-apple-system,sans-serif;
-  /* The reference's own clamp, taken down a quarter — kept as a factor on
-     the original so the three values it interpolates between stay legible. */
-  font-size: calc(clamp(34px, 4.4vw, 70px) * .75);
-  line-height: 1.05;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--md-sys-color-on-surface);
-  margin: 0 0 clamp(28px, 3.4vw, 56px);
-}
-
-/* The two glyphs the reference takes from Material Symbols Outlined, drawn
-   from the same outlines as paths so they cost no font and no request. */
-.highlight-events svg.ms{display:inline-block;flex:none;fill:currentColor;stroke:none}
-
-/* Carousel */
-.carousel__viewport{overflow:hidden}
-
-.carousel__track{
+.highlights__header{
   display:flex;
-  align-items:stretch;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:24px;
+  margin-block-end:28px;
+}
+.highlights__eyebrow{
+  margin:0 0 10px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--primary);
+}
+.highlights__headline{
   margin:0;
-  padding:0;
-  list-style:none;
-  transition:transform var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-emphasized);
-  will-change:transform;
+  font-size:34px;
+  font-weight:700;
+  line-height:1.1;
+  letter-spacing:-.025em;
+  color:var(--on-surface);
 }
+.highlights__nav{display:flex;gap:8px;flex:none}
 
-.carousel__slide{flex:0 0 100%;min-width:0;display:flex}
-/* Vertical panning stays the browser's, so a scroll that starts on the card
-   still scrolls the page; everything sideways reaches the swipe handler
-   instead of being cancelled halfway through. */
-.carousel__track{touch-action:pan-y}
-
-/* Dots ------------------------------------------------------- */
-.carousel-dots{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:8px;
-  margin-top:24px;
-}
-
-.carousel-dot{
-  position:relative;
-  appearance:none;
-  border:0;
-  padding:0;
-  inline-size:10px;
-  block-size:10px;
-  border-radius:999px;
-  background:var(--md-sys-color-outline-variant);
-  cursor:pointer;
-  transition:
-    inline-size var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-emphasized),
-    background-color var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
-}
-
-/* 48×48 touch target without changing the visual size */
-.carousel-dot::after{
-  content:"";
-  position:absolute;
-  inset:-19px -8px;
-}
-
-.carousel-dot:hover{background:#b5aeb9}
-
-.carousel-dot[aria-pressed="true"]{
-  inline-size:32px;
-  background:var(--md-sys-color-on-surface);
-}
-
-.carousel-dot:focus-visible{
-  outline:3px solid var(--md-sys-color-on-surface);
-  outline-offset:3px;
-}
-
-/* Event card */
-.event-card{
-  flex:1;
-  display:grid;
-  grid-template-columns:1fr;
-  background:var(--md-sys-color-surface-container-low);
-  border-radius:var(--md-sys-shape-corner-extra-large);
-  overflow:hidden;
-}
-
-/* Media panel ------------------------------------------------ */
-.event-card__media{
-  display:grid;
-  place-items:center;
-  background:var(--md-sys-color-primary-container);
-  aspect-ratio:608 / 289;
-}
-
-/* Bounding box of the two overlapping photos — keeps their proportions
-   no matter how tall the panel has to stretch */
-.event-card__stack{
-  position:relative;
-  block-size:86%;
-  inline-size:auto;
-  aspect-ratio:516 / 290;
-}
-
-.event-card__photo{
-  position:absolute;
-  margin:0;
-  inline-size:56%;
-  aspect-ratio:29 / 27;
-  overflow:hidden;
-  background-color:#e7c3d6;
-}
-
-/* Back photo — the festival's own photograph */
-.event-card__photo--back{
-  inset-block-start:0;
-  inset-inline-start:0;
-  background-image:linear-gradient(160deg, #a8c8dd 0%, #d9c3a8 55%, #c68b7a 100%);
-}
-
-/* Front tile — the wordmark on a white plate, offset down/right so it overlaps */
-.event-card__photo--front{
-  inset-block-start:6%;
-  inset-inline-start:44%;
-  background-color:var(--md-sys-color-surface);
-  z-index:1;
-  display:grid;
-  place-items:center;
-  padding:clamp(8px,1vw,14px);
-}
-
-.event-card__photo img{
-  inline-size:100%;
-  block-size:100%;
-  object-fit:cover;
-  display:block;
-}
-
-/* The wordmark is a logotype, not a photograph: it fits inside its tile. */
-.event-card__photo--front img{block-size:auto;max-block-size:100%;object-fit:contain}
-
-/* Keeps the gradient placeholder visible if the photo is missing */
-.event-card__photo img.is-missing{opacity:0}
-
-/* Body ------------------------------------------------------- */
-.event-card__body{
-  display:flex;
-  flex-direction:column;
-  padding:24px;
-}
-
-.event-card__date{
-  font-family:"Roboto Flex","Roboto",system-ui,sans-serif;
-  font-weight:400;
-  font-size:var(--card-body-size);
-  line-height:var(--card-body-line);
-  letter-spacing:0.3px;
-  color:var(--md-sys-color-on-surface-variant);
-  margin:0 0 14px;
-}
-
-.event-card__title{
-  font-family:"Roboto Flex","Roboto",system-ui,sans-serif;
-  font-weight:400;
-  font-size:var(--card-title-size);
-  line-height:var(--card-title-line);
-  letter-spacing:0.15px;
-  color:var(--md-sys-color-on-surface);
-  margin:0 0 12px;
-}
-
-.event-card__supporting{
-  font-family:"Roboto Flex","Roboto",system-ui,sans-serif;
-  font-weight:400;
-  font-size:var(--card-body-size);
-  line-height:var(--card-body-line);
-  letter-spacing:0.4px;
-  color:var(--md-sys-color-on-surface-variant);
-  margin:0 0 18px;
-  max-width:62ch;
-}
-
-.event-card__place{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-family:"Roboto Flex","Roboto",system-ui,sans-serif;
-  font-weight:500;
-  font-size:var(--card-body-size);
-  line-height:var(--card-body-line);
-  letter-spacing:0.5px;
-  color:var(--md-sys-color-on-surface);
-  margin:0;
-}
-
-.event-card__place svg.ms{
-  width:20px;
-  height:20px;
-  color:var(--md-sys-color-on-surface);
-}
-
-.event-card__actions{
-  margin-top:auto;
-  padding-top:20px;
-  display:flex;
-  justify-content:flex-end;
-}
-
-/* Icon button ------------------------------------------------ */
-.icon-button{
+/* filled tonal icon buttons */
+.highlights .icon-button{
   position:relative;
   display:grid;
   place-items:center;
@@ -557,102 +353,248 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   block-size:48px;
   border:0;
   border-radius:50%;
-  background:transparent;
-  color:var(--md-sys-color-on-surface);
-  text-decoration:none;
+  background:var(--chip);
+  color:var(--on-chip);
   cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
 }
-
-.icon-button svg.ms{width:24px;height:24px}
-
-.icon-button::before{
+.highlights .icon-button svg{inline-size:22px;block-size:22px;fill:currentColor}
+.highlights .icon-button::before{
   content:"";
   position:absolute;
   inset:0;
   border-radius:inherit;
   background:currentColor;
   opacity:0;
-  transition:opacity var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+  transition:opacity .2s cubic-bezier(.2,0,0,1);
+}
+.highlights .icon-button:hover::before {opacity:.08}
+.highlights .icon-button:active::before{opacity:.12}
+.highlights .icon-button:focus-visible {outline:2px solid var(--on-chip);outline-offset:2px}
+
+/* ---- carousel ---- */
+.carousel__viewport{overflow:hidden}
+.carousel__track{
+  display:flex;
+  margin:0;padding:0;
+  list-style:none;
+  transition:transform .4s cubic-bezier(.2,0,0,1);
+  will-change:transform;
+  /* vertical panning stays the browser's; everything sideways is the swipe's */
+  touch-action:pan-y;
+}
+.carousel__slide{flex:0 0 100%;min-inline-size:0;display:flex}
+
+.carousel-dots{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin-block-start:28px;
+}
+.carousel-dot{
+  position:relative;
+  appearance:none;
+  border:0;padding:0;
+  inline-size:10px;block-size:10px;
+  border-radius:999px;
+  background:var(--outline-var);
+  cursor:pointer;
+  transition:inline-size .25s cubic-bezier(.2,0,0,1),background-color .25s ease;
+}
+.carousel-dot::after{content:"";position:absolute;inset:-19px -8px}
+.carousel-dot[aria-pressed="true"]{inline-size:32px;background:var(--primary)}
+.carousel-dot:focus-visible{outline:2px solid var(--primary);outline-offset:4px}
+
+/* ---- banner card — the card system, scaled up ---- */
+.banner-card{
+  --media-radius:20px;
+  --chip-radius:16px;
+  --notch-gap:6px;
+  --notch-fillet:12px;
+
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr;
+  background:var(--surface-card);
+  border-radius:28px;
+  padding:12px 12px 24px;
 }
 
-.icon-button:hover::before  {opacity:var(--md-sys-state-hover-opacity)}
-.icon-button:active::before {opacity:var(--md-sys-state-pressed-opacity)}
-
-.icon-button:focus-visible{
-  outline:3px solid var(--md-sys-color-on-surface);
-  outline-offset:2px;
+.banner-card__media{
+  position:relative;
+  aspect-ratio:16 / 9;
+  border-radius:var(--media-radius);
+  overflow:hidden;
+  background:var(--art-bg);
+}
+.banner-card__art{
+  display:block;
+  inline-size:100%;
+  block-size:100%;
+  object-fit:cover;
 }
 
-/* Expanded (desktop) layout — media left, content right */
-@media (min-width: 840px){
-  :root{--hl-pad-top:64px}
-  .highlight-events{padding:var(--hl-pad-top) 0 0}
+.banner-card__notch{
+  position:absolute;
+  inset-block-end:0;
+  inset-inline-end:0;
+  padding-block-start:var(--notch-gap);
+  padding-inline-start:var(--notch-gap);
+  background:var(--surface-card);
+  border-start-start-radius:calc(var(--chip-radius) + var(--notch-gap));
+}
+.banner-card__notch::before,
+.banner-card__notch::after{
+  content:"";
+  position:absolute;
+  inline-size:var(--notch-fillet);
+  block-size:var(--notch-fillet);
+  background:radial-gradient(circle at 0 0,
+              #0000 calc(var(--notch-fillet) - .5px),
+              var(--surface-card) calc(var(--notch-fillet) + .5px));
+}
+.banner-card__notch::before{inset-inline-end:0;   inset-block-end:100%}
+.banner-card__notch::after {inset-inline-end:100%;inset-block-end:0}
 
-  /* No padding: the media panel is flush with the left, top and bottom
-     edges of the card, and the grid row stretches it to full height. */
-  .event-card{
-    grid-template-columns:48% 1fr;
-    padding:0;
+.banner-card__chip{
+  display:block;
+  padding:9px 16px;
+  border-start-start-radius:var(--chip-radius);
+  border-end-end-radius:var(--media-radius);
+  background:var(--chip);
+  color:var(--on-chip);
+  font:700 12px/1 inherit;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+
+.banner-card__body{
+  display:flex;
+  flex-direction:column;
+  padding:24px 12px 0;
+}
+.banner-card__date{
+  margin:0 0 12px;
+  color:var(--primary);
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.banner-card__title{
+  margin:0;
+  color:var(--on-surface);
+  font-size:28px;
+  font-weight:700;
+  line-height:1.15;
+  letter-spacing:-.02em;
+}
+.banner-card__supporting{
+  margin:14px 0 0;
+  color:var(--on-surface-var);
+  font-size:15px;
+  line-height:1.6;
+  max-inline-size:46ch;
+}
+.banner-card__place{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:18px 0 0;
+  color:var(--on-surface);
+  font-size:14.5px;
+  font-weight:500;
+}
+.banner-card__place svg{
+  flex:none;
+  inline-size:20px;block-size:20px;
+  fill:var(--on-surface-var);
+}
+
+.banner-card__actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-block-start:auto;
+  padding-block-start:26px;
+}
+
+.highlights .text-button{
+  display:inline-flex;
+  align-items:center;
+  height:44px;
+  padding:0 16px;
+  border-radius:22px;
+  color:var(--primary);
+  font:550 15px/1 inherit;
+  text-decoration:none;
+  cursor:pointer;
+  transition:background .18s ease;
+}
+.highlights .text-button:hover{background:color-mix(in srgb,var(--primary) 10%,transparent)}
+.highlights .text-button:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+.banner-card .plan-toggle{--plan-height:44px;margin-inline-start:auto}
+.banner-card .plan-toggle__button{font-size:15px;padding:0 22px 0 18px}
+.banner-card .plan-toggle__icons svg{width:20px;height:20px}
+
+/* ---- two-column from 840px ---- */
+@media (min-width:840px){
+  .banner-card{
+    grid-template-columns:46% 1fr;
+    padding:12px;
+    align-items:stretch;
   }
+  .banner-card__media{aspect-ratio:auto;min-block-size:360px}
+  .banner-card__body {padding:36px 32px 12px}
+  .banner-card__title{font-size:34px}
+}
 
-  .event-card__media{
-    aspect-ratio:auto;
-    block-size:100%;
-    min-block-size:320px;
-    /* left corners follow the card, right corners stay large */
-    border-radius:
-      var(--md-sys-shape-corner-extra-large)
-      var(--md-sys-shape-corner-large)
-      var(--md-sys-shape-corner-large)
-      var(--md-sys-shape-corner-extra-large);
+/* ---- compact — phone ----
+   The navigation bar floats over the page at the foot of the viewport, and on
+   a phone the banner card ran past it: the card's own actions — the toggle
+   most of all — sat underneath the bar until the page was scrolled. The
+   section's opening air is tightened to the compact rhythm and the copy is
+   held to three lines, which is enough for the whole card to stand clear. */
+@media (max-width:599px){
+  .highlights__header{margin-block-end:20px}
+  .banner-card__body{padding:20px 12px 0}
+  .banner-card__supporting{
+    margin-block-start:12px;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
   }
-
-  .event-card__stack{
-    inline-size:85%;
-    block-size:auto;
-  }
-
-  .event-card__body{padding:40px 40px 24px}
-  .event-card__date{margin-bottom:18px}
+  .banner-card__place{margin-block-start:14px}
+  .banner-card__actions{padding-block-start:18px}
+  .carousel-dots{margin-block-start:20px}
 }
 
-/* Accessibility */
-@media (prefers-reduced-motion: reduce){
-  .carousel__track,
-  .carousel-dot,
-  .icon-button::before{transition:none}
+@media (prefers-reduced-motion:reduce){
+  .carousel__track,.carousel-dot,.highlights .icon-button::before,
+  .plan-toggle__button,.plan-toggle [data-state]{transition-duration:.01ms}
+  .plan-toggle__button:active{transform:none}
 }
 
-/* The reference is a page of its own, and its #1f1f1f is specified against the
-   white it paints behind everything. The card carries that white with it, so
-   every word inside the card reads in either theme — but the headline and the
-   dots sit on this page's background, which is nearly black in the dark theme,
-   and there they disappear. Those two take the page's own ink instead, and
-   only there: in the bright theme every value below is the reference's. */
-:root{--hl-ink:#1f1f1f;--hl-ink-dim:#cac4d0}
-:root[data-theme=dark]{--hl-ink:var(--md-sys-color-on-surface);
-  --hl-ink-dim:var(--md-sys-color-outline-variant)}
-@media(prefers-color-scheme:dark){
-  :root:not([data-theme=light]){--hl-ink:var(--md-sys-color-on-surface);
-    --hl-ink-dim:var(--md-sys-color-outline-variant)}
-}
 /* A heading belongs to what follows it, so it carries more air above than
-   below. The whole gap is one clamp rather than the banner's bottom padding
-   plus an offset here: two fixed values stacked to 88px on a phone, against
-   type that had shrunk to 25px, so the break stood half again as tall relative
-   to the words it separates as it does on a wide window. One value scales with
-   the viewport the way the type does.
-
-   Set after the rule above, whose `margin` shorthand would otherwise zero it. */
-.section-headline{margin-top:clamp(40px, 8.9vw, 112px)}
-/* Both headings take the same ink. Inside the banner --md-sys-color-on-surface
-   is the reference's #1f1f1f; out here it is the page's own, four values off.
-   --hl-ink is that same pair, so they match in either theme. */
-.highlight-events__headline,.section-headline{color:var(--hl-ink)}
-.carousel-dot{background:var(--hl-ink-dim)}
-.carousel-dot[aria-pressed="true"]{background:var(--hl-ink)}
-.carousel-dot:focus-visible{outline-color:var(--hl-ink)}
-
+   below. */
+/* The list's heading is the banner's headline: same face, same size, same
+   weight and tracking, so the two sections read as one page. */
+.section-headline{
+  font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:34px;
+  line-height:1.1;
+  font-weight:700;
+  letter-spacing:-.025em;
+  color:var(--md-sys-color-on-surface);
+  margin:0 0 clamp(28px, 3.4vw, 56px);
+}
+/* The whole break between the banner and the list is this one value: the
+   banner no longer carries a bottom padding of its own, so the two are not
+   stacked into a gap half a screen tall. */
+.section-headline{margin-top:clamp(36px, 4.4vw, 64px)}
 
 .facts{display:flex;flex-direction:column;gap:10px;align-items:stretch;
   margin:clamp(16px,1.8vw,22px) 0 0;border-top:0}
@@ -918,154 +860,443 @@ __NAV_CSS__
   .endcap{padding-bottom:calc(67px + 18px + var(--safe-b,0px) + 18px)}
 }
 
-/* ── calendar view ─────────────────────────────────────
-   Hidden until asked for, so the month grid costs nothing in the other two
-   views beyond the markup that builds it. */
+/* ── calendar ──────────────────────────────────────────
+   The month grid, taken as it stands from the redesign. Its chrome is neutral
+   and the colour belongs to the events: a bar carries its category's container
+   pair, and a festival already in the plan carries the selected pair instead —
+   the same two states the plan toggle has.
+
+   The tokens are scoped to the view rather than :root, and so are its own
+   .text-button and .icon-button, because the card component already has both
+   names and its versions must not change.
+
+   Folded is the default: most people are planning the days in front of them,
+   not scanning a whole month, and the list underneath is where a month is
+   read. The fold handle opens the full grid. */
 .calview[hidden]{display:none}
-body[data-view=cal] #months{display:none}
-body[data-view=cal] .empty{display:none}
+.calview{
+  --surface:        #FFFFFF;
+  --surface-dim:    #FAF9F4;
+  --surface-card:   #F2F0EB;
+  --on-surface:     #191D13;
+  --on-surface-var: #5B6053;
+  --outline:        #E3E2DA;
+  --primary:        #4C662B;
+  --on-primary:     #FFFFFF;
+  --primary-wash:   #EBF1DE;
 
-/* The month heading is the control: its chevron says the date can be changed,
-   which a plain heading never did. */
-.calbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  margin:0 0 14px}
-.calmonth{position:relative}
-.calpick{display:inline-flex;align-items:center;gap:9px;padding:6px 4px;
-  font-family:var(--title);font-weight:var(--md-sys-typescale-emphasized-label-weight);letter-spacing:.01em;
-  font-size:var(--md-sys-typescale-headline-small-size);
-  line-height:var(--md-sys-typescale-headline-small-line-height);
-  text-transform:uppercase;color:var(--md-sys-color-on-surface)}
-.calpick .cv{width:15px;height:15px;opacity:.65;
-  transition:transform var(--md-sys-motion-spring-fast-spatial)}
-.calpick[aria-expanded=true] .cv{transform:rotate(180deg)}
-.calarrows{display:flex;gap:6px;flex:none}
-.calarrows button{width:40px;height:40px;border:1px solid var(--md-sys-color-outline);
-  border-radius:var(--md-sys-shape-corner-full);display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);
-  transition:var(--md-sys-motion-spring-fast-effects)}
-.calarrows button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
-.calarrows .i{width:17px;height:17px}
-/* ── the month picker ──────────────────────────────────
-   A card over the app rather than a panel hanging off the heading: at this
-   size a dropdown either ran off the screen or pushed the grid around. Native
-   modal, so the backdrop, the click-outside and Escape are the platform's. */
-dialog.caldlg{border:none;padding:0;background:transparent;max-width:none;
-  max-height:none;width:100%;height:100%;overflow:visible;color:var(--md-sys-color-on-surface)}
-dialog.caldlg::backdrop{background:rgba(4,6,9,.55);
-  -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
-  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects)}
-dialog.caldlg.in::backdrop{opacity:1}
-.calbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
-  transform:translate(-50%,16px);opacity:0;width:min(420px,calc(100vw - 24px));
-  max-height:min(78svh,640px);overflow:auto;overscroll-behavior:contain;
-  background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large-increased);
-  padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:var(--md-sys-elevation-3);
-  transition:opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
-dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
-@media(min-width:600px){
-  .calbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
-  dialog.caldlg.in .calbox{transform:translate(-50%,-50%)}
+  --cat-music: #DCE8C0;  --on-cat-music: #1F2D0A;
+  --cat-art:   #F2DFC3;  --on-cat-art:   #2B1700;
+  --cat-film:  #E8DEF8;  --on-cat-film:  #1D192B;
+  /* Our data has two categories the redesign does not draw; they take the
+     pairs their own card theme already uses. */
+  --cat-culture: #FBD9DF;  --on-cat-culture: #2C151A;
+  --cat-others:  #E2E2DF;  --on-cat-others:  #1B1B19;
+
+  --plan-music: #2E4B12;  --on-plan-music: #EDF6DA;
+  --plan-art:   #6B4310;  --on-plan-art:   #FFEEDC;
+  --plan-film:  #4F378B;  --on-plan-film:  #EADDFF;
+  --plan-culture: #6B333E;  --on-plan-culture: #FFE1E6;
+  --plan-others:  #3C3D37;  --on-plan-others:  #E9E9E4;
+
+  --shape-xl: 28px;
+  --shape-l:  16px;
+  --ease: cubic-bezier(.2,0,0,1);
+
+  color: var(--on-surface);
+  font-family: "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
 }
-.calboxhead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--md-sys-color-surface-container-lowest)}
-.calboxhead h2{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--md-sys-typescale-title-medium-size);
-  letter-spacing:.02em;text-transform:uppercase}
-.yrow{display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:4px 0 14px}
-.yrow b{font-family:var(--title);font-size:var(--md-sys-typescale-title-medium-size);letter-spacing:.02em}
-.yrow button{width:38px;height:38px;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
-.yrow button:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
-.yrow .i{width:15px;height:15px}
-.mons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.mons button{position:relative;min-height:46px;border:1px solid var(--md-sys-color-outline);
-  border-radius:var(--md-sys-shape-corner-medium);font-size:var(--md-sys-typescale-label-medium-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface);
-  transition:var(--md-sys-motion-spring-fast-effects)}
-.mons button:hover{border-color:var(--md-sys-color-on-surface)}
-.mons button[aria-checked=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
-  border-color:var(--md-sys-color-on-surface)}
-/* A month with something in it is worth telling apart before you open it. */
-.mons button.dot::after{content:"";position:absolute;left:50%;bottom:7px;
-  transform:translateX(-50%);width:4px;height:4px;border-radius:50%;
-  background:var(--md-sys-color-on-surface)}
-.mons button[aria-checked=true].dot::after{background:var(--md-sys-color-surface)}
-.calhint{margin:12px 0 0;text-align:center;font-size:var(--md-sys-typescale-label-small-size);color:var(--md-sys-color-on-surface-variant)}
-@media(hover:hover){.calhint{display:none}}
+.calview *, .calview *::before, .calview *::after { box-sizing: border-box; }
 
-/* ── the day panel ─────────────────────────────────────*/
-.calday{margin-top:clamp(22px,3vw,32px)}
-.calday[hidden]{display:none}
-.cell.today .dn{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
-.cell.today{box-shadow:inset 0 0 0 2px var(--md-sys-color-outline)}
-.cell.sel{box-shadow:inset 0 0 0 2px var(--md-sys-color-on-surface)}
-.cell.has{cursor:pointer}
-.cell{text-align:left;font:inherit;color:inherit}
-.calhead{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
-  margin-bottom:6px}
-.calhead span{font-size:var(--f-caption);letter-spacing:.08em;text-transform:uppercase;
-  color:var(--md-sys-color-on-surface-variant);font-weight:var(--md-sys-typescale-emphasized-label-weight);text-align:center}
-.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
-  border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large);overflow:hidden;
-  background:var(--md-sys-color-outline);gap:1px}
-.cell{background:var(--md-sys-color-surface-container-lowest);min-height:88px;padding:6px 5px;display:flex;
-  flex-direction:column;gap:3px}
-.cell.out{background:var(--md-sys-color-surface)}
-.cell .dn{font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface-variant);padding-left:2px}
-.cell.has .dn{color:var(--md-sys-color-on-surface)}
-/* A run of days reads as one bar: square edges in the middle, rounded only
-   where the festival actually starts and ends. */
-.ev{position:relative;display:block;min-height:24px;padding:3px 6px;margin:0 -5px;
-  background:color-mix(in srgb,var(--cat,var(--md-sys-color-on-surface)) 55%,var(--md-sys-color-surface-container-lowest));
-  border-left:3px solid transparent;text-decoration:none;
-  font-size:var(--md-sys-typescale-label-medium-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);line-height:1.3;color:var(--md-sys-color-on-surface)}
-.ev.st{margin-left:0;border-radius:var(--md-sys-shape-corner-extra-small) 0 0 var(--md-sys-shape-corner-extra-small);border-left-color:var(--cat,var(--md-sys-color-on-surface))}
-.ev.en{margin-right:0;border-radius:0 var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) 0}
-.ev.st.en{border-radius:var(--md-sys-shape-corner-extra-small)}
-.cell.has:hover .ev{background:color-mix(in srgb,var(--cat,var(--md-sys-color-on-surface)) 80%,var(--md-sys-color-surface-container-lowest))}
-.ev{pointer-events:none}
-/* A day cell is far too narrow for a festival name, so the label is laid over
-   the whole run instead of the one cell it lives in — --span is how many days
-   the bar still has to go in this week row. */
-.cell{overflow:visible}
-.ev span{position:absolute;left:6px;right:auto;top:50%;transform:translateY(-50%);
-  z-index:2;pointer-events:none;white-space:nowrap;overflow:hidden;
-  text-overflow:ellipsis;width:calc(var(--span,1) * 100% - 12px)}
-/* The grid is the one place the 80% scale went too far: a seventh of a phone
-   screen is narrow, but a date is two digits and a weekday is three letters,
-   so neither needs the width that the rest of the page was saving. These sit
-   above the page's own small sizes on purpose. */
-@media(max-width:599px){
-  .calhead span{font-size:var(--md-sys-typescale-label-small-size);letter-spacing:.04em}
-  .cell{min-height:70px;padding:5px 4px}
-  .cell .dn{font-size:var(--md-sys-typescale-label-medium-size)}
-  .ev{min-height:22px;padding:2px 4px;border-left-width:3px}
-  .ev span{font-size:var(--md-sys-typescale-label-medium-size);left:4px;width:calc(var(--span,1) * 100% - 8px)}
+/* ---- header ---- */
+.cal-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-block-end: 24px;
+}
+.cal-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 6px 12px;
+  margin: 0;
+  border: 0; border-radius: 999px;
+  background: none;
+  color: var(--on-surface);
+  font-family: inherit;
+  font-size: 28px; font-weight: 700; letter-spacing: -.025em;
+  cursor: pointer;
+  transition: background .18s var(--ease);
+}
+.cal-title:hover { background: var(--primary-wash); }
+.cal-title svg { inline-size: 22px; block-size: 22px; fill: var(--on-surface-var); }
+.cal-header__spacer { margin-inline-start: auto; }
+
+.calview .text-button {
+  display: inline-flex; align-items: center;
+  height: 40px; padding: 0 16px;
+  border: 0; border-radius: 20px;
+  background: none;
+  color: var(--primary);
+  font: 550 14px/1 inherit;
+  cursor: pointer;
+  transition: background .18s var(--ease);
+}
+.calview .text-button:hover { background: var(--primary-wash); }
+.calview .text-button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.calview .icon-button {
+  position: relative;
+  display: grid; place-items: center;
+  inline-size: 44px; block-size: 44px;
+  border: 0; border-radius: 50%;
+  background: var(--cat-music);
+  color: var(--on-cat-music);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.calview .icon-button svg { inline-size: 22px; block-size: 22px; fill: currentColor; }
+.calview .icon-button::before {
+  content: ""; position: absolute; inset: 0;
+  border-radius: inherit; background: currentColor;
+  opacity: 0; transition: opacity .18s var(--ease);
+}
+.calview .icon-button:hover::before  { opacity: .08; }
+.calview .icon-button:active::before { opacity: .12; }
+.calview .icon-button:focus-visible  { outline: 2px solid var(--on-cat-music); outline-offset: 2px; }
+
+/* ---- grid ---- */
+.calendar {
+  border: 1px solid var(--outline);
+  border-radius: var(--shape-xl);
+  background: var(--surface);
+  overflow: hidden;
 }
 
-/* ── compact tiles ─────────────────────────────────────
-   A thumbnail and the three things worth scanning: what it is called, when and
-   where, and what kind of festival it is. Everything else is a tap away. */
-.grid.tile{grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 14px 0;
+  background: var(--surface-dim);
+  border-block-end: 1px solid var(--outline);
+}
+.weekdays span {
+  text-align: center;
+  font-size: 11.5px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--on-surface-var);
+}
+.weekdays .short { display: none; }
+
+.week { position: relative; }
+.week + .week { border-block-start: 1px solid var(--outline); }
+
+.week__bg {
+  position: absolute;
+  inset: 6px 0;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  pointer-events: none;
+}
+.week__bg i { margin-inline: 3px; border-radius: var(--shape-l); }
+.week__bg i.is-selected { background: var(--primary-wash); }
+
+.week__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 32px repeat(3, 26px);
+  row-gap: 5px;
+  padding: 10px 0 16px;
+}
+
+.day {
+  position: relative;
+  grid-row: 1;
+  justify-self: start;
+  display: grid; place-items: center;
+  inline-size: 30px; block-size: 30px;
+  margin-inline-start: 10px;
+  border: 0; border-radius: 50%;
+  background: none;
+  color: var(--on-surface);
+  font: 600 13.5px/1 inherit;
+  cursor: pointer;
+  transition: background .18s var(--ease);
+}
+.day::after { content: ""; position: absolute; inset: -9px; }  /* 48px target */
+.day:hover { background: var(--primary-wash); }
+.day:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.day.is-outside { color: var(--on-surface-var); opacity: .45; }
+.day.is-today { box-shadow: inset 0 0 0 1.5px var(--primary); color: var(--primary); }
+.day.is-selected { background: var(--primary); color: var(--on-primary); box-shadow: none; }
+
+.event {
+  display: flex; align-items: center; gap: 6px;
+  min-inline-size: 0;
+  margin-inline: 3px;
+  padding: 0 10px;
+  border: 0; border-radius: 13px;
+  font: 600 12.5px/1 inherit;
+  letter-spacing: -.005em;
+  text-align: start;
+  cursor: pointer;
+  overflow: hidden; white-space: nowrap;
+  transition: filter .18s var(--ease);
+}
+.event span { overflow: hidden; text-overflow: ellipsis; }
+.event svg { flex: none; inline-size: 14px; block-size: 14px; fill: currentColor; }
+.event:hover { filter: brightness(.96); }
+.event:focus-visible { outline: 2px solid var(--on-surface); outline-offset: 2px; }
+
+.event.cont-left  { border-start-start-radius: 3px; border-end-start-radius: 3px; margin-inline-start: 0; }
+.event.cont-right { border-start-end-radius: 3px;   border-end-end-radius: 3px;   margin-inline-end: 0; }
+
+.event.cat-music   { background: var(--cat-music);   color: var(--on-cat-music); }
+.event.cat-art     { background: var(--cat-art);     color: var(--on-cat-art); }
+.event.cat-film    { background: var(--cat-film);    color: var(--on-cat-film); }
+.event.cat-culture { background: var(--cat-culture); color: var(--on-cat-culture); }
+.event.cat-others  { background: var(--cat-others);  color: var(--on-cat-others); }
+.event.is-planned.cat-music   { background: var(--plan-music);   color: var(--on-plan-music); }
+.event.is-planned.cat-art     { background: var(--plan-art);     color: var(--on-plan-art); }
+.event.is-planned.cat-film    { background: var(--plan-film);    color: var(--on-plan-film); }
+.event.is-planned.cat-culture { background: var(--plan-culture); color: var(--on-plan-culture); }
+.event.is-planned.cat-others  { background: var(--plan-others);  color: var(--on-plan-others); }
+
+.more {
+  grid-row: 4;
+  justify-self: start;
+  margin-inline-start: 10px;
+  border: 0; background: none;
+  color: var(--on-surface-var);
+  font: 600 12px/1 inherit;
+  cursor: pointer;
+}
+.more:hover { color: var(--on-surface); }
+
+/* ---- fold handle ---- */
+.weeks { overflow: hidden; }
+.weeks.is-collapsed .week:not(.is-active) { display: none; }
+.weeks.is-collapsed .week.is-active { border-block-start: 0; }
+
+.fold {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  inline-size: 100%; block-size: 40px;
+  border: 0; border-block-start: 1px solid var(--outline);
+  background: var(--surface-dim);
+  color: var(--on-surface-var);
+  font: 600 11.5px/1 inherit;
+  letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer;
+  transition: background .18s var(--ease), color .18s var(--ease);
+}
+.fold:hover { background: var(--primary-wash); color: var(--on-surface); }
+.fold:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.fold svg {
+  inline-size: 20px; block-size: 20px;
+  fill: currentColor;
+  transform: rotate(180deg);
+  transition: transform .3s var(--ease);
+}
+.fold[aria-expanded="false"] svg { transform: none; }
+
+/* ---- legend ---- */
+.legend {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 10px 20px;
+  margin-block-start: 20px;
+  padding-inline: 4px;
+}
+.legend__item {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 500;
+  color: var(--on-surface-var);
+}
+.legend__swatch { inline-size: 26px; block-size: 14px; border-radius: 7px; }
+.legend__note { margin-inline-start: auto; font-size: 13px; color: var(--on-surface-var); }
+.legend__note b { color: var(--on-surface); font-weight: 600; }
+
+/* ---- medium — tablet ---- */
+@media (max-width: 1023px) {
+  .week__grid { grid-template-rows: 30px repeat(3, 23px); row-gap: 4px; padding: 8px 0 14px; }
+  .event { font-size: 11.5px; border-radius: 11px; padding: 0 8px; }
+}
+
+/* ---- compact — phone ----
+   Titles are dropped from the grid: at this width they cannot be read anyway,
+   and the spans still show what runs when. The list below carries the names. */
+@media (max-width: 599px) {
+  .cal-title { font-size: 22px; }
+  .cal-header { margin-block-end: 16px; }
+  .weekdays { padding: 11px 0; }
+  .weekdays .long  { display: none; }
+  .weekdays .short { display: inline; }
+
+  .week__grid { grid-template-rows: 30px repeat(3, 7px); row-gap: 4px; padding: 7px 0 11px; }
+  .week__bg { inset: 4px 0; }
+  .week__bg i { margin-inline: 2px; border-radius: 12px; }
+
+  .day {
+    justify-self: center;
+    margin-inline-start: 0;
+    inline-size: 28px; block-size: 28px;
+    font-size: 13px;
+  }
+  .event { margin-inline: 2px; padding: 0; border-radius: 4px; gap: 0; }
+  .event span, .event svg { display: none; }
+  .event.cont-left  { border-start-start-radius: 1px; border-end-start-radius: 1px; }
+  .event.cont-right { border-start-end-radius: 1px;   border-end-end-radius: 1px; }
+  .more { display: none; }
+
+  .fold__label { display: none; }
+  .fold { block-size: 44px; }
+
+  .legend { gap: 8px 14px; margin-block-start: 16px; }
+  .legend__item { font-size: 12px; }
+  .legend__swatch { inline-size: 20px; block-size: 10px; }
+  .legend__note { margin-inline-start: 0; inline-size: 100%; font-size: 12px; }
+}
+
+/* ── one list, in the card views ───────────────────────
+   Split by month, a grid of four columns ran two cards to a row and left the
+   rest of the row empty. The groups stay in the markup for the calendar; here
+   they step out of the way and every card joins one grid. */
+body[data-view=cal] #months{margin-top:clamp(28px,3.4vw,44px)}
+body[data-view=tile] #months,
+body[data-view=full] #months{display:grid;gap:clamp(16px,2vw,24px);
+  grid-template-columns:minmax(0,1fr)}
+@media(min-width:600px){body[data-view=full] #months{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1024px){body[data-view=full] #months{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1800px){body[data-view=full] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
+body[data-view=tile] #months{gap:clamp(12px,1.6vw,18px);
+  grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:600px){body[data-view=tile] #months{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1024px){body[data-view=tile] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:2800px){body[data-view=tile] #months{grid-template-columns:repeat(5,minmax(0,1fr))}}
+/* M3's compact window class: 16dp margins and 16dp gutters. The margins are
+   .wrap's; this is the gutter, which had been running at 10. */
+@media(max-width:599px){body[data-view=tile] #months{gap:16px}}
+body[data-view=tile] .mgroup, body[data-view=full] .mgroup,
+body[data-view=tile] #months .grid, body[data-view=full] #months .grid{display:contents}
+body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
+
+/* The day a reader has picked, said above the list the calendar filters. */
+.dayfilter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  margin:clamp(24px,3vw,36px) 0 0}
+.dayfilter[hidden]{display:none}
+.dayfilter h3{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;
+  font-size:17px;font-weight:700;letter-spacing:-.015em;color:var(--md-sys-color-on-surface)}
+.dayfilter span{font-size:13px;color:var(--md-sys-color-on-surface-variant)}
+.dayfilter button{margin-inline-start:auto;height:40px;padding:0 16px;border:0;
+  border-radius:20px;background:none;color:#4C662B;cursor:pointer;
+  font:550 14px/1 "Inter","Segoe UI",system-ui,sans-serif;
+  transition:background .18s cubic-bezier(.2,0,0,1)}
+.dayfilter button:hover{background:#EBF1DE}
+
+/* ── the two grids ─────────────────────────────────────
+   Compact tiles and detailed cards are one component in two sizes; the grid
+   says which.
+
+   The compact grid counts columns rather than fitting as many as will go: two
+   on a phone, three on a tablet, four from a laptop up. A fifth waits until
+   the window is wide enough that the cards are still broader than they are
+   tall at that count — packing in more columns as the window grows would keep
+   the card the same narrow shape for ever. */
+.grid.tile{grid-template-columns:repeat(2,minmax(0,1fr));
   gap:clamp(12px,1.6vw,18px)}
-.grid.tile .card .shot{aspect-ratio:16/9}
-.grid.tile .card .lg img{height:clamp(24px,3vw,30px)}
-.grid.tile .card .body{padding:14px 16px 16px;gap:0}
-.grid.tile .card .ttl{padding-top:0}
-.grid.tile .card h4{font-size:var(--md-sys-typescale-title-medium-size);
-  line-height:var(--md-sys-typescale-title-medium-line-height)}
-.grid.tile .card .where{margin-top:4px}
-.grid.tile .card .offi,.grid.tile .card .figs,
-.grid.tile .card .acts,.grid.tile .card .cats{display:none}
-.grid.tile .card .when{margin-top:8px}
-.grid.tile .card .where{margin-top:4px}
-/* The tag notched into the picture is the only place the category is named
-   now — the chip that used to repeat it under the title is gone, and the tag
-   drops a step on the scale so it decorates the picture rather than competing
-   with the festival's own name. */
-.grid.tile .card .kind{display:none}
-.grid.tile .card .notch{font-size:var(--md-sys-typescale-label-small-size)}
-/* The whole tile is the target, since the buttons are gone. */
-.grid.tile .card{cursor:pointer}
-.card .kind{display:none}
+@media(min-width:600px){.grid.tile{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1024px){.grid.tile{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:2800px){.grid.tile{grid-template-columns:repeat(5,minmax(0,1fr))}}
+/* The whole card is the target — the two controls in it are excluded in the
+   script, and everything else opens the planner. */
+.grid .card{cursor:pointer}
+
+/* ── "Add to plan" / "In your plan" ────────────────────
+   A Material 3 filled tonal toggle, taken as it stands from the reference:
+   a hidden checkbox drives both states, so the control needs no script to
+   look right and keeps its place in the accessibility tree. Both sizes of
+   card carry it — centred under the compact one, opposite the links on the
+   detailed one — and each theme re-points its colours. */
+.plan-toggle {
+  --plan-bg:          #DCE8C0;
+  --plan-fg:          #1F2D0A;
+  --plan-bg-on:       #2E4B12;
+  --plan-fg-on:       #EDF6DA;
+  --plan-height:      40px;
+  --plan-radius:      20px;
+}
+
+/* The checkbox stays in the accessibility tree, just out of sight. */
+.plan-toggle__input {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden; white-space: nowrap;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+}
+
+.plan-toggle__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--plan-height);
+  padding: 0 20px 0 16px;
+  border-radius: var(--plan-radius);
+  background: var(--plan-bg);
+  color: var(--plan-fg);
+  font: 550 14px/1 "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  letter-spacing: .01em;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.plan-toggle__button:hover  { box-shadow: 0 1px 2px rgba(0,0,0,.18); }
+.plan-toggle__button:active { transform: scale(.97); }
+
+/* Selected */
+.plan-toggle__input:checked + .plan-toggle__button {
+  background: var(--plan-bg-on);
+  color: var(--plan-fg-on);
+}
+
+/* Keyboard focus lands on the hidden input, so ring the visible label. */
+.plan-toggle__input:focus-visible + .plan-toggle__button {
+  outline: 2px solid var(--plan-fg);
+  outline-offset: 2px;
+}
+.plan-toggle__input:checked:focus-visible + .plan-toggle__button {
+  outline-color: var(--plan-bg-on);
+}
+
+/* --- Icon and label swap ------------------------------------
+   Both states are stacked in one grid cell, so the button is
+   always as wide as the longer label and never jumps on click. */
+.plan-toggle__icons,
+.plan-toggle__labels { display: grid; }
+.plan-toggle__icons > *,
+.plan-toggle__labels > * {
+  grid-area: 1 / 1;
+  transition: opacity .16s ease, transform .16s ease;
+}
+.plan-toggle__labels > * { justify-self: center; white-space: nowrap; }
+
+.plan-toggle__icons svg { display: block; width: 18px; height: 18px; fill: currentColor; }
+
+.plan-toggle [data-state="on"]  { opacity: 0; transform: scale(.7); }
+.plan-toggle__input:checked + .plan-toggle__button [data-state="off"] {
+  opacity: 0; transform: scale(.7);
+}
+.plan-toggle__input:checked + .plan-toggle__button [data-state="on"] {
+  opacity: 1; transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plan-toggle__button, .plan-toggle [data-state] { transition-duration: .01ms; }
+  .plan-toggle__button:active { transform: none; }
+}
 /* On a phone the search box and two triggers will not share one row, and left
    to wrap they produced three ragged ones. Two rows instead: the mark and the
    search, then the filters side by side.
@@ -1116,16 +1347,7 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   .vseg button{height:42px;padding:0 11px}
   .vseg button .lbl{display:none}
   /* Two per row is the point of the compact view on a phone. */
-  .grid.tile{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .grid.tile .card{border-radius:var(--md-sys-shape-corner-large)}
-  .grid.tile .card .body{padding:11px 12px 13px}
-  /* Two to a row leaves no space for the full 18/27, but nothing that is a
-     sentence goes under 14px — the city's listing holds 16 for its meta and
-     this is the same job at half the width. */
-  .grid.tile .card h4{font-size:var(--md-sys-typescale-label-large-size);
-    line-height:var(--md-sys-typescale-label-large-line-height)}
-  .grid.tile .card .when{font-size:var(--md-sys-typescale-label-medium-size);line-height:1.5;margin-top:6px}
-  .grid.tile .card .where{font-size:var(--md-sys-typescale-label-medium-size);line-height:1.5}
+  .grid.tile{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
   .sheet{left:0;right:0;width:auto;max-width:none}
@@ -1168,114 +1390,504 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 /* The month heading used to trail a rule across the rest of the row. The
    heading and its count already read as a group; the line only added weight
    above cards that carry plenty of their own. */
-.card .figs b{color:var(--md-sys-color-on-surface)}
 .grid{display:grid;gap:clamp(16px,2vw,24px);
-  grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))}
-/* The festival's own colour is confined to the label on the picture. The card
-   underneath is the site's surface, so a row of cards reads as one list rather
-   than as a set of differently tinted objects. */
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
 /* ── card ──────────────────────────────────────────────
-   Built to the cards on Material's own site: extra-large corner, a
-   surface-container-low fill that sits one step *under* the page rather than
-   above it, no outline and no resting shadow — the fill is the whole
-   separation — media full-bleed to the top edge, and 24dp of padding round the
-   text. Title headline-small, supporting text body-large. */
-.card{background:var(--md-sys-color-surface-container-low);border-radius:var(--r-card);overflow:hidden;display:flex;
-  flex-direction:column;transition:transform var(--md-sys-motion-spring-default-spatial),box-shadow var(--md-sys-motion-spring-default-effects)}
-.card[hidden]{display:none}
-.card:hover{transform:translateY(-2px);box-shadow:var(--md-sys-elevation-2)}
-.card.past .shot img.pic{filter:grayscale(.8) contrast(.95)}
+   The redesign, taken as it stands: one M3 tonal palette per category, a chip
+   notched into the artwork's corner, and a single component in two sizes —
+   compact in the tile grid, detailed in the full one.
 
-/* 2:1 rather than 16:10. The picture is the card's opening, not its subject —
-   at 16:10 it took more height than the record underneath it, and a festival
-   poster survives the tighter crop because what identifies it is the wordmark
-   laid over the corner, which keeps its own size. */
-.card .shot{position:relative;aspect-ratio:2/1;overflow:hidden;background:var(--md-sys-color-surface-container-low)}
-.card .shot img.pic{width:100%;height:100%;object-fit:cover;display:block}
-.card .lg{position:absolute;left:18px;top:16px;width:max-content;max-width:66%;z-index:2}
-.card .lg img{height:clamp(34px,4vw,44px);width:auto;max-width:100%;display:block;
-  filter:drop-shadow(0 2px 8px rgba(0,0,0,.55))}
-/* The notched tag: a block whose top-left corner curves back into the image.
-   It is the card's one piece of colour, and the colour says what kind of
-   festival this is — music, film, art, culture or other. */
-.notch{position:absolute;right:0;bottom:0;z-index:2;background:var(--cat,var(--md-sys-color-on-surface));color:var(--cat-ink,var(--md-sys-color-surface-container-lowest));
-  font-family:var(--title);font-size:var(--f-caption);font-weight:var(--md-sys-typescale-emphasized-label-weight);
-  letter-spacing:var(--k-over);text-transform:uppercase;
-  padding:11px 18px 12px;border-top-left-radius:22px}
-.notch::before,.notch::after{content:"";position:absolute;width:22px;height:22px;
-  background:radial-gradient(circle at 0 0,transparent 22px,var(--cat,var(--md-sys-color-on-surface)) 22px)}
-.notch::before{right:100%;bottom:0}
-.notch::after{right:0;bottom:100%}
-/* Card interior, measured off a myhelsinki.fi event card: 24px of padding on
-   the sides and the bottom, none at the top, a 12px stack gap, and 24px of air
-   between the picture and the title. Everything inside is 18/27 — the title in
-   700, the date and the place in 400, one line each — and the category is
-   16/24 in 700. */
-.body{padding:0 24px 24px;display:flex;flex-direction:column;gap:12px;flex:1}
-.ttl{display:flex;align-items:flex-start;gap:12px}
-.ttl h4{flex:1;min-width:0}
-.offi{position:relative;flex:none;display:inline-flex;align-items:center;gap:5px;font-size:var(--f-caption);
-  letter-spacing:var(--k-caption);font-weight:var(--md-sys-typescale-emphasized-label-weight);
-  color:var(--md-sys-color-on-surface-variant);text-decoration:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  padding:5px 11px;margin-top:1px;white-space:nowrap;transition:var(--md-sys-motion-spring-fast-effects)}
-/* the pill stays visually light beside the title, but its hit area is
-   expanded to the 44pt minimum both HIG and Material ask for */
-.offi::after{content:'';position:absolute;inset:-5px -6px}
-.offi:hover{color:var(--md-sys-color-on-surface);border-color:var(--md-sys-color-on-surface);
-  background:color-mix(in srgb,var(--md-sys-color-on-surface) 10%,transparent)}
-.offi svg{width:12px;height:12px}
-.ttl{padding-top:24px}
-/* The name is what a reader scans for, so it steps up two rungs from the
-   14.4px the rest of the card runs at rather than sharing their size. */
-.body h4{margin:0;font-family:var(--sans);
-  font-size:var(--md-sys-typescale-headline-small-size);
-  line-height:var(--md-sys-typescale-headline-small-line-height);
-  letter-spacing:var(--md-sys-typescale-headline-tracking);
-  text-transform:none;font-weight:var(--md-sys-typescale-emphasized-title-weight);
-  color:var(--md-sys-color-on-surface)}
-.when{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-body-weight);
-  font-variant-numeric:tabular-nums}
-/* The date and the place are consecutive lines of one address on their card,
-   not two blocks — so this one closes the stack gap rather than adding to it. */
-.where{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface-variant);margin-top:-12px}
-.cats{font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface)}
-.figs{display:flex;gap:18px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;color:var(--md-sys-color-on-surface-variant)}
-.figs b{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight);font-variant-numeric:tabular-nums}
-.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  white-space:nowrap;font-size:var(--md-sys-typescale-label-large-size);
-  line-height:var(--md-sys-typescale-label-large-line-height);
-  letter-spacing:var(--md-sys-typescale-label-large-tracking);
-  font-weight:var(--md-sys-typescale-emphasized-title-weight);
-  letter-spacing:var(--k-label);padding:12px 20px;
-  /* Round by default, squaring off while held: "When pressed, buttons can
-     morph to become more square." The pressed corner is the one the
-     measurements table gives this size. */
-  --shape:var(--md-sys-shape-corner-full);
-  --shape-pressed:var(--md-sys-shape-corner-pressed-m);
-  border-radius:var(--shape);
-  border:1.5px solid var(--md-sys-color-on-surface);text-decoration:none;
-  transition:var(--md-sys-motion-spring-fast-effects),
-             border-radius var(--md-sys-motion-spring-fast-spatial);
-  min-height:40px;color:var(--md-sys-color-on-surface)}
-.btn:active{--shape:var(--shape-pressed)}
-/* Buttons are ink on paper or paper on ink — never the category's colour.
-   Colour is how a label is read at a glance, and a page that uses it for the
-   buttons too has spent it. */
-/* Filled button: primary container, on-primary label, state layer in the
-   label's own colour — M3's filled button, with our ink-on-paper palette
-   choice kept (DESIGN.md §9). */
-.btn.primary{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest);font-weight:var(--md-sys-typescale-emphasized-label-weight);
-  border-color:var(--md-sys-color-on-surface);flex:1 1 auto;
-  --st-on:var(--md-sys-color-surface-container-lowest)}
-.btn{--st-on:var(--md-sys-color-on-surface)}
+   Two things had to be said differently here. The reference fixes the card at
+   320px and 400px; in a fluid grid it fills its column instead, so a row stays
+   flush at every width. And the size is chosen by the grid rather than by a
+   modifier class, because switching view toggles one class on the grid and
+   re-rendering every card to swap a modifier would lose their state. The
+   declarations are the reference's.
 
-.acts .btn:not(.primary){flex:0 1 auto}
-.btn.free{border-style:dashed;color:var(--md-sys-color-on-surface-variant);border-color:var(--md-sys-color-outline)}
-/* below this width the two actions stop fitting side by side; a clean stack
-   beats one full-width button with an orphan beneath it */
-@media(max-width:599px){.acts{flex-direction:column;align-items:stretch}
-  .acts .btn{width:100%}}
+   ── category themes ──
+   Each is one tonal palette. Everything in the card — surface, text, chip,
+   artwork, toggle — reads its colour from these, so a new category is a new
+   theme block and nothing else. Music, art and film are the redesign's own;
+   culture and others are built to the same recipe, since our data has five
+   categories where it draws three. */
+.theme-music {                       /* green  — music festivals */
+  --surface:        #F2F0EB;
+  --on-surface:     #191D13;
+  --on-surface-var: #494E42;
+  --outline-var:    #C7CBBA;
+  --chip:           #DCE8C0;
+  --on-chip:        #1F2D0A;
+  --accent:         #4C662B;
+  /* artwork */
+  --art-bg:  #E7F0CF;
+  --art-1:   #CDEDA3;
+  --art-2:   #4C662B;
+  --art-3:   #A9CE88;
+  --art-ink: #31490F;
+}
+.theme-art {                         /* amber / brown — art festivals */
+  --surface:        #F7F1E8;
+  --on-surface:     #211A11;
+  --on-surface-var: #51443A;
+  --outline-var:    #D4C5B4;
+  --chip:           #F2DFC3;
+  --on-chip:        #2B1700;
+  --accent:         #855318;
+  --art-bg:  #FBEBD3;
+  --art-1:   #FFDDB3;
+  --art-2:   #855318;
+  --art-3:   #E5C193;
+  --art-ink: #4A2A02;
+}
+.theme-film {                        /* purple — film festivals */
+  --surface:        #F4F0F7;
+  --on-surface:     #1D1B20;
+  --on-surface-var: #49454F;
+  --outline-var:    #CAC4D0;
+  --chip:           #E8DEF8;
+  --on-chip:        #1D192B;
+  --accent:         #6750A4;
+  --art-bg:  #EFE6FA;
+  --art-1:   #EADDFF;
+  --art-2:   #6750A4;
+  --art-3:   #CFC1E8;
+  --art-ink: #341E73;
+}
+.theme-culture {                     /* rose — street festivals, food, heritage */
+  --surface:        #F8F0F1;
+  --on-surface:     #201A1B;
+  --on-surface-var: #524345;
+  --outline-var:    #D8C2C5;
+  --chip:           #FBD9DF;
+  --on-chip:        #2C151A;
+  --accent:         #8F4A56;
+  --art-bg:  #FBE4E8;
+  --art-1:   #FFD9DF;
+  --art-2:   #8F4A56;
+  --art-3:   #E7B9C1;
+  --art-ink: #4E2029;
+}
+.theme-others {                      /* neutral — anything the four do not describe */
+  --surface:        #F1F1EF;
+  --on-surface:     #1B1B19;
+  --on-surface-var: #464644;
+  --outline-var:    #C6C6C3;
+  --chip:           #E2E2DF;
+  --on-chip:        #1B1B19;
+  --accent:         #55564F;
+  --art-bg:  #E9E9E6;
+  --art-1:   #DCDCD8;
+  --art-2:   #55564F;
+  --art-3:   #C9C9C5;
+  --art-ink: #38382F;
+}
+
+/* The toggle keeps its own component CSS; only its tokens are re-pointed per
+   theme. Two classes beat the component's one. */
+.theme-music { --sel-bg: #2E4B12; --sel-fg: #EDF6DA; }
+.theme-music .plan-toggle {
+  --plan-bg: #DCE8C0; --plan-fg: #1F2D0A;
+  --plan-bg-on: #2E4B12; --plan-fg-on: #EDF6DA;
+}
+.theme-art { --sel-bg: #6B4310; --sel-fg: #FFEEDC; }
+.theme-art .plan-toggle {
+  --plan-bg: #F2DFC3; --plan-fg: #2B1700;
+  --plan-bg-on: #6B4310; --plan-fg-on: #FFEEDC;
+}
+.theme-film { --sel-bg: #4F378B; --sel-fg: #EADDFF; }
+.theme-film .plan-toggle {
+  --plan-bg: #E8DEF8; --plan-fg: #1D192B;
+  --plan-bg-on: #4F378B; --plan-fg-on: #EADDFF;
+}
+.theme-culture { --sel-bg: #6B333E; --sel-fg: #FFE1E6; }
+.theme-culture .plan-toggle {
+  --plan-bg: #FBD9DF; --plan-fg: #2C151A;
+  --plan-bg-on: #6B333E; --plan-fg-on: #FFE1E6;
+}
+.theme-others { --sel-bg: #3C3D37; --sel-fg: #E9E9E4; }
+.theme-others .plan-toggle {
+  --plan-bg: #E2E2DF; --plan-fg: #1B1B19;
+  --plan-bg-on: #3C3D37; --plan-fg-on: #E9E9E4;
+}
+
+/* ── the component, shared between compact and detailed ── */
+.card {
+  --media-radius: 20px;
+  --chip-radius:  16px;
+  --notch-gap:    6px;    /* space between artwork and chip     */
+  --notch-fillet: 12px;   /* radius of the concave transitions  */
+
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: var(--surface);
+  border-radius: 28px;
+  padding: 12px 12px 16px;
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  /* The chip and the text button ask for `font: … inherit`, which is not a
+     valid shorthand and is dropped — so both take the size they inherit. On
+     the reference page that is the browser's 16px; this page runs smaller, so
+     the card restates it and the two render at the size they do there. */
+  font-size: 16px;
+}
+.grid.tile .card { padding-block-end: 24px; }
+.card[hidden] { display: none; }
+/* A festival that has been is greyed — but only where that reads as age. The
+   drawn artwork takes its colour from the theme, and desaturating it just
+   makes the category unrecognisable. */
+.card.past img.card__art { filter: grayscale(.8) contrast(.95); }
+
+/* ---- media ------------------------------------------------- */
+.card__media {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--media-radius);
+  overflow: hidden;
+  background: var(--art-bg);
+}
+.grid.tile .card__media { aspect-ratio: 16 / 9; }
+
+/* A festival with a photograph of its own uses <img class="card__art">; the
+   layout, notch and chip all still work. */
+.card__art {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* The notch is a block of card colour over the artwork's corner. It wraps the
+   chip, so it always matches the chip's size. */
+.card__notch {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  padding-block-start: var(--notch-gap);
+  padding-inline-start: var(--notch-gap);
+  background: var(--surface);
+  border-start-start-radius: calc(var(--chip-radius) + var(--notch-gap));
+}
+/* Concave fillets: a square of card colour with a quarter-disc punched out, so
+   the artwork curves into the cut. */
+.card__notch::before,
+.card__notch::after {
+  content: "";
+  position: absolute;
+  inline-size: var(--notch-fillet);
+  block-size: var(--notch-fillet);
+  background: radial-gradient(circle at 0 0,
+              #0000 calc(var(--notch-fillet) - .5px),
+              var(--surface) calc(var(--notch-fillet) + .5px));
+}
+.card__notch::before { inset-inline-end: 0;    inset-block-end: 100%; }
+.card__notch::after  { inset-inline-end: 100%; inset-block-end: 0;    }
+
+.card__chip {
+  display: block;
+  padding: 9px 16px;
+  border-start-start-radius: var(--chip-radius);
+  border-end-end-radius: var(--media-radius);
+  background: var(--chip);
+  color: var(--on-chip);
+  font: 700 12px/1 inherit;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+/* ---- text -------------------------------------------------- */
+.card__body { padding: 20px 12px 0; }
+
+.card__title {
+  margin: 0;
+  color: var(--on-surface);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+}
+.grid.tile .card__title { font-size: 19px; }
+
+.card__date {
+  margin: 10px 0 0;
+  color: var(--on-surface);
+  font-size: 15px;
+  font-weight: 450;
+  line-height: 1.35;
+}
+.card__meta {
+  margin: 7px 0 0;
+  color: var(--on-surface-var);
+  font-size: 14.5px;
+  line-height: 1.35;
+}
+/* ---- facts list (detailed only) ---------------------------- */
+.card__facts {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+.card__facts li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--on-surface);
+  font-size: 14.5px;
+  line-height: 1.3;
+}
+.card__facts svg {
+  flex: none;
+  inline-size: 20px;
+  block-size: 20px;
+  fill: var(--on-surface-var);
+}
+
+/* ---- assist chips ------------------------------------------ */
+/* One row. The chips are 32px tall and a second row starts at 40, so the clip
+   never cuts through a chip — it either fits or it is not shown. Which ones
+   fit is decided by the column width, so it settles again on every resize
+   without anything having to measure it. */
+.card__tags {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-block-size: 32px;
+  overflow: hidden;
+}
+.card__tags li {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--outline-var);
+  border-radius: 8px;
+  color: var(--on-surface);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* The compact card is the title, the date, the place and the toggle. */
+.grid.tile .card__facts,
+.grid.tile .card__tags { display: none; }
+
+/* ---- actions ----------------------------------------------- */
+.card__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-block-start: 22px;
+  padding: 18px 4px 0 8px;
+  border-block-start: 1px solid var(--outline-var);
+}
+.card__actions > .btn-group { flex: 1 1 100%; }
+/* The cards in a row are the same height, and the toggle is pushed to the
+   foot of each, so a title that takes two lines does not drop its button below
+   its neighbours'. The 30px is the least air it may have, not the amount. */
+.grid.tile .card__actions {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0 0;
+  margin-block-start: auto;
+  border-block-start: 0;
+}
+
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 20px;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  font: 550 14px/1 inherit;
+  letter-spacing: .01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .18s ease;
+}
+.text-button:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.text-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── the detailed card's actions ───────────────────────
+   Material 3 Expressive's standard button group, as the redesign gives it:
+   two stateless links and one toggle, 8dp apart, each keeping its own shape.
+   Only the toggle has a selected state, so only the toggle morphs its corner
+   and fills — in M3 the shape change signals selection, and a stateless button
+   must never borrow it.
+
+   The colours are the card's rather than the group's own: the container pair
+   is the category's chip, and the selected fill is the pair the plan toggle
+   already uses, so the two controls mean the same thing in every theme. */
+.btn-group {
+  /* ---- colour roles, taken from the card ---- */
+  --md-primary:    var(--sel-bg);
+  --md-on-primary: var(--sel-fg);
+  --md-surface:    var(--chip);
+  --md-on-surface: var(--on-chip);
+
+  /* ---- motion tokens ----
+     Material's published web conversions of the expressive spring tokens. */
+  --m3-spatial-fast:    350ms cubic-bezier(.42, 1.67, .21, .90);
+  --m3-effects-default: 200ms cubic-bezier(.34, .80, .34, 1.00);
+  --spatial: var(--m3-spatial-fast);
+
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  width: 100%;
+  max-width: 560px;
+}
+
+/* The toggle's checkbox stays in the accessibility tree, out of the layout. */
+.btn-group__input {
+  position: absolute;
+  width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- shared button ---------- */
+.opt {
+  position: relative;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 56px;
+  padding: 0 24px;
+  border-radius: 16px;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font: 500 16px/1 "Roboto", "Inter", "Segoe UI", system-ui, sans-serif;
+  letter-spacing: .01em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    flex-grow        var(--spatial),
+    border-radius    var(--spatial),
+    background-color var(--m3-effects-default),
+    color            var(--m3-effects-default);
+}
+
+/* State layer — 8% hover, 10% pressed, over the container colour. */
+.opt::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity var(--m3-effects-default);
+  pointer-events: none;
+}
+.opt:hover::before  { opacity: .08; }
+.opt:active::before { opacity: .10; }
+
+.opt:focus-visible,
+.btn-group__input:focus-visible + .opt {
+  outline: 3px solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+/* ---------- selected — the toggle only ---------- */
+.btn-group__input:checked + .opt {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  border-radius: 28px;                  /* full */
+}
+
+/* ---------- width choreography ---------- */
+.opt                             { flex-grow: 1; }
+.btn-group__input:checked + .opt { flex-grow: 1.6; }
+/* while any button is held, its neighbours breathe outwards … */
+.btn-group:has(.opt:active) .opt                             { flex-grow: 1.14; }
+.btn-group:has(.opt:active) .btn-group__input:checked + .opt { flex-grow: 1.74; }
+/* … and the held one squeezes in. */
+.btn-group .opt:active                             { flex-grow: .80; }
+.btn-group .btn-group__input:checked + .opt:active { flex-grow: .88; }
+
+/* ---------- icons ---------- */
+.opt__icon { width: 24px; height: 24px; flex: none; }
+.opt__icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* plus ⇄ check, stacked so the icon box never shifts */
+.opt__icon--toggle path { transition: opacity var(--m3-effects-default); }
+.opt__icon--toggle .ic-on { opacity: 0; }
+.btn-group__input:checked + .opt .ic-off { opacity: 0; }
+.btn-group__input:checked + .opt .ic-on  { opacity: 1; }
+
+/* label swap, stacked in one grid cell so the button never jumps width */
+.opt__labels { display: grid; }
+.opt__labels > span {
+  grid-area: 1 / 1;
+  justify-self: center;
+  transition: opacity var(--m3-effects-default);
+}
+.opt__labels .lbl-on { opacity: 0; }
+.btn-group__input:checked + .opt .lbl-off { opacity: 0; }
+.btn-group__input:checked + .opt .lbl-on  { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-group { --spatial: 1ms linear; }
+  .opt, .opt::before, .opt__icon path, .opt__labels > span { transition-duration: 1ms; }
+}
+
+/* The group is drawn at 560px; a card column is smaller than that, and the row
+   does not break. What gives instead is the two stateless buttons' labels: at
+   the width where three labels would have to be cut mid-word, those two become
+   the icons they already carry, and the toggle — the one button whose label
+   changes with its state — keeps its words at every size. */
+.grid:not(.tile) .card{container-type:inline-size}
+@container (max-width: 470px){
+  .opt--link{flex-grow:0;padding:0 18px}
+  .opt--link .opt__text{display:none}
+}
+
+/* Each card size keeps the control it was drawn with. */
+.grid.tile .card .btn-group{display:none}
+.grid:not(.tile) .card .plan-toggle{display:none}
+
+/* Card-scoped sizing for the shared toggle. */
+.card .plan-toggle { --plan-height: 44px; }
+.card .plan-toggle__button { font-size: 15px; padding: 0 22px 0 18px; }
+.card .plan-toggle__icons svg { width: 20px; height: 20px; }
+.grid.tile .card .plan-toggle { --plan-height: 48px; }
+
+/* Two compact cards to a phone's row is 167px each, half the 320 the redesign
+   is drawn at. Nothing is re-composed: every length is taken down by about a
+   fifth so the card keeps its proportions — otherwise the chip alone covers
+   half the artwork and the toggle runs past the card's own edge. */
+@media(max-width:599px){
+  .grid.tile .card{--media-radius:14px;--chip-radius:12px;--notch-fillet:9px;
+    border-radius:20px;padding:8px 8px 16px}
+  .grid.tile .card__chip{padding:6px 10px;font-size:10px;letter-spacing:.07em}
+  .grid.tile .card__body{padding:14px 6px 0}
+  .grid.tile .card__title{font-size:15px}
+  .grid.tile .card__date{font-size:13px;margin-top:8px}
+  .grid.tile .card__meta{font-size:12.5px;margin-top:5px}
+  .grid.tile .card__actions{padding-block-start:18px}
+  .grid.tile .card .plan-toggle{--plan-height:38px;--plan-radius:19px}
+  .grid.tile .card .plan-toggle__button{font-size:13px;padding:0 14px 0 12px;gap:6px}
+  .grid.tile .card .plan-toggle__icons svg{width:16px;height:16px}
+}
+
 .empty{padding:40px 0;text-align:center;color:var(--md-sys-color-on-surface-variant);font-size:var(--f-body);
   line-height:var(--l-body)}
 
@@ -1417,18 +2029,20 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <body id="top" class="fx-shell">
 
 <svg class="sr" aria-hidden="true"><defs>
-<symbol id="i-logo" viewBox="0 0 40 40">
-  <defs>
-    <linearGradient id="fpgrad" x1=".06" y1=".95" x2=".94" y2=".05">
-      <stop offset="0" stop-color="#b6fc46"/>
-      <stop offset=".55" stop-color="#e4fb27"/>
-      <stop offset="1" stop-color="#fff203"/>
-    </linearGradient>
-    <clipPath id="fpup"><path d="M-14 -14H54V20H-14Z" transform="rotate(-34 20 20)"/></clipPath>
-    <clipPath id="fpdn"><path d="M-14 20H54V54H-14Z" transform="rotate(-34 20 20)"/></clipPath>
-  </defs>
-  <g clip-path="url(#fpup)"><circle cx="22.2" cy="16.7" r="18.4" fill="url(#fpgrad)"/></g>
-  <g clip-path="url(#fpdn)"><circle cx="17.8" cy="23.3" r="18.4" fill="url(#fpgrad)"/></g>
+<!-- The Flanner mark: six petals bursting from a centre. Everywhere this page
+     draws it, it is under 40px, which is where the brand's own spec asks for
+     the simplified cut — wider petals, one tone, no centre dot. The silhouette
+     is the same one the full mark and the favicon carry. The tone follows the
+     theme through --mark-ink. -->
+<symbol id="i-logo" viewBox="0 0 96 96">
+  <g fill="var(--mark-ink,currentColor)">
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(60 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(120 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(180 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(240 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(300 48 48)"/>
+  </g>
 </symbol>
 <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
 <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
@@ -1464,6 +2078,98 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
      which is what this page's offline promise costs. -->
 <symbol id="i-ms-location" viewBox="0 -960 960 960"><path d="M480-301q99-80 149.5-154T680-594q0-90-56-148t-144-58q-88 0-144 58t-56 148q0 65 50.5 139T480-301Zm0 101Q339-304 269.5-402T200-594q0-121 79.5-193.5T480-860q121 0 200.5 72.5T760-594q0 94-69.5 192T480-200Zm0-320q33 0 56.5-23.5T560-600q0-33-23.5-56.5T480-680q-33 0-56.5 23.5T400-600q0 33 23.5 56.5T480-520Z"/></symbol>
 <symbol id="i-ms-arrow-forward" viewBox="0 -960 960 960"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></symbol>
+
+<!-- Category artwork. One shared composition, one motif per category. The
+     colours are custom properties, so a <use> of the same symbol renders
+     green, amber or purple depending on which theme the card carries.
+     A festival with a photograph of its own uses that instead. -->
+<!-- The calendar's own glyphs, from the redesign. i-cal-down is its chevron;
+     the page already has an i-down of its own in the stroked set. -->
+<symbol id="i-prev" viewBox="0 0 24 24"><path d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4-4.6-4.6z"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path d="M8.6 16.6 10 18l6-6-6-6-1.4 1.4 4.6 4.6z"/></symbol>
+<symbol id="i-cal-down" viewBox="0 0 24 24"><path d="m12 15-5-5 1.4-1.4L12 12.2l3.6-3.6L17 10z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M9.6 16.2 4.8 11.4l1.4-1.4 3.4 3.4 8-8L19 6.8z"/></symbol>
+
+<symbol id="art-base" viewBox="0 0 400 250">
+  <rect width="400" height="250" fill="var(--art-bg)"/>
+  <circle cx="335" cy="42" r="118" fill="var(--art-1)"/>
+  <path d="M0 250V128a122 122 0 0 1 122 122z" fill="var(--art-3)"/>
+  <circle cx="335" cy="42" r="152" fill="none" stroke="var(--art-2)" stroke-width="6" opacity=".28"/>
+  <circle cx="52" cy="52" r="18" fill="var(--art-2)" opacity=".45"/>
+</symbol>
+<!-- music: equaliser bars -->
+<symbol id="motif-music" viewBox="0 0 400 250">
+  <g fill="var(--art-ink)">
+    <rect x="110" y="100" width="22" height="60"  rx="11"/>
+    <rect x="142" y="78"  width="22" height="104" rx="11"/>
+    <rect x="174" y="110" width="22" height="40"  rx="11"/>
+    <rect x="206" y="88"  width="22" height="84"  rx="11"/>
+    <rect x="238" y="102" width="22" height="56"  rx="11"/>
+  </g>
+</symbol>
+<!-- art: brush stroke -->
+<symbol id="motif-art" viewBox="0 0 400 250">
+  <path d="M108 178c30-88 100 22 140-72" fill="none" stroke="var(--art-ink)"
+        stroke-width="24" stroke-linecap="round"/>
+  <circle cx="272" cy="172" r="15" fill="var(--art-ink)" opacity=".55"/>
+</symbol>
+<!-- film: strip with play -->
+<symbol id="motif-film" viewBox="0 0 400 250">
+  <rect x="100" y="85" width="180" height="90" rx="14" fill="var(--art-ink)"/>
+  <g fill="var(--art-1)">
+    <rect x="122" y="93"  width="16" height="12" rx="3"/>
+    <rect x="152" y="93"  width="16" height="12" rx="3"/>
+    <rect x="182" y="93"  width="16" height="12" rx="3"/>
+    <rect x="212" y="93"  width="16" height="12" rx="3"/>
+    <rect x="242" y="93"  width="16" height="12" rx="3"/>
+    <rect x="122" y="145" width="16" height="12" rx="3"/>
+    <rect x="152" y="145" width="16" height="12" rx="3"/>
+    <rect x="182" y="145" width="16" height="12" rx="3"/>
+    <rect x="212" y="145" width="16" height="12" rx="3"/>
+    <rect x="242" y="145" width="16" height="12" rx="3"/>
+    <path d="M180 114l32 16-32 16z"/>
+  </g>
+</symbol>
+<!-- culture: bunting over the street. Drawn to the same recipe as the three
+     the reference supplies, for the two categories our data has that its
+     three themes do not cover. -->
+<symbol id="motif-culture" viewBox="0 0 400 250">
+  <path d="M96 100q104 52 208 0" fill="none" stroke="var(--art-ink)"
+        stroke-width="7" stroke-linecap="round"/>
+  <g fill="var(--art-ink)">
+    <path d="M124 111l26 9-9 32z"/>
+    <path d="M170 125l26 5-5 33z"/>
+    <path d="M214 130l26-5 5 33z"/>
+    <path d="M258 120l26-9 9 32z"/>
+  </g>
+</symbol>
+<!-- others: the base composition and a plain trio, for anything the four
+     named categories do not describe -->
+<symbol id="motif-others" viewBox="0 0 400 250">
+  <g fill="var(--art-ink)">
+    <circle cx="152" cy="128" r="17"/>
+    <circle cx="200" cy="128" r="17"/>
+    <circle cx="248" cy="128" r="17"/>
+  </g>
+</symbol>
+
+<!-- The detailed card's fact icons. Prefixed f- because the rail already has
+     an i-ticket of its own, drawn in the stroked style this set does not use. -->
+<symbol id="f-time" viewBox="0 0 24 24">
+  <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 5h-2v6l5 3 1-1.7-4-2.3V7z"/>
+</symbol>
+<symbol id="i-place" viewBox="0 0 24 24">
+  <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>
+</symbol>
+<symbol id="f-place" viewBox="0 0 24 24">
+  <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/>
+</symbol>
+<symbol id="f-ticket" viewBox="0 0 24 24">
+  <path d="M4 6h16a1 1 0 0 1 1 1v3a2 2 0 0 0 0 4v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3a2 2 0 0 0 0-4V7a1 1 0 0 1 1-1zm5 3v6h2V9H9z"/>
+</symbol>
+<symbol id="f-date" viewBox="0 0 24 24">
+  <path d="M7 2h2v2h6V2h2v2h2a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h2V2zM5 9v10h14V9H5z"/>
+</symbol>
 </defs></svg>
 
 <div class="wrap">
@@ -1490,10 +2196,25 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
   </div>
 </header>
 
-<!-- The reference's section, shell for shell. The track and the dots are the
-     only things filled in from the festival data. -->
-<section class="highlight-events" id="hero" hidden aria-labelledby="highlight-events-headline">
-  <h2 class="highlight-events__headline" id="highlight-events-headline">Flanner Highlights</h2>
+<!-- The redesign's section, shell for shell. The header, the track and the
+     dots are filled in from the festival data; the section's theme class is
+     whichever festival is on screen. -->
+<section class="highlights" id="hero" hidden aria-labelledby="highlights-headline">
+
+  <div class="highlights__header">
+    <div>
+      <p class="highlights__eyebrow">This season in Helsinki</p>
+      <h2 class="highlights__headline" id="highlights-headline">Highlight events</h2>
+    </div>
+    <div class="highlights__nav">
+      <button type="button" class="icon-button" id="hlPrev" aria-label="Previous event">
+        <svg aria-hidden="true"><use href="#i-prev"/></svg>
+      </button>
+      <button type="button" class="icon-button" id="hlNext" aria-label="Next event">
+        <svg aria-hidden="true"><use href="#i-next"/></svg>
+      </button>
+    </div>
+  </div>
 
   <div class="carousel" id="highlight-carousel">
     <div class="carousel__viewport">
@@ -1552,28 +2273,55 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 </div>
 
 <div class="active" id="activeTags"></div>
-<section class="months" id="months"></section>
-
 <section class="calview" id="calView" hidden aria-label="Festival calendar">
-  <div class="calbar">
-    <button class="calpick" id="calPick" aria-haspopup="dialog" aria-expanded="false">
-      <span id="calTitle">&nbsp;</span>
-      <svg class="i cv"><use href="#i-down"/></svg></button>
-    <div class="calarrows">
-      <button id="calPrev" aria-label="Previous month">
-        <svg class="i"><use href="#i-left"/></svg></button>
-      <button id="calNext" aria-label="Next month">
-        <svg class="i"><use href="#i-right"/></svg></button>
+  <div class="cal-header">
+    <button type="button" class="cal-title" id="monthBtn" aria-label="Change month">
+      <span id="monthLabel">&nbsp;</span>
+      <svg aria-hidden="true"><use href="#i-cal-down"/></svg>
+    </button>
+    <span class="cal-header__spacer"></span>
+    <button type="button" class="text-button" id="todayBtn">Today</button>
+    <button type="button" class="icon-button" id="prevBtn" aria-label="Previous month">
+      <svg aria-hidden="true"><use href="#i-prev"/></svg>
+    </button>
+    <button type="button" class="icon-button" id="nextBtn" aria-label="Next month">
+      <svg aria-hidden="true"><use href="#i-next"/></svg>
+    </button>
+  </div>
+
+  <div class="calendar">
+    <div class="weekdays" aria-hidden="true">
+      <span><span class="long">Mon</span><span class="short">M</span></span>
+      <span><span class="long">Tue</span><span class="short">T</span></span>
+      <span><span class="long">Wed</span><span class="short">W</span></span>
+      <span><span class="long">Thu</span><span class="short">T</span></span>
+      <span><span class="long">Fri</span><span class="short">F</span></span>
+      <span><span class="long">Sat</span><span class="short">S</span></span>
+      <span><span class="long">Sun</span><span class="short">S</span></span>
     </div>
+    <div class="weeks is-collapsed" id="weeks"></div>
+
+    <button type="button" class="fold" id="foldBtn"
+            aria-expanded="false" aria-controls="weeks"
+            aria-label="Expand to month view">
+      <svg aria-hidden="true"><use href="#i-cal-down"/></svg>
+      <span class="fold__label">Month view</span>
+    </button>
   </div>
-  <div class="calhead" id="calHead"></div>
-  <div class="calgrid" id="calGrid"></div>
-  <p class="calhint">Swipe the grid to change month &middot; tap a day to see what is on</p>
-  <div class="calday" id="calDay" hidden>
-    <div class="mhead"><h3 id="calDayTitle"></h3><span class="ct" id="calDayCt"></span></div>
-    <div class="grid tile" id="calDayGrid"></div>
+
+  <div class="legend" id="calLegend"></div>
+
+  <!-- The list below the calendar is the day pane: it shows everything that is
+       coming up until a day is picked, and that day's festivals after. -->
+  <div class="dayfilter" id="dayFilter" hidden>
+    <h3 id="dayFilterDate"></h3>
+    <span id="dayFilterCount"></span>
+    <button type="button" id="dayFilterClear">Show all</button>
   </div>
+  <p class="sr" id="a11ySummary" aria-live="polite"></p>
 </section>
+
+<section class="months" id="months"></section>
 <p class="empty" id="empty" hidden>No festivals match that filter.</p>
 
 <!-- The questions are a page of their own now, linked from the footer's Info
@@ -1586,24 +2334,6 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <div class="endcap" id="endCap">
   <p>More to be discovered</p>
 </div>
-
-<dialog class="caldlg" id="calDlg" aria-labelledby="calDlgTitle">
-  <div class="calbox">
-    <div class="calboxhead">
-      <h2 id="calDlgTitle">Jump to</h2>
-      <button class="setclose" id="calDlgClose" aria-label="Close">
-        <svg class="i"><use href="#i-close"/></svg></button>
-    </div>
-    <div class="yrow">
-      <button id="yrDown" aria-label="Previous year">
-        <svg class="i"><use href="#i-left"/></svg></button>
-      <b id="yrLabel">&nbsp;</b>
-      <button id="yrUp" aria-label="Next year">
-        <svg class="i"><use href="#i-right"/></svg></button>
-    </div>
-    <div class="mons" id="monOpts"></div>
-  </div>
-</dialog>
 
 <!-- The destination list is m3.material.io's own, copied at the user's request:
      same seven labels in the same order, the same glyphs, the same leading
@@ -1677,6 +2407,10 @@ const Store = (() => {
     theme: {values: ['light', 'dark'], def: 'light', legacy: 'fp-theme'},
     view:  {values: ['cal', 'tile', 'full'], def: null, legacy: 'fp-view'},
     place: {values: null, def: 'fi', legacy: 'fp-place'},  /* checked against PLACES */
+    /* The festivals someone has put in their plan, as a comma-separated list
+       of ids. Ids the current data does not know are dropped on read, so a
+       renamed or retired festival cannot linger in the list. */
+    plan:  {values: null, def: ''},
   };
 
   const readCookie = k => {
@@ -1722,6 +2456,61 @@ const Store = (() => {
 })();
 
 
+/* ── the plan ──────────────────────────────────────────
+   Which festivals someone has marked, held in the same place as the rest of
+   the preferences: on the device, no identifiers, nothing sent anywhere. The
+   set is filtered against the festivals this page actually knows, so a stale
+   id neither counts nor gets written back. */
+const Plan = (() => {
+  const known = new Set(DATA.festivals.map(f => f.id));
+  const set = new Set(Store.get('plan').split(',').filter(id => known.has(id)));
+  const save = () => Store.set('plan', [...set].join(','));
+  return {
+    has: id => set.has(id),
+    set(id, on) { on ? set.add(id) : set.delete(id); save(); },
+    size: () => set.size,
+  };
+})();
+
+
+/* The reference's toggle, once per card. A festival can be on the page twice —
+   in its month and in the day the calendar has open — so the input needs an id
+   of its own each time rather than one derived from the festival; the two
+   copies are kept in step when either changes. */
+let planSeq = 0;
+function planToggle(f) {
+  const id = 'plan-' + (++planSeq);
+  const on = Plan.has(f.id);
+  return `<span class="plan-toggle">
+    <input class="plan-toggle__input" type="checkbox" id="${id}" autocomplete="off"
+           data-plan="${esc(f.id)}"${on ? ' checked' : ''}>
+    <label class="plan-toggle__button" for="${id}">
+      <span class="plan-toggle__icons" aria-hidden="true">
+        <svg data-state="off" viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>
+        <svg data-state="on"  viewBox="0 0 24 24"><path d="M9.6 16.2 4.8 11.4l1.4-1.4 3.4 3.4 8-8L19 6.8z"/></svg>
+      </span>
+      <span class="plan-toggle__labels">
+        <span data-state="off">Add to plan</span>
+        <span data-state="on">In your plan</span>
+      </span>
+    </label>
+  </span>`;
+}
+
+/* One listener for every copy of the toggle on the page, so cards rendered
+   later — a month reflowed by a filter, a day opened in the calendar — are
+   covered without being wired up again. */
+document.addEventListener('change', e => {
+  const box = e.target.closest('input[type=checkbox][data-plan]');
+  if (!box) return;
+  const id = box.dataset.plan;
+  Plan.set(id, box.checked);
+  document.querySelectorAll(`input[data-plan="${CSS.escape(id)}"]`)
+    .forEach(other => { other.checked = box.checked; });
+  /* The calendar paints a festival in the plan solid, so it redraws too. */
+  if (window.redrawCal) window.redrawCal();
+});
+
 /* Days until a festival opens — drives the "on now / in N days" line. */
 const today = new Date(); today.setHours(0,0,0,0);
 const daysTo = f => Math.round((new Date(f.start + 'T00:00:00') - today) / 86400000);
@@ -1747,95 +2536,85 @@ const catOf = f => CAT_BY_ID.get(f.category) || CAT_BY_ID.get(CAT_FALLBACK);
 
 
 /* ── the hero ──────────────────────────────────────────
-   The reference's carousel, script for script: one track that translates by a
-   whole slide, dots that drive it, arrow keys from the dot group, and a swipe
-   across the track. Every image is already a data URI in the document, so a
-   slide is fully painted long before it is scrolled to. */
+   The redesign's carousel, script for script: one track that translates by a
+   whole slide, dots that drive it, arrows either side of the headline, arrow
+   keys from the dot group, and a swipe across the track.
+
+   Three things are ours. The slides are built from the festival data rather
+   than written out. The section takes the theme of whichever festival is on
+   screen, which is what the redesign means by "swap the section to any
+   category palette by changing one class". And the track still turns itself
+   every fifteen seconds, which the page has asked for since before this
+   redesign — it stops for a pointer, a focus, a hidden tab or a track that has
+   scrolled out of view. */
 const byDate = DATA.festivals.slice().sort((a, b) => a.start.localeCompare(b.start));
-/* Upcoming first, then the ones that have been. Five at most: past a handful
-   the dots stop being a way of reaching a particular festival, and the list
-   below is already that. */
+/* What is still to come, five at most: past a handful the dots stop being a
+   way of reaching a particular festival, and the list below is already that. */
 const REEL_MAX = 5;
-const reel = [...byDate.filter(f => !status(f).past),
-              ...byDate.filter(f => status(f).past)].slice(0, REEL_MAX);
+const reel = byDate.filter(f => !status(f).past).slice(0, REEL_MAX);
 
 if (reel.length) {
   $('#hero').hidden = false;
 
-  /* The reference's <span class="material-symbols-outlined">, as the sprite
-     symbol that carries the same outline. */
-  const ms = n => `<svg class="ms" aria-hidden="true"><use href="#i-ms-${n}"/></svg>`;
-
   $('#carousel-track').innerHTML = reel.map((f, i) => `
     <li class="carousel__slide" role="group" aria-roledescription="slide"
         aria-label="Event ${i + 1} of ${reel.length}">
-      <article class="event-card">
-        <div class="event-card__media">
-          <div class="event-card__stack">
-            <figure class="event-card__photo event-card__photo--back">
-              <img src="${f.promoSrc}" alt="">
-            </figure>
-            <figure class="event-card__photo event-card__photo--front">
-              <img src="${f.logoSrc}" alt="${esc(f.name)}">
-            </figure>
+      <article class="banner-card">
+        <div class="banner-card__media">
+          ${cardArt(f, 'banner-card__art')}
+          <div class="banner-card__notch">
+            <span class="banner-card__chip">${esc(catOf(f).label)}</span>
           </div>
         </div>
 
-        <div class="event-card__body">
-          <p class="event-card__date">
+        <div class="banner-card__body">
+          <p class="banner-card__date">
             <time datetime="${esc(f.start)}">${esc(f.dates)}</time>
           </p>
-          <h3 class="event-card__title">${esc(f.name)} ${esc(f.year)}</h3>
-          <p class="event-card__supporting">${esc(f.description)}</p>
-          <p class="event-card__place">
-            ${ms('location')}
+          <h3 class="banner-card__title">${esc(f.name)}${f.year ? ' ' + esc(f.year) : ''}</h3>
+          <p class="banner-card__supporting">${esc(f.description)}</p>
+          <p class="banner-card__place">
+            <svg aria-hidden="true"><use href="#i-place"/></svg>
             ${esc(f.city)}
           </p>
 
-          <div class="event-card__actions">
-            <a class="icon-button" href="${esc(f.planner)}"
-               aria-label="Open ${esc(f.name)} ${esc(f.year)}">
-              ${ms('arrow-forward')}
-            </a>
+          <div class="banner-card__actions">
+            <a class="text-button" href="${esc(f.tickets || f.official)}"
+               target="_blank" rel="noopener">${f.tickets ? 'Tickets' : 'Programme'}</a>
+            ${planToggle(f)}
           </div>
         </div>
       </article>
     </li>`).join('');
 
-  /* One dot per slide, as the reference asks for at the foot of its own
-     markup. A single festival needs no way of choosing between festivals. */
+  /* One dot per slide. A single festival needs no way of choosing between
+     festivals. */
   $('#carousel-dots').innerHTML = reel.length < 2 ? '' : reel.map((f, i) => `
     <button type="button" class="carousel-dot" data-slide-index="${i}"
       aria-label="Show event ${i + 1} of ${reel.length}"
       aria-pressed="${i === 0}"${i === 0 ? ' aria-current="true"' : ''}></button>`).join('');
 
   (function () {
-    const carousel = document.getElementById('highlight-carousel');
-    const track    = document.getElementById('carousel-track');
+    const hero     = $('#hero');
+    const carousel = $('#highlight-carousel');
+    const track    = $('#carousel-track');
     const slides   = Array.from(track.children);
     const dots     = Array.from(carousel.querySelectorAll('.carousel-dot'));
+    const THEMES   = CATEGORIES.map(c => 'theme-' + c.id);
     let index = 0;
 
-    /* ── autoplay ────────────────────────────────────────
-       Not in the reference, which is a page showing one component. Here the
-       banner is the top of a list, and it rotates so a first-time reader sees
-       every festival without touching anything.
-
-       It holds still whenever moving would be wasted or unwelcome: one
-       festival, reduced motion, a backgrounded tab, the banner scrolled out of
-       view, a pointer resting on it, or the keyboard focus inside it — a slide
-       that changes under the cursor or mid-tab is the thing an auto-rotating
-       carousel is usually blamed for. The dwell restarts on every change, so a
-       reader who picks a dot gets the full 15s on what they picked. */
+    /* ── the fifteen-second turn ──
+       Held back while a reader is in the middle of it, and while the page
+       cannot be seen at all. */
     const DWELL = 15000;
     const motionOK = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     let timer = 0, hovering = false, onscreen = true;
 
-    const canRun = () => slides.length > 1 && motionOK && !document.hidden &&
-                         onscreen && !hovering && !carousel.contains(document.activeElement);
+    const canRun = () => slides.length > 1 && motionOK && !document.hidden
+      && onscreen && !hovering && !carousel.contains(document.activeElement);
 
     function nudge() {
-      clearTimeout(timer); timer = 0;
+      clearTimeout(timer);
       if (!canRun()) return;
       timer = setTimeout(() => show((index + 1) % slides.length), DWELL);
     }
@@ -1851,8 +2630,11 @@ if (reel.length) {
     }
 
     function show(next) {
-      index = Math.max(0, Math.min(next, slides.length - 1));
+      index = (next + slides.length) % slides.length;
       track.style.transform = `translateX(-${index * 100}%)`;
+
+      hero.classList.remove(...THEMES);
+      hero.classList.add('theme-' + catOf(reel[index]).id);
 
       dots.forEach((dot, i) => {
         dot.setAttribute('aria-pressed', String(i === index));
@@ -1868,28 +2650,25 @@ if (reel.length) {
       nudge();
     }
 
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => show(Number(dot.dataset.slideIndex)));
-    });
+    dots.forEach(dot => dot.addEventListener('click', () => show(Number(dot.dataset.slideIndex))));
+    $('#hlPrev').addEventListener('click', () => show(index - 1));
+    $('#hlNext').addEventListener('click', () => show(index + 1));
 
-    // Arrow-key navigation from the dot group
-    carousel.querySelector('.carousel-dots').addEventListener('keydown', (event) => {
+    $('#carousel-dots').addEventListener('keydown', (event) => {
       if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
       event.preventDefault();
-      const next = index + (event.key === 'ArrowRight' ? 1 : -1);
-      show((next + slides.length) % slides.length);
+      show(index + (event.key === 'ArrowRight' ? 1 : -1));
       dots[index].focus();
     });
 
-    /* Swipe. The reference compares two clientX values and nothing else,
-       which is enough for a mouse drag and close to useless on a touch screen:
-       a finger that starts on the card and moves down is a page scroll, the
+    /* Swipe. The redesign compares two clientX values and nothing else, which
+       is enough for a mouse drag and close to useless on a touch screen: a
+       finger that starts on the card and moves down is a page scroll, the
        browser takes the gesture over and fires pointercancel, so pointerup
        never arrives — and on the occasions it did, a slightly slanted scroll
        counted as a swipe. So the vertical delta is measured too, the gesture
        only counts when it is clearly horizontal, and a cancelled pointer drops
-       it. touch-action:pan-y in the stylesheet is the other half: it leaves
-       vertical panning to the browser and hands us everything sideways. */
+       it. touch-action:pan-y in the stylesheet is the other half. */
     let startX = null, startY = null;
     const dropGesture = () => { startX = startY = null; };
     track.addEventListener('pointerdown', (e) => { startX = e.clientX; startY = e.clientY; });
@@ -1899,110 +2678,261 @@ if (reel.length) {
       const dx = e.clientX - startX, dy = e.clientY - startY;
       dropGesture();
       if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.6) {
-        show((index + (dx < 0 ? 1 : -1) + slides.length) % slides.length);
+        show(index + (dx < 0 ? 1 : -1));
       }
-    });
-
-    // Hide the gradient placeholder only when a real photo loads
-    track.querySelectorAll('.event-card__photo img').forEach(img => {
-      img.addEventListener('error', () => img.classList.add('is-missing'));
-      if (img.complete && img.naturalWidth === 0) img.classList.add('is-missing');
     });
 
     show(0);
   })();
 }
 
+
 /* ── calendar ──────────────────────────────────────────
-   A real month grid, Monday first as Finland writes it. A festival occupies
-   every day it runs, not just the day it opens — a three-day festival that
-   showed up once would be exactly the thing a calendar is meant to fix.
+   The redesign's month grid, script for script: six week rows, Monday first,
+   a festival laid across every day it runs rather than only the day it opens,
+   and at most three lanes before the rest of a day becomes "+n more".
 
-   A festival that crosses a month boundary appears in the month it starts in,
-   which is the month its group belongs to. */
-const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const iso = (y, m, d) =>
-  `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+   Two things are ours. The events are the festivals the filters currently
+   allow, minus the ones that have been — the same question the list under the
+   grid asks, so the grid cannot draw a day the list has dropped. And a bar is
+   "planned" when the festival is in the plan, which is what makes the solid
+   colour mean the same thing as the toggle on its card. */
+const isoDay = ms => new Date(ms).toISOString().slice(0, 10);
 
-/* One calendar, any month, driven by state rather than by which months happen
-   to hold a festival — a month picker that could only offer months with
-   something in them would be a strange picker. */
-let calY = 0, calM = 0, calSel = '';
+const CAL = (() => {
+  const DAY = 86400000;
+  const parse = s => { const [y, m, d] = s.split('-').map(Number); return Date.UTC(y, m - 1, d); };
+  const MAX_LANES = 3;
 
-function calKey() {
-  return `${calY}-${String(calM + 1).padStart(2, '0')}`;
-}
+  const weeksEl = $('#weeks');
+  if (!weeksEl) return null;
 
-function evsOn(key) {
-  return DATA.festivals.filter(f => matches(f) && f.start <= key && key <= f.end);
-}
+  const foldBtn = $('#foldBtn');
+  const labelEl = $('#monthLabel');
+  const summary = $('#a11ySummary');
 
-function paintCal() {
-  const head = $('#calHead'), grid = $('#calGrid');
-  if (!head || !grid) return;
-  head.innerHTML = DOW.map(d => `<span>${d}</span>`).join('');
-  $('#calTitle').textContent = `${MONTH[calM]} ${calY}`;
+  const fmtMonth = new Intl.DateTimeFormat('en-GB', {month: 'long', year: 'numeric', timeZone: 'UTC'});
+  const fmtDay   = new Intl.DateTimeFormat('en-GB', {weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC'});
 
-  /* UTC throughout: a local-time Date shifts the first of the month across a
-     day boundary in any zone behind UTC, and the grid silently rotates. */
-  const lead = (new Date(Date.UTC(calY, calM, 1)).getUTCDay() + 6) % 7;
-  const days = new Date(Date.UTC(calY, calM + 1, 0)).getUTCDate();
-  const today = new Date().toISOString().slice(0, 10);
+  const TODAY = parse(new Date().toISOString().slice(0, 10));
+  let view = {year: 0, month: 0};
+  let selected = TODAY;
+  /* What the list under the grid is filtered to. Null until a day is picked:
+     the calendar opens showing everything that is coming up. */
+  let day = null;
+  let collapsed = true;
 
-  const cells = [];
-  for (let i = 0; i < lead; i++) cells.push('<div class="cell out"></div>');
-  for (let d = 1; d <= days; d++) {
-    const key = iso(calY, calM + 1, d);
-    const col = (lead + d - 1) % 7;
-    const evs = evsOn(key).map(f => {
-      /* The name is written once per week row — on the opening day, or on the
-         Monday a run carries into. Repeating it in every cell was noise. */
-      const label = key === f.start || col === 0;
-      const cls = ['ev', key === f.start ? 'st' : '', key === f.end ? 'en' : ''].join(' ');
-      /* Days left in this run, capped at the Sunday — a label may not spill
-         into the week below. */
-      const left = Math.round((Date.parse(f.end) - Date.parse(key)) / 864e5) + 1;
-      const span = Math.max(1, Math.min(left, 7 - col));
-      return `<span class="${cls}" style="${fvars(f)};--span:${span}"
-                 data-id="${esc(f.id)}"><span>${label ? esc(f.name) : ''}</span></span>`;
-    }).join('');
-    const flags = [evs ? 'has' : '', key === today ? 'today' : '',
-                   key === calSel ? 'sel' : ''].join(' ').trim();
-    cells.push(`<button class="cell ${flags}" data-d="${key}"
-      aria-label="${d} ${MONTH[calM]} ${calY}">
-      <span class="dn">${d}</span>${evs}</button>`);
+  const events = () => DATA.festivals.filter(onCal).map(f => ({
+    f, s: parse(f.start), e: parse(f.end), cat: catOf(f).id,
+    planned: Plan.has(f.id),
+  }));
+
+  function renderGrid() {
+    const first  = Date.UTC(view.year, view.month, 1);
+    const offset = (new Date(first).getUTCDay() + 6) % 7;   // Monday-first
+    const start  = first - offset * DAY;
+    const all    = events();
+
+    labelEl.textContent = fmtMonth.format(new Date(first));
+    weeksEl.textContent = '';
+
+    for (let w = 0; w < 6; w++) {
+      const ws = start + w * 7 * DAY;
+      const we = ws + 6 * DAY;
+
+      const week = document.createElement('div');
+      week.className = 'week';
+      if (selected >= ws && selected <= we) week.classList.add('is-active');
+
+      const bg = document.createElement('div');
+      bg.className = 'week__bg';
+      for (let d = 0; d < 7; d++) {
+        const i = document.createElement('i');
+        if (day !== null && ws + d * DAY === day) i.className = 'is-selected';
+        bg.appendChild(i);
+      }
+      week.appendChild(bg);
+
+      const grid = document.createElement('div');
+      grid.className = 'week__grid';
+
+      for (let d = 0; d < 7; d++) {
+        const date = ws + d * DAY;
+        const dt   = new Date(date);
+        const btn  = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'day';
+        btn.style.gridColumn = d + 1;
+        btn.textContent = dt.getUTCDate();
+        if (dt.getUTCMonth() !== view.month) btn.classList.add('is-outside');
+        if (date === TODAY) btn.classList.add('is-today');
+        if (date === day)   btn.classList.add('is-selected');
+        btn.setAttribute('aria-label', fmtDay.format(dt));
+        btn.setAttribute('aria-pressed', String(date === day));
+        /* Picking the day already picked clears the filter, so the list can be
+           put back without hunting for a button. */
+        btn.addEventListener('click', () => pick(date === day ? null : date));
+        grid.appendChild(btn);
+      }
+
+      const items = all
+        .filter(ev => ev.e >= ws && ev.s <= we)
+        .map(ev => ({
+          ev,
+          from: Math.max(0, Math.round((ev.s - ws) / DAY)),
+          to:   Math.min(6, Math.round((ev.e - ws) / DAY)),
+          contL: ev.s < ws,
+          contR: ev.e > we,
+        }))
+        .sort((a, b) => a.from - b.from || (b.to - b.from) - (a.to - a.from));
+
+      const lanes = [];
+      const hidden = Array(7).fill(0);
+
+      items.forEach(it => {
+        let lane = lanes.findIndex(rows => rows.every(r => it.to < r.from || it.from > r.to));
+        if (lane === -1) { lanes.push([]); lane = lanes.length - 1; }
+        lanes[lane].push(it);
+
+        if (lane >= MAX_LANES) {
+          for (let c = it.from; c <= it.to; c++) hidden[c]++;
+          return;
+        }
+
+        const bar = document.createElement('button');
+        bar.type = 'button';
+        bar.className = `event cat-${it.ev.cat}` +
+          (it.ev.planned ? ' is-planned' : '') +
+          (it.contL ? ' cont-left' : '') +
+          (it.contR ? ' cont-right' : '');
+        bar.style.gridColumn = `${it.from + 1} / span ${it.to - it.from + 1}`;
+        bar.style.gridRow = lane + 2;
+
+        if (it.ev.planned) {
+          bar.insertAdjacentHTML('beforeend', '<svg aria-hidden="true"><use href="#i-check"/></svg>');
+        }
+        const label = document.createElement('span');
+        label.textContent = it.ev.f.name;
+        bar.appendChild(label);
+        bar.setAttribute('aria-label',
+          `${it.ev.f.name}, ${catOf(it.ev.f).label}, ${it.ev.f.dates}` +
+          (it.ev.planned ? ', in your plan' : ''));
+
+        // tapping a bar picks its first day in this week, so the list follows
+        bar.addEventListener('click', () => pick(ws + it.from * DAY));
+        grid.appendChild(bar);
+      });
+
+      hidden.forEach((n, c) => {
+        if (!n) return;
+        const more = document.createElement('button');
+        more.type = 'button';
+        more.className = 'more';
+        more.style.gridColumn = c + 1;
+        more.textContent = `+${n} more`;
+        more.addEventListener('click', () => pick(ws + c * DAY));
+        grid.appendChild(more);
+      });
+
+      week.appendChild(grid);
+      weeksEl.appendChild(week);
+    }
   }
-  while (cells.length % 7) cells.push('<div class="cell out"></div>');
-  grid.innerHTML = cells.join('');
 
-  if (calSel) paintCalDay(calSel, false);
-}
+  /* The list under the grid, and the line that says what it is showing. */
+  function renderList() {
+    const box = $('#dayFilter');
+    if (day === null) {
+      box.hidden = true;
+      summary.textContent = '';
+    } else {
+      const n = DATA.festivals.filter(f => onCal(f) && f.start <= isoDay(day) && isoDay(day) <= f.end).length;
+      box.hidden = false;
+      $('#dayFilterDate').textContent = fmtDay.format(new Date(day));
+      $('#dayFilterCount').textContent = n
+        ? `${n} festival${n > 1 ? 's' : ''}`
+        : 'nothing on this day';
+      summary.textContent = `${fmtDay.format(new Date(day))}, ${n} festivals`;
+    }
+    if (window.applyFilters) window.applyFilters();
+  }
 
-/* The grid is small on a phone, so the day you tap opens as cards underneath
-   it — the compact ones, since the calendar has already said the date. */
-function paintCalDay(key, scroll) {
-  const box = $('#calDay'), list = evsOn(key);
-  calSel = key;
-  document.querySelectorAll('#calGrid .cell').forEach(c =>
-    c.classList.toggle('sel', c.dataset.d === key));
-  if (!list.length) { box.hidden = true; return; }
-  const [y, m, d] = key.split('-').map(Number);
-  $('#calDayTitle').textContent = `${d} ${MONTH[m - 1]} ${y}`;
-  $('#calDayCt').textContent =
-    `${list.length} festival${list.length > 1 ? 's' : ''}`;
-  $('#calDayGrid').innerHTML = list.map(card).join('');
-  box.hidden = false;
-  if (scroll) box.scrollIntoView({behavior: 'smooth', block: 'start'});
-}
+  function draw() { renderGrid(); renderList(); }
 
-function calGo(delta) {
-  const t = calM + delta;
-  calY += Math.floor(t / 12);
-  calM = ((t % 12) + 12) % 12;
-  calSel = '';
-  $('#calDay').hidden = true;
-  paintCal();
-}
+  function pick(date) {
+    day = date;
+    if (date !== null) selected = date;
+    draw();
+  }
+
+  /* Folded, the grid keeps only the week holding the selected day, so the view
+     never loses the reader's place. The month label follows that day. */
+  function syncViewToSelected() {
+    const d = new Date(selected);
+    view = {year: d.getUTCFullYear(), month: d.getUTCMonth()};
+  }
+
+  function setFold(next) {
+    const before = weeksEl.getBoundingClientRect().height;
+
+    collapsed = next;
+    weeksEl.classList.toggle('is-collapsed', collapsed);
+    foldBtn.setAttribute('aria-expanded', String(!collapsed));
+    foldBtn.setAttribute('aria-label',
+      collapsed ? 'Expand to month view' : 'Collapse to week view');
+    foldBtn.querySelector('.fold__label').textContent =
+      collapsed ? 'Month view' : 'Week view';
+
+    if (collapsed) syncViewToSelected();
+    renderGrid();
+
+    const after = weeksEl.getBoundingClientRect().height;
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      weeksEl.animate(
+        [{height: `${before}px`}, {height: `${after}px`}],
+        {duration: 300, easing: 'cubic-bezier(.2,0,0,1)'}
+      );
+    }
+  }
+
+  // Folded, the arrows step a week at a time; unfolded, a month.
+  function step(dir) {
+    if (collapsed) {
+      selected += dir * 7 * DAY;
+      syncViewToSelected();
+    } else {
+      view.month += dir;
+      if (view.month < 0)  { view.month = 11; view.year--; }
+      if (view.month > 11) { view.month = 0;  view.year++; }
+    }
+    draw();
+  }
+
+  foldBtn.addEventListener('click', () => setFold(!collapsed));
+  $('#prevBtn').addEventListener('click', () => step(-1));
+  $('#nextBtn').addEventListener('click', () => step(1));
+  $('#todayBtn').addEventListener('click', () => {
+    selected = TODAY;
+    syncViewToSelected();
+    pick(null);
+  });
+  $('#monthBtn').addEventListener('click', () => setFold(collapsed ? false : true));
+  $('#dayFilterClear').addEventListener('click', () => pick(null));
+
+  /* The legend names the categories the data actually has, in their own
+     colours, so it cannot drift from what the grid can draw. */
+  $('#calLegend').innerHTML = CATEGORIES.map(c =>
+    `<span class="legend__item"><span class="legend__swatch"
+       style="background:var(--cat-${esc(c.id)})"></span>${esc(c.label)}</span>`).join('') +
+    '<span class="legend__note">Solid bars are <b>in your plan</b></span>';
+
+  syncViewToSelected();
+  window.redrawCal = renderGrid;
+  return {draw, on: () => day, redraw: renderGrid};
+})();
+
+/* The list is filtered to the day the calendar has picked, when it has one. */
+function calDay() { return CAL ? CAL.on() : null; }
 
 /* ── month groups ─────────────────────────────────────── */
 const MONTH = ['January','February','March','April','May','June',
@@ -2024,37 +2954,103 @@ $('#months').innerHTML = Object.keys(groups).sort().map(m => {
   </div>`;
 }).join('');
 
+/* The artwork. A festival that has a photograph worth cropping declares one;
+   everything else gets the category's own composition, which is drawn from the
+   theme's variables and so is already the right colour by the time it renders.
+   Two <use>s rather than one: the base is shared, the motif is what differs. */
+function cardArt(f, cls = 'card__art') {
+  const cat = catOf(f).id;
+  if (f.cardArt === 'photo') {
+    return `<img class="${cls}" src="${f.promoSrc}" alt="" loading="lazy">`;
+  }
+  return `<svg class="${cls}" viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice"
+       role="img" aria-label="${esc(catOf(f).label)} festival artwork">
+    <use href="#art-base"/><use href="#motif-${esc(cat)}"/>
+  </svg>`;
+}
+
+/* The three facts the redesign lists — a time, a place, a price. A festival
+   states them in its own record when it knows them; where it does not, they
+   are put together from what the record does carry, so the row is never
+   invented and the list is always the same three lines. */
+function cardFacts(f) {
+  const own = f.facts || {};
+  const days = `${f.stats.days} day${f.stats.days > 1 ? 's' : ''}`;
+  const counts = f.stats.acts
+    ? `${days} · ${f.stats.acts} acts across ${f.stats.stages} stages` : days;
+  return [
+    ['f-time', own.time || counts],
+    ['f-place', own.place || `${f.city} · ${f.type}`],
+    ['f-ticket', own.price || (f.free ? 'Free entry' : 'Ticketed by the festival')],
+  ].map(([icon, text]) =>
+    `<li><svg aria-hidden="true"><use href="#${icon}"/></svg>${esc(text)}</li>`).join('');
+}
+
+/* The redesign's button group: the festival's own site, its tickets when it
+   sells any, and the plan toggle — the only one of the three with a state. */
+function buttonGroup(f) {
+  const id = 'plan-g-' + (++planSeq);
+  const on = Plan.has(f.id);
+  return `<div class="btn-group" role="group" aria-label="Festival actions">
+    <a class="opt opt--link" href="${esc(f.official)}" target="_blank"
+       rel="noopener noreferrer" aria-label="Official site for ${esc(f.name)}">
+      <svg class="opt__icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M17 13.6v4.6a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V8.8A1.8 1.8 0 0 1 5.8 7h4.6"/>
+        <path d="M13.6 4.5H19.5V10.4"/>
+        <path d="M19.5 4.5 11.2 12.8"/>
+      </svg>
+      <span class="opt__text">Official site</span><span class="sr"> (opens in a new tab)</span>
+    </a>
+    ${f.tickets ? `<a class="opt opt--link" href="${esc(f.tickets)}" target="_blank"
+       rel="noopener noreferrer" aria-label="Tickets for ${esc(f.name)}">
+      <svg class="opt__icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 6H19a2 2 0 0 1 2 2v1.5a2.5 2.5 0 0 0 0 5V16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1.5a2.5 2.5 0 0 0 0-5V8a2 2 0 0 1 2-2Z"/>
+        <path d="M15 7.3v2M15 11v2M15 14.7v2"/>
+      </svg>
+      <span class="opt__text">Ticket</span>
+    </a>` : ''}
+    <input class="btn-group__input" type="checkbox" id="${id}" autocomplete="off"
+           data-plan="${esc(f.id)}"${on ? ' checked' : ''}>
+    <label class="opt" for="${id}">
+      <svg class="opt__icon opt__icon--toggle" viewBox="0 0 24 24" aria-hidden="true">
+        <path class="ic-off" d="M12 6.6v10.8M6.6 12h10.8"/>
+        <path class="ic-on"  d="M6.8 12.4 10.4 16 17.2 8.6"/>
+      </svg>
+      <span class="opt__labels">
+        <span class="lbl-off">Add to plan</span>
+        <span class="lbl-on">Added</span>
+      </span>
+    </label>
+  </div>`;
+}
+
 function card(f) {
   const st = status(f);
-  return `<article class="card${st.past ? ' past' : ''}" style="${fvars(f)}"
+  /* One text button beside the toggle, as the redesign has it: where the
+     festival sells its tickets, or where it publishes its programme when it
+     does not sell any. The planner is the card itself — clicking anywhere
+     that is not one of these two controls opens it. */
+  const link = {href: f.tickets || f.official};
+  const title = `${f.name}${f.year ? ' ' + f.year : ''}`;
+  return `<article class="card theme-${esc(catOf(f).id)}${st.past ? ' past' : ''}"
              data-id="${esc(f.id)}" data-cat="${esc(catOf(f).id)}"
-             data-cost="${f.free ? 'free' : 'paid'}">
-    <div class="shot">
-      <img class="pic" src="${f.promoSrc}" alt="" loading="lazy">
-      <span class="lg"><img src="${f.logoSrc}" alt="${esc(f.name)}"></span>
-      <span class="notch">${esc(catOf(f).label)}</span>
+             data-cost="${f.free ? 'free' : 'paid'}"${
+               f.planner ? ` data-planner="${esc(f.planner)}"`
+                         : ` data-away="${esc(link.href)}"`}>
+    <div class="card__media">
+      ${cardArt(f)}
+      <div class="card__notch"><span class="card__chip">${esc(catOf(f).label)}</span></div>
     </div>
-    <div class="body">
-      <div class="ttl">
-        <h4>${esc(f.name)} ${esc(f.year)}</h4>
-        <a class="offi" href="${esc(f.official)}" target="_blank" rel="noopener"
-           title="Official site for ${esc(f.name)}">Official ${ico('ext')}</a>
-      </div>
-      <div class="when">${esc(f.dates)}</div>
-      <div class="where">${esc(f.city)} · ${esc(f.type)}</div>
-      <div class="kind">${esc(catOf(f).label)}</div>
-      <div class="figs">
-        <span><b>${f.stats.acts}</b> acts</span>
-        <span><b>${f.stats.stages}</b> stages</span>
-        <span><b>${f.stats.days}</b> day${f.stats.days > 1 ? 's' : ''}</span>
-      </div>
-      <div class="cats">${esc(f.tags.join(', '))}</div>
-      <div class="acts">
-        <md-filled-button trailing-icon href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'}<span slot="icon">${ico('arrow')}</span></md-filled-button>
-        ${f.free
-          ? `<md-outlined-button disabled>Free entry</md-outlined-button>`
-          : `<md-outlined-button trailing-icon href="${esc(f.tickets)}" target="_blank">Tickets<span slot="icon">${ico('ticket')}</span></md-outlined-button>`}
-      </div>
+    <div class="card__body">
+      <h3 class="card__title">${esc(title)}</h3>
+      <p class="card__date">${esc(f.dates)}</p>
+      <p class="card__meta">${esc(f.city)} · ${esc(f.type)}</p>
+      <ul class="card__facts">${cardFacts(f)}</ul>
+      <ul class="card__tags">${f.tags.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
+    </div>
+    <div class="card__actions">
+      ${planToggle(f)}
+      ${buttonGroup(f)}
     </div>
   </article>`;
 }
@@ -2248,12 +3244,28 @@ function matches(f) {
     && (!cats.size || cats.has(catOf(f).id));
 }
 
+/* What the calendar shows: the filters, and only what is still to come. The
+   grid and the list under it ask the same question, so a festival cannot be
+   drawn on a day and missing from the list below it. */
+const onCal = f => matches(f) && !status(f).past;
+
 function apply() {
   let shown = 0;
   DATA.festivals.forEach(f => {
     const el = document.querySelector(`.card[data-id="${f.id}"]`);
     if (!el) return;
-    const ok = matches(f);
+    /* The calendar is about what is still to come — a festival that has been
+       stays in the two card views and drops out of this one. */
+    let ok;
+    if (document.body.dataset.view === 'cal') {
+      /* The calendar shows what is coming up, and once a day is picked, what
+         is on that day. */
+      const d = calDay();
+      ok = onCal(f) && (d === null
+        || (f.start <= isoDay(d) && isoDay(d) <= f.end));
+    } else {
+      ok = matches(f);
+    }
     el.hidden = !ok;
     if (ok) shown++;
   });
@@ -2268,7 +3280,7 @@ function apply() {
   });
   $('#empty').hidden = shown > 0 || document.body.dataset.view === 'cal';
   $('#endCap').hidden = shown === 0;
-  if (window.paintCal) paintCal();
+  if (window.redrawCal) window.redrawCal();
   /* The trigger says what the filter is set to, not what it filters — the
      sheet it opens is already titled "Filter by date". */
   const w2 = WHEN.find(x => x.k === when);
@@ -2499,109 +3511,6 @@ document.addEventListener('keydown', e => {
    jerk rather than a glide. Removed rather than tuned: the reader decides
    where the page rests. */
 
-/* ── calendar behaviour ────────────────────────────────*/
-(() => {
-  const grid = $('#calGrid');
-  if (!grid) return;
-
-  /* Open on the month you are in, unless nothing is on then and something is
-     on soon — an empty grid is a poor first impression. */
-  const now = new Date();
-  const here = now.toISOString().slice(0, 7);
-  const withData = [...new Set(DATA.festivals.map(f => f.month))].sort();
-  const start = withData.includes(here)
-    ? here
-    : (withData.find(m => m > here) || withData[withData.length - 1] || here);
-  calY = +start.slice(0, 4);
-  calM = +start.slice(5, 7) - 1;
-  window.paintCal = paintCal;
-  paintCal();
-
-  $('#calPrev').onclick = () => calGo(-1);
-  $('#calNext').onclick = () => calGo(1);
-
-  grid.addEventListener('click', e => {
-    const cell = e.target.closest('.cell[data-d]');
-    if (!cell) return;
-    if (!evsOn(cell.dataset.d).length) return;
-    paintCalDay(cell.dataset.d, true);
-  });
-
-  /* ── month by gesture ───────────────────────────────
-     A wheel or a swipe over the grid moves through months. Both need a
-     threshold and a cooldown: a trackpad emits dozens of small deltas per
-     flick, and without one a single gesture would run through a year. */
-  let armed = true;
-  const step = d => {
-    if (!armed) return;
-    armed = false;
-    calGo(d);
-    setTimeout(() => { armed = true; }, 420);
-  };
-
-  let acc = 0;
-  grid.addEventListener('wheel', e => {
-    /* Only claim the gesture when it is clearly vertical, so a horizontal
-       trackpad swipe still belongs to the page. */
-    if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
-    e.preventDefault();
-    acc += e.deltaY;
-    if (Math.abs(acc) > 40) { step(acc > 0 ? 1 : -1); acc = 0; }
-  }, {passive: false});
-
-  let sy = 0, sx = 0, tracking = false;
-  grid.addEventListener('touchstart', e => {
-    sy = e.touches[0].clientY; sx = e.touches[0].clientX; tracking = true;
-  }, {passive: true});
-  grid.addEventListener('touchend', e => {
-    if (!tracking) return;
-    tracking = false;
-    const dy = e.changedTouches[0].clientY - sy;
-    const dx = e.changedTouches[0].clientX - sx;
-    /* Swiping the grid upward pulls the next month into view, the way a page
-       of a wall calendar turns. */
-    if (Math.abs(dy) > 46 && Math.abs(dy) > Math.abs(dx) * 1.4) step(dy < 0 ? 1 : -1);
-  }, {passive: true});
-
-  /* ── the month picker ───────────────────────────────*/
-  const dlg = $('#calDlg'), pick = $('#calPick');
-  let pickY = calY;
-
-  function paintPicker() {
-    $('#yrLabel').textContent = pickY;
-    $('#monOpts').innerHTML = MONTH.map((m, i) => {
-      const key = `${pickY}-${String(i + 1).padStart(2, '0')}`;
-      const has = DATA.festivals.some(f => matches(f) && f.month === key);
-      const on = pickY === calY && i === calM;
-      return `<button class="${has ? 'dot' : ''}" data-m="${i}"
-        aria-checked="${on}" role="radio">${m.slice(0, 3)}</button>`;
-    }).join('');
-    $('#monOpts').querySelectorAll('[data-m]').forEach(b => b.onclick = () => {
-      calY = pickY; calM = +b.dataset.m;
-      calSel = ''; $('#calDay').hidden = true;
-      paintCal(); close();
-    });
-  }
-
-  const open = () => {
-    pickY = calY; paintPicker();
-    dlg.showModal();
-    requestAnimationFrame(() => dlg.classList.add('in'));
-    pick.setAttribute('aria-expanded', 'true');
-  };
-  const close = () => {
-    dlg.classList.remove('in');
-    pick.setAttribute('aria-expanded', 'false');
-    setTimeout(() => { if (dlg.open) dlg.close(); }, 260);
-  };
-  pick.onclick = () => open();
-  $('#calDlgClose').onclick = close;
-  dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
-  dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
-  $('#yrDown').onclick = () => { pickY--; paintPicker(); };
-  $('#yrUp').onclick = () => { pickY++; paintPicker(); };
-})();
-
 /* ── card size ─────────────────────────────────────────
    Compact trades the artwork and the buttons for density — two per row on a
    phone, name, date, place and category only. The choice is remembered, since
@@ -2624,11 +3533,18 @@ document.addEventListener('keydown', e => {
     if (cal) cal.hidden = v !== 'cal';
     /* The day panel below the calendar is always compact; the month groups
        follow the switcher. */
+    /* Only the detailed view is detailed: the calendar's month list is the
+       compact card, the same one the day panel under the grid uses. */
     document.querySelectorAll('#months .grid').forEach(g =>
-      g.classList.toggle('tile', v === 'tile'));
+      g.classList.toggle('tile', v !== 'full'));
     seg.querySelectorAll('[data-view]').forEach(b =>
       b.setAttribute('aria-pressed', b.dataset.view === v));
     if (remember) Store.set('view', v);
+    /* What is shown depends on the view — the calendar leaves out the
+       festivals that have been — so the filters are asked again on every
+       switch. Not before they exist: the first paint happens during setup,
+       and the run at the end of that module covers it. */
+    if (window.applyFilters) window.applyFilters();
   }
 
   seg.querySelectorAll('[data-view]').forEach(b =>
@@ -2645,13 +3561,25 @@ document.addEventListener('keydown', e => {
   paintView(chosen || fallback(), false);
   phone.addEventListener('change', () => { if (!chosen) paintView(fallback(), false); });
 
-  /* A compact tile has no buttons, so the tile itself is the link. */
-  document.querySelector('#months').addEventListener('click', e => {
-    const grid = e.target.closest('.grid.tile');
-    if (!grid || e.target.closest('a,button')) return;
-    const card = e.target.closest('.card');
-    const href = card && card.querySelector('.acts a.primary');
-    if (href) location.href = href.getAttribute('href');
+  /* A card carries two controls — the text button and the plan toggle — and
+     the rest of it is a link to that festival's planner. The toggle is a
+     label, which is neither an anchor nor a button, hence the third selector:
+     without it, marking a festival would also navigate away from the list.
+
+     The destination is read from the card itself rather than from a link
+     inside it, since the compact card shows no link at all, and a festival
+     with no planner of ours carries no destination and so stays put. Bound to
+     the document, so the day the calendar has open is covered as well as the
+     month groups. */
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.grid')) return;
+    if (e.target.closest('a,button,.plan-toggle,.btn-group')) return;
+    const card = e.target.closest('.card[data-planner],.card[data-away]');
+    if (!card) return;
+    /* Ours opens in place; a festival we have not built a planner for opens
+       its own site in a new tab, the way its link in the card does. */
+    if (card.dataset.planner) location.href = card.dataset.planner;
+    else window.open(card.dataset.away, '_blank', 'noopener');
   });
 })();
 
@@ -2680,6 +3608,7 @@ const railTheme = $('#railTheme');
 if (railTheme) railTheme.onclick = () =>
   applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
 applyTheme(Store.get('theme'));
+window.applyFilters = apply;
 apply();
 </script>
 <script>

@@ -19,8 +19,15 @@ from fontTools import subset
 from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parent.parent
-FONTS = [ROOT / "assets" / "font" / "robotoflex-latin.woff2",
-         ROOT / "assets" / "font" / "robotoflex-latin-ext.woff2"]
+# token in the page -> the file it stands for. A page that does not carry a
+# token is not charged for the font: Inter is the card component's face and
+# only the home page sets it, so the planners never pay the bytes.
+FONTS = {
+    "__ROBOTOFLEX_LATIN__": ROOT / "assets" / "font" / "robotoflex-latin.woff2",
+    "__ROBOTOFLEX_EXT__":   ROOT / "assets" / "font" / "robotoflex-latin-ext.woff2",
+    "__INTER_LATIN__":      ROOT / "assets" / "font" / "inter-latin.woff2",
+    "__INTER_EXT__":        ROOT / "assets" / "font" / "inter-latin-ext.woff2",
+}
 
 # Characters every page needs whatever its copy says: the digits and
 # punctuation that live in templates, and the arrows and dashes the UI draws.
@@ -77,8 +84,9 @@ def inline(html: str) -> str:
     characters to keep is only known then.
     """
     keep = chars_in(html)
-    for token, path in (("__ROBOTOFLEX_LATIN__", FONTS[0]),
-                        ("__ROBOTOFLEX_EXT__", FONTS[1])):
+    for token, path in FONTS.items():
+        if token not in html:
+            continue
         data = subset_font(path, keep)
         uri = "data:font/woff2;base64," + base64.b64encode(data).decode()
         html = html.replace(token, uri)

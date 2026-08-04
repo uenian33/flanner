@@ -92,8 +92,13 @@ def palettes(source: str) -> dict[str, dict[int, str]]:
         # 60° away at half, and the neutrals keep only a trace of the hue.
         "secondary": palette(hue, chroma / 3),
         "tertiary": palette(hue + 60, chroma / 2),
-        "neutral": palette(hue, min(chroma / 12, 4)),
-        "neutral_variant": palette(hue, min(chroma / 6, 8)),
+        # Material tints the neutrals with a trace of the source hue. From a
+        # lime source that trace is a grey-green, and it settles over the whole
+        # page — every surface, every outline, every muted line of text. The
+        # neutrals here are neutral: the colour belongs to the categories and
+        # the mark, and the paper stays paper.
+        "neutral": palette(hue, 0),
+        "neutral_variant": palette(hue, 0),
         "error": palette(25, 84),
     }
 
@@ -116,7 +121,9 @@ ROLES = [
     ("on-error", "error", 100, 20),
     ("error-container", "error", 90, 30),
     ("on-error-container", "error", 10, 90),
-    ("surface", "neutral", 98, 6),
+    # The page itself is paper, not the 98 tone: white, with the dot grid and
+    # the containers above it doing the separating.
+    ("surface", "neutral", 100, 6),
     ("on-surface", "neutral", 10, 90),
     ("surface-variant", "neutral_variant", 90, 30),
     ("on-surface-variant", "neutral_variant", 30, 80),

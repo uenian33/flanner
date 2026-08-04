@@ -111,18 +111,20 @@ __FOOTER_CSS__
 <body class="fx-shell">
 
 <svg class="sr" aria-hidden="true"><defs>
-<symbol id="i-logo" viewBox="0 0 40 40">
-  <defs>
-    <linearGradient id="fpgrad" x1=".06" y1=".95" x2=".94" y2=".05">
-      <stop offset="0" stop-color="#b6fc46"/>
-      <stop offset=".55" stop-color="#e4fb27"/>
-      <stop offset="1" stop-color="#fff203"/>
-    </linearGradient>
-    <clipPath id="fpup"><path d="M-14 -14H54V20H-14Z" transform="rotate(-34 20 20)"/></clipPath>
-    <clipPath id="fpdn"><path d="M-14 20H54V54H-14Z" transform="rotate(-34 20 20)"/></clipPath>
-  </defs>
-  <g clip-path="url(#fpup)"><circle cx="22.2" cy="16.7" r="18.4" fill="url(#fpgrad)"/></g>
-  <g clip-path="url(#fpdn)"><circle cx="17.8" cy="23.3" r="18.4" fill="url(#fpgrad)"/></g>
+<!-- The Flanner mark: six petals bursting from a centre. Everywhere this page
+     draws it, it is under 40px, which is where the brand's own spec asks for
+     the simplified cut — wider petals, one tone, no centre dot. The silhouette
+     is the same one the full mark and the favicon carry. The tone follows the
+     theme through --mark-ink. -->
+<symbol id="i-logo" viewBox="0 0 96 96">
+  <g fill="var(--mark-ink,currentColor)">
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(60 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(120 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(180 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(240 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(300 48 48)"/>
+  </g>
 </symbol>
 <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
 <symbol id="i-left" viewBox="0 0 24 24"><path d="m14.4 6-6 6 6 6"/></symbol>

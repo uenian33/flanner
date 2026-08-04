@@ -948,16 +948,20 @@ __THEME__
 <symbol id="i-speaker" viewBox="0 0 24 24"><rect x="5.4" y="2.8" width="13.2" height="18.4" rx="2.6"/><circle cx="12" cy="15" r="3.5"/><circle cx="12" cy="7.2" r="1.4"/></symbol>
 <symbol id="i-cathedral" viewBox="0 0 24 24"><path d="M12 1.8v2.4M10.9 3h2.2"/><path d="M8.6 10.4a3.4 3.4 0 0 1 6.8 0"/><path d="M6.2 20.6V13M17.8 20.6V13M6.2 13h11.6"/><path d="M9.4 20.6v-3.9a2.6 2.6 0 0 1 5.2 0v3.9"/><path d="M3.6 20.6h16.8"/></symbol>
 <symbol id="i-robot" viewBox="0 0 24 24"><rect x="4.2" y="8" width="15.6" height="11" rx="3.6"/><path d="M12 4.8V8"/><circle cx="12" cy="3.5" r="1.3"/><circle cx="9.2" cy="12.8" r="1.05"/><circle cx="14.8" cy="12.8" r="1.05"/><path d="M9.8 16.2h4.4"/><path d="M4.2 11.6H2.3M19.8 11.6h1.9"/></symbol>
-<symbol id="i-logo" viewBox="0 0 40 40">
-  <defs>
-    <linearGradient id="fpgrad" x1=".06" y1=".95" x2=".94" y2=".05">
-      <stop offset="0" stop-color="#b6fc46"/><stop offset=".55" stop-color="#e4fb27"/><stop offset="1" stop-color="#fff203"/>
-    </linearGradient>
-    <clipPath id="fpup"><path d="M-14 -14H54V20H-14Z" transform="rotate(-34 20 20)"/></clipPath>
-    <clipPath id="fpdn"><path d="M-14 20H54V54H-14Z" transform="rotate(-34 20 20)"/></clipPath>
-  </defs>
-  <g clip-path="url(#fpup)"><circle cx="22.2" cy="16.7" r="18.4" fill="url(#fpgrad)"/></g>
-  <g clip-path="url(#fpdn)"><circle cx="17.8" cy="23.3" r="18.4" fill="url(#fpgrad)"/></g>
+<!-- The Flanner mark: six petals bursting from a centre. Everywhere this page
+     draws it, it is under 40px, which is where the brand's own spec asks for
+     the simplified cut — wider petals, one tone, no centre dot. The silhouette
+     is the same one the full mark and the favicon carry. The tone follows the
+     theme through --mark-ink. -->
+<symbol id="i-logo" viewBox="0 0 96 96">
+  <g fill="var(--mark-ink,currentColor)">
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(60 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(120 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(180 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(240 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(300 48 48)"/>
+  </g>
 </symbol>
 <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H5M11 18l-6-6 6-6"/></symbol>
 <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></symbol>

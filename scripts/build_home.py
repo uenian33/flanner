@@ -27,9 +27,16 @@ def main():
     # Validated and normalised before anything is rendered — see schema.py.
     cfg = schema.load()
     for f in cfg["festivals"]:
-        f["promoSrc"] = data_uri(H / f["promo"])
-        f["logoSrc"] = data_uri(ROOT / "assets" / f["logo"])
+        # A festival we have not built a planner for has no poster and no
+        # wordmark of its own; its card draws the category's artwork instead.
+        if f.get("promo"):
+            f["promoSrc"] = data_uri(H / f["promo"])
+        if f.get("logo"):
+            f["logoSrc"] = data_uri(ROOT / "assets" / f["logo"])
         f.pop("promo", None); f.pop("logo", None)
+    # The structured data describes the pages this site publishes, so only the
+    # festivals with a planner of ours appear in it.
+    planned = [f for f in cfg["festivals"] if f.get("planner")]
 
     html = (ROOT / "scripts" / "home.html").read_text()
     for tok, val in [
@@ -42,8 +49,8 @@ def main():
             "2026 — aikataulut, esiintyjät ja lavakartat. One page per festival, "
             "works offline once loaded.",
             f"{seo.BASE}/assets/og/home.jpg",
-            jsonld=seo.site_jsonld(cfg["festivals"])
-                   + [seo.festival_event(f) for f in cfg["festivals"]]
+            jsonld=seo.site_jsonld(planned)
+                   + [seo.festival_event(f) for f in planned]
         )),
         ("__CATCSS__", schema.category_css(cfg)),
         ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
