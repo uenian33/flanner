@@ -297,11 +297,17 @@ def patch_script(src: str, fest: Festival) -> str:
 # the five tones the design's own category palettes use — container 90,
 # on-container 16, a 79 for the pin, and the 28/95 pair the plan state takes.
 def stage_palette(n: int) -> list[dict]:
+    """Hues by the golden angle rather than in equal steps.
+
+    Ten stages spaced evenly are 36° apart, and 36° at these tones is the
+    difference between one green and another — stage 1 and stage 2 read as the
+    same colour, which is the one thing this palette exists to prevent. The
+    golden angle puts consecutive stages most of the wheel apart while still
+    filling it evenly however many stages there turn out to be."""
     import m3color
-    step = 360.0 / max(n, 1)
     out = []
     for i in range(n):
-        h = (124 + i * step) % 360
+        h = (124 + i * 137.507) % 360
         out.append({
             "bg": m3color.tone(h, 21, 90),
             "fg": m3color.tone(h, 23, 16),
@@ -326,7 +332,15 @@ def patch_stage_colours(src: str, fest: Festival) -> str:
         (r"next\.burstColor = this\.CAT\[ev\.cat\]\.planBg;",
          "next.burstColor = this.stageColor(ev.s).planBg;", "burst colour"),
         (r"const st = this\.STAGES\[i\], c = this\.CAT\[st\.cat\];",
-         "const st = this.STAGES[i], c = this.stageColor(i);", "stage card"),
+         "const st = this.STAGES[i], c = this.stageColor(i);", "focus ring"),
+        # The stage list beside the map: its number badge is the stage's own
+        # colour, and its count is for the day on screen rather than all of them.
+        (r"const c = C\[st\.cat\], n = this\.EVENTS\.filter\(e => e\.s === i\)\.length;",
+         "const c = this.stageColor(i), n = this.EVENTS.filter("
+         "e => e.s === i && e.d === this.state.day).length;", "stage card"),
+        (r"this\.EVENTS\.filter\(e => e\.s === i\)\.length \+ ' acts on '",
+         "this.EVENTS.filter(e => e.s === i && e.d === this.state.day).length + ' acts on '",
+         "map popup count"),
         (r"      const c = this\.CAT\[st\.cat\];",
          "      const c = this.stageColor(i);", "map pin"),
         (r"const c = C\[ev\.cat\], dur = ev\.b - ev\.a,",
@@ -340,6 +354,10 @@ def patch_stage_colours(src: str, fest: Festival) -> str:
         (r"background: C\[st\.cat\]\.bg, color: C\[st\.cat\]\.fg",
          "background: this.stageColor(i).bg, color: this.stageColor(i).fg",
          "column head number"),
+        # The grid has a time axis down its left edge and the cell is drawn at
+        # the height its set runs, so the range inside it said a third time
+        # what the reader could already see. The name gets the room instead.
+        (r"showTime: dur >= 30,", "showTime: false,", "cell time"),
     ]:
         src = sub_once(src, old, new, what)
     return src

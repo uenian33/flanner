@@ -3661,7 +3661,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 <script type="text/x-dc" data-dc-script="" data-props="{&quot;navMode&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;auto&quot;, &quot;drawer&quot;, &quot;rail&quot;, &quot;bar&quot;], &quot;default&quot;: &quot;auto&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Adaptive shell&quot;}, &quot;density&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;compact&quot;, &quot;default&quot;, &quot;roomy&quot;], &quot;default&quot;: &quot;default&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Adaptive shell&quot;}, &quot;startView&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;timetable&quot;, &quot;list&quot;, &quot;map&quot;, &quot;plan&quot;, &quot;info&quot;], &quot;default&quot;: &quot;timetable&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Adaptive shell&quot;}, &quot;showWeather&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Adaptive shell&quot;}}">
 
 class Component extends DCLogic {
-  STAGE_PALETTE = [{"bg":"#d9e8c1","fg":"#1e2c09","dot":"#b1ce86","planBg":"#30490f","planFg":"#eaf5d8"},{"bg":"#bfedd4","fg":"#002f1c","dot":"#7cd5aa","planBg":"#004c31","planFg":"#d7f8e6"},{"bg":"#aeeeed","fg":"#002d2d","dot":"#47d7d6","planBg":"#004a4a","planFg":"#cdf9f8"},{"bg":"#b6eaff","fg":"#002c38","dot":"#49d3fc","planBg":"#00495a","planFg":"#dcf5ff"},{"bg":"#d2e4ff","fg":"#002a47","dot":"#9ac7ff","planBg":"#004571","planFg":"#e9f1ff"},{"bg":"#e9ddff","fg":"#2b2343","dot":"#ceb9ff","planBg":"#473970","planFg":"#f4eeff"},{"bg":"#ffd7ef","fg":"#401b33","dot":"#fbabdd","planBg":"#6a2b56","planFg":"#ffebf7"},{"bg":"#ffdadc","fg":"#461920","dot":"#ffaeb5","planBg":"#742834","planFg":"#ffeced"},{"bg":"#ffdbcb","fg":"#401f0d","dot":"#ffb28c","planBg":"#6a3317","planFg":"#ffede5"},{"bg":"#f4e0bb","fg":"#322701","dot":"#dec17b","planBg":"#514003","planFg":"#feefd4"}];
+  STAGE_PALETTE = [{"bg":"#d9e8c1","fg":"#1e2c09","dot":"#b1ce86","planBg":"#30490f","planFg":"#eaf5d8"},{"bg":"#cee5ff","fg":"#002a43","dot":"#90c9ff","planBg":"#00466b","planFg":"#e7f2ff"},{"bg":"#ffdbd1","fg":"#431c14","dot":"#ffb09d","planBg":"#6f2e21","planFg":"#ffede8"},{"bg":"#b5eedf","fg":"#002e26","dot":"#63d7be","planBg":"#004b3f","planFg":"#d1f9ee"},{"bg":"#f1daff","fg":"#33203f","dot":"#deb4f8","planBg":"#54356a","planFg":"#f8edff"},{"bg":"#f1e1ba","fg":"#302701","dot":"#dac27b","planBg":"#4f4103","planFg":"#fcf0d4"},{"bg":"#b3ebff","fg":"#002c37","dot":"#45d3f9","planBg":"#004959","planFg":"#dbf5ff"},{"bg":"#ffd9e0","fg":"#451925","dot":"#ffadbe","planBg":"#74273d","planFg":"#ffecef"},{"bg":"#caebca","fg":"#0f2e14","dot":"#94d398","planBg":"#144c20","planFg":"#dff7df"},{"bg":"#dae2ff","fg":"#152748","dot":"#adc2ff","planBg":"#1b4279","planFg":"#edf0ff"}];
   /* The colour of everything that belongs to a stage. */
   stageColor(i) { return this.STAGE_PALETTE[i % this.STAGE_PALETTE.length]; }
 
@@ -4130,7 +4130,7 @@ class Component extends DCLogic {
         icon: L.divIcon({ html: html, className: '', iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30] })
       }).addTo(map);
       mk.bindPopup('<strong style="font:650 14px Inter,sans-serif">' + st.name + '</strong><br><span style="font:400 12.5px Inter,sans-serif;color:var(--on-var,#494E42)">' +
-        this.EVENTS.filter(e => e.s === i).length + ' acts on ' + this.DAY_WINDOW.short + '<\/span>');
+        this.EVENTS.filter(e => e.s === i && e.d === this.state.day).length + ' acts on ' + this.DAY_WINDOW.short + '<\/span>');
       this.markers[i] = mk;
     });
     this.map = map;
@@ -4533,7 +4533,7 @@ class Component extends DCLogic {
           const fg = dim ? 'var(--dim-on,#5F6556)' : dark ? c.planFg : c.fg;
           return {
             title: ev.title, range: ev.from + '–' + ev.to, planned: dark, starred: String(starred),
-            showTime: dur >= 30, showTags: dur * min >= 118 && ev.genres.length > 0, showStar: dur >= 40,
+            showTime: false, showTags: dur * min >= 118 && ev.genres.length > 0, showStar: dur >= 40,
             timeStyle: { fontSize: '12px', fontWeight: starred ? 600 : 450, letterSpacing: '.02em', opacity: .82 },
             starIcon: starred ? '#i-star-fill' : '#i-star',
             starLabel: (starred ? 'Unstar ' : 'Star ') + ev.title,
@@ -4622,7 +4622,7 @@ class Component extends DCLogic {
 
     /* ---- map side ---- */
     const stageCards = this.STAGES.map((st, i) => {
-      const c = C[st.cat], n = this.EVENTS.filter(e => e.s === i).length;
+      const c = this.stageColor(i), n = this.EVENTS.filter(e => e.s === i && e.d === this.state.day).length;
       return {
         n: st.n, name: st.name, note: st.note, count: n + ' acts on ' + this.DAY_WINDOW.short,
         style: { display: 'flex', gap: '14px', alignItems: 'flex-start', width: '100%', padding: '16px', border: 0, borderRadius: '24px', background: 'var(--card,#F2F0EB)', fontFamily: 'inherit', cursor: 'pointer', textAlign: 'start' },
