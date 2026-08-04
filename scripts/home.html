@@ -289,10 +289,9 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   --md-sys-color-on-surface-variant:      #49454f;  /* date, body copy      */
   --md-sys-color-outline-variant:         #cac4d0;
 
-  /* Typography — Roboto, three sizes: 35 / 18 / 11 */
-  /* 700 rather than the reference's 400: this headline names the product,
-     not just the section. Every other value on the scale is unchanged. */
-  --md-sys-typescale-headline-font:       700 35px/40px "Roboto Flex","Roboto",system-ui,sans-serif;
+  /* Typography — Roboto, three sizes: 35 / 18 / 11. The headline style is
+     gone from this scale: the heading above the card follows the other
+     reference's section title now, set on the rule itself below. */
   --md-sys-typescale-title-font:          400 18px/24px "Roboto Flex","Roboto",system-ui,sans-serif;
   --md-sys-typescale-body-font:           400 11px/16px "Roboto Flex","Roboto",system-ui,sans-serif;
   --md-sys-typescale-label-font:          500 11px/16px "Roboto Flex","Roboto",system-ui,sans-serif;
@@ -326,14 +325,30 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
 /* Section — the top padding is a variable only so the rail can start its
    first destination on the same line as the headline. The values are the
    reference's, unchanged. */
-:root{--hl-pad-top:48px}
-.highlight-events{padding:var(--hl-pad-top) 0 40px}
+/* Compact on a phone, where the masthead sits right above the heading and the
+   screen is the scarce thing. The wide window keeps the reference's own 64px,
+   set in the 840px block below. */
+:root{--hl-pad-top:28px}
+.highlight-events{padding:var(--hl-pad-top) 0 0}
 
-.highlight-events__headline{
-  font: var(--md-sys-typescale-headline-font);
-  letter-spacing: 0;
+
+/* The heading is material-design-home's .section__title — the one over
+   "Material at Google I/O 2026" — rather than highlight-events' own 35px
+   headline: same family, same clamped size, same 1.05 leading and -0.02em
+   tracking, and the same clamped margin beneath it, which the size needs to
+   keep its proportion. The family resolves through Roboto Flex, since that is
+   the Roboto this page carries. Weight stays 700. */
+.highlight-events__headline,
+.section-headline{
+  font-family: "Roboto Flex","Roboto",system-ui,-apple-system,sans-serif;
+  /* The reference's own clamp, taken down a quarter — kept as a factor on
+     the original so the three values it interpolates between stay legible. */
+  font-size: calc(clamp(34px, 4.4vw, 70px) * .75);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--md-sys-color-on-surface);
-  margin: 0 0 28px;
+  margin: 0 0 clamp(28px, 3.4vw, 56px);
 }
 
 /* The two glyphs the reference takes from Material Symbols Outlined, drawn
@@ -354,6 +369,10 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
 }
 
 .carousel__slide{flex:0 0 100%;min-width:0;display:flex}
+/* Vertical panning stays the browser's, so a scroll that starts on the card
+   still scrolls the page; everything sideways reaches the swipe handler
+   instead of being cancelled halfway through. */
+.carousel__track{touch-action:pan-y}
 
 /* Dots ------------------------------------------------------- */
 .carousel-dots{
@@ -567,8 +586,7 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
 /* Expanded (desktop) layout — media left, content right */
 @media (min-width: 840px){
   :root{--hl-pad-top:64px}
-  .highlight-events{padding:var(--hl-pad-top) 0 48px}
-  .highlight-events__headline{margin-bottom:32px}
+  .highlight-events{padding:var(--hl-pad-top) 0 0}
 
   /* No padding: the media panel is flush with the left, top and bottom
      edges of the card, and the grid row stretches it to full height. */
@@ -618,7 +636,19 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   :root:not([data-theme=light]){--hl-ink:var(--md-sys-color-on-surface);
     --hl-ink-dim:var(--md-sys-color-outline-variant)}
 }
-.highlight-events__headline{color:var(--hl-ink)}
+/* A heading belongs to what follows it, so it carries more air above than
+   below. The whole gap is one clamp rather than the banner's bottom padding
+   plus an offset here: two fixed values stacked to 88px on a phone, against
+   type that had shrunk to 25px, so the break stood half again as tall relative
+   to the words it separates as it does on a wide window. One value scales with
+   the viewport the way the type does.
+
+   Set after the rule above, whose `margin` shorthand would otherwise zero it. */
+.section-headline{margin-top:clamp(40px, 8.9vw, 112px)}
+/* Both headings take the same ink. Inside the banner --md-sys-color-on-surface
+   is the reference's #1f1f1f; out here it is the page's own, four values off.
+   --hl-ink is that same pair, so they match in either theme. */
+.highlight-events__headline,.section-headline{color:var(--hl-ink)}
 .carousel-dot{background:var(--hl-ink-dim)}
 .carousel-dot[aria-pressed="true"]{background:var(--hl-ink)}
 .carousel-dot:focus-visible{outline-color:var(--hl-ink)}
@@ -635,6 +665,17 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   -webkit-mask:var(--wave-src) repeat-x center/56px 16px;
           mask:var(--wave-src) repeat-x center/56px 16px}
 .facts .btn{flex:none;width:100%}
+/* Stacked, the card's copy sits in a column of its own rather than beside a
+   picture, and the reference's desktop padding leaves it looking half empty —
+   most visibly under the venue, where the actions row reserves 20px of its own
+   above a 48dp button. The button keeps that target; its own inner air just
+   overlaps the body's padding instead of adding to it. */
+@media(max-width:839px){
+  .event-card__body{padding:20px}
+  .event-card__supporting{margin-bottom:12px}
+  .event-card__actions{padding-top:8px;margin:0 -8px -8px 0}
+}
+
 @media(max-width:839px){
   .fig{grid-area:auto;aspect-ratio:16/10;min-height:0;border-radius:var(--r-card) var(--r-card) 0 0}
   .side{grid-area:auto;align-self:auto}
@@ -1012,15 +1053,16 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .grid.tile .card h4{font-size:var(--md-sys-typescale-title-medium-size);
   line-height:var(--md-sys-typescale-title-medium-line-height)}
 .grid.tile .card .where{margin-top:4px}
-.grid.tile .card .offi,.grid.tile .card .figs,.grid.tile .card .stars,
+.grid.tile .card .offi,.grid.tile .card .figs,
 .grid.tile .card .acts,.grid.tile .card .cats{display:none}
 .grid.tile .card .when{margin-top:8px}
 .grid.tile .card .where{margin-top:4px}
-/* The compact tile has no notch — the picture is too small to carry one — so
-   the category chip is where its colour goes instead. */
-.grid.tile .card .kind{display:inline-block;margin-top:10px;padding:4px 11px;
-  border-radius:var(--md-sys-shape-corner-full);font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);letter-spacing:.04em;
-  background:var(--cat,var(--md-sys-color-surface-container-high));color:var(--cat-ink,var(--md-sys-color-on-surface-variant));width:max-content}
+/* The tag notched into the picture is the only place the category is named
+   now — the chip that used to repeat it under the title is gone, and the tag
+   drops a step on the scale so it decorates the picture rather than competing
+   with the festival's own name. */
+.grid.tile .card .kind{display:none}
+.grid.tile .card .notch{font-size:var(--md-sys-typescale-label-small-size)}
 /* The whole tile is the target, since the buttons are gone. */
 .grid.tile .card{cursor:pointer}
 .card .kind{display:none}
@@ -1080,10 +1122,10 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   /* Two to a row leaves no space for the full 18/27, but nothing that is a
      sentence goes under 14px — the city's listing holds 16 for its meta and
      this is the same job at half the width. */
-  .grid.tile .card h4{font-size:var(--md-sys-typescale-label-medium-size)}
-  .grid.tile .card .when{font-size:var(--md-sys-typescale-label-small-size);line-height:1.5;margin-top:6px}
-  .grid.tile .card .where{font-size:var(--md-sys-typescale-label-small-size);line-height:1.5}
-  .grid.tile .card .kind{font-size:var(--md-sys-typescale-label-small-size);padding:3px 9px;margin-top:8px}
+  .grid.tile .card h4{font-size:var(--md-sys-typescale-label-large-size);
+    line-height:var(--md-sys-typescale-label-large-line-height)}
+  .grid.tile .card .when{font-size:var(--md-sys-typescale-label-medium-size);line-height:1.5;margin-top:6px}
+  .grid.tile .card .where{font-size:var(--md-sys-typescale-label-medium-size);line-height:1.5}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
   .sheet{left:0;right:0;width:auto;max-width:none}
@@ -1116,10 +1158,17 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
   text-transform:uppercase;letter-spacing:.02em;line-height:1;white-space:nowrap}
 .mhead .ct{font-size:var(--f-label);line-height:var(--l-label);letter-spacing:var(--k-label);
   color:var(--md-sys-color-on-surface-variant);white-space:nowrap}
+/* The month is a divider between groups of cards, not a headline: on a phone
+   at title-large it stood taller than anything it separated. It takes the
+   toolbar's own size there, so it reads level with the "All" beside it. */
+@media(max-width:599px){
+  .mhead h3{font-size:var(--md-sys-typescale-title-medium-size);
+    line-height:var(--md-sys-typescale-title-medium-line-height)}
+}
 /* The month heading used to trail a rule across the rest of the row. The
    heading and its count already read as a group; the line only added weight
    above cards that carry plenty of their own. */
-.card .figs b,.card .stars b{color:var(--md-sys-color-on-surface)}
+.card .figs b{color:var(--md-sys-color-on-surface)}
 .grid{display:grid;gap:clamp(16px,2vw,24px);
   grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))}
 /* The festival's own colour is confined to the label on the picture. The card
@@ -1137,7 +1186,11 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 .card:hover{transform:translateY(-2px);box-shadow:var(--md-sys-elevation-2)}
 .card.past .shot img.pic{filter:grayscale(.8) contrast(.95)}
 
-.card .shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--md-sys-color-surface-container-low)}
+/* 2:1 rather than 16:10. The picture is the card's opening, not its subject —
+   at 16:10 it took more height than the record underneath it, and a festival
+   poster survives the tighter crop because what identifies it is the wordmark
+   laid over the corner, which keeps its own size. */
+.card .shot{position:relative;aspect-ratio:2/1;overflow:hidden;background:var(--md-sys-color-surface-container-low)}
 .card .shot img.pic{width:100%;height:100%;object-fit:cover;display:block}
 .card .lg{position:absolute;left:18px;top:16px;width:max-content;max-width:66%;z-index:2}
 .card .lg img{height:clamp(34px,4vw,44px);width:auto;max-width:100%;display:block;
@@ -1185,8 +1238,6 @@ dialog.caldlg.in .calbox{opacity:1;transform:translate(-50%,0)}
 /* The date and the place are consecutive lines of one address on their card,
    not two blocks — so this one closes the stack gap rather than adding to it. */
 .where{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface-variant);margin-top:-12px}
-.stars{font-size:var(--md-sys-typescale-label-large-size);line-height:21.6px;color:var(--md-sys-color-on-surface-variant)}
-.stars b{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
 .cats{font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface)}
 .figs{display:flex;gap:18px;font-size:var(--md-sys-typescale-label-medium-size);line-height:19.2px;color:var(--md-sys-color-on-surface-variant)}
 .figs b{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-emphasized-label-weight);font-variant-numeric:tabular-nums}
@@ -1453,6 +1504,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
   </div>
 </section>
 
+<h2 class="section-headline" id="all-festivals-headline">All Festivals</h2>
 <div id="toolsMark" aria-hidden="true"></div>
 <div class="tools" id="tools">
   <a class="toolmark" href="#top" aria-label="Back to the top">
@@ -1829,14 +1881,26 @@ if (reel.length) {
       dots[index].focus();
     });
 
-    // Swipe
-    let startX = null;
-    track.addEventListener('pointerdown', (e) => { startX = e.clientX; });
+    /* Swipe. The reference compares two clientX values and nothing else,
+       which is enough for a mouse drag and close to useless on a touch screen:
+       a finger that starts on the card and moves down is a page scroll, the
+       browser takes the gesture over and fires pointercancel, so pointerup
+       never arrives — and on the occasions it did, a slightly slanted scroll
+       counted as a swipe. So the vertical delta is measured too, the gesture
+       only counts when it is clearly horizontal, and a cancelled pointer drops
+       it. touch-action:pan-y in the stylesheet is the other half: it leaves
+       vertical panning to the browser and hands us everything sideways. */
+    let startX = null, startY = null;
+    const dropGesture = () => { startX = startY = null; };
+    track.addEventListener('pointerdown', (e) => { startX = e.clientX; startY = e.clientY; });
+    track.addEventListener('pointercancel', dropGesture);
     track.addEventListener('pointerup', (e) => {
       if (startX === null) return;
-      const delta = e.clientX - startX;
-      if (Math.abs(delta) > 48) show(index + (delta < 0 ? 1 : -1));
-      startX = null;
+      const dx = e.clientX - startX, dy = e.clientY - startY;
+      dropGesture();
+      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+        show((index + (dx < 0 ? 1 : -1) + slides.length) % slides.length);
+      }
     });
 
     // Hide the gradient placeholder only when a real photo loads
@@ -1984,7 +2048,6 @@ function card(f) {
         <span><b>${f.stats.stages}</b> stages</span>
         <span><b>${f.stats.days}</b> day${f.stats.days > 1 ? 's' : ''}</span>
       </div>
-      <p class="stars"><b>${st.past ? 'Played' : 'Headlining'}:</b> ${esc(f.stars.slice(0, 4).join(' · '))}</p>
       <div class="cats">${esc(f.tags.join(', '))}</div>
       <div class="acts">
         <md-filled-button trailing-icon href="${esc(f.planner)}">${st.past ? 'Browse timetable' : 'Open planner'}<span slot="icon">${ico('arrow')}</span></md-filled-button>
