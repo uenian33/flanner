@@ -881,11 +881,15 @@ __NAV_CSS__
   --on-surface:     #191D13;
   --on-surface-var: #5B6053;
   --outline:        #E3E2DA;
-  --primary:        #4C662B;
-  --on-primary:     #FFFFFF;
-  --primary-wash:   #EBF1DE;
+  /* The grid's own chrome is neutral — the hover, the day you have picked,
+     the fold, the focus ring. Colour in this view means a festival: the bars
+     carry their category's container pair and nothing else does, so a green
+     fill can never be mistaken for a music festival that is not there. */
+  --chrome:         #1B1B19;
+  --on-chrome:      #FFFFFF;
+  --wash:           #EFEFEC;
 
-  --cat-music: #DCE8C0;  --on-cat-music: #1F2D0A;
+  --cat-music: #FFD8E8;  --on-cat-music: #441B2F;
   --cat-art:   #F2DFC3;  --on-cat-art:   #2B1700;
   --cat-film:  #E8DEF8;  --on-cat-film:  #1D192B;
   /* Our data has two categories the redesign does not draw; they take the
@@ -893,7 +897,7 @@ __NAV_CSS__
   --cat-culture: #FBD9DF;  --on-cat-culture: #2C151A;
   --cat-others:  #E2E2DF;  --on-cat-others:  #1B1B19;
 
-  --plan-music: #2E4B12;  --on-plan-music: #EDF6DA;
+  --plan-music: #71294E;  --on-plan-music: #FFEEF5;
   --plan-art:   #6B4310;  --on-plan-art:   #FFEEDC;
   --plan-film:  #4F378B;  --on-plan-film:  #EADDFF;
   --plan-culture: #6B333E;  --on-plan-culture: #FFE1E6;
@@ -909,13 +913,33 @@ __NAV_CSS__
 .calview *, .calview *::before, .calview *::after { box-sizing: border-box; }
 
 /* ---- header ---- */
+/* Pinned directly under the toolbar, so the month you are reading and the two
+   arrows that change it stay to hand however far down the weeks you have
+   scrolled. --stickb is the bottom edge of whatever is already pinned above
+   this — the toolbar on a pointer device, the masthead and the toolbar on a
+   phone — measured at runtime, because both of those change height with their
+   own contents. The fill is the page's surface rather than the calendar's, so
+   the band is invisible until something scrolls under it. */
 .cal-header {
+  position: sticky;
+  top: var(--stickb, 74px);
+  z-index: 55;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px 16px;
-  margin-block-end: 24px;
+  padding-block: 8px;
+  margin-block-end: 16px;
 }
+.cal-header::before {
+  content: "";
+  position: absolute; inset: 0 -50vw; z-index: -1;
+  background: var(--md-sys-color-surface);
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-spring-default-effects);
+  pointer-events: none;
+}
+.cal-header.stuck::before { opacity: 1; }
 .cal-title {
   display: inline-flex;
   align-items: center;
@@ -930,7 +954,7 @@ __NAV_CSS__
   cursor: pointer;
   transition: background .18s var(--ease);
 }
-.cal-title:hover { background: var(--primary-wash); }
+.cal-title:hover { background: var(--wash); }
 .cal-title svg { inline-size: 22px; block-size: 22px; fill: var(--on-surface-var); }
 .cal-header__spacer { margin-inline-start: auto; }
 
@@ -939,21 +963,25 @@ __NAV_CSS__
   height: 40px; padding: 0 16px;
   border: 0; border-radius: 20px;
   background: none;
-  color: var(--primary);
+  color: var(--chrome);
   font: 550 14px/1 inherit;
   cursor: pointer;
   transition: background .18s var(--ease);
 }
-.calview .text-button:hover { background: var(--primary-wash); }
-.calview .text-button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.calview .text-button:hover { background: var(--wash); }
+.calview .text-button:focus-visible { outline: 2px solid var(--chrome); outline-offset: 2px; }
 
+/* Neutral, not green: the month arrows are chrome, and in the category's own
+   colour they read as though they belonged to the music festivals underneath
+   them. They take the neutral container pair the calendar already defines for
+   the categories its five colours do not name. */
 .calview .icon-button {
   position: relative;
   display: grid; place-items: center;
   inline-size: 44px; block-size: 44px;
   border: 0; border-radius: 50%;
-  background: var(--cat-music);
-  color: var(--on-cat-music);
+  background: var(--cat-others);
+  color: var(--on-cat-others);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -965,7 +993,7 @@ __NAV_CSS__
 }
 .calview .icon-button:hover::before  { opacity: .08; }
 .calview .icon-button:active::before { opacity: .12; }
-.calview .icon-button:focus-visible  { outline: 2px solid var(--on-cat-music); outline-offset: 2px; }
+.calview .icon-button:focus-visible  { outline: 2px solid var(--on-cat-others); outline-offset: 2px; }
 
 /* ---- grid ---- */
 .calendar {
@@ -1001,7 +1029,7 @@ __NAV_CSS__
   pointer-events: none;
 }
 .week__bg i { margin-inline: 3px; border-radius: var(--shape-l); }
-.week__bg i.is-selected { background: var(--primary-wash); }
+.week__bg i.is-selected { background: var(--wash); }
 
 .week__grid {
   position: relative;
@@ -1027,11 +1055,11 @@ __NAV_CSS__
   transition: background .18s var(--ease);
 }
 .day::after { content: ""; position: absolute; inset: -9px; }  /* 48px target */
-.day:hover { background: var(--primary-wash); }
-.day:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.day:hover { background: var(--wash); }
+.day:focus-visible { outline: 2px solid var(--chrome); outline-offset: 2px; }
 .day.is-outside { color: var(--on-surface-var); opacity: .45; }
-.day.is-today { box-shadow: inset 0 0 0 1.5px var(--primary); color: var(--primary); }
-.day.is-selected { background: var(--primary); color: var(--on-primary); box-shadow: none; }
+.day.is-today { box-shadow: inset 0 0 0 1.5px var(--chrome); color: var(--chrome); }
+.day.is-selected { background: var(--chrome); color: var(--on-chrome); box-shadow: none; }
 
 .event {
   display: flex; align-items: center; gap: 6px;
@@ -1092,8 +1120,8 @@ __NAV_CSS__
   cursor: pointer;
   transition: background .18s var(--ease), color .18s var(--ease);
 }
-.fold:hover { background: var(--primary-wash); color: var(--on-surface); }
-.fold:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.fold:hover { background: var(--wash); color: var(--on-surface); }
+.fold:focus-visible { outline: 2px solid var(--chrome); outline-offset: -2px; }
 .fold svg {
   inline-size: 20px; block-size: 20px;
   fill: currentColor;
@@ -1167,13 +1195,23 @@ body[data-view=cal] #months{margin-top:clamp(28px,3.4vw,44px)}
 body[data-view=tile] #months,
 body[data-view=full] #months{display:grid;gap:clamp(16px,2vw,24px);
   grid-template-columns:minmax(0,1fr)}
+/* ── how many to a row ─────────────────────────────────
+   Two for the detailed card and three for the compact one, from the tablet
+   all the way up an ordinary desktop: at those counts each card sits close to
+   the width it is drawn at — 400px detailed, 320px compact — and a further
+   column would only be bought by making every card narrower.
+
+   The count rises where the page's own measure does. Between 1100px and
+   1900px the window grows but .wrap does not, so a column added in there
+   would take its width out of the cards; at 1900px and again at 2800px the
+   measure opens up and there is room for a real one. */
 @media(min-width:600px){body[data-view=full] #months{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(min-width:1024px){body[data-view=full] #months{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:1800px){body[data-view=full] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1900px){body[data-view=full] #months{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:2800px){body[data-view=full] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
 body[data-view=tile] #months{gap:clamp(12px,1.6vw,18px);
   grid-template-columns:repeat(2,minmax(0,1fr))}
 @media(min-width:600px){body[data-view=tile] #months{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:1024px){body[data-view=tile] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1900px){body[data-view=tile] #months{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(min-width:2800px){body[data-view=tile] #months{grid-template-columns:repeat(5,minmax(0,1fr))}}
 /* M3's compact window class: 16dp margins and 16dp gutters. The margins are
    .wrap's; this is the gutter, which had been running at 10. */
@@ -1189,26 +1227,20 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 .dayfilter h3{margin:0;font-family:"Inter","Segoe UI",system-ui,sans-serif;
   font-size:17px;font-weight:700;letter-spacing:-.015em;color:var(--md-sys-color-on-surface)}
 .dayfilter span{font-size:13px;color:var(--md-sys-color-on-surface-variant)}
+/* The calendar's own control, so it takes the calendar's neutral chrome
+   rather than the green it used to carry. */
 .dayfilter button{margin-inline-start:auto;height:40px;padding:0 16px;border:0;
-  border-radius:20px;background:none;color:#4C662B;cursor:pointer;
+  border-radius:20px;background:none;color:#1B1B19;cursor:pointer;
   font:550 14px/1 "Inter","Segoe UI",system-ui,sans-serif;
   transition:background .18s cubic-bezier(.2,0,0,1)}
-.dayfilter button:hover{background:#EBF1DE}
+.dayfilter button:hover{background:#EFEFEC}
 
-/* ── the two grids ─────────────────────────────────────
-   Compact tiles and detailed cards are one component in two sizes; the grid
-   says which.
-
-   The compact grid counts columns rather than fitting as many as will go: two
-   on a phone, three on a tablet, four from a laptop up. A fifth waits until
-   the window is wide enough that the cards are still broader than they are
-   tall at that count — packing in more columns as the window grows would keep
-   the card the same narrow shape for ever. */
-.grid.tile{grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:clamp(12px,1.6vw,18px)}
-@media(min-width:600px){.grid.tile{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:1024px){.grid.tile{grid-template-columns:repeat(4,minmax(0,1fr))}}
-@media(min-width:2800px){.grid.tile{grid-template-columns:repeat(5,minmax(0,1fr))}}
+/* ── the three shapes ──────────────────────────────────
+   Compact tiles, detailed cards and rows are one component in three sizes;
+   the class on the grid says which. Only the row lays its own cards out — in
+   the two card views the month groups are display:contents and the columns
+   are counted on #months above, so there is one ladder rather than two that
+   have to agree. */
 /* The whole card is the target — the two controls in it are excluded in the
    script, and everything else opens the planner. */
 .grid .card{cursor:pointer}
@@ -1220,10 +1252,12 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
    card carry it — centred under the compact one, opposite the links on the
    detailed one — and each theme re-points its colours. */
 .plan-toggle {
-  --plan-bg:          #DCE8C0;
-  --plan-fg:          #1F2D0A;
-  --plan-bg-on:       #2E4B12;
-  --plan-fg-on:       #EDF6DA;
+  /* The neutral pair, for a toggle that is not inside a category theme —
+     every one on this page is, and each re-points these four. */
+  --plan-bg:          #E2E2DF;
+  --plan-fg:          #1B1B19;
+  --plan-bg-on:       #3C3D37;
+  --plan-fg-on:       #E9E9E4;
   --plan-height:      40px;
   --plan-radius:      20px;
 }
@@ -1346,8 +1380,6 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   .vseg button{flex:1 1 0;min-width:0;width:auto}
   .vseg button{height:42px;padding:0 11px}
   .vseg button .lbl{display:none}
-  /* Two per row is the point of the compact view on a phone. */
-  .grid.tile{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
   .sheet{left:0;right:0;width:auto;max-width:none}
@@ -1410,20 +1442,32 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
    theme block and nothing else. Music, art and film are the redesign's own;
    culture and others are built to the same recipe, since our data has five
    categories where it draws three. */
-.theme-music {                       /* green  — music festivals */
-  --surface:        #F2F0EB;
-  --on-surface:     #191D13;
-  --on-surface-var: #494E42;
-  --outline-var:    #C7CBBA;
-  --chip:           #DCE8C0;
-  --on-chip:        #1F2D0A;
-  --accent:         #4C662B;
+/* Rose — music festivals. One hue at three chroma levels, which is the recipe
+   every theme here follows: the surface and its two text roles are all but
+   neutral (C≈3–9), the chip and the artwork's ground carry a container's worth
+   (C≈11–21), and the accent, the artwork's shapes and the selected fill run at
+   the hue's full strength (C≈36–40). Only the hue changes between categories;
+   the tones do not, so a card reads the same whatever it is showing.
+
+   Generated at hue 350 by scripts/m3color.py at the tones the other themes
+   use, then checked against them: 5.7:1 for the accent on the surface, 11.3:1
+   for the chip's label, 8.4:1 for the artwork's ink. The artwork's first shape
+   sits at tone 85 rather than 90 — pink runs out of gamut before green does,
+   and at 90 it came back the same colour as the chip beside it. */
+.theme-music {
+  --surface:        #F6EFF2;
+  --on-surface:     #24181D;
+  --on-surface-var: #57474E;
+  --outline-var:    #D9C4CC;
+  --chip:           #FFD8E8;
+  --on-chip:        #441B2F;
+  --accent:         #8F4669;
   /* artwork */
-  --art-bg:  #E7F0CF;
-  --art-1:   #CDEDA3;
-  --art-2:   #4C662B;
-  --art-3:   #A9CE88;
-  --art-ink: #31490F;
+  --art-bg:  #FFE4EF;
+  --art-1:   #FFC4DD;
+  --art-2:   #8F4669;
+  --art-3:   #FFABD0;
+  --art-ink: #6F284D;
 }
 .theme-art {                         /* amber / brown — art festivals */
   --surface:        #F7F1E8;
@@ -1484,10 +1528,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 
 /* The toggle keeps its own component CSS; only its tokens are re-pointed per
    theme. Two classes beat the component's one. */
-.theme-music { --sel-bg: #2E4B12; --sel-fg: #EDF6DA; }
+.theme-music { --sel-bg: #71294E; --sel-fg: #FFEEF5; }
 .theme-music .plan-toggle {
-  --plan-bg: #DCE8C0; --plan-fg: #1F2D0A;
-  --plan-bg-on: #2E4B12; --plan-fg-on: #EDF6DA;
+  --plan-bg: #FFD8E8; --plan-fg: #441B2F;
+  --plan-bg-on: #71294E; --plan-fg-on: #FFEEF5;
 }
 .theme-art { --sel-bg: #6B4310; --sel-fg: #FFEEDC; }
 .theme-art .plan-toggle {
@@ -1608,6 +1652,11 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   letter-spacing: -.01em;
 }
 .grid.tile .card__title { font-size: 19px; }
+/* The title is the card's own link — the same destination the whole card
+   already opens, said in markup rather than only in a click handler, so a
+   keyboard reaches it. It takes the heading's colour and no underline, so
+   nothing about the card looks different for having gained it. */
+.card__link { color: inherit; text-decoration: none; }
 
 .card__date {
   margin: 10px 0 0;
@@ -1622,6 +1671,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   font-size: 14.5px;
   line-height: 1.35;
 }
+/* The category, ready to be re-issued as the first token of the meta line.
+   Every card carries it and only the narrowest row shows it — where the
+   artwork has become too small to hold a legible chip. */
+.card__cat { display: none; }
 /* ---- facts list (detailed only) ---------------------------- */
 .card__facts {
   margin: 20px 0 0;
@@ -1646,10 +1699,9 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 }
 
 /* ---- assist chips ------------------------------------------ */
-/* One row. The chips are 32px tall and a second row starts at 40, so the clip
-   never cuts through a chip — it either fits or it is not shown. Which ones
-   fit is decided by the column width, so it settles again on every resize
-   without anything having to measure it. */
+/* They wrap, as the reference has them: in a fluid column a chip set that has
+   to fit one row is a chip set that disappears, and what a card says about a
+   festival should not depend on how wide the window happens to be. */
 .card__tags {
   margin: 20px 0 0;
   padding: 0;
@@ -1657,8 +1709,6 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  max-block-size: 32px;
-  overflow: hidden;
 }
 .card__tags li {
   display: inline-flex;
@@ -1678,15 +1728,11 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 
 /* ---- actions ----------------------------------------------- */
 .card__actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+  display: block;
   margin-block-start: 22px;
-  padding: 18px 4px 0 8px;
+  padding: 18px 12px 0;      /* 12px matches the body's text inset */
   border-block-start: 1px solid var(--outline-var);
 }
-.card__actions > .btn-group { flex: 1 1 100%; }
 /* The cards in a row are the same height, and the toggle is pushed to the
    foot of each, so a title that takes two lines does not drop its button below
    its neighbours'. The 30px is the least air it may have, not the amount. */
@@ -1718,20 +1764,24 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 
 /* ── the detailed card's actions ───────────────────────
    Material 3 Expressive's standard button group, as the redesign gives it:
-   two stateless links and one toggle, 8dp apart, each keeping its own shape.
-   Only the toggle has a selected state, so only the toggle morphs its corner
-   and fills — in M3 the shape change signals selection, and a stateless button
-   must never borrow it.
+     1  Official site   <a target="_blank">   stateless
+     2  Tickets         <a>                   stateless
+     3  Add to plan     checkbox + label      the only stateful button
 
-   The colours are the card's rather than the group's own: the container pair
-   is the category's chip, and the selected fill is the pair the plan toggle
-   already uses, so the two controls mean the same thing in every theme. */
+   Sized to the SMALL button — 40dp tall, 12dp corner, 20dp icon, label-large —
+   because a card is a dense context and the medium 56dp button out-weighs the
+   22px title above it. Only the toggle has a selected state, so only the
+   toggle morphs its corner and fills: in M3 the shape change signals
+   selection, and a stateless button must never borrow it.
+
+   The container is white against the card's tinted surface, and the selected
+   fill is the pair the plan toggle already uses, so the two controls mean the
+   same thing in every theme. */
 .btn-group {
   /* ---- colour roles, taken from the card ---- */
   --md-primary:    var(--sel-bg);
   --md-on-primary: var(--sel-fg);
-  --md-surface:    var(--chip);
-  --md-on-surface: var(--on-chip);
+  --md-surface:    #FFFFFF;
 
   /* ---- motion tokens ----
      Material's published web conversions of the expressive spring tokens. */
@@ -1742,8 +1792,7 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   display: flex;
   gap: 8px;
   align-items: stretch;
-  width: 100%;
-  max-width: 560px;
+  inline-size: 100%;
 }
 
 /* The toggle's checkbox stays in the accessibility tree, out of the layout. */
@@ -1754,21 +1803,31 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   white-space: nowrap;
 }
 
-/* ---------- shared button ---------- */
-.opt {
+/* ---------- shared button ----------
+   Scoped to the group, because .opt is also the filter sheets' chip and the
+   two components share nothing but the name.
+
+   The label is M3 label-large — 14px at 500, which is what the reference asks
+   for in words. It writes it as `font: 500 14px/1 inherit`, which is not a
+   valid shorthand and is dropped, so on that page the button draws at
+   whatever it inherits; said in longhand here, it draws at the size the
+   component is specified at. */
+.btn-group .opt {
   position: relative;
-  flex: 1 1 auto;
-  min-inline-size: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 56px;
-  padding: 0 24px;
-  border-radius: 16px;
+  block-size: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
   background: var(--md-surface);
-  color: var(--md-on-surface);
-  font: 500 16px/1 "Roboto", "Inter", "Segoe UI", system-ui, sans-serif;
+  color: var(--on-surface);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
   letter-spacing: .01em;
   text-decoration: none;
   white-space: nowrap;
@@ -1776,14 +1835,14 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   transition:
-    flex-grow        var(--spatial),
+    flex-basis       var(--spatial),
     border-radius    var(--spatial),
     background-color var(--m3-effects-default),
     color            var(--m3-effects-default);
 }
 
 /* State layer — 8% hover, 10% pressed, over the container colour. */
-.opt::before {
+.btn-group .opt::before {
   content: "";
   position: absolute; inset: 0;
   border-radius: inherit;
@@ -1792,12 +1851,12 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   transition: opacity var(--m3-effects-default);
   pointer-events: none;
 }
-.opt:hover::before  { opacity: .08; }
-.opt:active::before { opacity: .10; }
+.btn-group .opt:hover::before  { opacity: .08; }
+.btn-group .opt:active::before { opacity: .10; }
 
-.opt:focus-visible,
+.btn-group .opt:focus-visible,
 .btn-group__input:focus-visible + .opt {
-  outline: 3px solid var(--md-primary);
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -1805,25 +1864,28 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 .btn-group__input:checked + .opt {
   background: var(--md-primary);
   color: var(--md-on-primary);
-  border-radius: 28px;                  /* full */
+  border-radius: 20px;                  /* full */
 }
 
-/* ---------- width choreography ---------- */
-.opt                             { flex-grow: 1; }
-.btn-group__input:checked + .opt { flex-grow: 1.6; }
-/* while any button is held, its neighbours breathe outwards … */
-.btn-group:has(.opt:active) .opt                             { flex-grow: 1.14; }
-.btn-group:has(.opt:active) .btn-group__input:checked + .opt { flex-grow: 1.74; }
-/* … and the held one squeezes in. */
-.btn-group .opt:active                             { flex-grow: .80; }
-.btn-group .btn-group__input:checked + .opt:active { flex-grow: .88; }
+/* ---------- width choreography ----------
+   The two links are icon-only until the card is wide enough to carry their
+   labels, and the toggle takes whatever is left of the row. Selecting nudges
+   the links in so the toggle claims more of it — the width play that makes
+   this a group rather than three buttons — and pressing squeezes the held
+   button while its neighbours breathe outwards. */
+.btn-group .opt--icon   { flex: 0 1 40px; padding: 0; }
+.btn-group .opt--toggle { flex: 1 1 auto; }
+.btn-group:has(.btn-group__input:checked) .opt--icon { flex-basis: 36px; }
+.btn-group:has(.opt:active) .opt--icon         { flex-basis: 46px; }
+.btn-group .opt--icon:active                   { flex-basis: 34px; }
+.btn-group:has(.opt--toggle:active) .opt--icon { flex-basis: 48px; }
 
 /* ---------- icons ---------- */
-.opt__icon { width: 24px; height: 24px; flex: none; }
+.opt__icon { inline-size: 20px; block-size: 20px; flex: none; }
 .opt__icon path {
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -1846,23 +1908,40 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 
 @media (prefers-reduced-motion: reduce) {
   .btn-group { --spatial: 1ms linear; }
-  .opt, .opt::before, .opt__icon path, .opt__labels > span { transition-duration: 1ms; }
+  .btn-group .opt, .btn-group .opt::before,
+  .opt__icon path, .opt__labels > span { transition-duration: 1ms; }
 }
 
-/* The group is drawn at 560px; a card column is smaller than that, and the row
-   does not break. What gives instead is the two stateless buttons' labels: at
-   the width where three labels would have to be cut mid-word, those two become
-   the icons they already carry, and the toggle — the one button whose label
-   changes with its state — keeps its words at every size. */
-.grid:not(.tile) .card{container-type:inline-size}
-@container (max-width: 470px){
-  .opt--link{flex-grow:0;padding:0 18px}
-  .opt--link .opt__text{display:none}
+/* A link's label is clipped rather than deleted, so its accessible name is
+   there whether or not there is room to draw it. */
+.opt--icon .opt__text {
+  position: absolute;
+  inline-size: 1px; block-size: 1px; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
 
-/* Each card size keeps the control it was drawn with. */
-.grid.tile .card .btn-group{display:none}
-.grid:not(.tile) .card .plan-toggle{display:none}
+/* Wider cards: the links get their labels back. The row answers to the CARD's
+   width rather than the window's, so one rule covers a three-up grid, a
+   two-up one and a single column. */
+.grid:not(.tile):not(.list) .card{container-type:inline-size}
+@container (min-width: 430px){
+  .btn-group .opt--icon{flex:0 1 auto;padding:0 16px}
+  .opt--icon .opt__text{
+    position: static;
+    inline-size: auto; block-size: auto; margin: 0;
+    overflow: visible; clip-path: none;
+  }
+  .btn-group:has(.btn-group__input:checked) .opt--icon,
+  .btn-group:has(.opt:active) .opt--icon,
+  .btn-group .opt--icon:active,
+  .btn-group:has(.opt--toggle:active) .opt--icon{flex-basis:auto}
+}
+
+/* Each card size keeps the control it was drawn with. The row is a compact
+   card on its side, so it keeps the compact card's toggle. */
+.grid.tile .card .btn-group,
+.grid.list .card .btn-group{display:none}
+.grid:not(.tile):not(.list) .card .plan-toggle{display:none}
 
 /* Card-scoped sizing for the shared toggle. */
 .card .plan-toggle { --plan-height: 44px; }
@@ -1886,6 +1965,131 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   .grid.tile .card .plan-toggle{--plan-height:38px;--plan-radius:19px}
   .grid.tile .card .plan-toggle__button{font-size:13px;padding:0 14px 0 12px;gap:6px}
   .grid.tile .card .plan-toggle__icons svg{width:16px;height:16px}
+}
+
+/* ── the row ───────────────────────────────────────────
+   The same card laid on its side: same surface, same notch, same chip, same
+   toggle, with the artwork moved to the leading edge and each of the three
+   lines of text held to one line. It says what a tile says in a quarter of
+   the height, which is what two places on this page need — the list under the
+   calendar, where the grid above it has already taken most of the screen, and
+   the compact view on a phone, where two tiles to a row leave every second
+   title cut in half.
+
+   Where it is used is decided in the script, since it depends on the view and
+   the width together, and published as the grid's own class. The two card
+   grids are untouched.
+
+   Three sizes rather than one, at the page's own breakpoints, so each width
+   gets a row drawn for it:
+     ≥ 1024px   media 168×112 · toggle with its label
+     ≤ 1023px   media 144×96  · toggle as a circular icon button
+     ≤ 599px    media 96×72   · chip clipped, category into the meta line
+   Nothing wraps at any of the three: artwork, text and action stay on one
+   line all the way down to 320px.
+
+   The row spans the column at every width. In the compact view the month
+   groups are display:contents and the columns are counted on #months, so that
+   is where the single column has to be set; in the calendar the groups keep
+   their headings and each grid sets its own. */
+body[data-rows=on] #months{grid-template-columns:minmax(0,1fr);gap:12px}
+.grid.list{grid-template-columns:minmax(0,1fr);gap:12px}
+
+.grid.list .card{
+  --media-radius:16px;
+  --chip-radius:12px;
+  --notch-gap:5px;
+  --notch-fillet:9px;
+
+  position:relative;
+  flex-direction:row;
+  align-items:center;
+  gap:16px;
+  padding:12px}
+.grid.list .card__media{flex:none;inline-size:168px;aspect-ratio:3/2}
+.grid.list .card__chip{padding:6px 10px;font-size:10px;letter-spacing:.08em}
+
+/* One line each, so every row is the same height and the three columns stay
+   aligned the whole way down the list. */
+.grid.list .card__body{flex:1 1 auto;min-inline-size:0;padding:0}
+.grid.list .card__title,
+.grid.list .card__date,
+.grid.list .card__meta{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grid.list .card__title{font-size:17px}
+.grid.list .card__date{margin-block-start:6px;font-size:14px}
+.grid.list .card__meta{margin-block-start:4px;font-size:13.5px}
+.grid.list .card__facts,
+.grid.list .card__tags{display:none}
+
+.grid.list .card__actions{display:flex;flex:none;justify-content:flex-end;
+  margin-block-start:0;padding:0;border-block-start:0;
+  /* lifts the toggle above the row's own link */
+  position:relative;z-index:1}
+.grid.list .card .plan-toggle{--plan-height:44px}
+.grid.list .card .plan-toggle__button{font-size:14px;padding:0 18px 0 15px}
+.grid.list .card .plan-toggle__icons svg{width:19px;height:19px}
+
+/* The whole row is the link, and the state layer belongs to the row rather
+   than to the words in it. */
+.grid.list .card__link::after{content:"";position:absolute;inset:0;
+  border-radius:inherit}
+.grid.list .card::before{content:"";position:absolute;inset:0;
+  border-radius:inherit;background:var(--on-surface);opacity:0;
+  transition:opacity .18s ease;pointer-events:none}
+.grid.list .card:has(.card__link:hover)::before{opacity:.05}
+.grid.list .card:has(.card__link:active)::before{opacity:.09}
+.grid.list .card:has(.card__link:focus-visible){outline:3px solid var(--accent);
+  outline-offset:2px}
+@media(prefers-reduced-motion:reduce){
+  .grid.list .card::before{transition-duration:.01ms}
+}
+
+/* ---- tablet and narrow windows ----
+   The label is the first thing to go: it is the only part of the row that
+   repeats identically on every item, so it carries the least. The button
+   becomes a circular icon toggle and keeps its full 48dp target; the words
+   are clipped rather than removed, so they still name the control. */
+@media(max-width:1023px){
+  .grid.list .card{gap:14px}
+  .grid.list .card__media{inline-size:144px}
+  .grid.list .card__chip{padding:5px 9px;font-size:9px}
+  .grid.list .card__title{font-size:16px}
+  .grid.list .card__date{font-size:13.5px}
+  .grid.list .card__meta{font-size:13px}
+
+  .grid.list .card .plan-toggle{--plan-height:48px}
+  .grid.list .card .plan-toggle__button{inline-size:48px;padding:0;
+    justify-content:center;border-radius:24px}
+  .grid.list .card .plan-toggle__labels{position:absolute;
+    inline-size:1px;block-size:1px;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap}
+  .grid.list .card .plan-toggle__icons svg{width:22px;height:22px}
+}
+
+/* ---- phone ----
+   The artwork is now too small to carry a legible chip, so the chip is
+   clipped — again, not deleted — and the category is re-issued as the first
+   token of the meta line. The category is never lost, and the row still reads
+   artwork, text, action. */
+@media(max-width:599px){
+  .grid.list .card{gap:10px;padding:10px;border-radius:24px}
+  .grid.list .card__media{inline-size:96px;aspect-ratio:4/3}
+
+  .grid.list .card__notch{padding:0;background:none;border-start-start-radius:0}
+  .grid.list .card__notch::before,
+  .grid.list .card__notch::after{display:none}
+  .grid.list .card__chip{position:absolute;
+    inline-size:1px;block-size:1px;padding:0;margin:-1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap}
+  .grid.list .card__cat{display:inline}
+
+  .grid.list .card__title{font-size:15px}
+  .grid.list .card__date{margin-block-start:4px;font-size:13px}
+  .grid.list .card__meta{margin-block-start:3px;font-size:12.5px}
+
+  .grid.list .card .plan-toggle{--plan-height:44px}
+  .grid.list .card .plan-toggle__button{inline-size:44px;border-radius:22px}
+  .grid.list .card .plan-toggle__icons svg{width:20px;height:20px}
 }
 
 .empty{padding:40px 0;text-align:center;color:var(--md-sys-color-on-surface-variant);font-size:var(--f-body);
@@ -2992,33 +3196,35 @@ function buttonGroup(f) {
   const id = 'plan-g-' + (++planSeq);
   const on = Plan.has(f.id);
   return `<div class="btn-group" role="group" aria-label="Festival actions">
-    <a class="opt opt--link" href="${esc(f.official)}" target="_blank"
-       rel="noopener noreferrer" aria-label="Official site for ${esc(f.name)}">
+    <a class="opt opt--icon" href="${esc(f.official)}" target="_blank"
+       rel="noopener noreferrer" title="Official site"
+       aria-label="Official site for ${esc(f.name)}">
       <svg class="opt__icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M17 13.6v4.6a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V8.8A1.8 1.8 0 0 1 5.8 7h4.6"/>
         <path d="M13.6 4.5H19.5V10.4"/>
         <path d="M19.5 4.5 11.2 12.8"/>
       </svg>
-      <span class="opt__text">Official site</span><span class="sr"> (opens in a new tab)</span>
+      <span class="opt__text">Official site<span class="sr"> (opens in a new tab)</span></span>
     </a>
-    ${f.tickets ? `<a class="opt opt--link" href="${esc(f.tickets)}" target="_blank"
-       rel="noopener noreferrer" aria-label="Tickets for ${esc(f.name)}">
+    ${f.tickets ? `<a class="opt opt--icon" href="${esc(f.tickets)}" target="_blank"
+       rel="noopener noreferrer" title="Tickets"
+       aria-label="Tickets for ${esc(f.name)}">
       <svg class="opt__icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M5 6H19a2 2 0 0 1 2 2v1.5a2.5 2.5 0 0 0 0 5V16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1.5a2.5 2.5 0 0 0 0-5V8a2 2 0 0 1 2-2Z"/>
         <path d="M15 7.3v2M15 11v2M15 14.7v2"/>
       </svg>
-      <span class="opt__text">Ticket</span>
+      <span class="opt__text">Tickets</span>
     </a>` : ''}
     <input class="btn-group__input" type="checkbox" id="${id}" autocomplete="off"
            data-plan="${esc(f.id)}"${on ? ' checked' : ''}>
-    <label class="opt" for="${id}">
+    <label class="opt opt--toggle" for="${id}">
       <svg class="opt__icon opt__icon--toggle" viewBox="0 0 24 24" aria-hidden="true">
         <path class="ic-off" d="M12 6.6v10.8M6.6 12h10.8"/>
         <path class="ic-on"  d="M6.8 12.4 10.4 16 17.2 8.6"/>
       </svg>
       <span class="opt__labels">
         <span class="lbl-off">Add to plan</span>
-        <span class="lbl-on">Added</span>
+        <span class="lbl-on">In your plan</span>
       </span>
     </label>
   </div>`;
@@ -3032,6 +3238,12 @@ function card(f) {
      that is not one of these two controls opens it. */
   const link = {href: f.tickets || f.official};
   const title = `${f.name}${f.year ? ' ' + f.year : ''}`;
+  /* The card's destination, said once in markup as well as in the click
+     handler: ours opens in place, a festival we have not built a planner for
+     opens its own site in a new tab. The row stretches this link over itself,
+     so a keyboard has the same target a pointer does. */
+  const away = !f.planner;
+  const href = f.planner || link.href;
   return `<article class="card theme-${esc(catOf(f).id)}${st.past ? ' past' : ''}"
              data-id="${esc(f.id)}" data-cat="${esc(catOf(f).id)}"
              data-cost="${f.free ? 'free' : 'paid'}"${
@@ -3042,9 +3254,11 @@ function card(f) {
       <div class="card__notch"><span class="card__chip">${esc(catOf(f).label)}</span></div>
     </div>
     <div class="card__body">
-      <h3 class="card__title">${esc(title)}</h3>
+      <h3 class="card__title"><a class="card__link" href="${esc(href)}"${
+        away ? ' target="_blank" rel="noopener noreferrer"' : ''}>${esc(title)}</a></h3>
       <p class="card__date">${esc(f.dates)}</p>
-      <p class="card__meta">${esc(f.city)} · ${esc(f.type)}</p>
+      <p class="card__meta"><span class="card__cat"
+        aria-hidden="true">${esc(catOf(f).label)} · </span>${esc(f.city)} · ${esc(f.type)}</p>
       <ul class="card__facts">${cardFacts(f)}</ul>
       <ul class="card__tags">${f.tags.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
     </div>
@@ -3066,6 +3280,7 @@ const tools = $('#tools');
    reaches the top — which is exactly when its own offset hits zero. Nothing
    above it collapses, so the measurement cannot feed back into the layout. */
 const headEl = document.querySelector('header');
+const calHead = document.querySelector('.cal-header');
 function readStuck() {
   const wasStuck = tools.classList.contains('stuck');
   /* On a phone the masthead is sticky too, so the toolbar pins beneath it
@@ -3080,45 +3295,61 @@ function readStuck() {
   tools.classList.toggle('stuck', top <= h + 1);
   /* Joined means resting on the masthead, not merely scrolled past it. */
   document.body.classList.toggle('bars-joined', phone && Math.abs(top - h) <= 1.5);
+
+  /* Where the pinned stack ends, published for whatever pins beneath it —
+     the calendar's header, today. Read from the bar rather than assumed,
+     since it is two rows on a phone and one on a window. */
+  const stack = h + Math.round(tools.getBoundingClientRect().height);
+  document.documentElement.style.setProperty('--stickb', stack + 'px');
+  if (calHead) calHead.classList.toggle('stuck',
+    calHead.getBoundingClientRect().top <= stack + 1);
   if (tools.classList.contains('stuck') !== wasStuck && window.placeControls) placeControls();
 }
 addEventListener('scroll', readStuck, {passive: true});
 addEventListener('resize', readStuck, {passive: true});
 readStuck();
 
-/* ── the toolbar brings its section with it ────────────
-   Every control in this bar acts on the list below it, and on a long page the
-   list is usually off screen when you reach for one — you filter, and the
-   result lands somewhere you cannot see. So touching any of the bar's own
-   controls first brings the section up: the bar goes where it pins, and the
-   festivals start directly underneath it.
+/* ── the pinned bars bring their section with them ─────
+   Everything in the pinned region acts on what is underneath it, and on a long
+   page that is usually off screen when you reach for a control — you filter,
+   or you step a month, and the result lands somewhere you cannot see. So
+   touching anywhere in that region first brings the section up: the bars go
+   where they pin, and the calendar, the cards or the rows start directly
+   below them.
 
-   Bound to the controls themselves rather than to the bar, because the search
-   field is one element that moves — it lives in the toolbar on a pointer
-   device and in the masthead on a phone, and a listener on the bar would lose
-   it at the width where it travels. The filter sheets are left out: they hang
-   off their trigger, and scrolling on every chip inside an open sheet would
-   drag the page out from under the sheet. */
-/* Lands the bar exactly where it pins — at the top on a pointer device, under
-   the masthead on a phone — so the highlight above it goes completely out of
-   view and the festivals read as a page of their own. The rail's Festivals
-   destination uses this too, rather than the generic 90px-short offset every
-   other jump takes. */
+   Bound to the regions rather than to individual controls, so the bar's own
+   empty space counts too; the search field is listed separately because it is
+   the one element that moves, living in the toolbar on a pointer device and in
+   the masthead on a phone. The filter sheets are left out: they hang off their
+   trigger, and scrolling on every chip inside an open sheet would drag the
+   page out from under the sheet. */
+/* Lands the section itself directly under the pinned bars — the calendar in
+   the calendar view, the cards or the rows in the other two — so whatever you
+   have just changed starts at the top of what is left of the screen. It works
+   from the section rather than from the bar because the bar is sticky: once
+   you are past it, it is always at its pin and there would be nothing to
+   scroll. The rail's Festivals destination uses this too, rather than the
+   generic 90px-short offset every other jump takes. */
 function scrollToTools() {
   const phone = matchMedia('(max-width:599px)').matches;
   const h = phone && headEl ? Math.round(headEl.getBoundingClientRect().height) : 0;
-  const top = tools.getBoundingClientRect().top;
-  /* Already resting where it pins — scrolling anyway would jitter the page on
-     every second click. */
-  if (Math.abs(top - h) <= 1.5) return;
-  scrollTo({top: Math.max(0, top + scrollY - h), behavior: 'smooth'});
+  const stack = h + Math.round(tools.getBoundingClientRect().height);
+  const sec = document.querySelector(
+    document.body.dataset.view === 'cal' ? '#calView' : '#months');
+  if (!sec) return;
+  /* 8px of air under the bar, so the first row does not touch it. */
+  const target = Math.max(0,
+    Math.round(sec.getBoundingClientRect().top + scrollY - stack - 8));
+  /* Already resting there — scrolling anyway would jitter the page on every
+     second click. */
+  if (Math.abs(target - scrollY) <= 2) return;
+  scrollTo({top: target, behavior: 'smooth'});
 }
 
 (() => {
-  const bringUp = scrollToTools;
-  const field = document.querySelector('.sbox');
-  const parts = [field, $('#whenTrig'), $('#catTrig'), $('#viewSeg')].filter(Boolean);
-  for (const el of parts) {
+  const bringUp = e => { if (!e.target.closest('.sheet')) scrollToTools(); };
+  const zones = [tools, calHead, document.querySelector('.sbox')].filter(Boolean);
+  for (const el of zones) {
     el.addEventListener('pointerdown', bringUp);
     /* So the keyboard gets the same view as the pointer. */
     el.addEventListener('focusin', bringUp);
@@ -3531,12 +3762,21 @@ document.addEventListener('keydown', e => {
     fadeT = setTimeout(() => document.body.classList.remove('switching'), 300);
     const cal = document.querySelector('#calView');
     if (cal) cal.hidden = v !== 'cal';
-    /* The day panel below the calendar is always compact; the month groups
-       follow the switcher. */
-    /* Only the detailed view is detailed: the calendar's month list is the
-       compact card, the same one the day panel under the grid uses. */
-    document.querySelectorAll('#months .grid').forEach(g =>
-      g.classList.toggle('tile', v !== 'full'));
+    /* Which shape the list takes. Rows wherever a card would be the wrong
+       shape: under the calendar at every width, since the grid above it has
+       already taken most of the screen, and in the compact view on a phone,
+       where two tiles to a row cut every second title in half. Everywhere
+       else the two card sizes stand — compact tiles, or the detailed card.
+
+       It is published on the body as well as on each grid, because in the
+       compact view the month groups are display:contents and the column count
+       belongs to #months rather than to any grid. */
+    const rows = v === 'cal' || (v === 'tile' && phone.matches);
+    document.body.dataset.rows = rows ? 'on' : 'off';
+    document.querySelectorAll('#months .grid').forEach(g => {
+      g.classList.toggle('list', rows);
+      g.classList.toggle('tile', !rows && v !== 'full');
+    });
     seg.querySelectorAll('[data-view]').forEach(b =>
       b.setAttribute('aria-pressed', b.dataset.view === v));
     if (remember) Store.set('view', v);
@@ -3559,18 +3799,23 @@ document.addEventListener('keydown', e => {
   const saved = Store.get('view', VIEWS);
   let chosen = saved || '';
   paintView(chosen || fallback(), false);
-  phone.addEventListener('change', () => { if (!chosen) paintView(fallback(), false); });
+  /* Repainted on every crossing of the phone breakpoint, not only while the
+     default is still following the viewport: the compact view is tiles on a
+     window and rows on a phone, so a rotation or a resize has to be able to
+     change the shape of a view someone has already chosen. */
+  phone.addEventListener('change', () => paintView(chosen || fallback(), false));
 
   /* A card carries two controls — the text button and the plan toggle — and
      the rest of it is a link to that festival's planner. The toggle is a
      label, which is neither an anchor nor a button, hence the third selector:
      without it, marking a festival would also navigate away from the list.
 
-     The destination is read from the card itself rather than from a link
-     inside it, since the compact card shows no link at all, and a festival
-     with no planner of ours carries no destination and so stays put. Bound to
-     the document, so the day the calendar has open is covered as well as the
-     month groups. */
+     The destination is read from the card itself rather than from the title's
+     link, so that the whole card is the target and not only the words: a
+     festival with no planner of ours carries no destination and so stays put.
+     Clicks that do land on the link are left to it — that is the first
+     selector's job. Bound to the document, so the day the calendar has open is
+     covered as well as the month groups. */
   document.addEventListener('click', e => {
     if (!e.target.closest('.grid')) return;
     if (e.target.closest('a,button,.plan-toggle,.btn-group')) return;
