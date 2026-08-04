@@ -492,12 +492,14 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   line-height:1.15;
   letter-spacing:-.02em;
 }
+/* No measure of its own: the paragraph runs to the same edge the actions row
+   below it finishes on, so the panel reads as one column rather than as a
+   short block of text with a button floating off to the right of it. */
 .banner-card__supporting{
   margin:14px 0 0;
   color:var(--on-surface-var);
   font-size:15px;
   line-height:1.6;
-  max-inline-size:46ch;
 }
 .banner-card__place{
   display:flex;
@@ -517,9 +519,27 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
 .banner-card__actions{
   display:flex;
   align-items:center;
-  gap:8px;
+  flex-wrap:wrap;
+  gap:10px 8px;
   margin-block-start:auto;
   padding-block-start:26px;
+}
+
+/* ---- the banner's two links ----
+   The detailed card's own buttons, at the banner's scale: same white
+   container on the category's tint, same corner family, same icons, and 44dp
+   tall so they sit level with the toggle at the far end of the row. The group
+   holds only the two stateless actions here — the banner's stateful one is
+   the filled pill it was drawn with. */
+.banner-card .btn-group{inline-size:auto;flex:0 1 auto;gap:8px}
+.banner-card .btn-group .opt{block-size:44px;padding:0 18px;border-radius:14px}
+.banner-card .opt--icon{flex:0 1 auto}
+/* The labels are drawn, not clipped: this is the widest thing on the page and
+   there is room for the words. */
+.banner-card .opt--icon .opt__text{
+  position:static;
+  inline-size:auto;block-size:auto;margin:0;
+  overflow:visible;clip-path:none;
 }
 
 .highlights .text-button{
@@ -571,6 +591,16 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   }
   .banner-card__place{margin-block-start:14px}
   .banner-card__actions{padding-block-start:18px}
+  /* Three labelled controls do not share a phone's row, and the toggle's
+     label is the one that changes with its state — so the two links give
+     theirs up and become the icons they already carry. Clipped, not deleted:
+     each still has its name. */
+  .banner-card .btn-group .opt{padding:0;inline-size:44px}
+  .banner-card .opt--icon .opt__text{
+    position:absolute;
+    inline-size:1px;block-size:1px;margin:-1px;
+    overflow:hidden;clip-path:inset(50%);white-space:nowrap;
+  }
   .carousel-dots{margin-block-start:20px}
 }
 
@@ -2797,8 +2827,9 @@ if (reel.length) {
           </p>
 
           <div class="banner-card__actions">
-            <a class="text-button" href="${esc(f.tickets || f.official)}"
-               target="_blank" rel="noopener">${f.tickets ? 'Tickets' : 'Programme'}</a>
+            <div class="btn-group" role="group" aria-label="Festival links">
+              ${actionLinks(f)}
+            </div>
             ${planToggle(f)}
           </div>
         </div>
@@ -3204,13 +3235,12 @@ function cardFacts(f) {
     `<li><svg aria-hidden="true"><use href="#${icon}"/></svg>${esc(text)}</li>`).join('');
 }
 
-/* The redesign's button group: the festival's own site, its tickets when it
-   sells any, and the plan toggle — the only one of the three with a state. */
-function buttonGroup(f) {
-  const id = 'plan-g-' + (++planSeq);
-  const on = Plan.has(f.id);
-  return `<div class="btn-group" role="group" aria-label="Festival actions">
-    <a class="opt opt--icon" href="${esc(f.official)}" target="_blank"
+/* The two stateless actions — the festival's own site, and where it sells its
+   tickets when it sells any. Shared by the detailed card's button group and by
+   the banner, so a festival offers the same two things wherever it is drawn,
+   with the same icons and in the same order. */
+function actionLinks(f) {
+  return `<a class="opt opt--icon" href="${esc(f.official)}" target="_blank"
        rel="noopener noreferrer" title="Official site"
        aria-label="Official site for ${esc(f.name)}">
       <svg class="opt__icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -3228,7 +3258,16 @@ function buttonGroup(f) {
         <path d="M15 7.3v2M15 11v2M15 14.7v2"/>
       </svg>
       <span class="opt__text">Tickets</span>
-    </a>` : ''}
+    </a>` : ''}`;
+}
+
+/* The redesign's button group: those two links, and the plan toggle — the only
+   one of the three with a state. */
+function buttonGroup(f) {
+  const id = 'plan-g-' + (++planSeq);
+  const on = Plan.has(f.id);
+  return `<div class="btn-group" role="group" aria-label="Festival actions">
+    ${actionLinks(f)}
     <input class="btn-group__input" type="checkbox" id="${id}" autocomplete="off"
            data-plan="${esc(f.id)}"${on ? ' checked' : ''}>
     <label class="opt opt--toggle" for="${id}">
