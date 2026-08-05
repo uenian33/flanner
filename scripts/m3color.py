@@ -92,13 +92,14 @@ def palettes(source: str) -> dict[str, dict[int, str]]:
         # 60° away at half, and the neutrals keep only a trace of the hue.
         "secondary": palette(hue, chroma / 3),
         "tertiary": palette(hue + 60, chroma / 2),
-        # Material tints the neutrals with a trace of the source hue. From a
-        # lime source that trace is a grey-green, and it settles over the whole
-        # page — every surface, every outline, every muted line of text. The
-        # neutrals here are neutral: the colour belongs to the categories and
-        # the mark, and the paper stays paper.
-        "neutral": palette(hue, 0),
-        "neutral_variant": palette(hue, 0),
+        # Material tints the neutrals with a trace of the source hue, and so
+        # do these. They were held at zero for a while — the paper stays paper
+        # — but the planners are drawn on the tinted neutrals the card system
+        # uses, and a grey page beside a warm one reads as two products rather
+        # than one. At chroma 4 and 8 the trace is barely nameable on its own
+        # and lands the surfaces and outlines on the planner's own values.
+        "neutral": palette(hue, 4),
+        "neutral_variant": palette(hue, 8),
         "error": palette(25, 84),
     }
 
@@ -204,7 +205,12 @@ def css(source: str) -> str:
     return "\n".join(out)
 
 
-SOURCE = "#C9F24D"
+# The card system's own green — the one every festival card, every chip and
+# both planners are drawn in. Sourcing the scheme from it puts the chrome in
+# the same family as the content it frames: primary lands on #4c662b, the
+# secondary container within a hair of the cards' #DCE8C0, and the outlines on
+# the planners' own #C7CBBA.
+SOURCE = "#4C662B"
 
 if __name__ == "__main__":
     light, dark = scheme(SOURCE)

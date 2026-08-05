@@ -741,6 +741,97 @@ __SETTINGS_CSS__
 }
 
 __NAV_CSS__
+
+/* ── the bar opens the rail ────────────────────────────
+   The planners put the rail's own contents one tap from the bottom bar, and
+   this is the same element doing the same thing: More turns the bar into the
+   drawer — the same destinations, the same utilities, in the same order — so
+   the two pages have one navigation between them rather than two.
+   The four cells are the phone's; the rail never shows More.
+
+   The measurements are the planners' drawer, taken off it rather than chosen
+   here: 280 wide, 18/12/16 of padding, 4px between rows, each row 56 tall on
+   a full-round corner with its glyph 12px from its label, and the panel
+   sliding in from the edge over a scrim in .3s. */
+.navmore{display:none}
+/* The head and the rule belong to the panel alone. */
+.navhead,.navrule{display:none}
+.railfoot .lbl{display:none}
+/* Below the rail's own breakpoint, where this page shows the bar: above it
+   the rail already holds everything the panel would, so there is nothing for
+   More to open. */
+@media(max-width:599.98px){
+  .navmore{display:grid}
+  :root{--navn:4;--navcols:4}
+  /* Over the masthead as well: the panel is the only thing on screen, as it
+     is on the planners, so nothing of the page stands above the scrim. */
+  .navscrim{position:fixed;inset:0;z-index:79;border:0;padding:0;
+    background:var(--md-sys-color-scrim);opacity:.32;cursor:default;
+    animation:navfade .2s cubic-bezier(.2,0,0,1)}
+  .navscrim[hidden]{display:none}
+  @keyframes navfade{from{opacity:0}to{opacity:.32}}
+  @keyframes navslide{from{transform:translateX(-100%)}to{transform:none}}
+  body.nav-drawer .mnav{
+    left:0;top:0;bottom:0;width:280px;max-width:none;height:auto;z-index:80;
+    transform:none;display:flex;flex-direction:column;align-items:stretch;
+    gap:4px;padding:18px 12px 16px;border-radius:0 28px 28px 0;overflow-y:auto;
+    background:var(--md-sys-color-surface-container);border:0;
+    box-shadow:0 8px 40px var(--shade);
+    /* The bar does not stretch into the panel: the planners' drawer arrives
+       from the edge, so the width and height transitions step aside. */
+    transition:none;animation:navslide .3s cubic-bezier(.2,0,0,1)}
+  body.nav-drawer .mnav .pill{display:none}
+  body.nav-drawer .mnav button{display:grid;grid-template-columns:auto 1fr;
+    align-items:center;justify-items:start;gap:12px;height:56px;padding:0 16px;
+    border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);
+    font-size:var(--md-sys-typescale-label-large-size);
+    line-height:var(--md-sys-typescale-label-large-line-height);
+    letter-spacing:var(--md-sys-typescale-label-large-tracking);
+    font-weight:var(--md-sys-typescale-label-weight)}
+  body.nav-drawer .mnav button svg{transform:none;width:24px;height:24px}
+  body.nav-drawer .mnav .lbl{position:static;opacity:1;transform:none;text-align:start;
+    white-space:nowrap}
+  body.nav-drawer .mnav button.on{background:var(--md-sys-color-secondary-container);
+    color:var(--md-sys-color-on-secondary-container);
+    font-weight:var(--md-sys-typescale-emphasized-label-weight)}
+  /* The head: a 34px mark in the primary, the name at 19/700, and the
+     collapse control as a 44px circle at the end of the line. */
+  body.nav-drawer .navhead{display:flex;align-items:center;gap:12px;
+    flex:none;padding:0 6px 10px}
+  body.nav-drawer .navhead__home{display:flex;align-items:center;gap:12px;
+    min-width:0;color:inherit;text-decoration:none;border-radius:20px}
+  body.nav-drawer .navhead__mark{flex:none;width:34px;height:34px;
+    color:var(--md-sys-color-primary)}
+  body.nav-drawer .navhead__name{font-size:19px;font-weight:700;
+    letter-spacing:-.025em;white-space:nowrap;color:var(--md-sys-color-on-surface)}
+  body.nav-drawer .navhead__close{margin-inline-start:auto;display:grid;
+    place-items:center;width:44px;height:44px;border:0;border-radius:22px;
+    background:none;color:var(--md-sys-color-on-surface-variant);cursor:pointer}
+  body.nav-drawer .navhead__close svg{width:20px;height:20px}
+  /* The utilities come back at the foot, as they stand on the planners'
+     drawer: full rows at 48, each glyph 12px from its name. */
+  body.nav-drawer .navrule{display:block;height:1px;border:0;
+    background:var(--md-sys-color-outline-variant);margin:auto 16px 6px;
+    flex:none}
+  body.nav-drawer .mnav .railfoot{display:grid;gap:2px;
+    margin-top:0;padding-top:0}
+  /* The bar centres its cells' contents; a row reads from its leading edge,
+     so the place-content the bar sets is cleared rather than inherited. */
+  body.nav-drawer .mnav .railfoot > *{width:100%;height:48px;padding:0 16px;
+    display:flex;place-content:center flex-start;
+    align-items:center;gap:12px;border:0;border-radius:24px;
+    background:none;color:var(--md-sys-color-on-surface-variant);
+    font-size:13.5px;font-weight:500;text-align:start}
+  body.nav-drawer .mnav .railfoot svg{width:20px;height:20px;flex:none}
+  body.nav-drawer .railfoot .lbl{display:inline}
+  body.nav-drawer .railfoot .navval{margin-inline-start:auto;
+    color:var(--md-sys-color-primary);font-weight:600}
+  /* The cell that opened the panel has no place inside it: the drawer holds
+     the three destinations the rail holds. The scrim, Escape or picking a
+     destination closes it. */
+  body.nav-drawer .mnav .navmore{display:none}
+}
+
 /* The planner keeps its Home button as a separate pill above the rail; here
    the rail is short enough to hold it as an ordinary item at every width. */
 @media(min-width:600px){
@@ -2183,7 +2274,15 @@ __FOOTER_CSS__
 @media(min-width:600px){
   :root{--railw:96px}
   body{padding-left:var(--railw)}
-  .mnav{width:var(--railw);inline-size:var(--railw);
+  /* The shared bar runs to 839px and this rail starts at 600, so between
+     those two the bar's own capsule — centred at the foot of the screen,
+     80 tall, blurred, rounded, with its label lifted off the icon — is still
+     the last word on every property the rail does not restate. It restates
+     them: from here up the element is the column, not the capsule. */
+  .mnav{position:fixed;left:0;top:0;bottom:0;height:auto;max-width:none;
+    transform:none;border:0;border-radius:0;box-shadow:none;contain:none;
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+    width:var(--railw);inline-size:var(--railw);
     display:flex;flex-direction:column;align-items:center;
     /* The reference's rail starts its first destination 20px down. Here it
        starts on the same line as the Highlights headline instead, which is
@@ -2209,14 +2308,20 @@ __FOOTER_CSS__
      in this rail wants that: the destination icons are centred in their
      indicator and the utility icons in their circle, so the nudge is cleared
      and every glyph is placed by its own container. */
-  .mnav .ind svg{width:24px;height:24px;margin:0;place-self:center}
+  .mnav .ind svg{width:24px;height:24px;margin:0;place-self:center;transform:none}
   .mnav button:hover .ind{
     background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}
   .mnav button.on .ind{background:var(--md-sys-color-secondary-container);
     color:var(--md-sys-color-on-secondary-container)}
-  .mnav .lbl{font-size:12px;line-height:16px;letter-spacing:.3px;font-weight:400;
+  /* Under the icon in the flow, not pinned to the foot of a cell as the bar
+     pins it, and no opacity or lift left over from the bar's minimised state. */
+  .mnav .lbl{position:static;opacity:1;transform:none;
+    font-size:12px;line-height:16px;letter-spacing:.3px;font-weight:400;
     text-align:center;max-inline-size:100%;overflow-wrap:break-word;
     max-width:none;overflow:visible;white-space:normal}
+  /* The rail never carries the cell that opens the panel: everything the
+     panel would hold is already standing beside the page. */
+  .mnav .railnav .navmore{display:none}
   .mnav button.on .lbl{font-weight:500}
   .mnav button:focus-visible{outline:3px solid var(--md-sys-color-primary);
     outline-offset:4px;border-radius:12px}
@@ -2230,9 +2335,12 @@ __FOOTER_CSS__
   .mnav .railfoot{margin-top:auto;padding-top:32px;
     display:flex;flex-direction:column;gap:10px;
     padding-bottom:calc(var(--hslot-h) + 10px)}
+  /* No hairline: the planners' rail carries these as plain glyphs with a
+     state layer, and a ring here was the last thing telling the two rails
+     apart. The target stays 48dp. */
   .mnav .railfoot > *,.hslot .loc{inline-size:48px;block-size:48px;min-height:0;
-    padding:0;border-radius:50%;border:1px solid var(--md-sys-color-outline-variant);
-    background:transparent;color:var(--md-sys-color-on-surface);
+    padding:0;border-radius:50%;border:0;
+    background:transparent;color:var(--md-sys-color-on-surface-variant);
     /* place-content, not only place-items: the shared rail sets
        align-content:start on .mnav button, which pins the single auto row to
        the top of the 48px circle and leaves the glyph riding high no matter
@@ -2311,6 +2419,11 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.4" width="18" height="13.2" rx="2.2"/><path d="m3.6 6.6 8.4 6 8.4-6"/></symbol>
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.3M12 19.1v2.3M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.6 12h2.3M19.1 12h2.3M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.7 8.7 0 1 0 10.8 10.8z"/></symbol>
+<!-- The planners' own two, copied from their sprite so the cell that opens the
+     drawer and the one that closes it are the same glyphs on both pages. Both
+     are drawn as fills there, so they say so here. -->
+<symbol id="i-more" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></g></symbol>
+<symbol id="i-menu-open" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M3 6h18v2H3zm0 5h11v2H3zm0 5h18v2H3zm18-4.5L17.5 12 21 8.5z"/></symbol>
 <!-- The rail's destination glyphs, drawn to match m3.material.io's own set. -->
 <symbol id="i-dots" viewBox="0 0 24 24"><g fill="currentColor" stroke="none"><circle cx="6" cy="6" r="1.7"/><circle cx="12" cy="6" r="1.7"/><circle cx="18" cy="6" r="1.7"/><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/><circle cx="6" cy="18" r="1.7"/><circle cx="12" cy="18" r="1.7"/><circle cx="18" cy="18" r="1.7"/></g></symbol>
 <symbol id="i-code" viewBox="0 0 24 24"><path d="m8.6 8.4-4 3.6 4 3.6M15.4 8.4l4 3.6-4 3.6"/></symbol>
@@ -2591,6 +2704,19 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
      nothing here is a dead target. The mark stays Flanner's. -->
 <nav class="mnav" aria-label="Sections">
   <span class="pill" id="navPill" aria-hidden="true"></span>
+  <!-- The planners' drawer heads its list with the mark, the name and the
+       control that folds it away again, all at the same measurements. Drawer
+       only: the rail and the bar have no room for it and never show it. On
+       those pages the mark leads here; here it leads to the top of the page,
+       which is the same destination. -->
+  <div class="navhead">
+    <a href="#top" class="navhead__home" aria-label="Flanner — top of the page">
+      <svg class="navhead__mark" viewBox="0 0 96 96" aria-hidden="true"><use href="#i-logo"/></svg>
+      <span class="navhead__name">Flanner</span>
+    </a>
+    <button id="navClose" class="navhead__close" aria-label="Collapse navigation" title="Collapse">
+      <svg class="i" aria-hidden="true"><use href="#i-menu-open"/></svg></button>
+  </div>
   <!-- Three destinations, which is what this site has: the top of the page,
        the festivals, and the plan you build out of them. The reference rail's
        seven documentation labels were borrowed positions rather than places —
@@ -2605,20 +2731,30 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
     <button id="nFest"><span class="ind"><svg class="i"><use href="#i-ticket"/></svg></span><span class="lbl">Festivals</span></button>
     <button id="nPlan" aria-disabled="true" title="My plan — not built yet">
       <span class="ind"><svg class="i"><use href="#i-star-sq"/></svg></span><span class="lbl">My plan</span></button>
+    <!-- The planners' bar carries the same cell: the rail's own contents, one
+         tap away on a screen too narrow to stand one beside the page. -->
+    <button id="nMore" class="navmore" aria-expanded="false" aria-label="More">
+      <span class="ind"><svg class="i"><use href="#i-more"/></svg></span><span class="lbl">More</span></button>
   </div>
   <!-- Utilities, not destinations: they change how the page looks rather than
        what it shows, so they sit at the foot of the rail rather than in the
        list above. The place picker pins below them as a third row. -->
+  <!-- Each carries its name as well as its glyph. The rail and the bar show
+       the circle alone, as they do on the planners; the drawer is wide enough
+       for the row, so it reads the way the planners' drawer reads. -->
+  <hr class="navrule">
   <div class="railfoot">
     <button id="railTheme" aria-label="Switch to dark theme" title="Theme">
-      <svg class="i"><use href="#i-moon"/></svg></button>
+      <svg class="i"><use href="#i-moon"/></svg><span class="lbl">Dark theme</span></button>
     <button id="railSet" aria-label="Settings" title="Settings">
-      <svg class="i"><use href="#i-gear"/></svg></button>
+      <svg class="i"><use href="#i-gear"/></svg><span class="lbl">Settings</span></button>
     <button id="railLang" aria-disabled="true" aria-label="Language"
             title="Language — English only for now">
-      <svg class="i"><use href="#i-globe"/></svg></button>
+      <svg class="i"><use href="#i-globe"/></svg><span class="lbl">Language</span>
+      <span class="lbl navval">EN</span></button>
   </div>
 </nav>
+<button class="navscrim" id="navScrim" hidden aria-label="Close the menu"></button>
 
 __SETTINGS__
 
@@ -3893,6 +4029,10 @@ function applyTheme(t) {
     const next = t === 'dark' ? 'light' : 'dark';
     rt.setAttribute('aria-label', `Switch to ${next} theme`);
     rt.querySelector('use').setAttribute('href', t === 'dark' ? '#i-sun' : '#i-moon');
+    /* The drawer names the theme it would give you, as the planners' row
+       does — the circle in the rail says the same thing with its glyph. */
+    const lbl = rt.querySelector('.lbl');
+    if (lbl) lbl.textContent = next === 'dark' ? 'Dark theme' : 'Light theme';
   }
   const meta = document.querySelector('meta[name=theme-color]');
   if (meta) meta.content = t === 'dark' ? '#101010' : '#f5f5f5';
@@ -3906,6 +4046,38 @@ const railTheme = $('#railTheme');
 if (railTheme) railTheme.onclick = () =>
   applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
 applyTheme(Store.get('theme'));
+
+/* ── More opens the rail as a drawer ───────────────────
+   One element: the bar becomes the panel, so the destinations and the
+   utilities in it are the same buttons with the same handlers. */
+(() => {
+  const nav = $('.mnav'), more = $('#nMore'), scrim = $('#navScrim');
+  if (!nav || !more || !scrim) return;
+  const isOpen = () => document.body.classList.contains('nav-drawer');
+  const set = (open) => {
+    document.body.classList.toggle('nav-drawer', open);
+    more.setAttribute('aria-expanded', String(open));
+    scrim.hidden = !open;
+  };
+  /* One listener for the whole bar rather than one per button: More
+     toggles the drawer, and every other destination or utility closes it
+     behind itself — including the collapse control in its head. */
+  nav.addEventListener('click', e => {
+    const hit = e.target.closest('button,a');
+    if (!hit) return;
+    if (hit.classList.contains('navmore')) { set(!isOpen()); return; }
+    /* Two exceptions, as on the planners: the theme repaints the panel you
+       are looking at rather than leaving it, and a destination with nowhere
+       to go yet does nothing at all. */
+    if (hit.id === 'railTheme' || hit.getAttribute('aria-disabled') === 'true') return;
+    set(false);
+  });
+  scrim.onclick = () => set(false);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && isOpen()) set(false);
+  });
+})();
+
 window.applyFilters = apply;
 apply();
 </script>

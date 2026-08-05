@@ -106,11 +106,19 @@
       -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
       border:1px solid var(--glass-line);
       box-shadow:0 8px 32px var(--shade),inset 0 1px 0 var(--glass-line)}
+  /* The indicator is the planners' indicator: "the active indicator hugs
+     contents", so it is a 56×32 pill behind the icon rather than a block
+     filling the cell. The element still spans a cell — that is what lets it
+     travel by whole columns — and paints only the pill. */
   .mnav .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/var(--navcols,calc(var(--navn,4) + 1)));
-      border-radius:var(--md-sys-shape-corner-extra-large);background:var(--glass-pill);z-index:0;
-      box-shadow:inset 0 1px 0 var(--glass-line);
+      background:none;z-index:0;
       transform:translateX(calc((var(--i,0) + var(--pillbase,1)) * 100%));
       transition:transform var(--md-sys-motion-spring-default-spatial)}
+  .mnav .pill::after{content:"";position:absolute;left:50%;top:12px;
+      width:56px;height:32px;margin-left:-28px;
+      border-radius:var(--md-sys-shape-corner-full);background:var(--glass-pill);
+      transition:top var(--md-sys-motion-spring-default-spatial)}
+  body.nav-min .mnav .pill::after{top:8px}
   .mnav button{display:grid;place-content:center;padding:0;
       font-size:var(--md-sys-typescale-label-medium-size);
       line-height:var(--md-sys-typescale-label-medium-line-height);

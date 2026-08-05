@@ -248,11 +248,16 @@
   /* Colour comes from the generated Material 3 scheme above: 26 roles, two
      schemes, one source colour. The few compound values a pinned bar needs are
      mixed from those roles rather than picked. */
-  --glass:color-mix(in srgb,var(--md-sys-color-surface) 80%,transparent);
-  --glass-line:var(--md-sys-color-outline-variant);
-  --glass-pill:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent);
+  /* The bar is the planners' bar: their surface at the same translucency,
+     their hairline, and — the part that was really telling the two pages
+     apart — an active indicator that is the secondary container rather than a
+     wash of the page's own ink. M3 asks for exactly that: "the active
+     indicator is a filled shape in the secondary container colour". */
+  --glass:color-mix(in srgb,var(--md-sys-color-surface-container) 88%,transparent);
+  --glass-line:color-mix(in srgb,var(--md-sys-color-outline-variant) 60%,transparent);
+  --glass-pill:var(--md-sys-color-secondary-container);
   --glass-tx:var(--md-sys-color-on-surface-variant);
-  --glass-on:var(--md-sys-color-on-surface);
+  --glass-on:var(--md-sys-color-on-secondary-container);
   --shade:color-mix(in srgb,var(--md-sys-color-scrim) 32%,transparent);
   color-scheme:light;
 }
