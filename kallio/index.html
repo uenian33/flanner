@@ -5965,15 +5965,24 @@ class Component extends DCLogic {
     });
     const navStyle = navShown === 'drawer' ? drawerStyle : navShown === 'rail' ? railStyle : barStyle;
 
-    const destDefs = [
-      { id: 'info', label: 'Info', icon: '#i-info' },
-      { id: 'timetable', label: 'Programme', icon: '#i-cal', badge: shown.length },
-      { id: 'map', label: 'Map', icon: '#i-pin', badge: this.STAGES.length }
-    ];
+    const destDefs = mob
+      ? [
+        { id: 'info', label: 'Info', icon: '#i-info' },
+        { id: 'timetable', label: 'Schedule', icon: '#i-cal', badge: shown.length },
+        { id: 'list', label: 'Programme', icon: '#i-list', badge: shown.length },
+        { id: 'map', label: 'Map', icon: '#i-pin', badge: this.STAGES.length }
+      ]
+      : [
+        { id: 'info', label: 'Info', icon: '#i-info' },
+        { id: 'timetable', label: 'Programme', icon: '#i-cal', badge: shown.length },
+        { id: 'map', label: 'Map', icon: '#i-pin', badge: this.STAGES.length }
+      ];
     this.navShown = navShown;
     const activeDest = (navShown !== 'bar' && view !== 'map' && S.spy)
       ? S.spy
-      : (view === 'list' ? 'timetable' : view);
+      /* On a phone the list is a destination of its own,
+         so it lights its own cell rather than the grid's. */
+      : (view === 'list' ? (mob ? 'list' : 'timetable') : view);
     const dests = destDefs.map(d => {
       const on = d.id === activeDest;
       let style;
@@ -6010,8 +6019,11 @@ class Component extends DCLogic {
         badge: d.badge, badgeStyle: { marginInlineStart: 'auto', padding: '2px 8px', borderRadius: '999px', fontSize: '11.5px', fontWeight: 700, opacity: .8 },
         current: on ? 'page' : undefined,
         onClick: () => {
-          const toProg = d.id === 'timetable', toInfo = d.id === 'info';
-          const next = { view: d.id, navOpen: false, sheet: null, filtersOpen: false };
+          const toProg = d.id === 'timetable' || d.id === 'list';
+          const toInfo = d.id === 'info';
+          const next = { view: d.id, navOpen: false, sheet: null,
+            filtersOpen: false };
+          if (d.id === 'timetable' || d.id === 'list') next.prog = d.id;
           if (!mob && toProg) { next.heroOpen = false; next.weatherOpen = false; }
           if (!mob && toInfo) { next.heroOpen = true; next.weatherOpen = true; }
           this.setState(next, () => {
@@ -6160,7 +6172,9 @@ class Component extends DCLogic {
       { id: 'timetable', label: 'Timetable', icon: '#i-cal' },
       { id: 'list', label: 'List', icon: '#i-list' },
       { id: 'map', label: 'Map', icon: '#i-pin' }
-    ].filter(t => !((split || mob) && t.id === 'map')).map(t => {
+    ].filter(t => !((split || mob) && t.id === 'map'))
+      .filter(t => !mob)
+      .map(t => {
       const on = t.id === 'map' ? view === 'map' : split ? prog === t.id : view === t.id;
       return {
         label: t.label, aria: t.label + ' view', icon: t.icon, pressed: String(on),
@@ -7390,7 +7404,7 @@ class Component extends DCLogic {
            calendar keeps as much of the screen as possible */
         controlsBarStyle: {
           display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto',
-          gridTemplateAreas: '"picks picks" "days view"',
+          gridTemplateAreas: '"picks picks" "days days"',
           rowGap: '8px', columnGap: 0,
           padding: 0, background: 'none', border: 0, boxShadow: 'none'
         },
@@ -7425,16 +7439,11 @@ class Component extends DCLogic {
             : 'fp-search-in 440ms cubic-bezier(.05,.7,.1,1) both'
         },
         daysGroupStyle: Object.assign({}, cardSkin, {
-          gridArea: 'days', position: 'relative', display: 'flex', gap: '4px', minWidth: 0,
-          padding: '5px', borderStartStartRadius: '28px', borderEndStartRadius: '28px',
-          borderStartEndRadius: 0, borderEndEndRadius: 0, borderInlineEnd: 0
+          gridArea: 'days', position: 'relative', display: 'flex',
+          gap: '4px', minWidth: 0, padding: '5px',
+          borderRadius: '28px'
         }),
-        switcherStyle: Object.assign({}, cardSkin, {
-          gridArea: 'view', position: 'relative', display: 'flex', alignItems: 'center', gap: '12px',
-          marginInlineStart: 0, padding: '5px 5px 5px 10px',
-          borderStartEndRadius: '28px', borderEndEndRadius: '28px',
-          borderStartStartRadius: 0, borderEndStartRadius: 0, borderInlineStart: 0, boxShadow: 'none'
-        }),
+        switcherStyle: { display: 'none' },
         switcherPuckStyle: {
           position: 'absolute', top: '5px', left: '10px', zIndex: 0, pointerEvents: 'none',
           width: '40px', height: '40px', borderRadius: '50%', background: 'var(--plan,#2E4B12)',

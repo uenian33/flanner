@@ -1766,6 +1766,61 @@ def patch_nav(src: str) -> str:
         "          transition: 'none'",
         "control card arrives in place")
 
+    # ---- the bar switches the view ----
+    # The grid and the list are the same programme in two shapes, and the
+    # shape was chosen from a pair of icon buttons riding on the day switcher
+    # while the bar underneath held one destination for both. They are two
+    # destinations now — Schedule for the grid, Programme for the list — which
+    # is what the bar is for, and the pair of buttons is gone from the card,
+    # leaving it the day, the stars and the filters, which both views keep.
+    src = sub_once(
+        src,
+        r"    const destDefs = \[\n"
+        r"      \{ id: 'info', label: 'Info', icon: '#i-info' \},\n"
+        r"      \{ id: 'timetable', label: 'Programme', icon: '#i-cal',"
+        r" badge: shown\.length \},\n"
+        r"      \{ id: 'map', label: 'Map', icon: '#i-pin',"
+        r" badge: this\.STAGES\.length \}\n"
+        r"    \];",
+        "    const destDefs = mob\n"
+        "      ? [\n"
+        "        { id: 'info', label: 'Info', icon: '#i-info' },\n"
+        "        { id: 'timetable', label: 'Schedule', icon: '#i-cal',"
+        " badge: shown.length },\n"
+        "        { id: 'list', label: 'Programme', icon: '#i-list',"
+        " badge: shown.length },\n"
+        "        { id: 'map', label: 'Map', icon: '#i-pin',"
+        " badge: this.STAGES.length }\n"
+        "      ]\n"
+        "      : [\n"
+        "        { id: 'info', label: 'Info', icon: '#i-info' },\n"
+        "        { id: 'timetable', label: 'Programme', icon: '#i-cal',"
+        " badge: shown.length },\n"
+        "        { id: 'map', label: 'Map', icon: '#i-pin',"
+        " badge: this.STAGES.length }\n"
+        "      ];",
+        "two programme destinations")
+    # Pressing the list destination puts the programme in that shape.
+    src = sub_once(
+        src,
+        r"          const toProg = d\.id === 'timetable', toInfo = d\.id === 'info';\n"
+        r"          const next = \{ view: d\.id, navOpen: false, sheet: null,"
+        r" filtersOpen: false \};",
+        "          const toProg = d.id === 'timetable' || d.id === 'list';\n"
+        "          const toInfo = d.id === 'info';\n"
+        "          const next = { view: d.id, navOpen: false, sheet: null,\n"
+        "            filtersOpen: false };\n"
+        "          if (d.id === 'timetable' || d.id === 'list') next.prog = d.id;",
+        "the destination sets the shape")
+    # The pair of buttons leaves the card with the day and the two filters.
+    src = sub_once(
+        src,
+        r"    \]\.filter\(t => !\(\(split \|\| mob\) && t\.id === 'map'\)\)\.map\(t => \{",
+        "    ].filter(t => !((split || mob) && t.id === 'map'))\n"
+        "      .filter(t => !mob)\n"
+        "      .map(t => {",
+        "no view tabs on the phone")
+
     # And the bar carries destinations only. Its fourth cell opened the rail as
     # a drawer, which on this page is a panel of the three destinations already
     # standing beside it plus the utilities — so the cell spent a quarter of
@@ -1787,6 +1842,40 @@ def patch_nav(src: str) -> str:
         "    const utils = navShown === 'bar'\n"
         "      ? []\n",
         "bar without More")
+    # With the switcher gone the card is the day, the stars and the filters,
+    # and the day takes the whole row rather than two thirds of it.
+    src = sub_once(
+        src,
+        r"          gridTemplateAreas: '\"picks picks\" \"days view\"',",
+        "          gridTemplateAreas: '\"picks picks\" \"days days\"',",
+        "the card without the switcher")
+    src = sub_once(
+        src,
+        r"        daysGroupStyle: Object\.assign\(\{\}, cardSkin, \{\n"
+        r"          gridArea: 'days', position: 'relative', display: 'flex',"
+        r" gap: '4px', minWidth: 0,\n"
+        r"          padding: '5px', borderStartStartRadius: '28px',"
+        r" borderEndStartRadius: '28px',\n"
+        r"          borderStartEndRadius: 0, borderEndEndRadius: 0, borderInlineEnd: 0\n"
+        r"        \}\),",
+        "        daysGroupStyle: Object.assign({}, cardSkin, {\n"
+        "          gridArea: 'days', position: 'relative', display: 'flex',\n"
+        "          gap: '4px', minWidth: 0, padding: '5px',\n"
+        "          borderRadius: '28px'\n"
+        "        }),",
+        "the day takes the row")
+    src = sub_once(
+        src,
+        r"        switcherStyle: Object\.assign\(\{\}, cardSkin, \{\n"
+        r"          gridArea: 'view', position: 'relative', display: 'flex',"
+        r" alignItems: 'center', gap: '12px',\n"
+        r"          marginInlineStart: 0, padding: '5px 5px 5px 10px',\n"
+        r"          borderStartEndRadius: '28px', borderEndEndRadius: '28px',\n"
+        r"          borderStartStartRadius: 0, borderEndStartRadius: 0,"
+        r" borderInlineStart: 0, boxShadow: 'none'\n"
+        r"        \}\),",
+        "        switcherStyle: { display: 'none' },",
+        "no switcher on the phone")
 
     # The bar keeps its compact height for the whole of the programme. It
     # already compacted itself the moment you scrolled the grid and came back
@@ -1873,7 +1962,9 @@ def patch_nav(src: str) -> str:
                    "    this.navShown = navShown;\n"
                    "    const activeDest = (navShown !== 'bar' && view !== 'map' && S.spy)\n"
                    "      ? S.spy\n"
-                   "      : (view === 'list' ? 'timetable' : view);",
+                   "      /* On a phone the list is a destination of its own,\n"
+                   "         so it lights its own cell rather than the grid's. */\n"
+                   "      : (view === 'list' ? (mob ? 'list' : 'timetable') : view);",
                    "active destination")
 
     # ---- the mark itself moves, so no destination carries one ----
