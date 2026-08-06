@@ -1766,6 +1766,28 @@ def patch_nav(src: str) -> str:
         "          transition: 'none'",
         "control card arrives in place")
 
+    # And the bar carries destinations only. Its fourth cell opened the rail as
+    # a drawer, which on this page is a panel of the three destinations already
+    # standing beside it plus the utilities — so the cell spent a quarter of
+    # the bar on a second way to reach what the bar already reaches.
+    src = sub_once(
+        src,
+        r"    const utils = navShown === 'bar'\n"
+        r"      \? \[\{\n"
+        r"        label: 'More', icon: '#i-more', style: utilStyle,"
+        r" iconStyle: utilIcon, showLabel: true,\n"
+        r"        labelStyle: \{\n"
+        r"          whiteSpace: 'nowrap', height: mini \? '0px' : '14px',"
+        r" opacity: mini \? 0 : 1, overflow: 'hidden',\n"
+        r"          transition: 'height \.3s cubic-bezier\(\.2,0,0,1\),"
+        r" opacity \.2s cubic-bezier\(\.2,0,0,1\)'\n"
+        r"        \},\n"
+        r"        onClick: \(\) => this\.setState\(\{ navOpen: true \}\)\n"
+        r"      \}\]\n",
+        "    const utils = navShown === 'bar'\n"
+        "      ? []\n",
+        "bar without More")
+
     # The bar keeps its compact height for the whole of the programme. It
     # already compacted itself the moment you scrolled the grid and came back
     # to full height the moment you scrolled the other way, which on a page
@@ -2294,7 +2316,12 @@ def patch_map(src: str, fest: Festival) -> str:
         src,
         r"        onClick: \(\) => this\.focusStage\(i\)\n      \};\n    \}\);",
         "        open: S.stageOpen === i,\n"
-        "        where: st.where || st.note,\n"
+        "        /* A pin belongs in front of a place, not in front of a\n"
+        "           sentence: where the organiser published a street the panel\n"
+        "           shows it as an address, and where they published only a\n"
+        "           description it shows that as what it is. */\n"
+        "        hasAddr: !!st.where, where: st.where || '',\n"
+        "        panelNote: st.where ? '' : (st.note || ''),\n"
         "        panelStyle: {\n"
         "          overflow: 'hidden', borderRadius: '0 0 16px 16px',\n"
         "          maxBlockSize: S.stageOpen === i ? '200px' : '0px',\n"
@@ -2302,11 +2329,21 @@ def patch_map(src: str, fest: Festival) -> str:
         "          transition: 'max-block-size .4s cubic-bezier(.2,0,0,1),"
         " opacity .2s cubic-bezier(.2,0,0,1)'\n"
         "        },\n"
+        "        /* One column under the name: the supporting line starts where\n"
+        "           the name starts — 10 of inset, the 32 disc, 12 between —\n"
+        "           and the actions take the card's own 16, which is where a\n"
+        "           card's actions sit. */\n"
         "        panelInnerStyle: {\n"
-        "          display: 'grid', gap: '10px', padding: '4px 12px 12px 12px'\n"
+        "          display: 'grid', gap: '12px', padding: '0 16px 16px'\n"
         "        },\n"
         "        whereStyle: {\n"
         "          display: 'flex', alignItems: 'flex-start', gap: '8px',\n"
+        "          margin: 0, marginInlineStart: '38px',\n"
+        "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.25px',\n"
+        "          color: 'var(--on-var,#494E42)'\n"
+        "        },\n"
+        "        noteStyle2: {\n"
+        "          margin: 0, marginInlineStart: '38px',\n"
         "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.25px',\n"
         "          color: 'var(--on-var,#494E42)'\n"
         "        },\n"
@@ -2732,12 +2769,17 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '          </button>\n'
         '          <div style="{{ s.panelStyle }}">\n'
         '            <div style="{{ s.panelInnerStyle }}">\n'
-        '              <p style="{{ s.whereStyle }}">\n'
-        '                <svg aria-hidden="true" style="flex:none;'
+        '              <sc-if value="{{ s.hasAddr }}" hint-placeholder-val="{{ true }}">\n'
+        '                <p style="{{ s.whereStyle }}">\n'
+        '                  <svg aria-hidden="true" style="flex:none;'
         'width:18px;height:18px;fill:currentColor;margin-top:1px">'
         '<use href="#i-pin"></use></svg>\n'
-        '                <span>{{ s.where }}</span>\n'
-        '              </p>\n'
+        '                  <span>{{ s.where }}</span>\n'
+        '                </p>\n'
+        '              </sc-if>\n'
+        '              <sc-if value="{{ s.panelNote }}">\n'
+        '                <p style="{{ s.noteStyle2 }}">{{ s.panelNote }}</p>\n'
+        '              </sc-if>\n'
         '              <div style="{{ s.actionsStyle }}">\n'
         '                <button sc-camel-on-click="{{ s.onOpenMap }}" '
         'style="{{ s.openMapStyle }}">\n'

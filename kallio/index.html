@@ -4354,10 +4354,15 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           </button>
           <div style="{{ s.panelStyle }}">
             <div style="{{ s.panelInnerStyle }}">
-              <p style="{{ s.whereStyle }}">
-                <svg aria-hidden="true" style="flex:none;width:18px;height:18px;fill:currentColor;margin-top:1px"><use href="#i-pin"></use></svg>
-                <span>{{ s.where }}</span>
-              </p>
+              <sc-if value="{{ s.hasAddr }}" hint-placeholder-val="{{ true }}">
+                <p style="{{ s.whereStyle }}">
+                  <svg aria-hidden="true" style="flex:none;width:18px;height:18px;fill:currentColor;margin-top:1px"><use href="#i-pin"></use></svg>
+                  <span>{{ s.where }}</span>
+                </p>
+              </sc-if>
+              <sc-if value="{{ s.panelNote }}">
+                <p style="{{ s.noteStyle2 }}">{{ s.panelNote }}</p>
+              </sc-if>
               <div style="{{ s.actionsStyle }}">
                 <button sc-camel-on-click="{{ s.onOpenMap }}" style="{{ s.openMapStyle }}">
                   <svg aria-hidden="true" style="width:18px;height:18px;fill:currentColor"><use href="#i-pin"></use></svg>Open map
@@ -6086,14 +6091,7 @@ class Component extends DCLogic {
     const themeIcon = S.dark ? '#i-sun' : '#i-moon';
     const markUtil = (list) => list.map(u => Object.assign({ isPlain: !u.isTheme, labelStyle: { whiteSpace: 'nowrap' } }, u));
     const utils = navShown === 'bar'
-      ? [{
-        label: 'More', icon: '#i-more', style: utilStyle, iconStyle: utilIcon, showLabel: true,
-        labelStyle: {
-          whiteSpace: 'nowrap', height: mini ? '0px' : '14px', opacity: mini ? 0 : 1, overflow: 'hidden',
-          transition: 'height .3s cubic-bezier(.2,0,0,1), opacity .2s cubic-bezier(.2,0,0,1)'
-        },
-        onClick: () => this.setState({ navOpen: true })
-      }]
+      ? []
       : navShown === 'rail'
         ? [
           { label: 'Expand menu', icon: '#i-menu', style: utilStyle, iconStyle: utilIcon, showLabel: false, onClick: () => this.setState(s => ({ collapsed: false, navOpen: !(this.props.navMode === 'auto' || !this.props.navMode) ? true : s.w >= 1240 ? false : true })) },
@@ -6553,18 +6551,33 @@ class Component extends DCLogic {
            read. A phone keeps the stage and what it is. */
         showCount: !mob,
         open: S.stageOpen === i,
-        where: st.where || st.note,
+        /* A pin belongs in front of a place, not in front of a
+           sentence: where the organiser published a street the panel
+           shows it as an address, and where they published only a
+           description it shows that as what it is. */
+        hasAddr: !!st.where, where: st.where || '',
+        panelNote: st.where ? '' : (st.note || ''),
         panelStyle: {
           overflow: 'hidden', borderRadius: '0 0 16px 16px',
           maxBlockSize: S.stageOpen === i ? '200px' : '0px',
           opacity: S.stageOpen === i ? 1 : 0,
           transition: 'max-block-size .4s cubic-bezier(.2,0,0,1), opacity .2s cubic-bezier(.2,0,0,1)'
         },
+        /* One column under the name: the supporting line starts where
+           the name starts — 10 of inset, the 32 disc, 12 between —
+           and the actions take the card's own 16, which is where a
+           card's actions sit. */
         panelInnerStyle: {
-          display: 'grid', gap: '10px', padding: '4px 12px 12px 12px'
+          display: 'grid', gap: '12px', padding: '0 16px 16px'
         },
         whereStyle: {
           display: 'flex', alignItems: 'flex-start', gap: '8px',
+          margin: 0, marginInlineStart: '38px',
+          fontSize: '14px', lineHeight: '20px', letterSpacing: '.25px',
+          color: 'var(--on-var,#494E42)'
+        },
+        noteStyle2: {
+          margin: 0, marginInlineStart: '38px',
           fontSize: '14px', lineHeight: '20px', letterSpacing: '.25px',
           color: 'var(--on-var,#494E42)'
         },
