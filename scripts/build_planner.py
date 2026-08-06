@@ -530,8 +530,8 @@ def patch_script(src: str, fest: Festival) -> str:
                    % js([{"id": d["id"], "date": d.get("date", "")} for d in days]),
                    "opening day")
 
-    return patch_nav(patch_card(patch_sheet(patch_cards(patch_viewport(
-        patch_stage_colours(patch_weather(patch_map(src, fest), fest), fest))))))
+    return patch_nav(patch_card(patch_sheet(patch_cards(patch_grid(patch_viewport(
+        patch_stage_colours(patch_weather(patch_map(src, fest), fest), fest)))))))
 
 
 # ── the destination indicator ─────────────────────────
@@ -701,6 +701,115 @@ def patch_viewport(src: str) -> str:
         r"    this\.setState\(\{ w: window\.innerWidth, vh: window\.innerHeight \}\);\n  \}",
         "    this.setState(this.viewport());\n  }",
         "viewport at mount")
+    return src
+
+
+# ── the cell is the name ──────────────────────────────
+# A cell in the grid says one thing — who is playing — and it has never had
+# much room to say it. Three changes give it what there is:
+#
+# The margin each cell keeps from its lane. The design leaves 10px on both
+# sides, which on a phone column is a fifth of the cell; it keeps 2, enough to
+# read as a card standing in its lane rather than as the lane itself.
+#
+# The genres. They were printed as outlined chips in any cell tall enough to
+# hold them, which is a second and a third line of text in a box that had not
+# finished the first. The act's own card lists them, and so does every row of
+# the list view.
+#
+# The star. It sat in the top-right corner, over the corner the name starts
+# from, so every starrable cell reserved 24px of its first line for it. It
+# stands in the bottom-left corner now and the name has the full width above
+# it — clamped to whole lines, because a clamp that lands mid-line shows the
+# top halves of the letters underneath it.
+def patch_grid(src: str) -> str:
+    src = sub_once(
+        src,
+        r"          const pxh = dur \* min;\n",
+        "          const pxh = dur * min;\n"
+        "          /* What the cell has to give: the margin it keeps in its\n"
+        "             lane, and — the star standing in the bottom-left corner\n"
+        "             now — how many whole lines of the name fit above it.\n"
+        "             Three at the most, which is the clamp the design set. */\n"
+        "          const gut = mob ? 2 : 10;\n"
+        "          const hasStar = (mob ? pxh >= 44 : dur >= 40) && ev._lanes < 2;\n"
+        "          const starBox = mob ? 20 : 24, starGap = mob ? 2 : 5;\n"
+        "          const lineH = (mob ? (pxh < 48 ? 11 : 11.5)\n"
+        "                             : (pxh < 48 ? 12 : 12.5)) * 1.22;\n"
+        "          /* The shortest cell that carries a star is a 45-minute set\n"
+        "             on a phone, 39px tall, where one line and the star leave\n"
+        "             3px over: there the inset gives way rather than the star\n"
+        "             sitting under the name. */\n"
+        "          const padY = hasStar\n"
+        "            ? Math.min(mob ? 3 : 9,\n"
+        "                Math.max(2, (pxh - 10) - starGap - starBox - lineH))\n"
+        "            : (mob ? 5 : (pxh < 48 ? 5 : 9));\n"
+        "          const lines = Math.max(1, Math.min(3, Math.floor(\n"
+        "            ((pxh - 10) - padY - starGap - starBox - 1) / lineH)));\n",
+        "cell geometry")
+    src = sub_once(
+        src,
+        r"            showTags: pxh >= 118 && ev\.genres\.length > 0,\n"
+        r"            showStar: \(mob \? pxh >= 44 : dur >= 40\) && ev\._lanes < 2,",
+        "            showTags: false,\n"
+        "            showStar: hasStar,",
+        "cell tags and star")
+    src = sub_once(
+        src,
+        r"              left: 'calc\(' \+ \(ev\._lane / ev\._lanes\) \* 100 \+ '% \+ 10px\)',\n"
+        r"              width: 'calc\(' \+ 100 / ev\._lanes \+ '% - 20px\)'",
+        "              left: 'calc(' + (ev._lane / ev._lanes) * 100 + '% + ' + gut + 'px)',\n"
+        "              width: 'calc(' + 100 / ev._lanes + '% - ' + (2 * gut) + 'px)'",
+        "cell margin")
+    # The cell's own inset counts as margin to the eye as much as the gap
+    # outside it does: 9px of it on a phone is another sixth of the column.
+    src = sub_once(
+        src,
+        r"              padding: pxh < 48 \? '5px 9px' : '9px 11px',"
+        r" border: 0, borderRadius: mob \? '12px' : '14px',",
+        "              padding: padY + 'px ' + (mob ? 7 : (pxh < 48 ? 9 : 11)) + 'px',"
+        " border: 0, borderRadius: mob ? '12px' : '14px',",
+        "cell inset")
+    src = sub_once(
+        src,
+        r"              position: 'absolute', top: '6px', insetInlineEnd: '6px',"
+        r" display: 'grid', placeItems: 'center',\n"
+        r"              width: '26px', height: '26px', border: 0, borderRadius: '50%',",
+        "              position: 'absolute', bottom: starGap + 'px',"
+        " insetInlineEnd: starGap + 'px',\n"
+        "              display: 'grid', placeItems: 'center',\n"
+        "              width: starBox + 'px', height: starBox + 'px',"
+        " border: 0, borderRadius: '50%',",
+        "star corner")
+    # The tick a planned cell carries stood in that same corner; it takes the
+    # other end of the row, where the star used to leave a hole.
+    src = sub_once(
+        src,
+        r"            checkStyle: \{ position: 'absolute', bottom: '8px',"
+        r" insetInlineEnd: '8px', width: '15px', height: '15px',"
+        r" fill: 'currentColor', opacity: \.9 \},",
+        "            checkStyle: { position: 'absolute',"
+        " bottom: (starGap + (starBox - 15) / 2) + 'px',\n"
+        "              insetInlineStart: starGap + 'px', width: '15px',"
+        " height: '15px', fill: 'currentColor', opacity: .9 },",
+        "planned tick")
+    src = sub_once(
+        src,
+        r"              whiteSpace: \(pxh < 48 \|\| ev\._lanes > 1\) \? 'nowrap' : 'normal',\n"
+        r"              textOverflow: 'ellipsis',\n"
+        r"              maxHeight: \(pxh < 48 \|\| ev\._lanes > 1\) \? 'none' : '3\.7em',\n"
+        r"              paddingInlineEnd: \(\(mob \? pxh >= 44 : dur >= 40\)"
+        r" && ev\._lanes < 2\) \? '24px' : '0px'",
+        "              whiteSpace: (pxh < 48 || ev._lanes > 1"
+        " || (hasStar && lines === 1)) ? 'nowrap' : 'normal',\n"
+        "              textOverflow: 'ellipsis',\n"
+        "              maxHeight: hasStar ? (lines * lineH).toFixed(1) + 'px'\n"
+        "                : (pxh < 48 || ev._lanes > 1) ? 'none' : '3.7em',\n"
+        "              /* Nothing is reserved at the end of the line any more:\n"
+        "                 the star is out of the name's way, and the tick a\n"
+        "                 planned cell carries is in the star's row. */\n"
+        "              paddingInlineEnd: '0px'",
+        "name in the cell")
     return src
 
 
@@ -1343,6 +1452,21 @@ def patch_nav(src: str) -> str:
                    "    return w >= 640 ? 'rail' : 'bar';",
                    "one shell")
 
+    # The bar keeps its compact height for the whole of the programme. It
+    # already compacted itself the moment you scrolled the grid and came back
+    # to full height the moment you scrolled the other way, which on a page
+    # you read by dragging in two directions is a bar that changes size under
+    # your thumb. Reading the timetable is the one thing this page is for, so
+    # there it is small; Info and Map, which you land on rather than scroll
+    # through, keep the labels.
+    src = sub_once(
+        src,
+        r"    const mini = mob && S\.barMini;",
+        "    const progNow = (S.view || this.props.startView || 'timetable');\n"
+        "    const mini = mob && (S.barMini"
+        " || progNow === 'timetable' || progNow === 'list');",
+        "bar height on the programme")
+
     src = sub_once(src,
                    r"width: navShown === 'rail' \? '56px' : '54px', height: navShown === 'rail' \? '32px' : '30px'",
                    "width: navShown === 'rail' ? '48px' : '54px',"
@@ -1503,6 +1627,13 @@ ROLES = (
     # M3 means by adjusting an existing colour: hold the tonal relationships,
     # move the hue. Read off the design's own music artwork: 93/89/40/79/27 in
     # the light theme, 17/41/81/61/89 in the dark.
+    #
+    # It is drawn in the dark scheme under both themes — see ALWAYS_DARK. The
+    # hero is a dark surface whichever theme the page is in, because a 46%
+    # wash sits over it and the name on top is white; painting the ground in
+    # the light scheme meant tinting a light picture down to something with no
+    # colour left in it, which is the grey the card used to open with. Dark
+    # tones under the same wash keep the stage's hue.
     ("artBg",   (12, 93),              (14, 17)),
     ("art1",    (28, 89),              (26, 41)),
     ("art2",    (36, 40),              (30, 81)),
@@ -1512,6 +1643,9 @@ ROLES = (
     # dark in both: a 46% scrim sits over every artwork.
     ("hero",    (18, 95),              (30, 88)),
 )
+
+# Roles that take their dark value in both themes: the five the artwork reads.
+ALWAYS_DARK = {"artBg", "art1", "art2", "art3", "artInk"}
 
 
 def stage_palette(n: int) -> tuple[list[dict], str]:
@@ -1531,7 +1665,8 @@ def stage_palette(n: int) -> tuple[list[dict], str]:
         h = (124 + i * 137.507) % 360
         ref.append({k: "var(--st%d-%s)" % (i, k.lower()) for k, _l, _d in ROLES})
         for k, lt, dk in ROLES:
-            light.append("--st%d-%s:%s" % (i, k.lower(), m3color.tone(h, *lt)))
+            here = dk if k in ALWAYS_DARK else lt
+            light.append("--st%d-%s:%s" % (i, k.lower(), m3color.tone(h, *here)))
             dark.append("--st%d-%s:%s" % (i, k.lower(), m3color.tone(h, *dk)))
     css = (":root{%s}\n[data-theme=\"dark\"]{%s}\n"
            "/* The exit the two cards leave by: fp-weather-in, which is how\n"
@@ -2183,9 +2318,16 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
 .ac__body { padding: 0 8px; display: grid; min-inline-size: 0; }
 
 /* ---------- hero ---------- */
+/* Departure from the reference, which frames a photograph: 16/10 with a
+   218px floor. There is no photograph here — the artwork is drawn from the
+   act's own palette and reads at any height — so a picture's proportions
+   bought nothing but empty tint between the close button and the name. The
+   band is as tall as what stands in it: a row that keeps the close button
+   clear, then the name block, then the padding under it. A one-line name on
+   a phone comes to 159px where the frame gave 218. */
 .ac__hero {
   position: relative; display: grid; align-content: end;
-  aspect-ratio: 16 / 10; min-block-size: 218px;
+  padding-block-start: 60px; min-block-size: 152px;
   border-radius: 20px; overflow: hidden; background: var(--art-bg);
 }
 .ac__art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
@@ -2391,7 +2533,9 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
    5 · ADAPTIVE
    ============================================================ */
 @container ac (min-width: 700px) {
-  .ac__hero { aspect-ratio: auto; block-size: 236px; }
+  /* 236px in the reference; the same reasoning as above, one step taller
+     than the phone's so the band still reads as a header over two columns. */
+  .ac__hero { block-size: auto; min-block-size: 176px; }
   .ac__body { grid-template-columns: minmax(0,1fr) minmax(0,1fr); column-gap: 28px; padding: 0 10px; }
   .ac__col { display: grid; align-content: start; }
   .ac__col--a { grid-column: 1; }
@@ -2401,7 +2545,24 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
   .tags { margin-block-start: 16px; }
 }
 /* below that the columns dissolve and everything runs in one flow */
-@container ac (max-width: 699px) { .ac__col { display: contents; } }
+@container ac (max-width: 699px) {
+  .ac__col { display: contents; }
+  /* Departure from the reference, which lays the body out as a grid of auto
+     rows. On a phone the card is the whole screen, and auto rows in a grid
+     taller than its content share the slack out between them: every block
+     stood a little further from the last than it was written to, and the
+     spacing the design set — 12, 18, 20 — read as one loose column. The
+     blocks keep their own margins now, and the slack collects in one place,
+     above the divider, so the two actions sit at the foot of the card. */
+  .ac__body { display: flex; flex-direction: column; }
+  /* The 20px the design leaves above the divider becomes a transparent
+     border, so an auto margin can take the slack without ever closing that
+     gap up. The rule paints its content box alone and stays 1px. */
+  .ac__rule {
+    margin-block-start: auto; border-block-start: 20px solid transparent;
+    background-clip: content-box; box-sizing: content-box;
+  }
+}
 @container ac (max-width: 400px) {
   .ac { padding: 10px 10px 14px; }
   .ac__body { padding: 0 6px; }
@@ -2417,8 +2578,10 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
    own translucent surface, the same one its two icon buttons use, with a
    state layer and the arrow the button used to carry. */
 .ac__where {
-  display: inline-flex; align-items: center; gap: 8px; margin: 3px 0 0;
-  max-inline-size: calc(100% - 96px);
+  /* The overlay is a grid, which stretches its rows: inline-flex alone left
+     the pill running the width of the hero with the name in one end of it. */
+  display: inline-flex; justify-self: start; align-items: center; gap: 8px;
+  margin: 3px 0 0; max-inline-size: calc(100% - 96px);
   padding: 7px 12px 7px 10px; border: 0; border-radius: 20px;
   background: rgb(255 255 255 / .16);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
@@ -2519,7 +2682,16 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
 """
 
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
-html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}"""
+html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+/* The bounce again, for the scrollers inside the page. The timetable, the
+   list, the map pane and every sheet declare overscroll-behavior:contain,
+   which keeps a scroll from chaining out into the page but leaves each of
+   them free to rubber-band at its own ends — the page reads as loose when
+   reaching the end of the grid makes it wobble. They are all reached by the
+   one attribute they have in common, since each states it inline and an
+   inline declaration is the last word without this. */
+body{overscroll-behavior:none}
+[style*="overscroll-behavior"]{overscroll-behavior:none!important}"""
 
 NO_ZOOM_JS = """(function () {
   if (!window.matchMedia || !matchMedia('(pointer: coarse)').matches) return;
