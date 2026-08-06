@@ -530,8 +530,8 @@ def patch_script(src: str, fest: Festival) -> str:
                    % js([{"id": d["id"], "date": d.get("date", "")} for d in days]),
                    "opening day")
 
-    return patch_nav(patch_card(patch_sheet(patch_cards(patch_grid(patch_viewport(
-        patch_stage_colours(patch_weather(patch_map(src, fest), fest), fest)))))))
+    return patch_nav(patch_card(patch_sheet(patch_rows(patch_cards(patch_grid(patch_viewport(
+        patch_stage_colours(patch_weather(patch_map(src, fest), fest), fest))))))))
 
 
 # ── the destination indicator ─────────────────────────
@@ -1395,6 +1395,105 @@ def patch_card(src: str) -> str:
     return src
 
 
+# ── the list row on a phone ───────────────────────────
+# M3's list item, at the sizes M3 states for one. The design draws the row for
+# a screen with room in it: a 96×72 picture, a 17px name — the same size as the
+# name of the festival in the bar above it, and heavier — a 14px time and a
+# 13.5px line under that, which on a phone is four sizes inside 72px and the
+# name of the act with 150px to say itself in.
+#
+# What a row is for is who is playing, when and where. So: the picture is the
+# 56dp leading image of an M3 list item, square and rounded to 16; the type —
+# DJ, Live, Performance — is a label about the act rather than the act, and it
+# is gone (a wide screen still carries it on the chip over the artwork); and
+# the three lines take the type scale's own steps rather than sizes of their
+# own — Title Small for the name, Body Small for the time and the place, which
+# leaves the name a step below the bar's own title rather than level with it.
+#
+# The artwork takes the stage's palette, the one the card's hero takes, rather
+# than the category's: two acts on the same stage look like it in the row, in
+# the cell and on the card, and the row is where the reader meets them first.
+def patch_rows(src: str) -> str:
+    src = sub_once(
+        src,
+        r"        meta: \(narrow \? ev\.type \+ ' · ' : ''\) \+ st\.name"
+        r" \+ \(ev\.genres\.length \? ' · ' \+ ev\.genres\.join\(', '\) : ''\),",
+        "        meta: (narrow && !mob ? ev.type + ' · ' : '') + st.name\n"
+        "          + (ev.genres.length ? ' · ' + ev.genres.join(', ') : ''),",
+        "row without the type")
+    src = sub_once(
+        src,
+        r"        style: \{\n"
+        r"          position: 'relative', display: 'flex', alignItems: 'center',\n"
+        r"          gap: narrow \? '10px' : '14px', padding: narrow \? '10px' : '12px',\n"
+        r"          borderRadius: narrow \? '24px' : '28px', background: A\.surf,"
+        r" color: 'var\(--on,#191D13\)',\n"
+        r"          cursor: 'pointer', transition: 'box-shadow \.18s ease'\n"
+        r"        \},\n"
+        r"        mediaStyle: \{\n"
+        r"          position: 'relative', flex: 'none', width: narrow \? '96px' : '148px',\n"
+        r"          aspectRatio: narrow \? '4 / 3' : '3 / 2',\n"
+        r"          borderRadius: narrow \? '14px' : '16px', overflow: 'hidden',"
+        r" background: A\.bg\n"
+        r"        \},",
+        "        style: {\n"
+        "          position: 'relative', display: 'flex', alignItems: 'center',\n"
+        "          gap: mob ? '12px' : narrow ? '10px' : '14px',\n"
+        "          padding: mob ? '8px' : narrow ? '10px' : '12px',\n"
+        "          minBlockSize: mob ? '72px' : undefined,\n"
+        "          borderRadius: mob ? '20px' : narrow ? '24px' : '28px',\n"
+        "          background: A.surf, color: 'var(--on,#191D13)',\n"
+        "          cursor: 'pointer', transition: 'box-shadow .18s ease'\n"
+        "        },\n"
+        "        mediaStyle: {\n"
+        "          position: 'relative', flex: 'none',\n"
+        "          width: mob ? '56px' : narrow ? '96px' : '148px',\n"
+        "          height: mob ? '56px' : undefined,\n"
+        "          aspectRatio: mob ? undefined : narrow ? '4 / 3' : '3 / 2',\n"
+        "          borderRadius: mob ? '16px' : narrow ? '14px' : '16px',\n"
+        "          overflow: 'hidden', background: A.bg\n"
+        "        },\n"
+        "        /* The type scale's own steps: title-small over body-small,\n"
+        "           which is the pair M3 gives a list item's headline and its\n"
+        "           supporting text one size down. */\n"
+        "        rowTitleStyle: mob\n"
+        "          ? { fontSize: '14px', fontWeight: 600, lineHeight: '20px',\n"
+        "              letterSpacing: '.1px', overflow: 'hidden',\n"
+        "              textOverflow: 'ellipsis', whiteSpace: 'nowrap' }\n"
+        "          : { fontSize: '17px', fontWeight: 700, lineHeight: 1.25,\n"
+        "              letterSpacing: '-.012em', overflow: 'hidden',\n"
+        "              textOverflow: 'ellipsis', whiteSpace: 'nowrap' },\n"
+        "        rowWhenStyle: mob\n"
+        "          ? { fontSize: '12px', fontWeight: 400, lineHeight: '16px',\n"
+        "              letterSpacing: '.4px', overflow: 'hidden',\n"
+        "              textOverflow: 'ellipsis', whiteSpace: 'nowrap' }\n"
+        "          : { fontSize: '14px', fontWeight: 450, overflow: 'hidden',\n"
+        "              textOverflow: 'ellipsis', whiteSpace: 'nowrap' },\n"
+        "        rowMetaStyle: mob\n"
+        "          ? { display: 'inline-flex', alignItems: 'center', gap: '6px',\n"
+        "              minWidth: 0, fontSize: '12px', lineHeight: '16px',\n"
+        "              letterSpacing: '.4px', color: 'var(--on-var,#494E42)' }\n"
+        "          : { display: 'inline-flex', alignItems: 'center', gap: '7px',\n"
+        "              minWidth: 0, fontSize: '13.5px', opacity: .78 },\n"
+        "        rowTextStyle: { flex: '1 1 auto', minWidth: 0, display: 'grid',\n"
+        "          gap: mob ? '2px' : '5px' },",
+        "row measurements")
+    src = sub_once(
+        src,
+        r"      \}, this\.mediaParts\(ev\.cat\), this\.starParts\(ev\.id, starred\)\)\);",
+        "      }, this.mediaParts(ev.cat), mob ? {\n"
+        "        /* The stage's palette rather than the category's, so the\n"
+        "           thumbnail, the cell and the card's hero are one colour. */\n"
+        "        artStyle: {\n"
+        "          display: 'block', width: '100%', height: '100%',\n"
+        "          '--art-bg': c.artBg, '--art-1': c.art1, '--art-2': c.art2,\n"
+        "          '--art-3': c.art3, '--art-ink': c.artInk\n"
+        "        }\n"
+        "      } : null, this.starParts(ev.id, starred)));",
+        "row artwork in the stage's colour")
+    return src
+
+
 def patch_sheet(src: str) -> str:
     # The star's clip path is named after the act, and the act appears twice at
     # once — once in the list behind the card, once in the card. Two elements
@@ -2124,6 +2223,24 @@ def patch_template(tpl: str, fest: Festival) -> str:
     # The page behind the sheet, marked so it can step back while one is open.
     tpl = sub_once(tpl, r'<div style="\{\{ shellStyle \}\}">',
                    '<div data-fp-shell="" style="{{ shellStyle }}">', "shell mark")
+
+    # The three lines of a list row were written at one size for every screen;
+    # they are the row's own now, so a phone can take the scale down a step.
+    tpl = sub_once(
+        tpl,
+        r'                  <div style="flex:1 1 auto;min-width:0;display:grid;gap:5px">\n'
+        r'                    <span style="font-size:17px;font-weight:700;line-height:1\.25;'
+        r'letter-spacing:-\.012em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'
+        r'\{\{ r\.title \}\}</span>\n'
+        r'                    <span style="font-size:14px;font-weight:450;overflow:hidden;'
+        r'text-overflow:ellipsis;white-space:nowrap">\{\{ r\.when \}\}</span>\n'
+        r'                    <span style="display:inline-flex;align-items:center;gap:7px;'
+        r'min-width:0;font-size:13\.5px;opacity:\.78">',
+        '                  <div style="{{ r.rowTextStyle }}">\n'
+        '                    <span style="{{ r.rowTitleStyle }}">{{ r.title }}</span>\n'
+        '                    <span style="{{ r.rowWhenStyle }}">{{ r.when }}</span>\n'
+        '                    <span style="{{ r.rowMetaStyle }}">',
+        "row type scale")
     tpl = sub_once(tpl, r'      <aside id="fp-weather" style="\{\{ weatherCardStyle \}\}">',
                    '      <aside id="fp-weather" data-fp-card="" '
                    'style="{{ weatherCardStyle }}">', "weather card mark")

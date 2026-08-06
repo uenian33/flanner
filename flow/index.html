@@ -4165,10 +4165,10 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
                       </div>
                     </sc-if>
                   </div>
-                  <div style="flex:1 1 auto;min-width:0;display:grid;gap:5px">
-                    <span style="font-size:17px;font-weight:700;line-height:1.25;letter-spacing:-.012em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.title }}</span>
-                    <span style="font-size:14px;font-weight:450;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.when }}</span>
-                    <span style="display:inline-flex;align-items:center;gap:7px;min-width:0;font-size:13.5px;opacity:.78">
+                  <div style="{{ r.rowTextStyle }}">
+                    <span style="{{ r.rowTitleStyle }}">{{ r.title }}</span>
+                    <span style="{{ r.rowWhenStyle }}">{{ r.when }}</span>
+                    <span style="{{ r.rowMetaStyle }}">
                       <i style="{{ r.dotStyle }}"></i>
                       <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.meta }}</span>
                     </span>
@@ -6223,20 +6223,51 @@ class Component extends DCLogic {
       g.rows.push(Object.assign({
         title: ev.title,
         when: ev.from + ' – ' + ev.to + ' · ' + dur + ' min',
-        meta: (narrow ? ev.type + ' · ' : '') + st.name + (ev.genres.length ? ' · ' + ev.genres.join(', ') : ''),
+        meta: (narrow && !mob ? ev.type + ' · ' : '') + st.name
+          + (ev.genres.length ? ' · ' + ev.genres.join(', ') : ''),
         chipLabel: ev.type, showChip: !narrow,
         aria: ev.title + ', ' + ev.type + ', ' + ev.from + ' to ' + ev.to + ', ' + st.name,
         style: {
           position: 'relative', display: 'flex', alignItems: 'center',
-          gap: narrow ? '10px' : '14px', padding: narrow ? '10px' : '12px',
-          borderRadius: narrow ? '24px' : '28px', background: A.surf, color: 'var(--on,#191D13)',
+          gap: mob ? '12px' : narrow ? '10px' : '14px',
+          padding: mob ? '8px' : narrow ? '10px' : '12px',
+          minBlockSize: mob ? '72px' : undefined,
+          borderRadius: mob ? '20px' : narrow ? '24px' : '28px',
+          background: A.surf, color: 'var(--on,#191D13)',
           cursor: 'pointer', transition: 'box-shadow .18s ease'
         },
         mediaStyle: {
-          position: 'relative', flex: 'none', width: narrow ? '96px' : '148px',
-          aspectRatio: narrow ? '4 / 3' : '3 / 2',
-          borderRadius: narrow ? '14px' : '16px', overflow: 'hidden', background: A.bg
+          position: 'relative', flex: 'none',
+          width: mob ? '56px' : narrow ? '96px' : '148px',
+          height: mob ? '56px' : undefined,
+          aspectRatio: mob ? undefined : narrow ? '4 / 3' : '3 / 2',
+          borderRadius: mob ? '16px' : narrow ? '14px' : '16px',
+          overflow: 'hidden', background: A.bg
         },
+        /* The type scale's own steps: title-small over body-small,
+           which is the pair M3 gives a list item's headline and its
+           supporting text one size down. */
+        rowTitleStyle: mob
+          ? { fontSize: '14px', fontWeight: 600, lineHeight: '20px',
+              letterSpacing: '.1px', overflow: 'hidden',
+              textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
+          : { fontSize: '17px', fontWeight: 700, lineHeight: 1.25,
+              letterSpacing: '-.012em', overflow: 'hidden',
+              textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+        rowWhenStyle: mob
+          ? { fontSize: '12px', fontWeight: 400, lineHeight: '16px',
+              letterSpacing: '.4px', overflow: 'hidden',
+              textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
+          : { fontSize: '14px', fontWeight: 450, overflow: 'hidden',
+              textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+        rowMetaStyle: mob
+          ? { display: 'inline-flex', alignItems: 'center', gap: '6px',
+              minWidth: 0, fontSize: '12px', lineHeight: '16px',
+              letterSpacing: '.4px', color: 'var(--on-var,#494E42)' }
+          : { display: 'inline-flex', alignItems: 'center', gap: '7px',
+              minWidth: 0, fontSize: '13.5px', opacity: .78 },
+        rowTextStyle: { flex: '1 1 auto', minWidth: 0, display: 'grid',
+          gap: mob ? '2px' : '5px' },
         showNav: true, showPlan: !narrow,
         dotStyle: { flex: 'none', width: '9px', height: '9px', borderRadius: '50%', background: c.dot },
         navLabel: 'Navigate to ' + st.name,
@@ -6248,7 +6279,15 @@ class Component extends DCLogic {
         onOpen: () => this.setState({ sheet: ev.id }),
         onKey: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState({ sheet: ev.id }); } },
         onStar: (e) => { e.stopPropagation(); this.starToggle(ev.id, e.currentTarget.getBoundingClientRect()); }
-      }, this.mediaParts(ev.cat), this.starParts(ev.id, starred)));
+      }, this.mediaParts(ev.cat), mob ? {
+        /* The stage's palette rather than the category's, so the
+           thumbnail, the cell and the card's hero are one colour. */
+        artStyle: {
+          display: 'block', width: '100%', height: '100%',
+          '--art-bg': c.artBg, '--art-1': c.art1, '--art-2': c.art2,
+          '--art-3': c.art3, '--art-ink': c.artInk
+        }
+      } : null, this.starParts(ev.id, starred)));
     });
     groups.forEach(g => { g.count = g.rows.length === 1 ? '1 start' : g.rows.length + ' starts'; });
 
