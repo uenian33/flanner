@@ -336,9 +336,12 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   text-transform:uppercase;
   color:var(--primary);
 }
+/* A section's name is set at the size of the card standing under it — the
+   festival's own name in the banner — so the page has one heading size at
+   each width rather than two that are nearly the same. */
 .highlights__headline{
   margin:0;
-  font-size:34px;
+  font-size:28px;
   font-weight:700;
   line-height:1.1;
   letter-spacing:-.025em;
@@ -571,6 +574,8 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   .banner-card__media{aspect-ratio:auto;min-block-size:360px}
   .banner-card__body {padding:36px 32px 12px}
   .banner-card__title{font-size:34px}
+  /* and the section's heading with it, at both sizes it takes */
+  .highlights__headline{font-size:34px}
 }
 
 /* ---- compact — phone ----
@@ -616,7 +621,7 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
    weight and tracking, so the two sections read as one page. */
 .section-headline{
   font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
-  font-size:34px;
+  font-size:28px;
   line-height:1.1;
   font-weight:700;
   letter-spacing:-.025em;
@@ -627,6 +632,9 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
    banner no longer carries a bottom padding of its own, so the two are not
    stacked into a gap half a screen tall. */
 .section-headline{margin-top:clamp(36px, 4.4vw, 64px)}
+/* Its size steps where the banner's headline steps. Stated here rather than
+   in the 840px block above, which this declaration would otherwise outrank. */
+@media (min-width:840px){ .section-headline{font-size:34px} }
 
 .facts{display:flex;flex-direction:column;gap:10px;align-items:stretch;
   margin:clamp(16px,1.8vw,22px) 0 0;border-top:0}
@@ -1079,7 +1087,15 @@ __NAV_CSS__
 }
 .cal-title:hover { background: var(--wash); }
 .cal-title svg { inline-size: 22px; block-size: 22px; fill: var(--on-surface-var); }
-.cal-header__spacer { margin-inline-start: auto; }
+/* The three controls are one thing, so they wrap as one: a month's name at
+   heading size and all three of them do not share a narrow screen, and the
+   row used to break wherever it ran out — which left the second arrow alone
+   on a line. Grouped, either they all sit beside the name or they all stand
+   under it, at any width and in any language. */
+.cal-header__nav {
+  display: flex; align-items: center; gap: 8px;
+  flex: none; margin-inline-start: auto;
+}
 
 .calview .text-button {
   display: inline-flex; align-items: center;
@@ -1280,7 +1296,7 @@ __NAV_CSS__
    and the spans still show what runs when. The list below carries the names. */
 @media (max-width: 599px) {
   .cal-title { font-size: 22px; }
-  .cal-header { margin-block-end: 16px; }
+  .cal-header { margin-block-end: 16px; gap: 2px 8px; padding-block: 6px; }
   .weekdays { padding: 11px 0; }
   .weekdays .long  { display: none; }
   .weekdays .short { display: inline; }
@@ -2565,7 +2581,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
   <div class="highlights__header">
     <div>
       <p class="highlights__eyebrow">This season in Helsinki</p>
-      <h2 class="highlights__headline" id="highlights-headline">Highlight events</h2>
+      <h2 class="highlights__headline" id="highlights-headline">Highlights</h2>
     </div>
     <div class="highlights__nav">
       <button type="button" class="icon-button" id="hlPrev" aria-label="Previous event">
@@ -2640,14 +2656,15 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
       <span id="monthLabel">&nbsp;</span>
       <svg aria-hidden="true"><use href="#i-cal-down"/></svg>
     </button>
-    <span class="cal-header__spacer"></span>
-    <button type="button" class="text-button" id="todayBtn">Today</button>
-    <button type="button" class="icon-button" id="prevBtn" aria-label="Previous month">
-      <svg aria-hidden="true"><use href="#i-prev"/></svg>
-    </button>
-    <button type="button" class="icon-button" id="nextBtn" aria-label="Next month">
-      <svg aria-hidden="true"><use href="#i-next"/></svg>
-    </button>
+    <div class="cal-header__nav">
+      <button type="button" class="text-button" id="todayBtn">Today</button>
+      <button type="button" class="icon-button" id="prevBtn" aria-label="Previous month">
+        <svg aria-hidden="true"><use href="#i-prev"/></svg>
+      </button>
+      <button type="button" class="icon-button" id="nextBtn" aria-label="Next month">
+        <svg aria-hidden="true"><use href="#i-next"/></svg>
+      </button>
+    </div>
   </div>
 
   <div class="calendar">
