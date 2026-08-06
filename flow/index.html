@@ -1454,6 +1454,18 @@ svg.leaflet-image-layer.leaflet-interactive path {
   70%{opacity:.14}
   100%{transform:scale(2.9);opacity:0}
 }
+/* ---- the sound level in the Live chip ----
+   Three bars, a second to the cycle, a third of a cycle apart, on the
+   standard curve in and out. It says one thing — this is on now — and says it
+   quietly enough to be read past. */
+@keyframes fp-live{
+  0%,100%{transform:scaleY(.35)}
+  50%{transform:scaleY(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  [style*="fp-live"]{animation:none!important;transform:scaleY(.7)}
+}
+
 /* A pin is the colour of the cells in its column. */
 [data-fp-pin]{
   background:var(--pin,var(--sec,#DCE8C0));color:var(--pin-on,var(--on-sec,#1F2D0A));
@@ -4262,9 +4274,9 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
       </sc-if>
       <sc-for list="{{ listGroups }}" as="g" hint-placeholder-count="4">
         <div style="margin-bottom:22px">
-          <div style="display:flex;align-items:baseline;gap:10px;padding:0 4px 8px">
-            <span style="font-size:15px;font-weight:700;letter-spacing:-.01em">{{ g.time }}</span>
-            <span style="font-size:12.5px;color:var(--on-var,#494E42)">{{ g.count }}</span>
+          <div style="{{ g.headStyle }}">
+            <span style="{{ g.timeStyle }}">{{ g.time }}</span>
+            <span style="{{ g.countStyle }}">{{ g.count }}</span>
           </div>
           <ul style="margin:0;padding:0;list-style:none;display:grid;gap:8px">
             <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="4">
@@ -4285,6 +4297,12 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
                   <div style="{{ r.rowTextStyle }}">
                     <span style="{{ r.rowTitleStyle }}">{{ r.title }}</span>
                     <span style="{{ r.rowWhenStyle }}">{{ r.when }}</span>
+                    <sc-if value="{{ r.live }}">
+                      <span style="{{ r.liveStyle }}">
+                        <i style="{{ r.liveBarStyle }}"></i><i style="{{ r.liveBar2Style }}"></i><i style="{{ r.liveBar3Style }}"></i>
+                        <span>Live</span>
+                      </span>
+                    </sc-if>
                     <span style="{{ r.rowMetaStyle }}">
                       <i style="{{ r.dotStyle }}"></i>
                       <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.meta }}</span>
@@ -4584,6 +4602,24 @@ class Component extends DCLogic {
     return today && today.id === this.state.day
       ? Math.max(this.DAY_START, Math.min(this.DAY_END, m < 360 ? m + 1440 : m))
       : this.DAY_START;
+  }
+  /* The same clock, but it says nothing rather than something safe:
+     null off the festival, so an act at noon on a Tuesday in March
+     does not claim to be playing. */
+  get LIVE_AT() {
+    const d = new Date(), m = d.getHours() * 60 + d.getMinutes();
+    const today = this.DAYS.find(x => x.date === d.toISOString().slice(0, 10));
+    if (!today || today.id !== this.state.day) return null;
+    return m < 360 ? m + 1440 : m;
+  }
+  /* One bar of the little sound level in the Live chip. */
+  liveBar(i) {
+    return {
+      inlineSize: '2px', blockSize: '9px', borderRadius: '1px',
+      background: 'currentColor', transformOrigin: '50% 100%',
+      animation: 'fp-live 1s cubic-bezier(.2,0,0,1) '
+        + (i * .33).toFixed(2) + 's infinite'
+    };
   }
 
   state = {
@@ -6059,7 +6095,8 @@ class Component extends DCLogic {
     const isDrawer = mode === 'drawer', isRail = mode === 'rail', isBar = mode === 'bar';
     const overlay = S.navOpen && !isDrawer;
     const navShown = overlay ? 'drawer' : mode;
-    const view = S.view || this.props.startView || 'timetable';
+    const view = S.view
+      || (mob ? 'info' : (this.props.startView || 'timetable'));
     const planCount = Object.keys(S.star).length;
     const starCount = Object.keys(S.star).length;
     const shown = this.filtered();
@@ -6586,7 +6623,27 @@ class Component extends DCLogic {
       if (!g) { g = { time: key, rows: [] }; groups.push(g); }
       const c = this.stageColor(ev.s), A = this.ART[ev.cat], st = this.STAGES[ev.s];
       const starred = !!S.star[ev.id], planned = starred, dur = ev.b - ev.a;
+      const liveAt = this.LIVE_AT;
+      const isLive = liveAt != null && ev.a <= liveAt && liveAt < ev.b;
       g.rows.push(Object.assign({
+        live: isLive,
+        /* M3's own suggestion chip at its own size — full round, its
+           label in Label Small — in the stage's own dark container,
+           the tone its artwork beside it is drawn in, so the chip
+           belongs to the act rather than to the app. The bars beside
+           the word rise and fall on the standard curve, a second to
+           the cycle, each a third of a cycle behind the last. */
+        liveStyle: {
+          display: 'inline-flex', alignItems: 'center', gap: '5px',
+          justifySelf: 'start', blockSize: '20px',
+          padding: '0 8px 0 6px',
+          borderRadius: '10px', background: c.planBg, color: c.planFg,
+          fontSize: '11px',
+          lineHeight: '16px', letterSpacing: '.5px', fontWeight: 600
+        },
+        liveBarStyle: this.liveBar(0),
+        liveBar2Style: this.liveBar(1),
+        liveBar3Style: this.liveBar(2),
         title: ev.title,
         when: ev.from + ' – ' + ev.to + ' · ' + dur + ' min',
         /* On a phone the line under the time is where the act is
@@ -6664,7 +6721,26 @@ class Component extends DCLogic {
         }
       } : null, this.starParts(ev.id, starred)));
     });
-    groups.forEach(g => { g.count = g.rows.length === 1 ? '1 start' : g.rows.length + ' starts'; });
+    groups.forEach(g => {
+      g.count = g.rows.length === 1 ? '1 start' : g.rows.length + ' starts';
+      g.headStyle = {
+        position: 'sticky', zIndex: 3,
+        /* The list scrolls the page rather than a pane of its own, so
+           the hour holds under the title bar rather than under the
+           top of the screen, which is where the title bar is. */
+        insetBlockStart: mob ? ((S.headerH || 56) - 1) + 'px' : 0,
+        display: 'flex', alignItems: 'baseline', gap: '10px',
+        margin: '0 -4px', padding: mob ? '6px 8px 8px' : '0 4px 8px',
+        /* The bar it holds under, so the two read as one surface when
+           they meet and as nothing at all when they do not. */
+        background: mob ? 'var(--bar,rgba(255,255,255,.94))' : 'transparent',
+        WebkitBackdropFilter: mob ? 'blur(10px)' : undefined,
+        backdropFilter: mob ? 'blur(10px)' : undefined
+      };
+      g.timeStyle = { fontSize: '15px', fontWeight: 700,
+        letterSpacing: '-.01em' };
+      g.countStyle = { fontSize: '12.5px', color: 'var(--on-var,#494E42)' };
+    });
 
     /* ---- map side ---- */
     const stageCards = this.STAGES.map((st, i) => {

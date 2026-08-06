@@ -299,6 +299,24 @@ def patch_script(src: str, fest: Festival) -> str:
         "    return today && today.id === this.state.day\n"
         "      ? Math.max(this.DAY_START, Math.min(this.DAY_END, m < 360 ? m + 1440 : m))\n"
         "      : this.DAY_START;\n"
+        "  }\n"
+        "  /* The same clock, but it says nothing rather than something safe:\n"
+        "     null off the festival, so an act at noon on a Tuesday in March\n"
+        "     does not claim to be playing. */\n"
+        "  get LIVE_AT() {\n"
+        "    const d = new Date(), m = d.getHours() * 60 + d.getMinutes();\n"
+        "    const today = this.DAYS.find(x => x.date === d.toISOString().slice(0, 10));\n"
+        "    if (!today || today.id !== this.state.day) return null;\n"
+        "    return m < 360 ? m + 1440 : m;\n"
+        "  }\n"
+        "  /* One bar of the little sound level in the Live chip. */\n"
+        "  liveBar(i) {\n"
+        "    return {\n"
+        "      inlineSize: '2px', blockSize: '9px', borderRadius: '1px',\n"
+        "      background: 'currentColor', transformOrigin: '50% 100%',\n"
+        "      animation: 'fp-live 1s cubic-bezier(.2,0,0,1) '\n"
+        "        + (i * .33).toFixed(2) + 's infinite'\n"
+        "    };\n"
         "  }",
         "now line")
 
@@ -1632,6 +1650,66 @@ def patch_rows(src: str) -> str:
         "        rowTextStyle: { flex: '1 1 auto', minWidth: 0, display: 'grid',\n"
         "          gap: mob ? '2px' : '5px' },",
         "row measurements")
+    # An act that is on right now says so. Only on the day it is on: off the
+    # festival the clock is parked at the start of the day, and every act at
+    # noon would claim to be playing.
+    src = sub_once(
+        src,
+        r"      const starred = !!S\.star\[ev\.id\], planned = starred,"
+        r" dur = ev\.b - ev\.a;\n"
+        r"      g\.rows\.push\(Object\.assign\(\{\n"
+        r"        title: ev\.title,",
+        "      const starred = !!S.star[ev.id], planned = starred,"
+        " dur = ev.b - ev.a;\n"
+        "      const liveAt = this.LIVE_AT;\n"
+        "      const isLive = liveAt != null && ev.a <= liveAt && liveAt < ev.b;\n"
+        "      g.rows.push(Object.assign({\n"
+        "        live: isLive,\n"
+        "        /* M3's own suggestion chip at its own size — full round, its\n"
+        "           label in Label Small — in the stage's own dark container,\n"
+        "           the tone its artwork beside it is drawn in, so the chip\n"
+        "           belongs to the act rather than to the app. The bars beside\n"
+        "           the word rise and fall on the standard curve, a second to\n"
+        "           the cycle, each a third of a cycle behind the last. */\n"
+        "        liveStyle: {\n"
+        "          display: 'inline-flex', alignItems: 'center', gap: '5px',\n"
+        "          justifySelf: 'start', blockSize: '20px',\n"
+        "          padding: '0 8px 0 6px',\n"
+        "          borderRadius: '10px', background: c.planBg, color: c.planFg,\n"
+        "          fontSize: '11px',\n"
+        "          lineHeight: '16px', letterSpacing: '.5px', fontWeight: 600\n"
+        "        },\n"
+        "        liveBarStyle: this.liveBar(0),\n"
+        "        liveBar2Style: this.liveBar(1),\n"
+        "        liveBar3Style: this.liveBar(2),\n"
+        "        title: ev.title,",
+        "the row knows it is on")
+    # The head of each hour, holding at the top until the next one arrives.
+    src = sub_once(
+        src,
+        r"    groups\.forEach\(g => \{ g\.count = g\.rows\.length === 1 \? '1 start'"
+        r" : g\.rows\.length \+ ' starts'; \}\);",
+        "    groups.forEach(g => {\n"
+        "      g.count = g.rows.length === 1 ? '1 start' : g.rows.length + ' starts';\n"
+        "      g.headStyle = {\n"
+        "        position: 'sticky', zIndex: 3,\n"
+        "        /* The list scrolls the page rather than a pane of its own, so\n"
+        "           the hour holds under the title bar rather than under the\n"
+        "           top of the screen, which is where the title bar is. */\n"
+        "        insetBlockStart: mob ? ((S.headerH || 56) - 1) + 'px' : 0,\n"
+        "        display: 'flex', alignItems: 'baseline', gap: '10px',\n"
+        "        margin: '0 -4px', padding: mob ? '6px 8px 8px' : '0 4px 8px',\n"
+        "        /* The bar it holds under, so the two read as one surface when\n"
+        "           they meet and as nothing at all when they do not. */\n"
+        "        background: mob ? 'var(--bar,rgba(255,255,255,.94))' : 'transparent',\n"
+        "        WebkitBackdropFilter: mob ? 'blur(10px)' : undefined,\n"
+        "        backdropFilter: mob ? 'blur(10px)' : undefined\n"
+        "      };\n"
+        "      g.timeStyle = { fontSize: '15px', fontWeight: 700,\n"
+        "        letterSpacing: '-.01em' };\n"
+        "      g.countStyle = { fontSize: '12.5px', color: 'var(--on-var,#494E42)' };\n"
+        "    });",
+        "the hour holds at the top")
     src = sub_once(
         src,
         r"      \}, this\.mediaParts\(ev\.cat\), this\.starParts\(ev\.id, starred\)\)\);",
@@ -1896,6 +1974,20 @@ def patch_nav(src: str) -> str:
         r" opacity \.14s cubic-bezier\(\.3,0,\.8,\.15\)'",
         "          transition: 'none'",
         "control card arrives in place")
+
+    # ---- a phone opens on Info ----
+    # The grid is what the planner is for, and it is also the last thing you
+    # want first: a wall of cells with no idea which festival it is, when it
+    # opens or what the weather will do. A phone lands on Info — the festival
+    # card and the forecast, one screen of it — and the programme is the tap
+    # the bar is there to make. A wide screen still opens on the programme,
+    # because it shows both at once.
+    src = sub_once(
+        src,
+        r"    const view = S\.view \|\| this\.props\.startView \|\| 'timetable';",
+        "    const view = S.view\n"
+        "      || (mob ? 'info' : (this.props.startView || 'timetable'));",
+        "a phone opens on Info")
 
     # ---- the bar switches the view ----
     # The grid and the list are the same programme in two shapes, and the
@@ -3229,6 +3321,26 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '<div role="group" aria-label="Base map" style="{{ mapToggleStyle }}">',
         "base map container")
 
+    # ---- the hour stays until the next one arrives ----
+    # The list is read by time, and the time it was reading scrolled away with
+    # the acts under it. Each hour holds at the top of the list until the next
+    # hour reaches it and pushes it out, which is what a sticky section header
+    # is for. It carries the page's own surface so the rows do not show
+    # through it, and it is Title Small over Body Small, which is the pair the
+    # rows themselves take.
+    tpl = sub_once(
+        tpl,
+        r'          <div style="display:flex;align-items:baseline;gap:10px;'
+        r'padding:0 4px 8px">\n'
+        r'            <span style="font-size:15px;font-weight:700;'
+        r'letter-spacing:-\.01em">\{\{ g\.time \}\}</span>\n'
+        r'            <span style="font-size:12\.5px;color:var\(--on-var,#494E42\)">'
+        r'\{\{ g\.count \}\}</span>',
+        '          <div style="{{ g.headStyle }}">\n'
+        '            <span style="{{ g.timeStyle }}">{{ g.time }}</span>\n'
+        '            <span style="{{ g.countStyle }}">{{ g.count }}</span>',
+        "the hour sticks")
+
     # The stage beside the map: its three lines are the row's own now.
     tpl = sub_once(
         tpl,
@@ -3324,6 +3436,21 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '                    <span style="{{ r.rowWhenStyle }}">{{ r.when }}</span>\n'
         '                    <span style="{{ r.rowMetaStyle }}">',
         "row type scale")
+
+    # ---- and an act that is on says so ----
+    tpl = sub_once(
+        tpl,
+        r'                    <span style="\{\{ r\.rowMetaStyle \}\}">',
+        '                    <sc-if value="{{ r.live }}">\n'
+        '                      <span style="{{ r.liveStyle }}">\n'
+        '                        <i style="{{ r.liveBarStyle }}"></i>'
+        '<i style="{{ r.liveBar2Style }}"></i>'
+        '<i style="{{ r.liveBar3Style }}"></i>\n'
+        '                        <span>Live</span>\n'
+        '                      </span>\n'
+        '                    </sc-if>\n'
+        '                    <span style="{{ r.rowMetaStyle }}">',
+        "the live badge")
     tpl = sub_once(tpl, r'      <aside id="fp-weather" style="\{\{ weatherCardStyle \}\}">',
                    '      <aside id="fp-weather" data-fp-card="" '
                    'style="{{ weatherCardStyle }}">', "weather card mark")
@@ -4151,6 +4278,18 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
   70%{opacity:.14}
   100%{transform:scale(2.9);opacity:0}
 }
+/* ---- the sound level in the Live chip ----
+   Three bars, a second to the cycle, a third of a cycle apart, on the
+   standard curve in and out. It says one thing — this is on now — and says it
+   quietly enough to be read past. */
+@keyframes fp-live{
+  0%,100%{transform:scaleY(.35)}
+  50%{transform:scaleY(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  [style*="fp-live"]{animation:none!important;transform:scaleY(.7)}
+}
+
 /* A pin is the colour of the cells in its column. */
 [data-fp-pin]{
   background:var(--pin,var(--sec,#DCE8C0));color:var(--pin-on,var(--on-sec,#1F2D0A));
