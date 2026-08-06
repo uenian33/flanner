@@ -6322,8 +6322,9 @@ class Component extends DCLogic {
     const mode = this.mode();
     const mob = mode === 'bar';
     const tight = mob || (S.vh || 900) < 720;
-    const progNow = (S.view || this.props.startView || 'timetable');
-    const mini = mob && (S.barMini || progNow === 'timetable' || progNow === 'list');
+    const progNow = S.view
+      || (mob ? 'info' : (this.props.startView || 'timetable'));
+    const mini = mob && (progNow === 'timetable' || progNow === 'list');
     const dayIdx = Math.max(0, this.DAYS.findIndex(d => d.id === S.day));
     const isDrawer = mode === 'drawer', isRail = mode === 'rail', isBar = mode === 'bar';
     const overlay = S.navOpen && !isDrawer;

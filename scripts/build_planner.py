@@ -2474,13 +2474,18 @@ def patch_nav(src: str) -> str:
     # you read by dragging in two directions is a bar that changes size under
     # your thumb. Reading the timetable is the one thing this page is for, so
     # there it is small; Info and Map, which you land on rather than scroll
-    # through, keep the labels.
+    # through, keep the labels however far down them you are — which is why
+    # the scroll-driven state is no longer what the bar's height is read from.
+    # Which page you are on is resolved the way the view itself resolves it,
+    # a phone's default being Info: taking the design's own default here left
+    # the bar compact on the page a phone lands on.
     src = sub_once(
         src,
         r"    const mini = mob && S\.barMini;",
-        "    const progNow = (S.view || this.props.startView || 'timetable');\n"
-        "    const mini = mob && (S.barMini"
-        " || progNow === 'timetable' || progNow === 'list');",
+        "    const progNow = S.view\n"
+        "      || (mob ? 'info' : (this.props.startView || 'timetable'));\n"
+        "    const mini = mob"
+        " && (progNow === 'timetable' || progNow === 'list');",
         "bar height on the programme")
 
     src = sub_once(src,
