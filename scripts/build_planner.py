@@ -1290,7 +1290,21 @@ def patch_card(src: str) -> str:
         "        chipLabel: st.name,\n"
         "        listenClass: srcKeys.length ? 'listen' : 'listen listen--empty',\n"
         "        embedClass: 'listen__embed listen__embed--'\n"
-        "          + (playSrc === 'youtube' ? 'yt' : 'sp'),\n"
+        "          + (playSrc === 'youtube' ? 'yt' : 'sp')\n"
+        "          + (S.playerOpen ? ' is-open' : ''),\n"
+        "        /* Spotify draws two cards from the one URL: 152px of the act,\n"
+        "           its Follow and its play button, or 352 with the first three\n"
+        "           tracks under them. The tall one is most of a phone screen\n"
+        "           before the introduction has started, so a phone opens the\n"
+        "           short one and the chevron under it asks for the rest. */\n"
+        "        showPlayerToggle: mob && playSrc === 'spotify',\n"
+        "        playerOpen: String(!!S.playerOpen),\n"
+        "        playerLabel: S.playerOpen\n"
+        "          ? 'Hide the track list' : 'Show the track list',\n"
+        "        onPlayerToggle: (e) => {\n"
+        "          e.stopPropagation();\n"
+        "          this.setState(s => ({ playerOpen: !s.playerOpen }));\n"
+        "        },\n"
         "        /* The introduction is clipped to three lines and opens to its\n"
         "           own height, measured off the paragraph — the reference\n"
         "           animates max-block-size, which needs a number to animate to. */\n"
@@ -1570,6 +1584,9 @@ def patch_sheet(src: str) -> str:
         "      this.setSheetEl(el);\n"
         "      if (el) requestAnimationFrame(() => this.playSheetOpen());\n"
         "      if (this.state.bioOpen) this.setState({ bioOpen: false });\n"
+        "      /* And with the short player, whatever the last card was left\n"
+        "         showing. */\n"
+        "      if (this.state.playerOpen) this.setState({ playerOpen: false });\n"
         "    }\n"
         "    this.syncSheetShell();\n",
         "sheet open animation")
@@ -1675,6 +1692,41 @@ def patch_nav(src: str) -> str:
                    r"    return w >= 1240 \? \(this\.state\.collapsed \? 'rail' : 'drawer'\) : w >= 640 \? 'rail' : 'bar';",
                    "    return w >= 640 ? 'rail' : 'bar';",
                    "one shell")
+
+    # Scrolling the programme forward cleared every floating thing off the
+    # screen: the title bar, the bottom navigation, the back button and the
+    # control card with the day, the stars and the filters in it. Reading this
+    # page means dragging the grid in two directions, and those controls are
+    # what you are dragging it to reach — taking them away on the view that
+    # uses them most is the one place that gesture costs something. The title
+    # bar still goes, because it names the festival you are already looking
+    # at; nothing else does.
+    src = sub_once(
+        src,
+        r"    const chromeOff = mob && !!S\.chromeHidden"
+        r" && !S\.navOpen && !S\.filtersOpen && !S\.searchOpen;",
+        "    const chromeOff = mob && !!S.chromeHidden"
+        " && !S.navOpen && !S.filtersOpen && !S.searchOpen;\n"
+        "    /* What the controls do instead, which is stay. */\n"
+        "    const barOff = false;",
+        "chrome that stays")
+    for what in ("bar stays", "back button stays"):
+        src = sub_once(
+            src,
+            r"transform: chromeOff \? 'translateY\(calc\(100% \+ 28px\)\)' : 'none',\n"
+            r"(\s*)opacity: chromeOff \? 0 : 1, pointerEvents: chromeOff \? 'none' : 'auto',",
+            "transform: barOff ? 'translateY(calc(100% + 28px))' : 'none',\n"
+            "          opacity: barOff ? 0 : 1, pointerEvents: barOff ? 'none' : 'auto',",
+            what)
+    src = sub_once(
+        src,
+        r"          transform: chromeOff \? 'translate\(-50%, calc\(100% \+ 40px\)\)'"
+        r" : 'translateX\(-50%\)',\n"
+        r"          opacity: chromeOff \? 0 : 1, pointerEvents: chromeOff \? 'none' : 'auto',",
+        "          transform: barOff ? 'translate(-50%, calc(100% + 40px))'"
+        " : 'translateX(-50%)',\n"
+        "          opacity: barOff ? 0 : 1, pointerEvents: barOff ? 'none' : 'auto',",
+        "control card stays")
 
     # The bar keeps its compact height for the whole of the programme. It
     # already compacted itself the moment you scrolled the grid and came back
@@ -2412,7 +2464,6 @@ CARD_HTML = """    <div class="ac-host" style="{{ sheetHostStyle }}">
             <svg class="ac__where-go" sc-camel-view-box="0 0 24 24" aria-hidden="true"><use href="#i-near"></use></svg>
           </button>
         </div>
-        <div class="ac__notch"><i></i><i></i><span class="ac__chip">{{ sheet.chipLabel }}</span></div>
       </div>
 
       <div class="ac__body" style="{{ sheetBodyStyle }}" ref="{{ sheetBodyRef }}">
@@ -2430,6 +2481,11 @@ CARD_HTML = """    <div class="ac-host" style="{{ sheetHostStyle }}">
                   </div>
                 </sc-if>
               </div>
+              <sc-if value="{{ sheet.showPlayerToggle }}">
+                <button class="embed__more" type="button" sc-camel-on-click="{{ sheet.onPlayerToggle }}" aria-expanded="{{ sheet.playerOpen }}" aria-label="{{ sheet.playerLabel }}" title="{{ sheet.playerLabel }}">
+                  <svg sc-camel-view-box="0 0 24 24" aria-hidden="true"><use href="#i-chev"></use></svg>
+                </button>
+              </sc-if>
             </sc-if>
             <sc-if value="{{ sheet.noSources }}">
               <div class="listen__row">
@@ -2595,11 +2651,13 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
   line-height: 1.08; letter-spacing: -.03em; text-wrap: balance;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-/* Only the last row needs to clear the notch — indenting the headline
-   too would cost it a line of width for nothing. */
+/* The reference cuts a notch into the corner of the hero and stands a chip in
+   it, and reserved this row's end for it. The chip named the stage, which the
+   row itself names and links to, so it is gone from the markup and the row
+   has its end back. */
 .ac__where {
   display: flex; align-items: center; gap: 8px; margin: 1px 0 0;
-  padding-inline-end: clamp(96px, 29%, 150px);
+  padding-inline-end: 4px;
   font-size: 13.5px; font-weight: 500; color: var(--on-hero-dim); min-inline-size: 0;
 }
 .ac__where span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -2814,7 +2872,7 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
   .ac { padding: 10px 10px 14px; }
   .ac__body { padding: 0 6px; }
   .ac__overlay { padding: 0 16px 15px; gap: 6px; }
-  .ac__where { padding-inline-end: 92px; font-size: 13px; }
+  .ac__where { font-size: 13px; }
   .listen__cover, .listen__play { inline-size: 50px; block-size: 50px; }
   .btn--plan { flex-basis: 100%; margin-inline-start: 0; }
   .btn--outlined { flex: 1 1 auto; }
@@ -2828,7 +2886,7 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
   /* The overlay is a grid, which stretches its rows: inline-flex alone left
      the pill running the width of the hero with the name in one end of it. */
   display: inline-flex; justify-self: start; align-items: center; gap: 8px;
-  margin: 3px 0 0; max-inline-size: calc(100% - 96px);
+  margin: 3px 0 0; max-inline-size: 100%;
   padding: 7px 12px 7px 10px; border: 0; border-radius: 20px;
   background: rgb(255 255 255 / .16);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
@@ -2968,6 +3026,38 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
 @media (min-width:640px){ .ac__grab{display:none} }
 @media (prefers-reduced-motion:reduce){
   [data-fp-shell]{transition:none}
+}
+
+/* ---- the player opens, phone only ----
+   Spotify draws two cards from the same URL: a 152px bar with the act, its
+   Follow and its play button, and a 352px one with the first three tracks
+   under it. The tall one is most of a phone screen before the introduction
+   has started, so the card opens with the bar and the reader asks for the
+   rest. The ask is M3's own expand: the chevron that says which way it goes,
+   turning as it goes, and the height on the emphasised curve — a change of
+   size is a spatial change, so it takes the spatial duration, while the
+   chevron is a change of state and takes the shorter one. */
+.embed__more{display:none}
+@media (max-width:639.98px){
+  .listen__embed--sp,.listen__embed--sp iframe{
+    block-size:152px;transition:block-size .5s cubic-bezier(.2,0,0,1)}
+  .listen__embed--sp.is-open,.listen__embed--sp.is-open iframe{block-size:352px}
+  .embed__more{
+    display:flex;align-items:center;justify-content:center;
+    inline-size:100%;min-block-size:32px;margin-block-start:2px;
+    padding:0;border:0;border-radius:16px;background:none;
+    color:var(--on-var,#494E42);cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .2s cubic-bezier(.2,0,0,1)}
+  .embed__more:hover{background:var(--state8,rgba(25,29,19,.08))}
+  .embed__more:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .embed__more svg{
+    inline-size:18px;block-size:18px;fill:currentColor;
+    transition:transform .3s cubic-bezier(.2,0,0,1)}
+  .embed__more[aria-expanded="true"] svg{transform:rotate(180deg)}
+}
+@media (prefers-reduced-motion:reduce){
+  .listen__embed--sp,.listen__embed--sp iframe,.embed__more svg{transition:none}
 }"""
 
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
