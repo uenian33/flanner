@@ -958,6 +958,24 @@ SHEET_JS = """
     if (el) this.sheetDragOn();
   };
 
+  /* The page behind steps back while a sheet is up — the class is on the body
+     so the shell's own rule does the moving. Read on every update rather than
+     only when the sheet arrives, because the shell that has to step back
+     depends on the width as much as on the sheet, and it is dropped as the
+     sheet starts leaving so the two movements play together. */
+  syncSheetShell() {
+    const on = !!this.state.sheet && !this.sheetLeaving && this.mode() === 'bar';
+    document.body.classList.toggle('fp-sheet', on);
+  }
+
+  /* A phone gets the modal bottom sheet; everything wider keeps the container
+     transform out of the cell that was pressed. */
+  sheetIsBottom() { return this.mode() === 'bar'; }
+  sheetScrimEl() {
+    const el = this.sheetEl;
+    return el ? el.closest('[style*="z-index: 70"]') : null;
+  }
+
   /* ---- container transform ---- */
   /* A cubic-bezier read as a function of time, by bisection — eighteen
      samples do not need the analytic solution. */
@@ -1025,6 +1043,13 @@ SHEET_JS = """
     const el = this.sheetEl;
     if (!el || !el.animate) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    /* The sheet rises from the edge it will be dragged back to, on M3's
+       emphasised decelerate: quick away from the edge, settling into place. */
+    if (this.sheetIsBottom()) {
+      el.animate([{ transform: 'translateY(100%)' }, { transform: 'none' }],
+        { duration: 420, easing: 'cubic-bezier(.05,.7,.1,1)' });
+      return;
+    }
     const g = this.sheetGeometry();
     /* Opened by a keyboard, or from something with no box to grow out of:
        the design's own rise, which is what this replaces. */
@@ -1049,8 +1074,38 @@ SHEET_JS = """
      quicker, which is what M3 asks an exit to be. */
   dismissSheet(held) {
     const el = this.sheetEl;
-    const shut = () => { clearTimeout(this.closeT); this.setState({ sheet: null }); };
+    const shut = () => {
+      clearTimeout(this.closeT);
+      this.sheetLeaving = false;
+      this.setState({ sheet: null });
+    };
     if (!el) { shut(); return; }
+    /* The sheet leaves the way it came, down past the edge, on the
+       accelerating curve — and from wherever the finger left it, so a drag
+       that becomes a dismissal is one movement rather than two. */
+    if (this.sheetIsBottom()) {
+      const h = el.getBoundingClientRect().height || 1;
+      const from = (held && held.dy > 0 ? held.dy : 0);
+      const rest = Math.max(0, h - from);
+      const ms = Math.max(140, Math.min(260, Math.round(260 * rest / h)));
+      const scrim = this.sheetScrimEl();
+      this.sheetLeaving = true;
+      this.syncSheetShell();
+      el.style.transition = 'none';
+      if (el.animate) {
+        el.animate([
+          { transform: 'translateY(' + from + 'px)' },
+          { transform: 'translateY(' + h + 'px)' }
+        ], { duration: ms, easing: 'cubic-bezier(.3,0,.8,.15)', fill: 'forwards' });
+      }
+      if (scrim && scrim.animate) {
+        scrim.animate([{ opacity: Number(scrim.style.opacity || 1) }, { opacity: 0 }],
+          { duration: ms, easing: 'linear', fill: 'forwards' });
+      }
+      clearTimeout(this.closeT);
+      this.closeT = setTimeout(shut, ms + 20);
+      return;
+    }
     /* Measured with any drag undone, or the arc would start from wherever the
        finger left the sheet. What the finger did is put back on top of it
        below, as its own movement. */
@@ -1084,9 +1139,72 @@ SHEET_JS = """
     this.closeT = setTimeout(shut, 520);
   }
 
+  /* ---- drag the sheet down to close it ----
+     Downwards only, and only from the top of what it holds: a drag over the
+     introduction reads the introduction, and one that has scrolled the card
+     is scrolling the card. Once the gesture is taken the sheet is under the
+     finger — no threshold to cross before it starts moving, and the scrim
+     fades with it — and it is let go at the finger's own speed: far enough
+     down, or thrown down, and it carries on out; short of that it springs
+     back to the edge it rose from. */
+  sheetDragOnBottom() {
+    const el = this.sheetEl, scrim = this.sheetScrimEl();
+    const atTop = () => {
+      const b = this.sheetBodyEl;
+      return !b || b.scrollTop <= 0;
+    };
+    this.onSheetDown = (e) => {
+      if (e.button != null && e.button !== 0) return;
+      this.drag = { y: e.clientY, t: performance.now(), on: false, top: atTop(), dy: 0 };
+    };
+    this.onSheetMove = (e) => {
+      const d = this.drag;
+      if (!d) return;
+      const dy = e.clientY - d.y;
+      if (!d.on) {
+        if (dy < 6) { if (dy < -4) this.drag = null; return; }
+        /* The card may have been scrolled between the press and the move. */
+        if (!d.top || !atTop()) { this.drag = null; return; }
+        d.on = true;
+        el.style.transition = 'none';
+        if (el.setPointerCapture && e.pointerId != null) {
+          try { el.setPointerCapture(e.pointerId); } catch (err) { /* not ours */ }
+        }
+      }
+      if (e.cancelable) e.preventDefault();
+      d.dy = Math.max(0, dy);
+      const h = el.getBoundingClientRect().height || 1;
+      el.style.transform = 'translateY(' + d.dy + 'px)';
+      if (scrim) scrim.style.opacity = String(Math.max(0, 1 - (d.dy / h) * .9));
+    };
+    this.onSheetUp = (e) => {
+      const d = this.drag;
+      this.drag = null;
+      if (!d || !d.on) return;
+      const dy = Math.max(0, e.clientY - d.y);
+      const speed = dy / Math.max(1, performance.now() - d.t);
+      const h = el.getBoundingClientRect().height || 1;
+      if (dy > Math.min(150, h * .28) || (dy > 24 && speed > .55)) {
+        this.dismissSheet({ dy: dy });
+        return;
+      }
+      el.style.transition = 'transform .38s cubic-bezier(.2,0,0,1)';
+      el.style.transform = 'none';
+      if (scrim) {
+        scrim.style.transition = 'opacity .2s linear';
+        scrim.style.opacity = '1';
+      }
+    };
+    el.addEventListener('pointerdown', this.onSheetDown);
+    el.addEventListener('pointermove', this.onSheetMove, { passive: false });
+    el.addEventListener('pointerup', this.onSheetUp);
+    el.addEventListener('pointercancel', this.onSheetUp);
+  }
+
   /* ---- throw to dismiss ---- */
   sheetDragOn() {
     const el = this.sheetEl;
+    if (this.sheetIsBottom()) { this.sheetDragOnBottom(); return; }
     this.onSheetDown = (e) => {
       if (e.button != null && e.button !== 0) return;
       this.drag = { x: e.clientX, y: e.clientY, t: performance.now(), on: false };
@@ -1353,7 +1471,8 @@ def patch_sheet(src: str) -> str:
         "      this.setSheetEl(el);\n"
         "      if (el) requestAnimationFrame(() => this.playSheetOpen());\n"
         "      if (this.state.bioOpen) this.setState({ bioOpen: false });\n"
-        "    }\n",
+        "    }\n"
+        "    this.syncSheetShell();\n",
         "sheet open animation")
 
     # ---- the sheet is the page on a phone ----
@@ -1362,13 +1481,17 @@ def patch_sheet(src: str) -> str:
         r"      \}, tight \? \{\n"
         r"        display: 'flex', flexDirection: 'column', overflow: 'hidden',\n",
         "      }, sheet ? sheet.vars : null, mob ? {\n"
-        "        /* A phone opens it as a page of its own: the whole screen,\n"
-        "           squared off, the hero at its own height and the body taking\n"
-        "           the rest. The card stays a grid — its columns are decided by\n"
-        "           its own container queries and nothing here may take that. */\n"
+        "        /* A phone opens it as a modal bottom sheet: the width of the\n"
+        "           screen, standing on its bottom edge, as tall as what is in\n"
+        "           it and never taller than the screen less the strip that\n"
+        "           keeps the page behind it in view. The card stays a grid —\n"
+        "           its columns are decided by its own container queries and\n"
+        "           nothing here may take that. */\n"
         "        gridTemplateRows: 'auto minmax(0, 1fr)', overflow: 'hidden',\n"
-        "        width: '100%', height: '100%', maxHeight: 'none',\n"
-        "        borderRadius: '0px', boxShadow: 'none',\n"
+        "        width: '100%', height: 'auto',\n"
+        "        maxHeight: 'calc(100dvh - var(--sheet-gap))',\n"
+        "        borderRadius: '28px 28px 0 0',\n"
+        "        boxShadow: '0 -8px 40px rgba(20,24,14,.28)',\n"
         "        touchAction: 'pan-y'\n"
         "      } : tight ? {\n"
         "        gridTemplateRows: 'auto minmax(0, 1fr)', overflow: 'hidden',\n"
@@ -1413,8 +1536,9 @@ def patch_sheet(src: str) -> str:
         "        containerType: 'inline-size', containerName: 'ac',\n"
         "        width: (S.w || 1440) >= 1000\n"
         "          ? 'min(860px, calc(100vw - 48px))' : 'min(480px, calc(100vw - 48px))'\n"
-        "      }, mob ? { width: '100%', height: '100%', display: 'grid',\n"
-        "        gridTemplateRows: 'minmax(0, 1fr)' } : null),\n"
+        "      }, mob ? { width: '100%', height: 'auto', display: 'grid',\n"
+        "        alignContent: 'end',\n"
+        "        maxHeight: 'calc(100dvh - var(--sheet-gap))' } : null),\n"
         "      sheetRef: this.setSheetEl,\n"
         "      sheetBodyRef: (el) => { this.sheetBodyEl = el; },\n"
         "      sheetBodyStyle: tight ? { overflowY: 'auto', minHeight: 0 } : null,\n",
@@ -1429,7 +1553,8 @@ def patch_sheet(src: str) -> str:
         src,
         r"        justifyItems: 'center', placeContent: 'safe center',",
         "        justifyItems: mob ? 'stretch' : 'center',\n"
-        "        placeContent: mob ? 'stretch' : 'safe center',",
+        "        /* The sheet stands on the bottom edge of the screen. */\n"
+        "        placeContent: mob ? 'end stretch' : 'safe center',",
         "scrim placement")
     return src
 
@@ -1995,6 +2120,10 @@ def patch_template(tpl: str, fest: Festival) -> str:
     tpl = sub_once(tpl, r'    <article style="\{\{ heroCardStyle \}\}" ref="\{\{ heroCardRef \}\}">',
                    '    <article data-fp-card="" style="{{ heroCardStyle }}" '
                    'ref="{{ heroCardRef }}">', "festival card mark")
+
+    # The page behind the sheet, marked so it can step back while one is open.
+    tpl = sub_once(tpl, r'<div style="\{\{ shellStyle \}\}">',
+                   '<div data-fp-shell="" style="{{ shellStyle }}">', "shell mark")
     tpl = sub_once(tpl, r'      <aside id="fp-weather" style="\{\{ weatherCardStyle \}\}">',
                    '      <aside id="fp-weather" data-fp-card="" '
                    'style="{{ weatherCardStyle }}">', "weather card mark")
@@ -2151,6 +2280,7 @@ CARD_HTML = """    <div class="ac-host" style="{{ sheetHostStyle }}">
           <use href="#i-art"></use><use class="motif" href="{{ sheet.motif }}"></use>
         </svg>
         <div class="ac__scrim" aria-hidden="true"></div>
+        <div class="ac__grab" aria-hidden="true"></div>
         <div class="ac__tools">
           <button class="ac__tool" type="button" sc-camel-on-click="{{ closeSheet }}" aria-label="Close">
             <svg sc-camel-view-box="0 0 24 24" aria-hidden="true" style="fill:currentColor"><use href="#i-close"></use></svg>
@@ -2681,6 +2811,48 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
 }
 """
 
+# ── the card is a bottom sheet on a phone ─────────────
+# The phone shell draws the act as a page of its own, which is what a screen
+# that narrow has room for — but a page arrives by replacing what you were
+# reading, and this one is an aside from the grid you are still in. M3 has the
+# component for that: a modal bottom sheet. It rises from the edge it is
+# dragged from, keeps the top of the screen showing so the timetable is still
+# there behind it, and carries the handle that says it can be dragged.
+#
+# Its height is its content's. A card with a player, an introduction and four
+# tags fills the screen; one with a name and two tags is a third of it, and
+# standing that at full height left the reader looking at an empty column with
+# the action stranded at the bottom of it.
+#
+# The page behind it steps back as it arrives — scaled a little and rounded,
+# the way M3's own sheets treat what they cover — so the card reads as the
+# thing being looked at rather than as another page in the stack.
+#
+# The scoping is the shell's own breakpoint: mode() returns 'bar' below 640,
+# which is exactly the width this media query starts at. Nothing above it
+# changes — the tablet and the desktop keep the container transform that grows
+# the card out of the cell that was pressed.
+SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
+:root{--sheet-gap:calc(56px + env(safe-area-inset-top,0px))}
+[data-fp-shell]{transform-origin:50% 0}
+@media (max-width:639.98px){
+  [data-fp-shell]{
+    transition:transform .44s cubic-bezier(.2,0,0,1),border-radius .44s cubic-bezier(.2,0,0,1)}
+  body.fp-sheet [data-fp-shell]{
+    transform:scale(.94) translateY(8px);border-radius:28px;overflow:clip}
+  /* M3's drag handle: 32×4, on the surface it sits on at 40%. The hero is
+     dark under both themes, so it is drawn in white. */
+  .ac__grab{
+    position:absolute;inset-block-start:8px;inset-inline-start:50%;
+    transform:translateX(-50%);z-index:3;inline-size:32px;block-size:4px;
+    border-radius:2px;background:rgb(255 255 255 / .4);pointer-events:none}
+  .ac__hero{padding-block-start:64px}
+}
+@media (min-width:640px){ .ac__grab{display:none} }
+@media (prefers-reduced-motion:reduce){
+  [data-fp-shell]{transition:none}
+}"""
+
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 /* The bounce again, for the scrollers inside the page. The timetable, the
@@ -2795,6 +2967,7 @@ def build(fid: str) -> pathlib.Path:
 {art.other_css()}
 {stage_palette(len(fest.stages))[1]}
 {CARD_CSS}
+{SHEET_CSS}
 {NO_ZOOM_CSS}
 </style>
 <script>/* the page holds its scale on a touch screen */
