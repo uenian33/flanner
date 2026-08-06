@@ -1349,7 +1349,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
    card system already puts on the element. The measures are the design's:
    16dp margins, and the room the floating bar stands in. */
 .fest{
-  --headline-size:32px; --headline-lh:1.06;
+  /* a step down the M3 scale from the design's 32, which was drawn for a
+     three-word name and set a festival's full name across two lines */
+  --headline-size:28px; --headline-lh:1.08;
   --title-size:17px;
   --body-size:15px;   --body-lh:1.55;
   --body-sm-size:14px;
@@ -6324,7 +6326,7 @@ class Component extends DCLogic {
     const tight = mob || (S.vh || 900) < 720;
     const progNow = S.view
       || (mob ? 'info' : (this.props.startView || 'timetable'));
-    const mini = mob && (progNow === 'timetable' || progNow === 'list');
+    const mini = mob && (S.barMini || progNow === 'timetable' || progNow === 'list');
     const dayIdx = Math.max(0, this.DAYS.findIndex(d => d.id === S.day));
     const isDrawer = mode === 'drawer', isRail = mode === 'rail', isBar = mode === 'bar';
     const overlay = S.navOpen && !isDrawer;

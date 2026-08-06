@@ -2474,18 +2474,18 @@ def patch_nav(src: str) -> str:
     # you read by dragging in two directions is a bar that changes size under
     # your thumb. Reading the timetable is the one thing this page is for, so
     # there it is small; Info and Map, which you land on rather than scroll
-    # through, keep the labels however far down them you are — which is why
-    # the scroll-driven state is no longer what the bar's height is read from.
-    # Which page you are on is resolved the way the view itself resolves it,
-    # a phone's default being Info: taking the design's own default here left
+    # through, stand at full height until you push them up — the design's own
+    # behaviour, and all that is wrong with it there is where it starts. Which
+    # page you are on is resolved the way the view itself resolves it, a
+    # phone's default being Info: taking the design's own default here left
     # the bar compact on the page a phone lands on.
     src = sub_once(
         src,
         r"    const mini = mob && S\.barMini;",
         "    const progNow = S.view\n"
         "      || (mob ? 'info' : (this.props.startView || 'timetable'));\n"
-        "    const mini = mob"
-        " && (progNow === 'timetable' || progNow === 'list');",
+        "    const mini = mob && (S.barMini"
+        " || progNow === 'timetable' || progNow === 'list');",
         "bar height on the programme")
 
     src = sub_once(src,
@@ -4607,7 +4607,9 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
    card system already puts on the element. The measures are the design's:
    16dp margins, and the room the floating bar stands in. */
 .fest{
-  --headline-size:32px; --headline-lh:1.06;
+  /* a step down the M3 scale from the design's 32, which was drawn for a
+     three-word name and set a festival's full name across two lines */
+  --headline-size:28px; --headline-lh:1.08;
   --title-size:17px;
   --body-size:15px;   --body-lh:1.55;
   --body-sm-size:14px;
