@@ -2193,6 +2193,118 @@ def patch_map(src: str, fest: Festival) -> str:
     src = sub_once(src, r"\.setView\(\[[\d.]+, [\d.]+\], 16\)",
                    ".setView(%s, 16)" % js(centre), "map centre")
 
+    # ---- the pin ----
+    # A 32px disc in the stage's light container, ringed in 2px of white and
+    # dropped on an 8px shadow, which is how a map pin was drawn when the
+    # basemaps were still beige. The colour is the card's: the dark container
+    # the act's own card and its cell take when it is in the plan, with the
+    # light on-colour over it, so a stage is the same colour wherever it is
+    # met. The shape is off the shape scale — a 20dp corner on three sides and
+    # a 4dp one at the point — and it sits on M3's level-2 elevation rather
+    # than a single wide blur.
+    src = sub_once(
+        src,
+        r"      const html = '<div style=\"width:32px;height:32px;"
+        r"border-radius:50% 50% 50% 0;transform:rotate\(-45deg\);background:' \+ c\.dot \+\n"
+        r"        ';border:2px solid #fff;box-shadow:0 3px 8px rgba\(20,24,14,\.35\);"
+        r"display:grid;place-items:center\">' \+\n"
+        r"        '<span style=\"transform:rotate\(45deg\);"
+        r"font:700 14px Inter,system-ui,sans-serif;color:' \+ c\.fg \+ '\">' \+ st\.n"
+        r" \+ '</span></div>';",
+        "      const html = '<div style=\"width:34px;height:34px;"
+        "border-radius:20px 20px 20px 4px;transform:rotate(-45deg);background:'"
+        " + c.planBg +\n"
+        "        ';box-shadow:0 1px 2px rgba(20,24,14,.30),"
+        "0 2px 6px 2px rgba(20,24,14,.15);display:grid;place-items:center\">' +\n"
+        "        '<span style=\"transform:rotate(45deg);"
+        "font:600 14px/20px Inter,system-ui,sans-serif;letter-spacing:.1px;color:'"
+        " + c.planFg + '\">' + st.n + '</span></div>';",
+        "map pin")
+    src = sub_once(
+        src,
+        r"        icon: L\.divIcon\(\{ html: html, className: '', iconSize: \[32, 32\],"
+        r" iconAnchor: \[16, 32\], popupAnchor: \[0, -30\] \}\)",
+        "        icon: L.divIcon({ html: html, className: '', iconSize: [34, 34],"
+        " iconAnchor: [17, 34], popupAnchor: [0, -32] })",
+        "map pin box")
+    # The popup is the map's own card: the stage in Title Small over its count
+    # in Body Small, which is the pair every other list on the page uses.
+    src = sub_once(
+        src,
+        r"      mk\.bindPopup\('<strong style=\"font:650 14px Inter,sans-serif\">'"
+        r" \+ st\.name \+ '</strong><br><span style=\"font:400 12\.5px Inter,sans-serif;"
+        r"color:var\(--on-var,#494E42\)\">' \+",
+        "      mk.bindPopup('<strong style=\"font:500 14px/20px Inter,sans-serif;"
+        "letter-spacing:.1px\">' + st.name + '</strong><br>"
+        "<span style=\"font:400 12px/16px Inter,sans-serif;letter-spacing:.4px;"
+        "color:var(--on-var,#494E42)\">' +",
+        "map popup type")
+
+    # ---- Street / Satellite ----
+    # Two pills of different roundness inside a floating capsule, which is not
+    # a component M3 has. What it has is the segmented button, and this is one:
+    # 40 tall inside a 1dp outline, one corner radius for the pair, the chosen
+    # segment filled with the secondary container and its label in Label
+    # Large. The container itself is patched in the markup.
+    src = sub_once(
+        src,
+        r"    const baseTabs = \[\{ id: 'street', label: 'Street' \},"
+        r" \{ id: 'satellite', label: 'Satellite' \}\]\.map\(b => \{\n"
+        r"      const on = S\.base === b\.id;\n"
+        r"      return \{\n"
+        r"        label: b\.label, pressed: String\(on\),\n"
+        r"        style: \{[^\n]*\},\n"
+        r"        onClick: \(\) => this\.setBase\(b\.id\)\n"
+        r"      \};\n"
+        r"    \}\);",
+        "    const baseTabs = [{ id: 'street', label: 'Street' },"
+        " { id: 'satellite', label: 'Satellite' }].map((b, i) => {\n"
+        "      const on = S.base === b.id;\n"
+        "      return {\n"
+        "        label: b.label, pressed: String(on),\n"
+        "        style: {\n"
+        "          display: 'inline-flex', alignItems: 'center',"
+        " justifyContent: 'center',\n"
+        "          height: '38px', padding: '0 16px', border: 0,\n"
+        "          borderInlineStart: i\n"
+        "            ? '1px solid var(--outline,#C7CBBA)' : '0',\n"
+        "          borderRadius: 0,\n"
+        "          background: on ? 'var(--sec,#DCE8C0)' : 'transparent',\n"
+        "          color: on ? 'var(--on-sec,#1F2D0A)' : 'var(--on-var,#494E42)',\n"
+        "          fontFamily: 'inherit', fontSize: '14px', lineHeight: '20px',\n"
+        "          letterSpacing: '.1px', fontWeight: 500, cursor: 'pointer',\n"
+        "          transition: 'background .2s cubic-bezier(.2,0,0,1),"
+        " color .2s cubic-bezier(.2,0,0,1)'\n"
+        "        },\n"
+        "        onClick: () => this.setBase(b.id)\n"
+        "      };\n"
+        "    });",
+        "base map segments")
+
+    # ---- the stage beside the map ----
+    # Same disc, same colours, and the three lines take the type scale's own
+    # steps: Title Medium for the stage, Body Medium for what it is, Label
+    # Large for the count.
+    src = sub_once(
+        src,
+        r"        numStyle: \{ flex: 'none', display: 'grid', placeItems: 'center',"
+        r" width: '28px', height: '28px', borderRadius: '10px', background: c\.dot,"
+        r" color: c\.fg, fontSize: '13px', fontWeight: 700 \},",
+        "        numStyle: { flex: 'none', display: 'grid', placeItems: 'center',\n"
+        "          width: '32px', height: '32px', borderRadius: '12px',\n"
+        "          background: c.planBg, color: c.planFg,\n"
+        "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',\n"
+        "          fontWeight: 600 },\n"
+        "        nameStyle: { fontSize: '16px', lineHeight: '24px',\n"
+        "          letterSpacing: '.15px', fontWeight: 500 },\n"
+        "        noteStyle: { fontSize: '14px', lineHeight: '20px',\n"
+        "          letterSpacing: '.25px', color: 'var(--on-var,#494E42)',\n"
+        "          textWrap: 'pretty' },\n"
+        "        countStyle: { fontSize: '14px', lineHeight: '20px',\n"
+        "          letterSpacing: '.1px', fontWeight: 500,\n"
+        "          color: 'var(--primary,#4C662B)' },",
+        "stage card type")
+
     src = sub_once(
         src,
         r"    this\.layers = \{\n      street: L\.tileLayer\(.*?\n    \};",
@@ -2275,6 +2387,36 @@ def patch_template(tpl: str, fest: Festival) -> str:
     # The page behind the sheet, marked so it can step back while one is open.
     tpl = sub_once(tpl, r'<div style="\{\{ shellStyle \}\}">',
                    '<div data-fp-shell="" style="{{ shellStyle }}">', "shell mark")
+
+    # The segmented button's container: an outline and one corner for the
+    # pair, not a floating capsule with two pills rattling inside it.
+    tpl = sub_once(
+        tpl,
+        r'<div role="group" aria-label="Base map" style="position:absolute;top:14px;'
+        r'left:14px;z-index:1;display:flex;gap:4px;padding:4px;border-radius:22px;'
+        r'background:var\(--bar2,rgba\(255,255,255,\.92\)\);'
+        r'-webkit-backdrop-filter:blur\(8px\);backdrop-filter:blur\(8px\);'
+        r'box-shadow:0 2px 10px rgba\(20,24,14,\.14\)">',
+        '<div role="group" aria-label="Base map" style="position:absolute;'
+        'top:12px;left:12px;z-index:1;display:flex;padding:0;'
+        'border:1px solid var(--outline,#C7CBBA);border-radius:20px;overflow:hidden;'
+        'background:color-mix(in srgb,var(--card,#F2F0EB) 88%,transparent);'
+        '-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)">',
+        "base map container")
+
+    # The stage beside the map: its three lines are the row's own now.
+    tpl = sub_once(
+        tpl,
+        r'              <span style="font-size:15px;font-weight:650;'
+        r'letter-spacing:-\.012em">\{\{ s\.name \}\}</span>\n'
+        r'              <span style="font-size:13px;line-height:1\.45;'
+        r'color:var\(--on-var,#494E42\);text-wrap:pretty">\{\{ s\.note \}\}</span>\n'
+        r'              <span style="font-size:12\.5px;font-weight:500;'
+        r'color:var\(--primary,#4C662B\)">\{\{ s\.count \}\}</span>',
+        '              <span style="{{ s.nameStyle }}">{{ s.name }}</span>\n'
+        '              <span style="{{ s.noteStyle }}">{{ s.note }}</span>\n'
+        '              <span style="{{ s.countStyle }}">{{ s.count }}</span>',
+        "stage card lines")
 
     # The three lines of a list row were written at one size for every screen;
     # they are the row's own now, so a phone can take the scale down a step.
@@ -3063,7 +3205,44 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
 }
 @media (prefers-reduced-motion:reduce){
   .listen__embed--sp,.listen__embed--sp iframe,.embed__more svg{transition:none}
-}"""
+}
+
+/* ---- the map's own furniture ----
+   Leaflet ships the controls of 2011: white squares with a 1px border and a
+   4px corner, a popup with a hairline and a drop shadow, an attribution strip
+   in 11px grey. The map underneath is the festival's; these are the page's,
+   so they are drawn as the page draws its own — surface-container under M3's
+   level-1 elevation, the shape scale for the corners, and the type scale for
+   the words. */
+.leaflet-container{font-family:inherit}
+.leaflet-bar,.leaflet-touch .leaflet-bar{
+  border:0;border-radius:16px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(20,24,14,.24),0 1px 3px 1px rgba(20,24,14,.12)}
+.leaflet-bar a,.leaflet-touch .leaflet-bar a{
+  inline-size:40px;block-size:40px;line-height:40px;
+  border:0;border-block-end:1px solid var(--outline-variant,rgba(25,29,19,.10));
+  background:var(--card,#F2F0EB);color:var(--on-var,#494E42);
+  font-family:inherit;font-size:20px;font-weight:500;
+  transition:background .2s cubic-bezier(.2,0,0,1)}
+.leaflet-bar a:last-child,.leaflet-touch .leaflet-bar a:last-child{border-block-end:0}
+.leaflet-bar a:hover,.leaflet-touch .leaflet-bar a:hover{
+  background:var(--state8,rgba(25,29,19,.08))}
+.leaflet-bar a.leaflet-disabled{background:var(--card,#F2F0EB);opacity:.38}
+.leaflet-control-zoom{margin:12px}
+.leaflet-popup-content-wrapper{
+  border-radius:16px;background:var(--card,#F2F0EB);color:var(--on,#191D13);
+  box-shadow:0 1px 2px rgba(20,24,14,.24),0 2px 6px 2px rgba(20,24,14,.12)}
+.leaflet-popup-content{margin:12px 16px;font-family:inherit}
+.leaflet-popup-tip{background:var(--card,#F2F0EB);box-shadow:none}
+.leaflet-container a.leaflet-popup-close-button{
+  inline-size:36px;block-size:36px;padding:0;line-height:36px;
+  color:var(--on-var,#494E42);font-size:18px}
+.leaflet-control-attribution{
+  padding:2px 8px;border-start-start-radius:12px;
+  background:color-mix(in srgb,var(--card,#F2F0EB) 82%,transparent);
+  color:var(--on-var,#494E42);
+  font-family:inherit;font-size:11px;line-height:16px;letter-spacing:.5px}
+.leaflet-control-attribution a{color:var(--primary,#4C662B)}"""
 
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}

@@ -1398,6 +1398,43 @@ svg.leaflet-image-layer.leaflet-interactive path {
 @media (prefers-reduced-motion:reduce){
   .listen__embed--sp,.listen__embed--sp iframe,.embed__more svg{transition:none}
 }
+
+/* ---- the map's own furniture ----
+   Leaflet ships the controls of 2011: white squares with a 1px border and a
+   4px corner, a popup with a hairline and a drop shadow, an attribution strip
+   in 11px grey. The map underneath is the festival's; these are the page's,
+   so they are drawn as the page draws its own — surface-container under M3's
+   level-1 elevation, the shape scale for the corners, and the type scale for
+   the words. */
+.leaflet-container{font-family:inherit}
+.leaflet-bar,.leaflet-touch .leaflet-bar{
+  border:0;border-radius:16px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(20,24,14,.24),0 1px 3px 1px rgba(20,24,14,.12)}
+.leaflet-bar a,.leaflet-touch .leaflet-bar a{
+  inline-size:40px;block-size:40px;line-height:40px;
+  border:0;border-block-end:1px solid var(--outline-variant,rgba(25,29,19,.10));
+  background:var(--card,#F2F0EB);color:var(--on-var,#494E42);
+  font-family:inherit;font-size:20px;font-weight:500;
+  transition:background .2s cubic-bezier(.2,0,0,1)}
+.leaflet-bar a:last-child,.leaflet-touch .leaflet-bar a:last-child{border-block-end:0}
+.leaflet-bar a:hover,.leaflet-touch .leaflet-bar a:hover{
+  background:var(--state8,rgba(25,29,19,.08))}
+.leaflet-bar a.leaflet-disabled{background:var(--card,#F2F0EB);opacity:.38}
+.leaflet-control-zoom{margin:12px}
+.leaflet-popup-content-wrapper{
+  border-radius:16px;background:var(--card,#F2F0EB);color:var(--on,#191D13);
+  box-shadow:0 1px 2px rgba(20,24,14,.24),0 2px 6px 2px rgba(20,24,14,.12)}
+.leaflet-popup-content{margin:12px 16px;font-family:inherit}
+.leaflet-popup-tip{background:var(--card,#F2F0EB);box-shadow:none}
+.leaflet-container a.leaflet-popup-close-button{
+  inline-size:36px;block-size:36px;padding:0;line-height:36px;
+  color:var(--on-var,#494E42);font-size:18px}
+.leaflet-control-attribution{
+  padding:2px 8px;border-start-start-radius:12px;
+  background:color-mix(in srgb,var(--card,#F2F0EB) 82%,transparent);
+  color:var(--on-var,#494E42);
+  font-family:inherit;font-size:11px;line-height:16px;letter-spacing:.5px}
+.leaflet-control-attribution a{color:var(--primary,#4C662B)}
 /* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 /* The bounce again, for the scrollers inside the page. The timetable, the
@@ -4247,7 +4284,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
     <section style="{{ mapSectionStyle }}">
       <div style="{{ mapPaneStyle }}">
         <div ref="{{ mapRef }}" style="{{ mapBoxStyle }}"></div>
-        <div role="group" aria-label="Base map" style="position:absolute;top:14px;left:14px;z-index:1;display:flex;gap:4px;padding:4px;border-radius:22px;background:var(--bar2,rgba(255,255,255,.92));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 2px 10px rgba(20,24,14,.14)">
+        <div role="group" aria-label="Base map" style="position:absolute;top:12px;left:12px;z-index:1;display:flex;padding:0;border:1px solid var(--outline,#C7CBBA);border-radius:20px;overflow:hidden;background:color-mix(in srgb,var(--card,#F2F0EB) 88%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)">
           <sc-for list="{{ baseTabs }}" as="b" hint-placeholder-count="2">
             <button sc-camel-on-click="{{ b.onClick }}" aria-pressed="{{ b.pressed }}" style="{{ b.style }}">{{ b.label }}</button>
           </sc-for>
@@ -4261,9 +4298,9 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <button sc-camel-on-click="{{ s.onClick }}" style="{{ s.style }}">
             <span style="{{ s.numStyle }}">{{ s.n }}</span>
             <span style="min-width:0;display:grid;gap:4px;text-align:start">
-              <span style="font-size:15px;font-weight:650;letter-spacing:-.012em">{{ s.name }}</span>
-              <span style="font-size:13px;line-height:1.45;color:var(--on-var,#494E42);text-wrap:pretty">{{ s.note }}</span>
-              <span style="font-size:12.5px;font-weight:500;color:var(--primary,#4C662B)">{{ s.count }}</span>
+              <span style="{{ s.nameStyle }}">{{ s.name }}</span>
+              <span style="{{ s.noteStyle }}">{{ s.note }}</span>
+              <span style="{{ s.countStyle }}">{{ s.count }}</span>
             </span>
           </button>
         </sc-for>
@@ -5617,14 +5654,14 @@ class Component extends DCLogic {
     this.markers = {};
     this.STAGES.forEach((st, i) => {
       const c = this.stageColor(i);
-      const html = '<div style="width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:' + c.dot +
-        ';border:2px solid #fff;box-shadow:0 3px 8px rgba(20,24,14,.35);display:grid;place-items:center">' +
-        '<span style="transform:rotate(45deg);font:700 14px Inter,system-ui,sans-serif;color:' + c.fg + '">' + st.n + '</span></div>';
+      const html = '<div style="width:34px;height:34px;border-radius:20px 20px 20px 4px;transform:rotate(-45deg);background:' + c.planBg +
+        ';box-shadow:0 1px 2px rgba(20,24,14,.30),0 2px 6px 2px rgba(20,24,14,.15);display:grid;place-items:center">' +
+        '<span style="transform:rotate(45deg);font:600 14px/20px Inter,system-ui,sans-serif;letter-spacing:.1px;color:' + c.planFg + '">' + st.n + '</span></div>';
       const mk = L.marker([st.lat, st.lng], {
         title: st.name,
-        icon: L.divIcon({ html: html, className: '', iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -30] })
+        icon: L.divIcon({ html: html, className: '', iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -32] })
       }).addTo(map);
-      mk.bindPopup('<strong style="font:650 14px Inter,sans-serif">' + st.name + '</strong><br><span style="font:400 12.5px Inter,sans-serif;color:var(--on-var,#494E42)">' +
+      mk.bindPopup('<strong style="font:500 14px/20px Inter,sans-serif;letter-spacing:.1px">' + st.name + '</strong><br><span style="font:400 12px/16px Inter,sans-serif;letter-spacing:.4px;color:var(--on-var,#494E42)">' +
         this.EVENTS.filter(e => e.s === i && e.d === this.state.day).length + ' acts on ' + this.DAY_WINDOW.short + '<\/span>');
       this.markers[i] = mk;
     });
@@ -6343,15 +6380,38 @@ class Component extends DCLogic {
       return {
         n: st.n, name: st.name, note: st.note, count: n + ' acts on ' + this.DAY_WINDOW.short,
         style: { display: 'flex', gap: '14px', alignItems: 'flex-start', width: '100%', padding: '16px', border: 0, borderRadius: '24px', background: 'var(--card,#F2F0EB)', fontFamily: 'inherit', cursor: 'pointer', textAlign: 'start' },
-        numStyle: { flex: 'none', display: 'grid', placeItems: 'center', width: '28px', height: '28px', borderRadius: '10px', background: c.dot, color: c.fg, fontSize: '13px', fontWeight: 700 },
+        numStyle: { flex: 'none', display: 'grid', placeItems: 'center',
+          width: '32px', height: '32px', borderRadius: '12px',
+          background: c.planBg, color: c.planFg,
+          fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',
+          fontWeight: 600 },
+        nameStyle: { fontSize: '16px', lineHeight: '24px',
+          letterSpacing: '.15px', fontWeight: 500 },
+        noteStyle: { fontSize: '14px', lineHeight: '20px',
+          letterSpacing: '.25px', color: 'var(--on-var,#494E42)',
+          textWrap: 'pretty' },
+        countStyle: { fontSize: '14px', lineHeight: '20px',
+          letterSpacing: '.1px', fontWeight: 500,
+          color: 'var(--primary,#4C662B)' },
         onClick: () => this.focusStage(i)
       };
     });
-    const baseTabs = [{ id: 'street', label: 'Street' }, { id: 'satellite', label: 'Satellite' }].map(b => {
+    const baseTabs = [{ id: 'street', label: 'Street' }, { id: 'satellite', label: 'Satellite' }].map((b, i) => {
       const on = S.base === b.id;
       return {
         label: b.label, pressed: String(on),
-        style: { height: '32px', padding: '0 14px', border: 0, borderRadius: on ? '16px' : '10px', background: on ? 'var(--sec,#DCE8C0)' : 'transparent', color: on ? 'var(--on-sec,#1F2D0A)' : 'var(--on-var,#494E42)', fontFamily: 'inherit', fontSize: '12.5px', fontWeight: on ? 600 : 500, cursor: 'pointer' },
+        style: {
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          height: '38px', padding: '0 16px', border: 0,
+          borderInlineStart: i
+            ? '1px solid var(--outline,#C7CBBA)' : '0',
+          borderRadius: 0,
+          background: on ? 'var(--sec,#DCE8C0)' : 'transparent',
+          color: on ? 'var(--on-sec,#1F2D0A)' : 'var(--on-var,#494E42)',
+          fontFamily: 'inherit', fontSize: '14px', lineHeight: '20px',
+          letterSpacing: '.1px', fontWeight: 500, cursor: 'pointer',
+          transition: 'background .2s cubic-bezier(.2,0,0,1), color .2s cubic-bezier(.2,0,0,1)'
+        },
         onClick: () => this.setBase(b.id)
       };
     });
