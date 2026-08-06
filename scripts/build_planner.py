@@ -1205,6 +1205,72 @@ SHEET_JS = """
     el.addEventListener('pointercancel', this.onSheetUp);
   }
 
+  /* ---- what you starred goes to where it is kept ----
+     Pressing the star turned a cell dark and put a number up somewhere else on
+     the screen, and the two were not connected by anything the eye could
+     follow. So the cell itself goes: a copy of it leaves the grid, travels to
+     the button that counts your picks, and shrinks into it.
+
+     The path is the card's own arc, from the same sampler — a quadratic
+     Bézier through the corner the movement turns, so it leaves the cell along
+     one axis and arrives at the button along the other, which is how M3 moves
+     a container between two points rather than sliding it down the diagonal.
+     The samples are taken at eased times, so the speed is not constant
+     either: the standard curve for the travel, the accelerating one for the
+     shrink, so it lets go of its size before it lets go of its position and
+     is small by the time it lands. The whole thing is one container transform
+     at the duration M3 gives one, and the button answers with a beat of its
+     own, which is what says the two are the same thing. */
+  flyToPlan(host) {
+    if (!host || !host.animate) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const target = document.querySelector('[data-fp-picks]');
+    if (!target) return;
+    const from = host.getBoundingClientRect(), to = target.getBoundingClientRect();
+    if (!from.width || !to.width) return;
+    const ghost = host.cloneNode(true);
+    ghost.removeAttribute('id');
+    ghost.setAttribute('aria-hidden', 'true');
+    const skin = getComputedStyle(host);
+    ghost.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
+      + 'left:' + from.left.toFixed(1) + 'px;top:' + from.top.toFixed(1) + 'px;'
+      + 'width:' + from.width.toFixed(1) + 'px;height:' + from.height.toFixed(1) + 'px;'
+      + 'border-radius:' + skin.borderRadius + ';overflow:hidden;'
+      + 'transform-origin:50% 50%;will-change:transform,opacity;'
+      + 'box-shadow:0 8px 24px rgba(20,24,14,.18)';
+    document.body.appendChild(ghost);
+    const dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+    const dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+    /* The corner the arc turns through: it leaves the way it is least
+       travelling and arrives the way it is most. */
+    const vertical = Math.abs(dy) > Math.abs(dx);
+    const cx = vertical ? 0 : dx, cy = vertical ? dy : 0;
+    const move = this.bez(.2, 0, 0, 1), shrink = this.bez(.3, 0, .8, .15);
+    const end = Math.max(.08, Math.min(to.width / Math.max(from.width, 1), .3));
+    const N = 22, frames = [];
+    for (let i = 0; i <= N; i++) {
+      const t = i / N, p = move(t), s = shrink(t), q = 1 - p;
+      const x = 2 * q * p * cx + p * p * dx;
+      const y = 2 * q * p * cy + p * p * dy;
+      frames.push({
+        offset: t, easing: 'linear',
+        opacity: t < .62 ? 1 : Math.max(0, 1 - (t - .62) / .38),
+        transform: 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) '
+          + 'scale(' + (1 + (end - 1) * s).toFixed(4) + ')'
+      });
+    }
+    ghost.animate(frames, { duration: 500, fill: 'forwards' });
+    setTimeout(() => ghost.remove(), 560);
+    /* And the button takes it in. */
+    if (target.animate) {
+      target.animate([
+        { transform: 'scale(1)' },
+        { transform: 'scale(1.18)', offset: .45 },
+        { transform: 'scale(1)' }
+      ], { duration: 300, easing: 'cubic-bezier(.2,0,0,1)', delay: 380 });
+    }
+  }
+
   /* ---- one blast per press, however fast they come ----
      The blast was a single slot in the state — one id, one set of sparks, one
      timer — so a second star pressed while the first was still going took the
@@ -2084,6 +2150,33 @@ def patch_nav(src: str) -> str:
         "          })\n"
         "        ),",
         "the weather chip goes to the weather")
+
+    # The starred cell flies to the button that counts it. The two call sites
+    # are the same line — the cell in the grid and the row in the list — so
+    # they are taken one at a time.
+    for what in ("cell flies to the plan", "row flies to the plan"):
+        src = sub_once(
+            src,
+            r"onStar: \(e\) => \{ e\.stopPropagation\(\);"
+            r" this\.starToggle\(ev\.id, e\.currentTarget\.getBoundingClientRect\(\)\); \}",
+            "onStar: (e) => {\n"
+            "          e.stopPropagation();\n"
+            "          this.starToggle(ev.id, e.currentTarget.getBoundingClientRect(),\n"
+            "            e.currentTarget);\n"
+            "        }",
+            what)
+    src = sub_once(
+        src,
+        r"  starToggle\(id, rect\) \{\n"
+        r"    const ev = this\.EVENTS\.find\(x => x\.id === id\);",
+        "  starToggle(id, rect, srcEl) {\n"
+        "    const ev = this.EVENTS.find(x => x.id === id);\n"
+        "    /* The cell or the row the star was pressed in, which is what\n"
+        "       travels to the plan. Measured before the state changes it. */\n"
+        "    const host = srcEl && srcEl.closest\n"
+        "      ? srcEl.closest('li, [role=\"button\"]') : null;\n"
+        "    if (host && !this.state.star[id]) this.flyToPlan(host);",
+        "the star knows what it was pressed in")
 
     # Each press throws its own sparks, in its own layer.
     src = sub_once(
@@ -3185,6 +3278,13 @@ def patch_template(tpl: str, fest: Festival) -> str:
     tpl = sub_once(tpl, r'    <article style="\{\{ heroCardStyle \}\}" ref="\{\{ heroCardRef \}\}">',
                    '    <article data-fp-card="" style="{{ heroCardStyle }}" '
                    'ref="{{ heroCardRef }}">', "festival card mark")
+
+    # Where a starred act goes, and what counts it.
+    tpl = sub_once(
+        tpl,
+        r'<button sc-camel-on-click="\{\{ togglePicks \}\}"',
+        '<button data-fp-picks="" sc-camel-on-click="{{ togglePicks }}"',
+        "the picks button")
 
     # The word the celebration throws its paper from.
     tpl = sub_once(
