@@ -5692,54 +5692,66 @@ class Component extends DCLogic {
     setTimeout(() => layer.remove(), 1300);
   }
 
-  /* ---- the plan is yours, and the title says so ----
+  /* ---- the plan is yours, and the screen says so ----
      Turning the picks on puts the word Your in front of the festival's name,
      which is easy to miss at the top of a screen you are not looking at. The
      star's own answer is a ring flooding out of the button — a state
-     changing. This is not that: it is paper thrown, a dozen slips in the
-     festival's own colours leaving the word and falling past it. No ring, no
-     disc, nothing round: M3's own line is that expressive motion is for the
-     moments worth marking, and it is drawn from the palette that is already
-     on the page. */
+     changing. This is not that: it is paper over the whole view, two dozen
+     slips in the festival's own stage colours falling from above the top edge
+     to below the bottom one and gone. No ring, no disc, nothing round.
+
+     The motion is the spec's, by token rather than by feel: the fall takes an
+     extra-long duration — 700 to 1000, which is extra-long1 to extra-long4,
+     varied per slip so they do not land together — it leaves on the
+     emphasised accelerate curve, because a thing on its way off the screen
+     accelerates out of it, it crosses on the standard curve, and the slips
+     start short2 apart, 50ms, so the shower reads as one event rather than as
+     a queue. Nothing here is a number that felt right. */
   celebratePicks() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const el = document.querySelector('[data-fp-your]');
-    if (!el || !el.animate) return;
-    const r = el.getBoundingClientRect();
-    if (!r.width) return;
-    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    if (!document.body.animate) return;
+    const W = document.documentElement.clientWidth || window.innerWidth;
+    const H = document.documentElement.clientHeight || window.innerHeight;
     const layer = document.createElement('div');
     layer.setAttribute('aria-hidden', 'true');
-    layer.style.cssText = 'position:fixed;inset:0;z-index:95;pointer-events:none';
+    layer.style.cssText = 'position:fixed;inset:0;z-index:95;'
+      + 'pointer-events:none;overflow:hidden;contain:strict';
     document.body.appendChild(layer);
-    const N = 14, pal = this.STAGE_PALETTE.length;
+    const N = 22, pal = this.STAGE_PALETTE.length;
+    /* The motion tokens, by name: emphasised accelerate for the way out,
+       standard for the crossing, extra-long for the fall, short2 between the
+       slips. */
+    const ACCEL = 'cubic-bezier(0.3, 0, 0.8, 0.15)';
+    const STD = 'cubic-bezier(0.2, 0, 0, 1)';
     for (let i = 0; i < N; i++) {
       const spin = i % 2 ? 1 : -1;
-      const w = 5 + (i % 3) * 2, h = 9 + (i % 4) * 3;
+      const w = 6 + (i % 3) * 3, h = 10 + (i % 4) * 4;
+      const x = ((i + .5) / N) * W + ((i * 37) % 23) - 11;
       const p = document.createElement('i');
-      p.style.cssText = 'position:absolute;left:' + cx.toFixed(1) + 'px;top:'
-        + cy.toFixed(1) + 'px;width:' + w + 'px;height:' + h + 'px;border-radius:1.5px;'
+      p.style.cssText = 'position:absolute;left:' + x.toFixed(1) + 'px;top:0;'
+        + 'width:' + w + 'px;height:' + h + 'px;border-radius:2px;'
         + 'background:' + this.stageColor(i % pal).dot + ';will-change:transform,opacity';
       layer.appendChild(p);
-      /* Thrown up and out of the word, then let go of. */
-      const a = -Math.PI / 2 + ((i / (N - 1)) - .5) * 2.3;
-      const far = 46 + (i % 5) * 18;
-      const midX = Math.cos(a) * far * .62, midY = Math.sin(a) * far;
-      const endX = Math.cos(a) * far, endY = midY + 30 + (i % 4) * 10;
+      /* Out of sight above the edge, across the screen, out of sight below —
+         with a drift each way, so no two fall on the same line. */
+      const drift = ((i % 5) - 2) * 26;
       p.animate([
-        { transform: 'translate(-50%,-50%) rotate(0deg) scale(.5)', opacity: 1,
-          easing: 'cubic-bezier(.05,.7,.1,1)' },
-        { offset: .42, opacity: 1,
-          transform: 'translate(calc(-50% + ' + midX.toFixed(1) + 'px),calc(-50% + '
-            + midY.toFixed(1) + 'px)) rotate(' + (150 * spin) + 'deg) scale(1)',
-          easing: 'cubic-bezier(.3,0,.8,.15)' },
-        { transform: 'translate(calc(-50% + ' + endX.toFixed(1) + 'px),calc(-50% + '
-            + endY.toFixed(1) + 'px)) rotate(' + (430 * spin) + 'deg) scale(.92)',
-          opacity: 0 }
-      ], { duration: 820 + (i % 4) * 120, fill: 'forwards' });
+        { transform: 'translate3d(0,' + (-40 - (i % 6) * 24) + 'px,0) rotate(0deg)',
+          opacity: 1, easing: ACCEL },
+        { offset: .55, opacity: 1,
+          transform: 'translate3d(' + (drift * .6).toFixed(1) + 'px,'
+            + (H * .55).toFixed(0) + 'px,0) rotate(' + (220 * spin) + 'deg)',
+          easing: STD },
+        { transform: 'translate3d(' + drift.toFixed(1) + 'px,' + (H + 60) + 'px,0) '
+            + 'rotate(' + (540 * spin) + 'deg)', opacity: 0 }
+      ], {
+        duration: 700 + (i % 4) * 100,
+        delay: (i % 6) * 50,
+        fill: 'forwards'
+      });
     }
     clearTimeout(this.paperT);
-    this.paperT = setTimeout(() => layer.remove(), 1300);
+    this.paperT = setTimeout(() => layer.remove(), 1500);
   }
 
   /* ---- throw to dismiss ---- */
