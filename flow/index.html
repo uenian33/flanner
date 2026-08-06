@@ -1436,6 +1436,29 @@ svg.leaflet-image-layer.leaflet-interactive path {
   font-family:inherit;font-size:11px;line-height:16px;letter-spacing:.5px}
 .leaflet-control-attribution a{color:var(--primary,#4C662B)}
 
+/* ---- the pin answers when its stage is pressed ----
+   Two beats to the round and three rounds, the way a heart does it, over
+   three rings that leave the pin half a second apart. The pin keeps its
+   rotation through the beat — it is a teardrop turned 45° — and both are the
+   stage's own colour. */
+@keyframes fp-beat{
+  0%{transform:rotate(-45deg) scale(1)}
+  12%{transform:rotate(-45deg) scale(1.24)}
+  24%{transform:rotate(-45deg) scale(1)}
+  36%{transform:rotate(-45deg) scale(1.14)}
+  52%{transform:rotate(-45deg) scale(1)}
+  100%{transform:rotate(-45deg) scale(1)}
+}
+@keyframes fp-ripple{
+  0%{transform:scale(.42);opacity:.6}
+  70%{opacity:.14}
+  100%{transform:scale(2.9);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+  /* The map still travels to the stage; it just does not beat about it. */
+  [style*="fp-beat"],[style*="fp-ripple"]{animation:none!important}
+}
+
 /* ---- the measure ----
    M3 puts a readable line at 40–60 characters. Nothing in the planner is
    justified: every measure here is a card's width, and justification needs a
@@ -5171,16 +5194,20 @@ class Component extends DCLogic {
     const ring = L.marker([st.lat, st.lng], {
       interactive: false, zIndexOffset: -200,
       icon: L.divIcon({
-        className: '', iconSize: [36, 36], iconAnchor: [18, 18],
-        html: '<div style="width:36px;height:36px;border-radius:50%;background:' + c.dot +
-          ';box-shadow:0 0 0 2px ' + c.planBg + '55;animation:fp-blast 1.05s cubic-bezier(.2,0,0,1) 2 both"></div>'
+        className: '', iconSize: [46, 46], iconAnchor: [23, 23],
+        html: '<div style="position:relative;width:46px;height:46px">'
+          + [0, .5, 1].map(d => '<span style="position:absolute;inset:0;border-radius:50%;border:2px solid ' + c.planBg + ';opacity:0;animation:fp-ripple 1.5s cubic-bezier(.2,0,0,1) ' + d + 's 3 both"></span>').join('')
+          + '</div>'
       })
     }).addTo(this.map);
     clearTimeout(this.ringTimer);
-    this.ringTimer = setTimeout(() => this.mapDo(m => m.removeLayer(ring)), 2200);
+    this.ringTimer = setTimeout(() => this.mapDo(m => m.removeLayer(ring)), 4700);
     const mk = this.markers && this.markers[i];
     const el = mk && mk.getElement() && mk.getElement().firstElementChild;
-    if (el) { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = 'fp-pop .48s cubic-bezier(.2,0,0,1) 2'; }
+    if (el) {
+      el.style.animation = 'none'; void el.offsetWidth;
+      el.style.animation = 'fp-beat 1.1s cubic-bezier(.2,0,0,1) 3';
+    }
     } catch (e) { /* map went away mid-blast */ }
     this.pendingBlast = null;
   }
@@ -5699,7 +5726,9 @@ class Component extends DCLogic {
     if (!this.map) return;
     const st = this.STAGES[i];
     this.mapDo(m => {
-      m.setView([st.lat, st.lng], 17, { animate: true });
+      const z = Math.max(m.getZoom() || 0, 17);
+      if (m.flyTo) m.flyTo([st.lat, st.lng], z, { duration: .85, easeLinearity: .25 });
+      else m.setView([st.lat, st.lng], z, { animate: true });
       if (this.markers && this.markers[i]) this.markers[i].openPopup();
     });
     this.pendingStage = null;
@@ -6446,7 +6475,7 @@ class Component extends DCLogic {
            the stage, and the programme two taps away is where it is
            read. A phone keeps the stage and what it is. */
         showCount: !mob,
-        onClick: () => this.focusStage(i)
+        onClick: () => this.navigateTo(i)
       };
     });
     const baseTabs = [{ id: 'street', label: 'Street' }, { id: 'satellite', label: 'Satellite' }].map((b, i) => {

@@ -2274,6 +2274,67 @@ def patch_map(src: str, fest: Festival) -> str:
         "color:var(--on-var,#494E42)\">' +",
         "map popup type")
 
+    # Pressing the row does what pressing the arrow beside a set does: it
+    # takes the map to the stage and the pin answers. The row only moved the
+    # map before, which left the reader looking for what had changed.
+    src = sub_once(
+        src,
+        r"        onClick: \(\) => this\.focusStage\(i\)\n      \};\n    \}\);",
+        "        onClick: () => this.navigateTo(i)\n      };\n    });",
+        "stage row goes to the map")
+
+    # ---- pressing a stage takes the map to it ----
+    # It jumped: setView with animate:true is a pan at one speed, and at a zoom
+    # change it is a cut. flyTo is the movement M3 asks for on a spatial change
+    # — it accelerates away and decelerates in, and the zoom rides with it —
+    # and it never zooms out from where the reader already is.
+    src = sub_once(
+        src,
+        r"      m\.setView\(\[st\.lat, st\.lng\], 17, \{ animate: true \}\);",
+        "      const z = Math.max(m.getZoom() || 0, 17);\n"
+        "      if (m.flyTo) m.flyTo([st.lat, st.lng], z,"
+        " { duration: .85, easeLinearity: .25 });\n"
+        "      else m.setView([st.lat, st.lng], z, { animate: true });",
+        "map flies to the stage")
+    # ---- and the pin says so ----
+    # One filled disc expanding once and a single pop on the pin. It is a
+    # heartbeat now — two beats to the round, three rounds — over three rings
+    # leaving the pin half a second apart, which is what a ripple is. Both are
+    # drawn in the stage's own dark container, the colour the pin is.
+    src = sub_once(
+        src,
+        r"      icon: L\.divIcon\(\{\n"
+        r"        className: '', iconSize: \[36, 36\], iconAnchor: \[18, 18\],\n"
+        r"        html: '<div style=\"width:36px;height:36px;border-radius:50%;background:'"
+        r" \+ c\.dot \+\n"
+        r"          ';box-shadow:0 0 0 2px ' \+ c\.planBg \+ '55;"
+        r"animation:fp-blast 1\.05s cubic-bezier\(\.2,0,0,1\) 2 both\"></div>'\n"
+        r"      \}\)",
+        "      icon: L.divIcon({\n"
+        "        className: '', iconSize: [46, 46], iconAnchor: [23, 23],\n"
+        "        html: '<div style=\"position:relative;width:46px;height:46px\">'\n"
+        "          + [0, .5, 1].map(d => '<span style=\"position:absolute;inset:0;"
+        "border-radius:50%;border:2px solid ' + c.planBg + ';opacity:0;"
+        "animation:fp-ripple 1.5s cubic-bezier(.2,0,0,1) ' + d + 's 3 both\"></span>')"
+        ".join('')\n"
+        "          + '</div>'\n"
+        "      })",
+        "map ripple")
+    src = sub_once(
+        src,
+        r"    this\.ringTimer = setTimeout\(\(\) => this\.mapDo\(m => m\.removeLayer\(ring\)\), 2200\);",
+        "    this.ringTimer = setTimeout(() => this.mapDo(m => m.removeLayer(ring)), 4700);",
+        "map ripple lifetime")
+    src = sub_once(
+        src,
+        r"    if \(el\) \{ el\.style\.animation = 'none'; void el\.offsetWidth;"
+        r" el\.style\.animation = 'fp-pop \.48s cubic-bezier\(\.2,0,0,1\) 2'; \}",
+        "    if (el) {\n"
+        "      el.style.animation = 'none'; void el.offsetWidth;\n"
+        "      el.style.animation = 'fp-beat 1.1s cubic-bezier(.2,0,0,1) 3';\n"
+        "    }",
+        "map pin heartbeat")
+
     # ---- Street / Satellite ----
     # Two pills of different roundness inside a floating capsule, which is not
     # a component M3 has. What it has is the segmented button, and this is one:
@@ -3354,6 +3415,29 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
   color:var(--on-var,#494E42);
   font-family:inherit;font-size:11px;line-height:16px;letter-spacing:.5px}
 .leaflet-control-attribution a{color:var(--primary,#4C662B)}
+
+/* ---- the pin answers when its stage is pressed ----
+   Two beats to the round and three rounds, the way a heart does it, over
+   three rings that leave the pin half a second apart. The pin keeps its
+   rotation through the beat — it is a teardrop turned 45° — and both are the
+   stage's own colour. */
+@keyframes fp-beat{
+  0%{transform:rotate(-45deg) scale(1)}
+  12%{transform:rotate(-45deg) scale(1.24)}
+  24%{transform:rotate(-45deg) scale(1)}
+  36%{transform:rotate(-45deg) scale(1.14)}
+  52%{transform:rotate(-45deg) scale(1)}
+  100%{transform:rotate(-45deg) scale(1)}
+}
+@keyframes fp-ripple{
+  0%{transform:scale(.42);opacity:.6}
+  70%{opacity:.14}
+  100%{transform:scale(2.9);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+  /* The map still travels to the stage; it just does not beat about it. */
+  [style*="fp-beat"],[style*="fp-ripple"]{animation:none!important}
+}
 
 /* ---- the measure ----
    M3 puts a readable line at 40–60 characters. Nothing in the planner is
