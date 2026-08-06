@@ -4286,7 +4286,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
     <section style="{{ mapSectionStyle }}">
       <div style="{{ mapPaneStyle }}">
         <div ref="{{ mapRef }}" style="{{ mapBoxStyle }}"></div>
-        <div role="group" aria-label="Base map" style="position:absolute;top:12px;left:12px;z-index:1;display:flex;padding:0;border:1px solid var(--outline,#C7CBBA);border-radius:20px;overflow:hidden;background:color-mix(in srgb,var(--card,#F2F0EB) 88%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)">
+        <div role="group" aria-label="Base map" style="{{ mapToggleStyle }}">
           <sc-for list="{{ baseTabs }}" as="b" hint-placeholder-count="2">
             <button sc-camel-on-click="{{ b.onClick }}" aria-pressed="{{ b.pressed }}" style="{{ b.style }}">{{ b.label }}</button>
           </sc-for>
@@ -4302,7 +4302,9 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <span style="min-width:0;display:grid;gap:4px;text-align:start">
               <span style="{{ s.nameStyle }}">{{ s.name }}</span>
               <span style="{{ s.noteStyle }}">{{ s.note }}</span>
-              <span style="{{ s.countStyle }}">{{ s.count }}</span>
+              <sc-if value="{{ s.showCount }}" hint-placeholder-val="{{ true }}">
+                <span style="{{ s.countStyle }}">{{ s.count }}</span>
+              </sc-if>
             </span>
           </button>
         </sc-for>
@@ -6308,8 +6310,13 @@ class Component extends DCLogic {
       g.rows.push(Object.assign({
         title: ev.title,
         when: ev.from + ' – ' + ev.to + ' · ' + dur + ' min',
-        meta: (narrow && !mob ? ev.type + ' · ' : '') + st.name
-          + (ev.genres.length ? ' · ' + ev.genres.join(', ') : ''),
+        /* On a phone the line under the time is where the act is
+           playing, and nothing else: the type and the genres are
+           what an act is, which its own card says at length and this
+           row can only say in an ellipsis. */
+        meta: mob ? st.name
+          : (narrow ? ev.type + ' · ' : '') + st.name
+            + (ev.genres.length ? ' · ' + ev.genres.join(', ') : ''),
         chipLabel: ev.type, showChip: !narrow,
         aria: ev.title + ', ' + ev.type + ', ' + ev.from + ' to ' + ev.to + ', ' + st.name,
         style: {
@@ -6395,6 +6402,10 @@ class Component extends DCLogic {
         countStyle: { fontSize: '14px', lineHeight: '20px',
           letterSpacing: '.1px', fontWeight: 500,
           color: 'var(--primary,#4C662B)' },
+        /* The count is a third line about the day rather than about
+           the stage, and the programme two taps away is where it is
+           read. A phone keeps the stage and what it is. */
+        showCount: !mob,
         onClick: () => this.focusStage(i)
       };
     });
@@ -6915,7 +6926,17 @@ class Component extends DCLogic {
       mapSectionStyle: split
         ? { flex: '1 1 0', minWidth: 0, height: paneH, display: 'flex', flexDirection: 'column', gap: '14px', margin: 0 }
         : { display: 'flex', flexWrap: 'wrap', gap: '16px', margin: '18px 28px 36px', maxWidth: '1560px', alignItems: 'flex-start' },
-      mapPaneStyle: split ? { position: 'relative', width: '100%', flex: 'none' } : { flex: '2 1 460px', minWidth: 0, position: 'relative' },
+      mapPaneStyle: split ? { position: 'relative', width: '100%', flex: 'none' }
+        : { flex: '2 1 460px', minWidth: 0, position: 'relative' },
+      mapToggleStyle: {
+        position: 'absolute', zIndex: 1, insetBlockStart: '16px',
+        insetInlineStart: mob ? '28px' : '16px',
+        display: 'flex', padding: 0,
+        border: '1px solid var(--outline,#C7CBBA)', borderRadius: '20px',
+        overflow: 'hidden',
+        background: 'color-mix(in srgb, var(--card,#F2F0EB) 88%, transparent)',
+        WebkitBackdropFilter: 'blur(8px)', backdropFilter: 'blur(8px)'
+      },
       mapBoxStyle: {
         /* Leaflet's panes/controls run to z-index 1000; isolating the box keeps
            them below the sticky title and controls bars. */

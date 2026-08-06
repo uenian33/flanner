@@ -1432,8 +1432,13 @@ def patch_rows(src: str) -> str:
         src,
         r"        meta: \(narrow \? ev\.type \+ ' · ' : ''\) \+ st\.name"
         r" \+ \(ev\.genres\.length \? ' · ' \+ ev\.genres\.join\(', '\) : ''\),",
-        "        meta: (narrow && !mob ? ev.type + ' · ' : '') + st.name\n"
-        "          + (ev.genres.length ? ' · ' + ev.genres.join(', ') : ''),",
+        "        /* On a phone the line under the time is where the act is\n"
+        "           playing, and nothing else: the type and the genres are\n"
+        "           what an act is, which its own card says at length and this\n"
+        "           row can only say in an ellipsis. */\n"
+        "        meta: mob ? st.name\n"
+        "          : (narrow ? ev.type + ' · ' : '') + st.name\n"
+        "            + (ev.genres.length ? ' · ' + ev.genres.join(', ') : ''),",
         "row without the type")
     src = sub_once(
         src,
@@ -2310,6 +2315,30 @@ def patch_map(src: str, fest: Festival) -> str:
         "    });",
         "base map segments")
 
+    # Where it stands. It was placed against the pane, which runs the full
+    # width, while the map inside it keeps a 12px margin on a phone and a 28px
+    # corner at every width — so the control sat on the map's edge with the
+    # corner still curving away underneath it. It is placed against the map:
+    # far enough in from both of its edges to clear that curve, which for a
+    # 28px radius is 8px at the diagonal and 16 with room to spare.
+    src = sub_once(
+        src,
+        r"      mapPaneStyle: split \?"
+        r" \{ position: 'relative', width: '100%', flex: 'none' \}\n?"
+        r"\s*: \{ flex: '2 1 460px', minWidth: 0, position: 'relative' \},",
+        "      mapPaneStyle: split ? { position: 'relative', width: '100%', flex: 'none' }\n"
+        "        : { flex: '2 1 460px', minWidth: 0, position: 'relative' },\n"
+        "      mapToggleStyle: {\n"
+        "        position: 'absolute', zIndex: 1, insetBlockStart: '16px',\n"
+        "        insetInlineStart: mob ? '28px' : '16px',\n"
+        "        display: 'flex', padding: 0,\n"
+        "        border: '1px solid var(--outline,#C7CBBA)', borderRadius: '20px',\n"
+        "        overflow: 'hidden',\n"
+        "        background: 'color-mix(in srgb, var(--card,#F2F0EB) 88%, transparent)',\n"
+        "        WebkitBackdropFilter: 'blur(8px)', backdropFilter: 'blur(8px)'\n"
+        "      },",
+        "base map toggle place")
+
     # ---- the stage beside the map ----
     # Same disc, same colours, and the three lines take the type scale's own
     # steps: Title Medium for the stage, Body Medium for what it is, Label
@@ -2331,7 +2360,11 @@ def patch_map(src: str, fest: Festival) -> str:
         "          textWrap: 'pretty' },\n"
         "        countStyle: { fontSize: '14px', lineHeight: '20px',\n"
         "          letterSpacing: '.1px', fontWeight: 500,\n"
-        "          color: 'var(--primary,#4C662B)' },",
+        "          color: 'var(--primary,#4C662B)' },\n"
+        "        /* The count is a third line about the day rather than about\n"
+        "           the stage, and the programme two taps away is where it is\n"
+        "           read. A phone keeps the stage and what it is. */\n"
+        "        showCount: !mob,",
         "stage card type")
 
     src = sub_once(
@@ -2426,11 +2459,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
         r'background:var\(--bar2,rgba\(255,255,255,\.92\)\);'
         r'-webkit-backdrop-filter:blur\(8px\);backdrop-filter:blur\(8px\);'
         r'box-shadow:0 2px 10px rgba\(20,24,14,\.14\)">',
-        '<div role="group" aria-label="Base map" style="position:absolute;'
-        'top:12px;left:12px;z-index:1;display:flex;padding:0;'
-        'border:1px solid var(--outline,#C7CBBA);border-radius:20px;overflow:hidden;'
-        'background:color-mix(in srgb,var(--card,#F2F0EB) 88%,transparent);'
-        '-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)">',
+        '<div role="group" aria-label="Base map" style="{{ mapToggleStyle }}">',
         "base map container")
 
     # The stage beside the map: its three lines are the row's own now.
@@ -2444,7 +2473,9 @@ def patch_template(tpl: str, fest: Festival) -> str:
         r'color:var\(--primary,#4C662B\)">\{\{ s\.count \}\}</span>',
         '              <span style="{{ s.nameStyle }}">{{ s.name }}</span>\n'
         '              <span style="{{ s.noteStyle }}">{{ s.note }}</span>\n'
-        '              <span style="{{ s.countStyle }}">{{ s.count }}</span>',
+        '              <sc-if value="{{ s.showCount }}" hint-placeholder-val="{{ true }}">\n'
+        '                <span style="{{ s.countStyle }}">{{ s.count }}</span>\n'
+        '              </sc-if>',
         "stage card lines")
 
     # The three lines of a list row were written at one size for every screen;
