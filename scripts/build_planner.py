@@ -1212,15 +1212,24 @@ SHEET_JS = """
      the button that counts your picks, and shrinks into it.
 
      The path is the card's own arc, from the same sampler — a quadratic
-     Bézier through the corner the movement turns, so it leaves the cell along
-     one axis and arrives at the button along the other, which is how M3 moves
-     a container between two points rather than sliding it down the diagonal.
-     The samples are taken at eased times, so the speed is not constant
-     either: the standard curve for the travel, the accelerating one for the
-     shrink, so it lets go of its size before it lets go of its position and
-     is small by the time it lands. The whole thing is one container transform
-     at the duration M3 gives one, and the button answers with a beat of its
-     own, which is what says the two are the same thing. */
+     Bézier with its control point above the line, so the copy lifts up and
+     out the way something picked up leaves the place it was picked up from,
+     and comes down into the button. The samples are taken at eased times, so
+     the speed is not constant either: standard for the travel, accelerating
+     for the collapse.
+
+     The shape is the desktop's minimise: a window going to the dock stretches
+     toward it, necks down and is drawn through it. A single box cannot warp
+     the way that one does — there is no mesh here, only a transform — but the
+     two things that read are the stretch along the line of travel and the
+     necking across it, and both of those a transform can do: the scale is put
+     between a rotation to the travel angle and its inverse, so one axis works
+     along the path and the other across it, whatever direction the button
+     happens to be in.
+
+     The whole thing is one container transform at the duration M3 gives one,
+     and the button answers with a beat of its own, which is what says the two
+     are the same thing. */
   flyToPlan(host) {
     if (!host || !host.animate) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -1250,31 +1259,39 @@ SHEET_JS = """
     const lift = Math.max(80, Math.min(220, dist * .45));
     const cx = dx * .58, cy = -lift;
     const move = this.bez(.2, 0, 0, 1), shrink = this.bez(.3, 0, .8, .15);
-    const morph = this.bez(.2, 0, 0, 1);
-    /* Two shrinks, one after the other. First the shape: whatever the cell or
-       the row was, it draws itself in to a square of its own short side and
-       rounds as it goes, which is the shape the button it is going to is. Then
-       the size: the square keeps closing until it is the size of that button.
-       The first is done by the time the arc turns, so what crosses the screen
-       is a token rather than a picture of a cell. */
-    const sq = Math.min(from.width, from.height);
-    const sxEnd = sq / from.width, syEnd = sq / from.height;
-    const end = Math.max(.06, (to.width * .86) / Math.max(sq, 1));
-    const r0 = parseFloat(skin.borderTopLeftRadius) || 0, r1 = sq / 2;
-    const N = 24, frames = [];
+    const neck = this.bez(.2, 0, 0, 1);
+    /* The shape is drawn through the path rather than shrunk on it — the
+       minimise a desktop does when a window goes to the dock, as near as a
+       single box can come to it without a mesh to warp. Two scales are put on
+       either side of the travel angle, so one of them works along the line to
+       the button and the other across it: along, the copy stretches as it is
+       pulled away and then collapses; across, it necks down the whole way, so
+       it reads as being drawn through the button rather than parked in front
+       of it. The corners round to a circle over the same stretch, which is
+       the shape it is going into. */
+    const ang = Math.atan2(dy, dx) * 180 / Math.PI;
+    const short = Math.min(from.width, from.height);
+    const endAlong = Math.max(.05, (to.width * .8) / Math.max(from.width, 1));
+    const endAcross = Math.max(.05, (to.height * .8) / Math.max(short, 1));
+    const r0 = parseFloat(skin.borderTopLeftRadius) || 0, r1 = short / 2;
+    const N = 26, frames = [];
     for (let i = 0; i <= N; i++) {
       const t = i / N, p = move(t), s = shrink(t), q = 1 - p;
-      const m = morph(Math.min(1, t / .45));
       const x = 2 * q * p * cx + p * p * dx;
       const y = 2 * q * p * cy + p * p * dy;
-      const k = 1 + (end - 1) * s;
+      /* Pulled long first — a fifth again by a third of the way — then let go
+         of, which is the stretch a window makes as it leaves the desktop. */
+      const pull = t < .34 ? 1 + .22 * neck(t / .34) : 1.22 + (endAlong - 1.22) * shrink((t - .34) / .66);
+      const across = 1 + (endAcross - 1) * neck(t);
+      const m = neck(Math.min(1, t / .5));
       frames.push({
         offset: t, easing: 'linear',
-        opacity: t < .68 ? 1 : Math.max(0, 1 - (t - .68) / .32),
+        opacity: t < .72 ? 1 : Math.max(0, 1 - (t - .72) / .28),
         borderRadius: (r0 + (r1 - r0) * m).toFixed(1) + 'px',
         transform: 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) '
-          + 'scale(' + ((1 + (sxEnd - 1) * m) * k).toFixed(4) + ','
-          + ((1 + (syEnd - 1) * m) * k).toFixed(4) + ')'
+          + 'rotate(' + ang.toFixed(2) + 'deg) '
+          + 'scale(' + pull.toFixed(4) + ',' + across.toFixed(4) + ') '
+          + 'rotate(' + (-ang).toFixed(2) + 'deg)'
       });
     }
     ghost.animate(frames, { duration: 500, fill: 'forwards' });
