@@ -1341,6 +1341,154 @@ svg.leaflet-image-layer.leaflet-interactive path {
   .ac, .ac *, .ac *::before, .ac *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
 }
 
+/* ---------- the festival, compact ---------- */
+/* The design's own type scale, which it declares on the root and this page
+   cannot: the planner's root already carries a scale of its own. The colour
+   roles it declares there are the planner's roles under the planner's names,
+   so they are simply used; the artwork's five come from the strand class the
+   card system already puts on the element. The measures are the design's:
+   16dp margins, and the room the floating bar stands in. */
+.fest{
+  --headline-size:32px; --headline-lh:1.06;
+  --title-size:17px;
+  --body-size:15px;   --body-lh:1.55;
+  --body-sm-size:14px;
+  --label-size:14px;  --label-sm-size:11.5px;
+  font-size:var(--body-size); line-height:var(--body-lh);
+  /* the design's 16dp margin, over the 12 the view already keeps; the room
+     the bar stands in is kept by the scroller above this. */
+  padding: 8px 4px 0;
+}
+
+/* ---------- hero ---------- */
+.fest .hero {
+  position: relative; aspect-ratio: 16 / 10;
+  border-radius: 24px; overflow: hidden; background: var(--art-bg);
+}
+.fest .hero__art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+/* the card system's notch, cutting into the page rather than a card */
+.fest .notch {
+  position: absolute; inset-block-end: 0; inset-inline-end: 0;
+  padding: 6px 0 0 6px; background: var(--wash,#FFFFFF); border-start-start-radius: 22px;
+}
+.fest .notch i {
+  position: absolute; inline-size: 12px; block-size: 12px;
+  background: radial-gradient(circle at 0 0,#0000 11.5px,var(--wash,#FFFFFF) 12.5px);
+}
+.fest .notch i:first-child { inset-inline-end: 0; inset-block-end: 100%; }
+.fest .notch i:last-child { inset-inline-end: 100%; inset-block-end: 0; }
+.fest .notch span {
+  display: block; padding: 9px 16px;
+  border-start-start-radius: 16px; border-end-end-radius: 20px;
+  background: var(--sec); color: var(--on-sec);
+  font-size: var(--label-sm-size); font-weight: 700; line-height: 1;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+
+/* ---------- status row (M3 assist chips, 32dp) ---------- */
+.fest .status { display: flex; flex-wrap: wrap; gap: 8px; margin-block-start: 18px; }
+.fest .chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  block-size: 32px; padding: 0 14px 0 10px;
+  border: 1px solid var(--outline); border-radius: 8px;
+  background: transparent; color: var(--on-var);
+  font-size: 13.5px; font-weight: 500; line-height: 1; font-family: inherit;
+  cursor: pointer; transition: background var(--effects);
+}
+.fest .chip:hover { background: var(--state8); }
+.fest .chip svg { flex: none; inline-size: 18px; block-size: 18px; fill: currentColor; }
+.fest .chip--live { border-color: transparent; background: var(--sec); color: var(--on-sec); font-weight: 600; }
+.fest .chip--live b {
+  inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--primary);
+  animation: fp-fest-pulse 2s var(--ease) infinite;
+}
+@keyframes fp-fest-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.78); } }
+
+/* ---------- headline + meta ---------- */
+.fest .title {
+  margin: 12px 0 0;
+  font-size: var(--headline-size); font-weight: 700; line-height: var(--headline-lh);
+  letter-spacing: -.03em; text-wrap: balance;
+}
+.fest .meta { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 13px; }
+.fest .meta li { display: flex; align-items: center; gap: 12px; font-size: var(--body-size); line-height: 1.32; }
+.fest .meta svg {
+  flex: none; inline-size: 20px; block-size: 20px;
+  fill: none; stroke: var(--on-var); stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.fest .meta em { font-style: normal; color: var(--on-var); }
+/* the address is the one meta row that does something */
+.fest .meta button {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin: -6px -10px; padding: 6px 10px; border: 0; border-radius: 10px;
+  background: none; color: inherit; font: inherit; text-align: start; cursor: pointer;
+  transition: background var(--effects);
+}
+.fest .meta button:hover { background: var(--state8); }
+.fest .meta button svg { stroke: var(--primary); }
+
+/* ---------- genre chips ---------- */
+.fest .genres {
+  display: flex; gap: 8px; margin: 18px -16px 0; padding: 0 16px;
+  overflow-x: auto; scrollbar-width: none; list-style: none;
+}
+.fest .genres::-webkit-scrollbar { block-size: 0; }
+.fest .genres li {
+  flex: none; display: inline-flex; align-items: center; block-size: 32px; padding: 0 14px;
+  border: 1px solid var(--outline); border-radius: 8px;
+  font-size: 13.5px; font-weight: 500; color: var(--on-var); white-space: nowrap;
+}
+
+/* ---------- actions ---------- */
+.fest .actions { display: flex; gap: 10px; margin-block-start: 22px; }
+.fest .act {
+  flex: none; display: grid; place-items: center;
+  inline-size: 56px; block-size: 56px; border: 0; border-radius: 18px;
+  background: var(--card); color: var(--on); cursor: pointer; text-decoration: none;
+  transition: background var(--effects), border-radius var(--spring);
+}
+.fest .act svg { inline-size: 22px; block-size: 22px; }
+.fest .act:hover { background: var(--hover,#EAE8DF); border-radius: 28px; }
+.fest .act:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* filled tonal, shape-morphing on selection — the app's own plan button */
+.fest .plan {
+  flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  block-size: 56px; padding: 0 22px; border: 0; border-radius: 18px;
+  background: var(--card); color: var(--on);
+  font-size: 15px; font-weight: 550; font-family: inherit; letter-spacing: .006em; cursor: pointer;
+  transition: background var(--effects), color var(--effects), border-radius var(--spring);
+}
+.fest .plan[aria-pressed="true"] { border-radius: 28px; background: var(--heart-cont,#FBE0C0); color: var(--on-heart-cont,#2B1700); }
+.fest .plan:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.fest .plan svg { inline-size: 22px; block-size: 22px; overflow: visible; color: var(--heart,#8F4C0A); }
+.fest .plan[aria-pressed="true"] svg { color: currentColor; }
+
+/* ---------- about ---------- */
+.fest .about {
+  margin-block-start: 24px; padding: 18px 18px 14px;
+  border-radius: 24px; background: var(--card);
+}
+.fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
+.fest .about__clip { overflow: hidden; max-block-size: calc(3 * 1.55em); transition: max-block-size 340ms var(--ease); }
+.fest .about__text { margin: 0; font-size: var(--body-size); line-height: var(--body-lh); color: var(--on-var); text-wrap: pretty; }
+.fest .about__more {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 8px 0 0 -12px; padding: 10px 14px 10px 12px; min-block-size: 44px;
+  border: 0; border-radius: 22px; background: none; color: var(--primary);
+  font: 700 14px/1 inherit; cursor: pointer; transition: background var(--effects);
+}
+.fest .about__more:hover { background: var(--state8); }
+.fest .about__more:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.fest .about__more svg { inline-size: 18px; block-size: 18px; fill: currentColor; transition: transform var(--spring); }
+.fest .about.is-open .about__more svg { transform: rotate(180deg); }
+.fest .about__facts {
+  display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 14px 0 0; padding: 12px 0 0;
+  border-block-start: 1px solid var(--outline); list-style: none;
+}
+.fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: var(--body-sm-size); color: var(--on-var); }
+.fest .about__facts svg { inline-size: 17px; block-size: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
 /* ---- modal bottom sheet, phone only ---- */
 :root{--sheet-gap:calc(56px + env(safe-area-inset-top,0px))}
 [data-fp-shell]{transform-origin:50% 0}
@@ -3776,6 +3924,10 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <symbol id="i-menu" sc-camel-view-box="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></symbol>
   <symbol id="i-menu-open" sc-camel-view-box="0 0 24 24"><path d="M3 6h18v2H3zm0 5h11v2H3zm0 5h18v2H3zm18-4.5L17.5 12 21 8.5z"></path></symbol>
   <symbol id="i-more" sc-camel-view-box="0 0 24 24"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></symbol>
+  <symbol id="i-pin-line" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.6"></circle></symbol>
+  <symbol id="i-tag" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.6 12.4 12.4 20.6a2 2 0 0 1-2.8 0l-6.2-6.2A2 2 0 0 1 2.8 13V4.8A1.8 1.8 0 0 1 4.6 3h8.2a2 2 0 0 1 1.4.6l6.4 6.4a2 2 0 0 1 0 2.4Z"></path><circle cx="7.6" cy="7.6" r="1.4"></circle></symbol>
+  <symbol id="i-eq" sc-camel-view-box="0 0 24 24"><rect x="3.5" y="10" width="3.4" height="10" rx="1.7"></rect><rect x="10.3" y="4" width="3.4" height="16" rx="1.7"></rect><rect x="17.1" y="13" width="3.4" height="7" rx="1.7"></rect></symbol>
+  <symbol id="i-mic-line" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><rect x="9" y="2.8" width="6" height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-3 0h6"></path></symbol>
   <symbol id="i-chev" sc-camel-view-box="0 0 24 24"><path d="M12 15.6 5.4 9l1.7-1.7 4.9 4.9 4.9-4.9L18.6 9z"></path></symbol>
   <symbol id="i-youtube" sc-camel-view-box="0 0 24 24"><path d="M21.2 8.2a3 3 0 0 0-2.1-2.1C17.3 5.6 12 5.6 12 5.6s-5.3 0-7.1.5A3 3 0 0 0 2.8 8.2C2.4 10 2.4 12 2.4 12s0 2 .4 3.8a3 3 0 0 0 2.1 2.1c1.8.5 7.1.5 7.1.5s5.3 0 7.1-.5a3 3 0 0 0 2.1-2.1c.4-1.8.4-3.8.4-3.8s0-2-.4-3.8zM10.2 15.3V8.7L15.7 12z"></path></symbol>
   <symbol id="i-spotify" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
@@ -4010,6 +4162,73 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
     <sc-if value="{{ showHeroCard }}" hint-placeholder-val="{{ true }}">
     <article data-fp-card="" style="{{ heroCardStyle }}" ref="{{ heroCardRef }}">
+      <sc-if value="{{ phoneCard }}">
+      <div class="fest t-music">
+        <div class="hero">
+          <svg class="hero__art" sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img" aria-label="Music strand artwork">
+            <use href="#i-art"></use><use href="#i-motif-music"></use>
+          </svg>
+          <div class="notch"><i></i><i></i><span>Music</span></div>
+        </div>
+
+        <div class="status">
+          <sc-if value="{{ festLive }}"><span class="chip chip--live"><b aria-hidden="true"></b>Live now</span></sc-if>
+          <button class="chip" type="button" sc-camel-on-click="{{ toProgramme }}"><svg aria-hidden="true"><use href="#i-eq"></use></svg>Set times</button>
+        </div>
+
+        <h1 class="title">Flow Festival 2026</h1>
+
+        <ul class="meta">
+          <li>
+            <svg aria-hidden="true"><use href="#i-time"></use></svg>
+            14–16 August 2026 <em>· 13:00–01:00 daily</em>
+          </li>
+          <li>
+            <button type="button" sc-camel-on-click="{{ openMap }}" aria-label="Suvilahti, Helsinki — show the site map">
+              <svg aria-hidden="true"><use href="#i-pin-line"></use></svg>
+              Suvilahti, Helsinki <em>· City festival</em>
+            </button>
+          </li>
+          <li>
+            <svg aria-hidden="true"><use href="#i-tag"></use></svg>
+            Ticketed by the festival
+          </li>
+        </ul>
+
+        <ul class="genres"><li>Pop</li><li>Electronic</li><li>Indie</li><li>Jazz</li></ul>
+
+        <div class="actions">
+          <button class="plan" type="button" sc-camel-on-click="{{ toggleFestivalPlan }}" aria-pressed="{{ festivalPlanned }}">
+            <svg sc-camel-view-box="0 0 24 24" aria-hidden="true" style="{{ heartSvgStyle }}">
+              <defs><clipPath id="{{ heartClipId2 }}" sc-camel-clip-path-units="userSpaceOnUse">
+                <circle cx="12" cy="12" r="19" style="{{ heartDiscStyle }}"></circle>
+              </clipPath></defs>
+              <use href="#i-heart-geo" style="{{ heartOutlineStyle }}"></use>
+              <g clip-path="{{ heartClipUrl2 }}"><use href="#i-heart-geo" style="fill:currentColor;stroke:none"></use></g>
+            </svg>
+            <span>{{ festivalPlanLabel }}</span>
+          </button>
+          <a class="act" href="https://www.flowfestival.com/en/" target="_blank" rel="noopener noreferrer" aria-label="Official site" title="Official site">
+            <svg aria-hidden="true"><use href="#i-ext"></use></svg>
+          </a>
+        <a class="act" href="https://www.flowfestival.com/en/tickets/" target="_blank" rel="noopener noreferrer" aria-label="Tickets" title="Tickets">
+          <svg aria-hidden="true" style="fill:currentColor"><use href="#i-ticket"></use></svg>
+        </a>
+        </div>
+
+        <section class="{{ aboutClass }}">
+          <h2>About</h2>
+          <div class="about__clip" style="{{ aboutClipStyle }}" ref="{{ aboutClipRef }}">
+            <p class="about__text">Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.</p>
+          </div>
+          <button class="about__more" type="button" aria-expanded="{{ aboutOpen }}" sc-camel-on-click="{{ toggleAbout }}">
+            <span>{{ aboutMoreLabel }}</span><svg aria-hidden="true"><use href="#i-chev"></use></svg>
+          </button>
+          <ul class="about__facts"><li><svg aria-hidden="true"><use href="#i-pin-line"></use></svg>10 stages</li><li><svg aria-hidden="true"><use href="#i-time"></use></svg>3 days</li><li><svg aria-hidden="true"><use href="#i-mic-line"></use></svg>156 acts</li></ul>
+        </section>
+      </div>
+      </sc-if>
+      <sc-if value="{{ deskCard }}">
       <div style="{{ heroBodyStyle }}">
         <p style="margin:0 0 14px;font-size:22px;font-weight:600;line-height:28px;letter-spacing:-.01em;color:var(--primary,#4C662B)">14–16 August 2026</p>
         <p style="margin:0;font-size:15px;line-height:1.55;color:var(--on-var,#494E42);max-width:44ch;text-wrap:pretty">Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.</p>
@@ -4063,6 +4282,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
           <span style="display:block;padding:9px 16px;border-start-start-radius:16px;border-end-end-radius:20px;background:var(--sec,#DCE8C0);color:var(--on-sec,#1F2D0A);font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase">Music</span>
         </div>
       </div>
+      </sc-if>
       </sc-if>
     </article>
     </sc-if>
@@ -7096,6 +7316,25 @@ class Component extends DCLogic {
       openMap: () => this.setState({ view: 'map', filtersOpen: false, navOpen: false, note: 'Site map' }),
       controlsRef: (el) => { this.controlsEl = el; },
       showBack: false, goBack: this.goBack,
+      phoneCard: mob, deskCard: !mob,
+      festLive: (function (n) {
+        return n != null && n >= this.DAY_START && n < this.DAY_END;
+      }).call(this, this.LIVE_AT),
+      toProgramme: () => this.setState({ view: 'timetable', prog: 'timetable' }),
+      aboutClass: S.aboutOpen ? 'about is-open' : 'about',
+      aboutOpen: String(!!S.aboutOpen),
+      aboutMoreLabel: S.aboutOpen ? 'Show less' : 'Read more',
+      aboutClipStyle: { maxBlockSize: S.aboutOpen
+        ? ((S.aboutFull || 800) + 'px') : 'calc(3 * 1.55em)' },
+      aboutClipRef: (el) => { this.aboutClipEl = el; },
+      toggleAbout: () => {
+        const el = this.aboutClipEl;
+        const p = el && el.firstElementChild;
+        this.setState(s => ({ aboutOpen: !s.aboutOpen,
+          aboutFull: p ? p.scrollHeight : s.aboutFull }));
+      },
+      heartClipId2: 'fest-heart-2',
+      heartClipUrl2: 'url(#fest-heart-2)',
       showHeroFold: true, showControls: true, filterScrim: false, daysPuckStyle: { display: 'none' },
       filterPanelRef: (el) => { this.filterPanelEl = el; },
       filterPanelStyle: { margin: '16px 28px 0', padding: '8px 24px 18px', borderRadius: '28px', background: 'var(--card,#F2F0EB)' },
@@ -7174,7 +7413,8 @@ class Component extends DCLogic {
       heroCardStyle: {
         flex: split ? '0 0 ' + basis : '2 1 460px', minWidth: 0, display: 'flex', flexWrap: 'nowrap',
         flexDirection: heroStack ? 'column' : 'row',
-        background: 'var(--card,#F2F0EB)', borderRadius: '28px', padding: '12px',
+        background: mob ? 'none' : 'var(--card,#F2F0EB)',
+        borderRadius: mob ? 0 : '28px', padding: mob ? 0 : '12px',
         transformOrigin: 'top left', willChange: 'transform, opacity',
         animation: S.heroClosing ? 'fp-card-out 320ms cubic-bezier(.3,0,.8,.15) both' : 'fp-weather-in 480ms cubic-bezier(.42,1.67,.21,.9) both'
       },

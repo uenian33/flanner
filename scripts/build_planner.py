@@ -2014,6 +2014,55 @@ def patch_nav(src: str) -> str:
         "              fill: 'none', color: 'var(--primary,#4C662B)' },",
         "the button is drawn as what it does")
 
+    # The compact design is a page rather than a card: its hero sits on the
+    # page's own surface and the only card in it is the About block. So on a
+    # phone the container that used to be the card is a plain block, and keeps
+    # nothing but the movement it arrives and leaves by.
+    src = sub_once(
+        src,
+        r"      heroCardStyle: \{\n"
+        r"        flex: split \? '0 0 ' \+ basis : '2 1 460px', minWidth: 0,"
+        r" display: 'flex', flexWrap: 'nowrap',\n"
+        r"        flexDirection: heroStack \? 'column' : 'row',\n"
+        r"        background: 'var\(--card,#F2F0EB\)', borderRadius: '28px',"
+        r" padding: '12px',\n",
+        "      heroCardStyle: {\n"
+        "        flex: split ? '0 0 ' + basis : '2 1 460px', minWidth: 0,"
+        " display: 'flex', flexWrap: 'nowrap',\n"
+        "        flexDirection: heroStack ? 'column' : 'row',\n"
+        "        background: mob ? 'none' : 'var(--card,#F2F0EB)',\n"
+        "        borderRadius: mob ? 0 : '28px', padding: mob ? 0 : '12px',\n",
+        "the compact card is a page")
+
+    # What the compact festival design needs to work: which of the two cards
+    # is drawn, the state its About block keeps, whether the festival is on
+    # right now, and a clip path of its own for its heart — the wide card's is
+    # in the page at the same time, and two elements cannot share an id.
+    src = sub_once(
+        src,
+        r"      showHeroFold: true, showControls: true, filterScrim: false,",
+        "      phoneCard: mob, deskCard: !mob,\n"
+        "      festLive: (function (n) {\n"
+        "        return n != null && n >= this.DAY_START && n < this.DAY_END;\n"
+        "      }).call(this, this.LIVE_AT),\n"
+        "      toProgramme: () => this.setState({ view: 'timetable', prog: 'timetable' }),\n"
+        "      aboutClass: S.aboutOpen ? 'about is-open' : 'about',\n"
+        "      aboutOpen: String(!!S.aboutOpen),\n"
+        "      aboutMoreLabel: S.aboutOpen ? 'Show less' : 'Read more',\n"
+        "      aboutClipStyle: { maxBlockSize: S.aboutOpen\n"
+        "        ? ((S.aboutFull || 800) + 'px') : 'calc(3 * 1.55em)' },\n"
+        "      aboutClipRef: (el) => { this.aboutClipEl = el; },\n"
+        "      toggleAbout: () => {\n"
+        "        const el = this.aboutClipEl;\n"
+        "        const p = el && el.firstElementChild;\n"
+        "        this.setState(s => ({ aboutOpen: !s.aboutOpen,\n"
+        "          aboutFull: p ? p.scrollHeight : s.aboutFull }));\n"
+        "      },\n"
+        "      heartClipId2: 'fest-heart-2',\n"
+        "      heartClipUrl2: 'url(#fest-heart-2)',\n"
+        "      showHeroFold: true, showControls: true, filterScrim: false,",
+        "the compact card's own state")
+
     # ---- a phone opens on Info ----
     # The grid is what the planner is for, and it is also the last thing you
     # want first: a wall of cells with no idea which festival it is, when it
@@ -3337,12 +3386,174 @@ def patch_template(tpl: str, fest: Festival) -> str:
                    '    <article data-fp-card="" style="{{ heroCardStyle }}" '
                    'ref="{{ heroCardRef }}">', "festival card mark")
 
+    # ---- the festival, at the compact breakpoint ----
+    # festival-mobile.html's own markup, element for element: the hero and its
+    # notch, the status chips, the headline, the meta list, the genre rail, the
+    # actions and the About block. The festival's own words are written into
+    # it here the way they are written into the design above; the parts that do
+    # something — the plan button, the map, the set times, the About toggle —
+    # are bound to what already does them.
+    stats = f.get("stats") or {}
+    strand = (f.get("category") or "music")
+    days = int(stats.get("days") or 1)
+    # The design's three facts under the rule, carrying what the meta list
+    # above has not already said: how many stages, how long, how many acts.
+    span = fest.days
+    hours = round(sum(d["end"] - d["start"] for d in span) / 60)
+    facts = [
+        ("#i-pin-line", "%s stages" % stats.get("stages", "")),
+        ("#i-time", ("%d days" % days) if days > 1 else "%d hours" % hours),
+        ("#i-mic-line", "%s acts" % stats.get("acts", "")),
+    ]
+    genres = "".join("<li>%s</li>" % g for g in (f.get("tags") or []))
+    tickets = ('        <a class="act" href="%s" target="_blank" rel="noopener noreferrer"'
+               ' aria-label="Tickets" title="Tickets">\n'
+               '          <svg aria-hidden="true" style="fill:currentColor">'
+               '<use href="#i-ticket"></use></svg>\n'
+               '        </a>\n' % f["tickets"]) if f.get("tickets") else ""
+    compact = (
+        '      <sc-if value="{{ phoneCard }}">\n'
+        '      <div class="fest t-%(strand)s">\n'
+        '        <div class="hero">\n'
+        '          <svg class="hero__art" sc-camel-view-box="0 0 400 250"'
+        ' sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img"'
+        ' aria-label="%(strandName)s strand artwork">\n'
+        '            <use href="#i-art"></use><use href="#i-motif-%(strand)s"></use>\n'
+        '          </svg>\n'
+        '          <div class="notch"><i></i><i></i><span>%(strandName)s</span></div>\n'
+        '        </div>\n'
+        '\n'
+        '        <div class="status">\n'
+        '          <sc-if value="{{ festLive }}">'
+        '<span class="chip chip--live"><b aria-hidden="true"></b>Live now</span></sc-if>\n'
+        '          <button class="chip" type="button" sc-camel-on-click="{{ toProgramme }}">'
+        '<svg aria-hidden="true"><use href="#i-eq"></use></svg>Set times</button>\n'
+        '        </div>\n'
+        '\n'
+        '        <h1 class="title">%(name)s</h1>\n'
+        '\n'
+        '        <ul class="meta">\n'
+        '          <li>\n'
+        '            <svg aria-hidden="true"><use href="#i-time"></use></svg>\n'
+        '            %(dates)s <em>· %(hours)s</em>\n'
+        '          </li>\n'
+        '          <li>\n'
+        '            <button type="button" sc-camel-on-click="{{ openMap }}"'
+        ' aria-label="%(city)s — show the site map">\n'
+        '              <svg aria-hidden="true"><use href="#i-pin-line"></use></svg>\n'
+        '              %(city)s <em>· %(type)s</em>\n'
+        '            </button>\n'
+        '          </li>\n'
+        '          <li>\n'
+        '            <svg aria-hidden="true"><use href="#i-tag"></use></svg>\n'
+        '            %(price)s\n'
+        '          </li>\n'
+        '        </ul>\n'
+        '\n'
+        '        <ul class="genres">%(genres)s</ul>\n'
+        '\n'
+        '        <div class="actions">\n'
+        '          <button class="plan" type="button"'
+        ' sc-camel-on-click="{{ toggleFestivalPlan }}"'
+        ' aria-pressed="{{ festivalPlanned }}">\n'
+        '            <svg sc-camel-view-box="0 0 24 24" aria-hidden="true"'
+        ' style="{{ heartSvgStyle }}">\n'
+        '              <defs><clipPath id="{{ heartClipId2 }}"'
+        ' sc-camel-clip-path-units="userSpaceOnUse">\n'
+        '                <circle cx="12" cy="12" r="19" style="{{ heartDiscStyle }}"></circle>\n'
+        '              </clipPath></defs>\n'
+        '              <use href="#i-heart-geo" style="{{ heartOutlineStyle }}"></use>\n'
+        '              <g clip-path="{{ heartClipUrl2 }}">'
+        '<use href="#i-heart-geo" style="fill:currentColor;stroke:none"></use></g>\n'
+        '            </svg>\n'
+        '            <span>{{ festivalPlanLabel }}</span>\n'
+        '          </button>\n'
+        '          <a class="act" href="%(official)s" target="_blank"'
+        ' rel="noopener noreferrer" aria-label="Official site" title="Official site">\n'
+        '            <svg aria-hidden="true"><use href="#i-ext"></use></svg>\n'
+        '          </a>\n'
+        '%(tickets)s'
+        '        </div>\n'
+        '\n'
+        '        <section class="{{ aboutClass }}">\n'
+        '          <h2>About</h2>\n'
+        '          <div class="about__clip" style="{{ aboutClipStyle }}"'
+        ' ref="{{ aboutClipRef }}">\n'
+        '            <p class="about__text">%(about)s</p>\n'
+        '          </div>\n'
+        '          <button class="about__more" type="button"'
+        ' aria-expanded="{{ aboutOpen }}" sc-camel-on-click="{{ toggleAbout }}">\n'
+        '            <span>{{ aboutMoreLabel }}</span>'
+        '<svg aria-hidden="true"><use href="#i-chev"></use></svg>\n'
+        '          </button>\n'
+        '          <ul class="about__facts">%(facts)s</ul>\n'
+        '        </section>\n'
+        '      </div>\n'
+        '      </sc-if>\n'
+        '      <sc-if value="{{ deskCard }}">\n'
+    ) % {
+        "strand": strand,
+        "strandName": strand.title(),
+        "name": name,
+        "dates": f["dates"],
+        # the hours alone: how many days it runs is a fact below, and a date
+        # range with the count after it wraps this line in two.
+        "hours": fest.hours_line.split(" · ")[0],
+        "city": f["city"],
+        "type": f["type"],
+        "price": fest.facts[2],
+        "genres": genres,
+        "official": f["official"],
+        "tickets": tickets,
+        "about": f["description"],
+        "facts": "".join(
+            '<li><svg aria-hidden="true"><use href="%s"></use></svg>%s</li>' % (i, t)
+            for i, t in facts),
+    }
+    tpl = sub_once(
+        tpl,
+        r'    <article data-fp-card="" style="\{\{ heroCardStyle \}\}"'
+        r' ref="\{\{ heroCardRef \}\}">\n',
+        '    <article data-fp-card="" style="{{ heroCardStyle }}"'
+        ' ref="{{ heroCardRef }}">\n' + compact,
+        "the compact festival card")
+    tpl = sub_once(
+        tpl,
+        r'      </sc-if>\n    </article>',
+        '      </sc-if>\n      </sc-if>\n    </article>',
+        "the wide festival card closes")
+
     # Where a starred act goes, and what counts it.
     tpl = sub_once(
         tpl,
         r'<button sc-camel-on-click="\{\{ togglePicks \}\}"',
         '<button data-fp-picks="" sc-camel-on-click="{{ togglePicks }}"',
         "the picks button")
+
+    # The glyphs the compact festival design uses that the planner's sprite
+    # does not carry, copied from it unchanged — and one more drawn to match,
+    # because the design's third fact is about the festival's admission and
+    # ours is about its line-up.
+    tpl = sub_once(
+        tpl,
+        r'  <symbol id="i-chev"',
+        '  <symbol id="i-pin-line" sc-camel-view-box="0 0 24 24" fill="none"'
+        ' stroke="currentColor"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11'
+        ' 7 11Z"></path><circle cx="12" cy="10" r="2.6"></circle></symbol>\n'
+        '  <symbol id="i-tag" sc-camel-view-box="0 0 24 24" fill="none"'
+        ' stroke="currentColor"><path d="M20.6 12.4 12.4 20.6a2 2 0 0 1-2.8 0l-6.2-6.2A2'
+        ' 2 0 0 1 2.8 13V4.8A1.8 1.8 0 0 1 4.6 3h8.2a2 2 0 0 1 1.4.6l6.4 6.4a2 2 0 0 1 0'
+        ' 2.4Z"></path><circle cx="7.6" cy="7.6" r="1.4"></circle></symbol>\n'
+        '  <symbol id="i-eq" sc-camel-view-box="0 0 24 24"><rect x="3.5" y="10"'
+        ' width="3.4" height="10" rx="1.7"></rect><rect x="10.3" y="4" width="3.4"'
+        ' height="16" rx="1.7"></rect><rect x="17.1" y="13" width="3.4" height="7"'
+        ' rx="1.7"></rect></symbol>\n'
+        '  <symbol id="i-mic-line" sc-camel-view-box="0 0 24 24" fill="none"'
+        ' stroke="currentColor" stroke-linecap="round"><rect x="9" y="2.8" width="6"'
+        ' height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-3'
+        ' 0h6"></path></symbol>\n'
+        '  <symbol id="i-chev"',
+        "the compact design's glyphs")
 
     # The button at the foot takes its glyph and its name from the model, so
     # it can be the arrow or the mark.
@@ -4369,6 +4580,169 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
    in the card is. */
 .bio__text{font-size:14px;line-height:20px;letter-spacing:.25px}"""
 
+# ── the festival, at the compact breakpoint ───────────
+# The phone's festival card is a second exported design, festival-mobile.html,
+# and this is its stylesheet as written: the hero and its notch, the status
+# chips, the headline and its meta list, the genre rail, the actions and the
+# About block, rule for rule and value for value.
+#
+# One departure, and it is mechanical: every selector is prefixed with .fest.
+# The design is a page of its own, so it names things .hero, .title, .chip,
+# .actions — names a planner carrying an artist card, a map and a timetable
+# cannot leave unqualified. The prefix scopes them and changes nothing about
+# what they draw.
+#
+# The type scale it declares on :root is declared on .fest here, for the same
+# reason: the planner has its own and they are not the same numbers.
+FEST_CSS = """/* ---------- the festival, compact ---------- */
+/* The design's own type scale, which it declares on the root and this page
+   cannot: the planner's root already carries a scale of its own. The colour
+   roles it declares there are the planner's roles under the planner's names,
+   so they are simply used; the artwork's five come from the strand class the
+   card system already puts on the element. The measures are the design's:
+   16dp margins, and the room the floating bar stands in. */
+.fest{
+  --headline-size:32px; --headline-lh:1.06;
+  --title-size:17px;
+  --body-size:15px;   --body-lh:1.55;
+  --body-sm-size:14px;
+  --label-size:14px;  --label-sm-size:11.5px;
+  font-size:var(--body-size); line-height:var(--body-lh);
+  /* the design's 16dp margin, over the 12 the view already keeps; the room
+     the bar stands in is kept by the scroller above this. */
+  padding: 8px 4px 0;
+}
+
+/* ---------- hero ---------- */
+.fest .hero {
+  position: relative; aspect-ratio: 16 / 10;
+  border-radius: 24px; overflow: hidden; background: var(--art-bg);
+}
+.fest .hero__art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+/* the card system's notch, cutting into the page rather than a card */
+.fest .notch {
+  position: absolute; inset-block-end: 0; inset-inline-end: 0;
+  padding: 6px 0 0 6px; background: var(--wash,#FFFFFF); border-start-start-radius: 22px;
+}
+.fest .notch i {
+  position: absolute; inline-size: 12px; block-size: 12px;
+  background: radial-gradient(circle at 0 0,#0000 11.5px,var(--wash,#FFFFFF) 12.5px);
+}
+.fest .notch i:first-child { inset-inline-end: 0; inset-block-end: 100%; }
+.fest .notch i:last-child { inset-inline-end: 100%; inset-block-end: 0; }
+.fest .notch span {
+  display: block; padding: 9px 16px;
+  border-start-start-radius: 16px; border-end-end-radius: 20px;
+  background: var(--sec); color: var(--on-sec);
+  font-size: var(--label-sm-size); font-weight: 700; line-height: 1;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+
+/* ---------- status row (M3 assist chips, 32dp) ---------- */
+.fest .status { display: flex; flex-wrap: wrap; gap: 8px; margin-block-start: 18px; }
+.fest .chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  block-size: 32px; padding: 0 14px 0 10px;
+  border: 1px solid var(--outline); border-radius: 8px;
+  background: transparent; color: var(--on-var);
+  font-size: 13.5px; font-weight: 500; line-height: 1; font-family: inherit;
+  cursor: pointer; transition: background var(--effects);
+}
+.fest .chip:hover { background: var(--state8); }
+.fest .chip svg { flex: none; inline-size: 18px; block-size: 18px; fill: currentColor; }
+.fest .chip--live { border-color: transparent; background: var(--sec); color: var(--on-sec); font-weight: 600; }
+.fest .chip--live b {
+  inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--primary);
+  animation: fp-fest-pulse 2s var(--ease) infinite;
+}
+@keyframes fp-fest-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.78); } }
+
+/* ---------- headline + meta ---------- */
+.fest .title {
+  margin: 12px 0 0;
+  font-size: var(--headline-size); font-weight: 700; line-height: var(--headline-lh);
+  letter-spacing: -.03em; text-wrap: balance;
+}
+.fest .meta { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 13px; }
+.fest .meta li { display: flex; align-items: center; gap: 12px; font-size: var(--body-size); line-height: 1.32; }
+.fest .meta svg {
+  flex: none; inline-size: 20px; block-size: 20px;
+  fill: none; stroke: var(--on-var); stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.fest .meta em { font-style: normal; color: var(--on-var); }
+/* the address is the one meta row that does something */
+.fest .meta button {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin: -6px -10px; padding: 6px 10px; border: 0; border-radius: 10px;
+  background: none; color: inherit; font: inherit; text-align: start; cursor: pointer;
+  transition: background var(--effects);
+}
+.fest .meta button:hover { background: var(--state8); }
+.fest .meta button svg { stroke: var(--primary); }
+
+/* ---------- genre chips ---------- */
+.fest .genres {
+  display: flex; gap: 8px; margin: 18px -16px 0; padding: 0 16px;
+  overflow-x: auto; scrollbar-width: none; list-style: none;
+}
+.fest .genres::-webkit-scrollbar { block-size: 0; }
+.fest .genres li {
+  flex: none; display: inline-flex; align-items: center; block-size: 32px; padding: 0 14px;
+  border: 1px solid var(--outline); border-radius: 8px;
+  font-size: 13.5px; font-weight: 500; color: var(--on-var); white-space: nowrap;
+}
+
+/* ---------- actions ---------- */
+.fest .actions { display: flex; gap: 10px; margin-block-start: 22px; }
+.fest .act {
+  flex: none; display: grid; place-items: center;
+  inline-size: 56px; block-size: 56px; border: 0; border-radius: 18px;
+  background: var(--card); color: var(--on); cursor: pointer; text-decoration: none;
+  transition: background var(--effects), border-radius var(--spring);
+}
+.fest .act svg { inline-size: 22px; block-size: 22px; }
+.fest .act:hover { background: var(--hover,#EAE8DF); border-radius: 28px; }
+.fest .act:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* filled tonal, shape-morphing on selection — the app's own plan button */
+.fest .plan {
+  flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  block-size: 56px; padding: 0 22px; border: 0; border-radius: 18px;
+  background: var(--card); color: var(--on);
+  font-size: 15px; font-weight: 550; font-family: inherit; letter-spacing: .006em; cursor: pointer;
+  transition: background var(--effects), color var(--effects), border-radius var(--spring);
+}
+.fest .plan[aria-pressed="true"] { border-radius: 28px; background: var(--heart-cont,#FBE0C0); color: var(--on-heart-cont,#2B1700); }
+.fest .plan:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.fest .plan svg { inline-size: 22px; block-size: 22px; overflow: visible; color: var(--heart,#8F4C0A); }
+.fest .plan[aria-pressed="true"] svg { color: currentColor; }
+
+/* ---------- about ---------- */
+.fest .about {
+  margin-block-start: 24px; padding: 18px 18px 14px;
+  border-radius: 24px; background: var(--card);
+}
+.fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
+.fest .about__clip { overflow: hidden; max-block-size: calc(3 * 1.55em); transition: max-block-size 340ms var(--ease); }
+.fest .about__text { margin: 0; font-size: var(--body-size); line-height: var(--body-lh); color: var(--on-var); text-wrap: pretty; }
+.fest .about__more {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 8px 0 0 -12px; padding: 10px 14px 10px 12px; min-block-size: 44px;
+  border: 0; border-radius: 22px; background: none; color: var(--primary);
+  font: 700 14px/1 inherit; cursor: pointer; transition: background var(--effects);
+}
+.fest .about__more:hover { background: var(--state8); }
+.fest .about__more:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.fest .about__more svg { inline-size: 18px; block-size: 18px; fill: currentColor; transition: transform var(--spring); }
+.fest .about.is-open .about__more svg { transform: rotate(180deg); }
+.fest .about__facts {
+  display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 14px 0 0; padding: 12px 0 0;
+  border-block-start: 1px solid var(--outline); list-style: none;
+}
+.fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: var(--body-sm-size); color: var(--on-var); }
+.fest .about__facts svg { inline-size: 17px; block-size: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }"""
+
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 /* The bounce again, for the scrollers inside the page. The timetable, the
@@ -4483,6 +4857,7 @@ def build(fid: str) -> pathlib.Path:
 {art.other_css()}
 {stage_palette(len(fest.stages))[1]}
 {CARD_CSS}
+{FEST_CSS}
 {SHEET_CSS}
 {NO_ZOOM_CSS}
 </style>
