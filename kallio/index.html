@@ -3963,8 +3963,8 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 </nav>
 
 <sc-if value="{{ showBack }}">
-  <button sc-camel-on-click="{{ goBack }}" aria-label="Go back" title="Go back" style="{{ backBtnStyle }}" style-hover="box-shadow:0 10px 32px rgba(20,24,14,.16),inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
-    <svg aria-hidden="true" style="{{ backIconStyle }}"><use href="#i-back"></use></svg>
+  <button sc-camel-on-click="{{ goBack }}" aria-label="{{ backLabel }}" title="{{ backLabel }}" style="{{ backBtnStyle }}" style-hover="box-shadow:0 10px 32px rgba(20,24,14,.16),inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+    <svg aria-hidden="true" style="{{ backIconStyle }}"><use href="{{ backIcon }}"></use></svg>
   </button>
 </sc-if>
 
@@ -5041,11 +5041,24 @@ class Component extends DCLogic {
   }
 
   /* Back closes an open layer first, then retraces destinations. */
+  /* Read once: the referrer does not change while the page is open. */
+  get FROM_SITE() {
+    if (this._fromSite === undefined) {
+      const r = document.referrer || '';
+      this._fromSite = !!r && r.indexOf(location.origin) === 0
+        && r.replace(/[?#].*$/, '') !== location.href.replace(/[?#].*$/, '');
+    }
+    return this._fromSite;
+  }
+  leavePlanner() {
+    if (this.FROM_SITE && history.length > 1) history.back();
+    else window.location.href = '../index.html';
+  }
   goBack = () => {
     if (this.state.sheet) { this.dismissSheet(); return; }
     if (this.state.filtersOpen) { this.setState({ filtersOpen: false }); return; }
     const h = this.hist || [];
-    if (!h.length) { window.location.href = '../index.html'; return; }
+    if (!h.length) { this.leavePlanner(); return; }
     const prev = h[h.length - 1];
     this.hist = h.slice(0, -1);
     this.popping = true;
@@ -7579,7 +7592,13 @@ class Component extends DCLogic {
           opacity: barOff ? 0 : 1, pointerEvents: barOff ? 'none' : 'auto',
           transition: 'none'
         }),
-        backIconStyle: { width: mini ? '22px' : '24px', height: mini ? '22px' : '24px', fill: 'currentColor' },
+        backIcon: this.FROM_SITE ? '#i-back' : '#i-logo',
+        backLabel: this.FROM_SITE ? 'Go back' : 'Flanner — all festivals',
+        backIconStyle: this.FROM_SITE
+          ? { width: mini ? '22px' : '24px', height: mini ? '22px' : '24px',
+              fill: 'currentColor' }
+          : { width: mini ? '24px' : '26px', height: mini ? '24px' : '26px',
+              fill: 'none', color: 'var(--primary,#4C662B)' },
         /* filters lift off the page: a sheet above the control card, scrolling
            on its own so the programme behind it stays put */
         filterScrim: S.filtersOpen,

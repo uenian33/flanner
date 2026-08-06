@@ -1744,9 +1744,33 @@ def patch_sheet(src: str) -> str:
     src = sub_once(
         src,
         r"    const prev = h\.length \? h\[h\.length - 1\] : 'timetable';",
-        "    if (!h.length) { window.location.href = '../index.html'; return; }\n"
+        "    if (!h.length) { this.leavePlanner(); return; }\n"
         "    const prev = h[h.length - 1];",
         "back leaves for the list")
+    # Where the button goes when the planner has nothing left to go back
+    # through, and what it is drawn as. A reader who arrived from somewhere on
+    # this site has a page to be returned to, and the arrow returns them to it.
+    # A reader who opened the link cold has nothing behind them: the arrow
+    # would be a lie, so the button is the mark instead, and the mark goes
+    # where the mark always goes.
+    src = sub_once(
+        src,
+        r"  goBack = \(\) => \{",
+        "  /* Read once: the referrer does not change while the page is open. */\n"
+        "  get FROM_SITE() {\n"
+        "    if (this._fromSite === undefined) {\n"
+        "      const r = document.referrer || '';\n"
+        "      this._fromSite = !!r && r.indexOf(location.origin) === 0\n"
+        "        && r.replace(/[?#].*$/, '') !== location.href.replace(/[?#].*$/, '');\n"
+        "    }\n"
+        "    return this._fromSite;\n"
+        "  }\n"
+        "  leavePlanner() {\n"
+        "    if (this.FROM_SITE && history.length > 1) history.back();\n"
+        "    else window.location.href = '../index.html';\n"
+        "  }\n"
+        "  goBack = () => {",
+        "what the button leaves for")
 
     # Back is a way out of the card like any other, and takes the same arc.
     src = sub_once(src,
@@ -1974,6 +1998,21 @@ def patch_nav(src: str) -> str:
         r" opacity \.14s cubic-bezier\(\.3,0,\.8,\.15\)'",
         "          transition: 'none'",
         "control card arrives in place")
+
+    # And the button is drawn as what it does: an arrow for a reader with a
+    # page behind them, the mark for one who arrived cold.
+    src = sub_once(
+        src,
+        r"        backIconStyle: \{ width: mini \? '22px' : '24px',"
+        r" height: mini \? '22px' : '24px', fill: 'currentColor' \},",
+        "        backIcon: this.FROM_SITE ? '#i-back' : '#i-logo',\n"
+        "        backLabel: this.FROM_SITE ? 'Go back' : 'Flanner — all festivals',\n"
+        "        backIconStyle: this.FROM_SITE\n"
+        "          ? { width: mini ? '22px' : '24px', height: mini ? '22px' : '24px',\n"
+        "              fill: 'currentColor' }\n"
+        "          : { width: mini ? '24px' : '26px', height: mini ? '24px' : '26px',\n"
+        "              fill: 'none', color: 'var(--primary,#4C662B)' },",
+        "the button is drawn as what it does")
 
     # ---- a phone opens on Info ----
     # The grid is what the planner is for, and it is also the last thing you
@@ -3304,6 +3343,23 @@ def patch_template(tpl: str, fest: Festival) -> str:
         r'<button sc-camel-on-click="\{\{ togglePicks \}\}"',
         '<button data-fp-picks="" sc-camel-on-click="{{ togglePicks }}"',
         "the picks button")
+
+    # The button at the foot takes its glyph and its name from the model, so
+    # it can be the arrow or the mark.
+    tpl = sub_once(
+        tpl,
+        r'  <button sc-camel-on-click="\{\{ goBack \}\}" aria-label="Go back"'
+        r' title="Go back" style="\{\{ backBtnStyle \}\}"',
+        '  <button sc-camel-on-click="{{ goBack }}" aria-label="{{ backLabel }}"'
+        ' title="{{ backLabel }}" style="{{ backBtnStyle }}"',
+        "the back button's name")
+    tpl = sub_once(
+        tpl,
+        r'    <svg aria-hidden="true" style="\{\{ backIconStyle \}\}">'
+        r'<use href="#i-back"></use></svg>',
+        '    <svg aria-hidden="true" style="{{ backIconStyle }}">'
+        '<use href="{{ backIcon }}"></use></svg>',
+        "the back button's glyph")
 
     # The page behind the sheet, marked so it can step back while one is open.
     tpl = sub_once(tpl, r'<div style="\{\{ shellStyle \}\}">',
