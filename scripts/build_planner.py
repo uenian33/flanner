@@ -2228,14 +2228,20 @@ def patch_map(src: str, fest: Festival) -> str:
                    ".setView(%s, 16)" % js(centre), "map centre")
 
     # ---- the pin ----
-    # A 32px disc in the stage's light container, ringed in 2px of white and
-    # dropped on an 8px shadow, which is how a map pin was drawn when the
-    # basemaps were still beige. The colour is the card's: the dark container
-    # the act's own card and its cell take when it is in the plan, with the
-    # light on-colour over it, so a stage is the same colour wherever it is
-    # met. The shape is off the shape scale — a 20dp corner on three sides and
-    # a 4dp one at the point — and it sits on M3's level-2 elevation rather
-    # than a single wide blur.
+    # A 32px disc ringed in 2px of white and dropped on an 8px shadow, which is
+    # how a map pin was drawn when the basemaps were still beige. The ring and
+    # the blur are gone: the shape comes off the shape scale — a 20dp corner on
+    # three sides and a 4dp one at the point — and it sits on M3's level-2
+    # elevation.
+    #
+    # And they are one colour, not ten. The stage palettes do real work in the
+    # timetable, where a column of colour is how you read the grid, and in the
+    # row and the card, where one act is one stage. Ten of them side by side on
+    # a pale map is the page spending colour on nothing: the pins are numbered,
+    # and the number is what tells you which stage this is. So every pin takes
+    # the same secondary container the rest of the app puts its quiet emphasis
+    # in — and the one you have just asked for takes the plan colour while it
+    # beats, which is colour spent on state, which is what M3 spends it on.
     src = sub_once(
         src,
         r"      const html = '<div style=\"width:32px;height:32px;"
@@ -2245,14 +2251,17 @@ def patch_map(src: str, fest: Festival) -> str:
         r"        '<span style=\"transform:rotate\(45deg\);"
         r"font:700 14px Inter,system-ui,sans-serif;color:' \+ c\.fg \+ '\">' \+ st\.n"
         r" \+ '</span></div>';",
-        "      const html = '<div style=\"width:34px;height:34px;"
-        "border-radius:20px 20px 20px 4px;transform:rotate(-45deg);background:'"
-        " + c.planBg +\n"
-        "        ';box-shadow:0 1px 2px rgba(20,24,14,.30),"
-        "0 2px 6px 2px rgba(20,24,14,.15);display:grid;place-items:center\">' +\n"
+        "      /* The resting colour is in the stylesheet, not here: the state\n"
+        "         below sets an inline background and clears it again, and a\n"
+        "         cleared inline style has to fall back to something. */\n"
+        "      const html = '<div data-fp-pin=\"\" style=\"width:34px;height:34px;"
+        "border-radius:20px 20px 20px 4px;transform:rotate(-45deg);"
+        "box-shadow:0 1px 2px rgba(20,24,14,.30),"
+        "0 2px 6px 2px rgba(20,24,14,.15);"
+        "display:grid;place-items:center\">' +\n"
         "        '<span style=\"transform:rotate(45deg);"
-        "font:600 14px/20px Inter,system-ui,sans-serif;letter-spacing:.1px;color:'"
-        " + c.planFg + '\">' + st.n + '</span></div>';",
+        "font:600 14px/20px Inter,system-ui,sans-serif;letter-spacing:.1px;"
+        "color:inherit\">' + st.n + '</span></div>';",
         "map pin")
     src = sub_once(
         src,
@@ -2296,6 +2305,15 @@ def patch_map(src: str, fest: Festival) -> str:
         " { duration: .85, easeLinearity: .25 });\n"
         "      else m.setView([st.lat, st.lng], z, { animate: true });",
         "map flies to the stage")
+    # And it arrives without a speech bubble. The popup opened itself over the
+    # pin it was pointing at, covering the map the reader had just asked to
+    # see — and the pin now says which one it is by beating. Pressing the pin
+    # still opens it, which is what a popup is for.
+    src = sub_once(
+        src,
+        r"      if \(this\.markers && this\.markers\[i\]\) this\.markers\[i\]\.openPopup\(\);",
+        "      m.closePopup();",
+        "no bubble on arrival")
     # ---- and the pin says so ----
     # One filled disc expanding once and a single pop on the pin. It is a
     # heartbeat now — two beats to the round, three rounds — over three rings
@@ -2314,7 +2332,7 @@ def patch_map(src: str, fest: Festival) -> str:
         "        className: '', iconSize: [46, 46], iconAnchor: [23, 23],\n"
         "        html: '<div style=\"position:relative;width:46px;height:46px\">'\n"
         "          + [0, .5, 1].map(d => '<span style=\"position:absolute;inset:0;"
-        "border-radius:50%;border:2px solid ' + c.planBg + ';opacity:0;"
+        "border-radius:50%;border:2px solid var(--plan,#2E4B12);opacity:0;"
         "animation:fp-ripple 1.5s cubic-bezier(.2,0,0,1) ' + d + 's 3 both\"></span>')"
         ".join('')\n"
         "          + '</div>'\n"
@@ -2332,6 +2350,20 @@ def patch_map(src: str, fest: Festival) -> str:
         "    if (el) {\n"
         "      el.style.animation = 'none'; void el.offsetWidth;\n"
         "      el.style.animation = 'fp-beat 1.1s cubic-bezier(.2,0,0,1) 3';\n"
+        "      /* The one you asked for is the one in the plan colour, for as\n"
+        "         long as it is beating. Every other pin stays as it was. */\n"
+        "      const back = document.querySelectorAll('[data-fp-pin]');\n"
+        "      for (let k = 0; k < back.length; k++) {\n"
+        "        back[k].style.background = '';\n"
+        "        back[k].style.color = '';\n"
+        "      }\n"
+        "      el.style.background = 'var(--plan,#2E4B12)';\n"
+        "      el.style.color = 'var(--on-plan,#EDF6DA)';\n"
+        "      clearTimeout(this.pinTimer);\n"
+        "      this.pinTimer = setTimeout(() => {\n"
+        "        el.style.background = '';\n"
+        "        el.style.color = '';\n"
+        "      }, 3400);\n"
         "    }",
         "map pin heartbeat")
 
@@ -2411,7 +2443,10 @@ def patch_map(src: str, fest: Festival) -> str:
         r" color: c\.fg, fontSize: '13px', fontWeight: 700 \},",
         "        numStyle: { flex: 'none', display: 'grid', placeItems: 'center',\n"
         "          width: '32px', height: '32px', borderRadius: '12px',\n"
-        "          background: c.planBg, color: c.planFg,\n"
+        "          /* The pin's colour, for the same reason: the number is what\n"
+        "             identifies the stage, and ten hues down a list of ten\n"
+        "             rows is colour spent on nothing. */\n"
+        "          background: 'var(--sec,#DCE8C0)', color: 'var(--on-sec,#1F2D0A)',\n"
         "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',\n"
         "          fontWeight: 600 },\n"
         "        nameStyle: mob\n"
@@ -3434,6 +3469,11 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
   70%{opacity:.14}
   100%{transform:scale(2.9);opacity:0}
 }
+/* Every pin at rest is the one quiet container the app puts emphasis in; the
+   stage it stands for is the number written on it. */
+[data-fp-pin]{
+  background:var(--sec,#DCE8C0);color:var(--on-sec,#1F2D0A);
+  transition:background .3s cubic-bezier(.2,0,0,1),color .3s cubic-bezier(.2,0,0,1)}
 @media (prefers-reduced-motion:reduce){
   /* The map still travels to the stage; it just does not beat about it. */
   [style*="fp-beat"],[style*="fp-ripple"]{animation:none!important}

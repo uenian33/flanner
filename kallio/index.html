@@ -1454,6 +1454,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
   70%{opacity:.14}
   100%{transform:scale(2.9);opacity:0}
 }
+/* Every pin at rest is the one quiet container the app puts emphasis in; the
+   stage it stands for is the number written on it. */
+[data-fp-pin]{
+  background:var(--sec,#DCE8C0);color:var(--on-sec,#1F2D0A);
+  transition:background .3s cubic-bezier(.2,0,0,1),color .3s cubic-bezier(.2,0,0,1)}
 @media (prefers-reduced-motion:reduce){
   /* The map still travels to the stage; it just does not beat about it. */
   [style*="fp-beat"],[style*="fp-ripple"]{animation:none!important}
@@ -5194,7 +5199,7 @@ class Component extends DCLogic {
       icon: L.divIcon({
         className: '', iconSize: [46, 46], iconAnchor: [23, 23],
         html: '<div style="position:relative;width:46px;height:46px">'
-          + [0, .5, 1].map(d => '<span style="position:absolute;inset:0;border-radius:50%;border:2px solid ' + c.planBg + ';opacity:0;animation:fp-ripple 1.5s cubic-bezier(.2,0,0,1) ' + d + 's 3 both"></span>').join('')
+          + [0, .5, 1].map(d => '<span style="position:absolute;inset:0;border-radius:50%;border:2px solid var(--plan,#2E4B12);opacity:0;animation:fp-ripple 1.5s cubic-bezier(.2,0,0,1) ' + d + 's 3 both"></span>').join('')
           + '</div>'
       })
     }).addTo(this.map);
@@ -5205,6 +5210,20 @@ class Component extends DCLogic {
     if (el) {
       el.style.animation = 'none'; void el.offsetWidth;
       el.style.animation = 'fp-beat 1.1s cubic-bezier(.2,0,0,1) 3';
+      /* The one you asked for is the one in the plan colour, for as
+         long as it is beating. Every other pin stays as it was. */
+      const back = document.querySelectorAll('[data-fp-pin]');
+      for (let k = 0; k < back.length; k++) {
+        back[k].style.background = '';
+        back[k].style.color = '';
+      }
+      el.style.background = 'var(--plan,#2E4B12)';
+      el.style.color = 'var(--on-plan,#EDF6DA)';
+      clearTimeout(this.pinTimer);
+      this.pinTimer = setTimeout(() => {
+        el.style.background = '';
+        el.style.color = '';
+      }, 3400);
     }
     } catch (e) { /* map went away mid-blast */ }
     this.pendingBlast = null;
@@ -5702,9 +5721,11 @@ class Component extends DCLogic {
     this.markers = {};
     this.STAGES.forEach((st, i) => {
       const c = this.stageColor(i);
-      const html = '<div style="width:34px;height:34px;border-radius:20px 20px 20px 4px;transform:rotate(-45deg);background:' + c.planBg +
-        ';box-shadow:0 1px 2px rgba(20,24,14,.30),0 2px 6px 2px rgba(20,24,14,.15);display:grid;place-items:center">' +
-        '<span style="transform:rotate(45deg);font:600 14px/20px Inter,system-ui,sans-serif;letter-spacing:.1px;color:' + c.planFg + '">' + st.n + '</span></div>';
+      /* The resting colour is in the stylesheet, not here: the state
+         below sets an inline background and clears it again, and a
+         cleared inline style has to fall back to something. */
+      const html = '<div data-fp-pin="" style="width:34px;height:34px;border-radius:20px 20px 20px 4px;transform:rotate(-45deg);box-shadow:0 1px 2px rgba(20,24,14,.30),0 2px 6px 2px rgba(20,24,14,.15);display:grid;place-items:center">' +
+        '<span style="transform:rotate(45deg);font:600 14px/20px Inter,system-ui,sans-serif;letter-spacing:.1px;color:inherit">' + st.n + '</span></div>';
       const mk = L.marker([st.lat, st.lng], {
         title: st.name,
         icon: L.divIcon({ html: html, className: '', iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -32] })
@@ -5727,7 +5748,7 @@ class Component extends DCLogic {
       const z = Math.max(m.getZoom() || 0, 17);
       if (m.flyTo) m.flyTo([st.lat, st.lng], z, { duration: .85, easeLinearity: .25 });
       else m.setView([st.lat, st.lng], z, { animate: true });
-      if (this.markers && this.markers[i]) this.markers[i].openPopup();
+      m.closePopup();
     });
     this.pendingStage = null;
   }
@@ -6449,7 +6470,10 @@ class Component extends DCLogic {
           color: 'var(--on-var,#494E42)', opacity: .7 },
         numStyle: { flex: 'none', display: 'grid', placeItems: 'center',
           width: '32px', height: '32px', borderRadius: '12px',
-          background: c.planBg, color: c.planFg,
+          /* The pin's colour, for the same reason: the number is what
+             identifies the stage, and ten hues down a list of ten
+             rows is colour spent on nothing. */
+          background: 'var(--sec,#DCE8C0)', color: 'var(--on-sec,#1F2D0A)',
           fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',
           fontWeight: 600 },
         nameStyle: mob
