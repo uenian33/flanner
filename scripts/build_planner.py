@@ -1336,103 +1336,6 @@ SHEET_JS = """
     setTimeout(() => layer.remove(), 1300);
   }
 
-  /* ---- the plan is yours, and the screen says so ----
-     Turning the picks on puts the word Your in front of the festival's name,
-     which is easy to miss at the top of a screen you are not looking at. The
-     star's own answer is a ring flooding out of the button — a state
-     changing. This is not that: it is paper over the whole view, two dozen
-     slips in the festival's own stage colours falling from above the top edge
-     to below the bottom one and gone. No ring, no disc, nothing round.
-
-     The motion is thrown rather than eased. M3's curves describe a thing
-     travelling from one place to another; paper coming out of a word is not
-     doing that — it is given a speed and then handed to gravity, air and its
-     own spin, and no cubic-bezier says that. So the path is simulated and
-     sampled, the way the card's arc is, and played back linearly: the eye
-     follows the physics, not an approximation of it.
-
-     What is kept from the spec is what the spec is for: the slips leave
-     within short1 of each other so the throw reads as one event rather than
-     as a queue, nothing in the interface waits on any of it, and anyone who
-     has asked for less motion is given none of it. The fall itself runs past
-     the extra-long band — a second and a half to two — because paper falling
-     at interface speed is not paper falling. Those tokens time a thing moving
-     from one place to another; this is a thing being let go of. */
-  celebratePicks() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (!document.body.animate) return;
-    const W = document.documentElement.clientWidth || window.innerWidth;
-    const H = document.documentElement.clientHeight || window.innerHeight;
-    /* It comes out of the word. */
-    const word = document.querySelector('[data-fp-your]');
-    const wr = word ? word.getBoundingClientRect() : null;
-    const ox = wr && wr.width ? wr.left + wr.width / 2 : W / 2;
-    const oy = wr && wr.width ? wr.top + wr.height / 2 : 72;
-    const layer = document.createElement('div');
-    layer.setAttribute('aria-hidden', 'true');
-    layer.style.cssText = 'position:fixed;inset:0;z-index:95;'
-      + 'pointer-events:none;overflow:hidden;contain:strict';
-    document.body.appendChild(layer);
-    const N = 24, pal = this.STAGE_PALETTE.length;
-    for (let i = 0; i < N; i++) {
-      const w = 6 + (i % 3) * 3, h = 9 + (i % 4) * 4;
-      const p = document.createElement('i');
-      p.style.cssText = 'position:absolute;left:' + ox.toFixed(1) + 'px;top:'
-        + oy.toFixed(1) + 'px;width:' + w + 'px;height:' + h + 'px;border-radius:2px;'
-        + 'background:' + this.stageColor(i % pal).dot
-        + ';will-change:transform,opacity';
-      layer.appendChild(p);
-      /* Thrown, then let go of. Every slip is given a direction and a speed
-         out of the word and then handed to gravity, air and its own spin, and
-         the path it takes is walked here a step at a time rather than
-         described by a curve: an easing function can only bend a straight
-         line between two points, and none of this is straight. The samples
-         are played back linearly, so what the eye follows is the physics.
-
-         The air is thick, the way it is for something that light: the throw
-         is spent in the first third, and after that the slip is falling at
-         the speed a piece of paper falls at rather than at the speed a stone
-         does — 620px/s² of gravity against air that takes half the speed
-         every second, which settles to a drift. What makes it read as paper
-         rather than as a dot is the sway: it swings across its own fall a
-         couple of times a second and turns about its short axis as it goes,
-         so it shows its face and then its edge. And it is gone before it
-         reaches the foot of the screen — the fade starts at two fifths. */
-      const spread = 2.4, jitter = ((i * 37) % 17) / 17 - .5;
-      const a = -Math.PI / 2 + (((i + .5) / N) - .5) * spread + jitter * .3;
-      const speed = 300 + ((i * 53) % 5) * 70;
-      let vx = Math.cos(a) * speed, vy = Math.sin(a) * speed;
-      const g = 620, keep = .5;
-      const spin = (70 + (i % 4) * 55) * (i % 2 ? 1 : -1);
-      const swayAmp = 16 + (i % 4) * 7, swayHz = 1 + ((i * 29) % 7) / 7;
-      const phase = ((i * 61) % 31) / 31 * Math.PI * 2;
-      const dur = 1500 + (i % 5) * 170;
-      const steps = 44, secs = dur / 1000, dt = secs / steps;
-      let x = 0, y = 0, rot = (i % 2 ? 16 : -24);
-      const frames = [];
-      for (let k = 0; k <= steps; k++) {
-        const t = k / steps, at = t * secs;
-        if (k) {
-          const damp = Math.pow(keep, dt);
-          vy += g * dt; vx *= damp; vy *= damp;
-          x += vx * dt; y += vy * dt; rot += spin * dt;
-        }
-        const sway = Math.sin(at * swayHz * 6.283 + phase) * swayAmp;
-        const face = Math.cos(at * swayHz * 6.283 + phase) * 62;
-        frames.push({
-          offset: t, easing: 'linear',
-          opacity: t < .4 ? 1 : Math.max(0, 1 - (t - .4) / .6),
-          transform: 'translate3d(' + (x + sway).toFixed(1) + 'px,'
-            + y.toFixed(1) + 'px,0) rotate(' + rot.toFixed(1) + 'deg) '
-            + 'rotateY(' + face.toFixed(1) + 'deg)'
-        });
-      }
-      p.animate(frames, { duration: dur, delay: (i % 3) * 20, fill: 'forwards' });
-    }
-    clearTimeout(this.paperT);
-    this.paperT = setTimeout(() => layer.remove(), 1400);
-  }
-
   /* ---- throw to dismiss ---- */
   sheetDragOn() {
     const el = this.sheetEl;
@@ -2206,12 +2109,16 @@ def patch_nav(src: str) -> str:
         r"    const ev = this\.EVENTS\.find\(x => x\.id === id\);",
         "  starToggle(id, rect, srcEl) {\n"
         "    const ev = this.EVENTS.find(x => x.id === id);\n"
-        "    /* The cell or the row the star was pressed in, which is what\n"
-        "       travels to the plan. Measured before the state changes it. */\n"
+        "    /* The cell the star was pressed in, which is what travels to the\n"
+        "       plan — measured before the state changes it. The grid only: a\n"
+        "       row in the list is the width of the screen, and a thing that\n"
+        "       wide being drawn through a 40px button is a curtain closing\n"
+        "       rather than an act being put somewhere. */\n"
         "    const host = srcEl && srcEl.closest\n"
-        "      ? srcEl.closest('li, [role=\"button\"]') : null;\n"
-        "    if (host && !this.state.star[id]) this.flyToPlan(host);",
-        "the star knows what it was pressed in")
+        "      ? srcEl.closest('[role=\"button\"]') : null;\n"
+        "    const inGrid = host && !host.closest('li');\n"
+        "    if (inGrid && !this.state.star[id]) this.flyToPlan(host);",
+        "the star knows what cell it was pressed in")
 
     # Each press throws its own sparks, in its own layer.
     src = sub_once(
@@ -2253,21 +2160,6 @@ def patch_nav(src: str) -> str:
         "         its own. */\n"
         "      burstOpen: false,",
         "the old burst layer stands down")
-    # And starring the whole plan is worth a celebration rather than a state
-    # change: the word Your throws paper.
-    src = sub_once(
-        src,
-        r"      togglePicks: \(\) => this\.setState\(s => \(\{ onlyPicks: !s\.onlyPicks,"
-        r" note: s\.onlyPicks \? 'Showing the full programme'"
-        r" : 'Showing only your picks' \}\)\),",
-        "      togglePicks: () => this.setState(\n"
-        "        s => ({ onlyPicks: !s.onlyPicks,\n"
-        "          note: s.onlyPicks ? 'Showing the full programme'\n"
-        "            : 'Showing only your picks' }),\n"
-        "        () => { if (this.state.onlyPicks) requestAnimationFrame(\n"
-        "          () => this.celebratePicks()); }\n"
-        "      ),",
-        "the plan is worth a celebration")
 
     # ---- the title bar stays ----
     # It hid itself on the way down and came back on the way up, which is a
@@ -3320,13 +3212,6 @@ def patch_template(tpl: str, fest: Festival) -> str:
         r'<button sc-camel-on-click="\{\{ togglePicks \}\}"',
         '<button data-fp-picks="" sc-camel-on-click="{{ togglePicks }}"',
         "the picks button")
-
-    # The word the celebration throws its paper from.
-    tpl = sub_once(
-        tpl,
-        r'<span style="color:var\(--plan,#2E4B12\)">Your </span>',
-        '<span data-fp-your="" style="color:var(--plan,#2E4B12)">Your </span>',
-        "the word Your")
 
     # The page behind the sheet, marked so it can step back while one is open.
     tpl = sub_once(tpl, r'<div style="\{\{ shellStyle \}\}">',
