@@ -2357,7 +2357,7 @@ def patch_map(src: str, fest: Festival) -> str:
         "          letterSpacing: '.15px', fontWeight: 500 },\n"
         "        noteStyle: { fontSize: '14px', lineHeight: '20px',\n"
         "          letterSpacing: '.25px', color: 'var(--on-var,#494E42)',\n"
-        "          textWrap: 'pretty' },\n"
+        "          textAlign: 'justify', hyphens: 'auto' },\n"
         "        countStyle: { fontSize: '14px', lineHeight: '20px',\n"
         "          letterSpacing: '.1px', fontWeight: 500,\n"
         "          color: 'var(--primary,#4C662B)' },\n"
@@ -3302,7 +3302,19 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
   background:color-mix(in srgb,var(--card,#F2F0EB) 82%,transparent);
   color:var(--on-var,#494E42);
   font-family:inherit;font-size:11px;line-height:16px;letter-spacing:.5px}
-.leaflet-control-attribution a{color:var(--primary,#4C662B)}"""
+.leaflet-control-attribution a{color:var(--primary,#4C662B)}
+
+/* ---- prose runs to both edges ----
+   The same rule the rest of the site takes, in the planner's own words: body
+   copy is justified rather than ragged, with hyphenation, because justifying
+   a 40-character measure without it opens rivers between the words. The card
+   is outside the shell, so it is named too. A paragraph inside a centred
+   block — the empty states — keeps its centre; a heading, a label or a line
+   that ends in an ellipsis is one line and has nothing to justify. */
+[data-fp-shell] p,.ac p,.bio__text{
+  text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+[style*="text-align:center"] p,[style*="text-align: center"] p{
+  text-align:center;hyphens:manual;-webkit-hyphens:manual}"""
 
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
