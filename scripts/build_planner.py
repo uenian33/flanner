@@ -1728,6 +1728,35 @@ def patch_nav(src: str) -> str:
         "          opacity: barOff ? 0 : 1, pointerEvents: barOff ? 'none' : 'auto',",
         "control card stays")
 
+    # And they arrive where they belong rather than flying in. The three
+    # floating things at the foot — the bar, the back button and the control
+    # card — animated their size, their offset and their opacity, which on a
+    # page you land on is an entrance played every time you arrive and every
+    # time the bar changes height under it. M3 asks motion to explain a change
+    # the reader made; nothing here is a change the reader made.
+    src = sub_once(
+        src,
+        r"      transition: 'height \.3s cubic-bezier\(\.2,0,0,1\),"
+        r" padding \.3s cubic-bezier\(\.2,0,0,1\), width \.3s cubic-bezier\(\.2,0,0,1\),"
+        r" left \.3s cubic-bezier\(\.2,0,0,1\), transform \.22s cubic-bezier\(\.3,0,\.8,\.15\),"
+        r" opacity \.14s cubic-bezier\(\.3,0,\.8,\.15\)',",
+        "      transition: 'none',",
+        "bar arrives in place")
+    src = sub_once(
+        src,
+        r"          transition: 'height \.3s cubic-bezier\(\.2,0,0,1\),"
+        r" width \.3s cubic-bezier\(\.2,0,0,1\), transform \.22s cubic-bezier\(\.3,0,\.8,\.15\),"
+        r" opacity \.14s cubic-bezier\(\.3,0,\.8,\.15\)'",
+        "          transition: 'none'",
+        "back button arrives in place")
+    src = sub_once(
+        src,
+        r"          transition: 'bottom \.3s cubic-bezier\(\.2,0,0,1\),"
+        r" transform \.22s cubic-bezier\(\.3,0,\.8,\.15\),"
+        r" opacity \.14s cubic-bezier\(\.3,0,\.8,\.15\)'",
+        "          transition: 'none'",
+        "control card arrives in place")
+
     # The bar keeps its compact height for the whole of the programme. It
     # already compacted itself the moment you scrolled the grid and came back
     # to full height the moment you scrolled the other way, which on a page
