@@ -1851,11 +1851,25 @@ def patch_nav(src: str) -> str:
         r"          gridTemplateAreas: '\"picks picks\" \"days view\"',",
         "          gridTemplateAreas: '\"days picks\"',",
         "one control row")
+    # And one surface under the row, not two boxes meeting: joined skins left a
+    # seam down the middle, and each carried its own border and its own shadow
+    # to draw it with. The card is the row; what stands in it is transparent.
     src = sub_once(
         src,
-        r"          rowGap: '8px', columnGap: 0,",
-        "          rowGap: 0, columnGap: 0,",
-        "no row gap")
+        r"          rowGap: '8px', columnGap: 0,\n"
+        r"          padding: 0, background: 'none', border: 0, boxShadow: 'none'\n"
+        r"        \},",
+        "          rowGap: 0, columnGap: 0, alignItems: 'center',\n"
+        "          padding: '5px', borderRadius: '28px'\n"
+        "        }, cardSkin),",
+        "one surface for the row")
+    src = sub_once(
+        src,
+        r"        controlsBarStyle: \{\n"
+        r"          display: 'grid', gridTemplateColumns: 'minmax\(0,1fr\) auto',",
+        "        controlsBarStyle: Object.assign({\n"
+        "          display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto',",
+        "the row is the card")
     src = sub_once(
         src,
         r"        actionsGroupStyle: Object\.assign\(\{\n"
@@ -1863,15 +1877,119 @@ def patch_nav(src: str) -> str:
         r"          alignItems: 'center', gap: '12px',\n"
         r"          width: 'auto', marginInline: 0, padding: '5px', borderRadius: '28px'\n"
         r"        \}, cardSkin\),",
-        "        actionsGroupStyle: Object.assign({}, cardSkin, {\n"
+        "        actionsGroupStyle: {\n"
         "          gridArea: 'picks', display: 'flex', alignItems: 'center',\n"
-        "          gap: '4px', width: 'auto', marginInline: 0,\n"
-        "          padding: '5px 5px 5px 2px',\n"
-        "          borderStartEndRadius: '28px', borderEndEndRadius: '28px',\n"
-        "          borderStartStartRadius: 0, borderEndStartRadius: 0,\n"
-        "          borderInlineStart: 0, boxShadow: 'none'\n"
-        "        }),",
+        "          gap: '2px', width: 'auto', marginInline: 0, padding: 0,\n"
+        "          background: 'none', border: 0, boxShadow: 'none'\n"
+        "        },",
         "the two controls close the row")
+    src = sub_once(
+        src,
+        r"        daysGroupStyle: Object\.assign\(\{\}, cardSkin, \{\n"
+        r"          gridArea: 'days', position: 'relative', display: 'flex',"
+        r" gap: '4px', minWidth: 0,\n"
+        r"          padding: '5px', borderStartStartRadius: '28px',"
+        r" borderEndStartRadius: '28px',\n"
+        r"          borderStartEndRadius: 0, borderEndEndRadius: 0, borderInlineEnd: 0\n"
+        r"        \}\),",
+        "        daysGroupStyle: {\n"
+        "          gridArea: 'days', position: 'relative', display: 'flex',\n"
+        "          gap: '4px', minWidth: 0, padding: 0,\n"
+        "          background: 'none', border: 0, boxShadow: 'none'\n"
+        "        },",
+        "the day group has no skin of its own")
+    # The weather chip in the title bar goes to the weather. It took the reader
+    # to Info and unfolded the card, and then left them at the top of the page
+    # with the festival card in the way — on a phone the two cards are stacked,
+    # so the one that was asked for has to be brought up. The frame after the
+    # state lands is when the card exists to be scrolled to.
+    src = sub_once(
+        src,
+        r"        toggleWeather: \(\) => this\.setState\(\{ view: 'info',"
+        r" weatherOpen: true, note: 'Festival info' \}\),",
+        "        toggleWeather: () => this.setState(\n"
+        "          { view: 'info', weatherOpen: true, note: 'Weather' },\n"
+        "          () => requestAnimationFrame(() => {\n"
+        "            const el = document.getElementById('fp-weather');\n"
+        "            if (!el) return;\n"
+        "            const top = el.getBoundingClientRect().top + window.scrollY\n"
+        "              - ((this.state.headerH || 0) + 12);\n"
+        "            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });\n"
+        "          })\n"
+        "        ),",
+        "the weather chip goes to the weather")
+
+    # ---- the title bar hides once, not once a frame ----
+    # Hiding it changes the height of the page, which fires a scroll of its
+    # own, which arrives as a scroll in the other direction and brings it back
+    # — and at the end of the grid, where the scroll position is clamped, the
+    # two take turns for as long as the finger is down. That is the shudder.
+    # Three things settle it: the echo is ignored for as long as the bar takes
+    # to move, the thresholds are a real gesture rather than 2px, and at the
+    # end of the scroll the bar is left where it is, since there is nothing
+    # further to clear it for.
+    src = sub_once(
+        src,
+        r"  scrollSignal\(key, y\) \{\n"
+        r"    if \(!this\.lastPos\) this\.lastPos = \{\};\n"
+        r"    const last = this\.lastPos\[key\] \|\| 0;\n"
+        r"    const d = y - last;\n"
+        r"    /\* A small nudge is enough: 2px forward clears the chrome, 2px back brings\n"
+        r"       it straight down again\. \*/\n"
+        r"    if \(Math\.abs\(d\) < 2\) return;\n"
+        r"    this\.lastPos\[key\] = y;\n"
+        r"    const mini = y > 12 && d > 0;\n"
+        r"    /\* On the programme page the chrome clears out entirely once you are\n"
+        r"       reading forward, and slides back the moment you scroll back\. \*/\n"
+        r"    const prog = this\.state\.view === 'timetable' \|\| this\.state\.view === 'list'"
+        r" \|\| this\.state\.view == null;\n"
+        r"    const hide = prog && y > 16 && d > 0;\n"
+        r"    const next = \{\};\n"
+        r"    if \(mini !== this\.state\.barMini\) next\.barMini = mini;\n"
+        r"    if \(hide !== !!this\.state\.chromeHidden\) next\.chromeHidden = hide;\n"
+        r"    if \(Object\.keys\(next\)\.length\) this\.setState\(next\);\n"
+        r"  \}",
+        "  scrollSignal(key, y, el) {\n"
+        "    if (!this.lastPos) this.lastPos = {};\n"
+        "    const last = this.lastPos[key] || 0;\n"
+        "    const d = y - last;\n"
+        "    if (Math.abs(d) < 2) return;\n"
+        "    this.lastPos[key] = y;\n"
+        "    /* The scroll the bar's own movement fires, arriving in the other\n"
+        "       direction: ignored for as long as that movement lasts. */\n"
+        "    const now = performance.now();\n"
+        "    if (this.chromeAt && now - this.chromeAt < 320) return;\n"
+        "    /* At the end of the scroll the position is clamped and every\n"
+        "       further event is that echo, so the bar stays as it is. */\n"
+        "    const atEnd = !!el\n"
+        "      && (el.scrollTop + el.clientHeight >= el.scrollHeight - 16);\n"
+        "    const mini = y > 12 && d > 0;\n"
+        "    const prog = this.state.view === 'timetable' || this.state.view === 'list'"
+        " || this.state.view == null;\n"
+        "    /* A gesture, not a nudge: 10px of travel each way. */\n"
+        "    let hide = !!this.state.chromeHidden;\n"
+        "    if (prog && !atEnd) {\n"
+        "      if (d > 10 && y > 24) hide = true;\n"
+        "      else if (d < -10) hide = false;\n"
+        "    }\n"
+        "    const next = {};\n"
+        "    if (mini !== this.state.barMini) next.barMini = mini;\n"
+        "    if (hide !== !!this.state.chromeHidden) {\n"
+        "      next.chromeHidden = hide;\n"
+        "      this.chromeAt = now;\n"
+        "    }\n"
+        "    if (Object.keys(next).length) this.setState(next);\n"
+        "  }",
+        "the title bar hides once")
+    src = sub_once(
+        src,
+        r"  onScrollerScroll = \(e\) => \{ this\.scrollSignal\('grid',"
+        r" e\.currentTarget\.scrollTop\); \};",
+        "  onScrollerScroll = (e) => {\n"
+        "    const el = e.currentTarget;\n"
+        "    this.scrollSignal('grid', el.scrollTop, el);\n"
+        "  };",
+        "the scroller reports its end")
     src = sub_once(
         src,
         r"        switcherStyle: Object\.assign\(\{\}, cardSkin, \{\n"

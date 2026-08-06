@@ -4893,26 +4893,41 @@ class Component extends DCLogic {
 
   /* Any scrolling container can report progress; scrolling forward compacts
      the bottom bar to icons, scrolling back restores the labels. */
-  scrollSignal(key, y) {
+  scrollSignal(key, y, el) {
     if (!this.lastPos) this.lastPos = {};
     const last = this.lastPos[key] || 0;
     const d = y - last;
-    /* A small nudge is enough: 2px forward clears the chrome, 2px back brings
-       it straight down again. */
     if (Math.abs(d) < 2) return;
     this.lastPos[key] = y;
+    /* The scroll the bar's own movement fires, arriving in the other
+       direction: ignored for as long as that movement lasts. */
+    const now = performance.now();
+    if (this.chromeAt && now - this.chromeAt < 320) return;
+    /* At the end of the scroll the position is clamped and every
+       further event is that echo, so the bar stays as it is. */
+    const atEnd = !!el
+      && (el.scrollTop + el.clientHeight >= el.scrollHeight - 16);
     const mini = y > 12 && d > 0;
-    /* On the programme page the chrome clears out entirely once you are
-       reading forward, and slides back the moment you scroll back. */
     const prog = this.state.view === 'timetable' || this.state.view === 'list' || this.state.view == null;
-    const hide = prog && y > 16 && d > 0;
+    /* A gesture, not a nudge: 10px of travel each way. */
+    let hide = !!this.state.chromeHidden;
+    if (prog && !atEnd) {
+      if (d > 10 && y > 24) hide = true;
+      else if (d < -10) hide = false;
+    }
     const next = {};
     if (mini !== this.state.barMini) next.barMini = mini;
-    if (hide !== !!this.state.chromeHidden) next.chromeHidden = hide;
+    if (hide !== !!this.state.chromeHidden) {
+      next.chromeHidden = hide;
+      this.chromeAt = now;
+    }
     if (Object.keys(next).length) this.setState(next);
   }
 
-  onScrollerScroll = (e) => { this.scrollSignal('grid', e.currentTarget.scrollTop); };
+  onScrollerScroll = (e) => {
+    const el = e.currentTarget;
+    this.scrollSignal('grid', el.scrollTop, el);
+  };
 
   /* Park the controls bar just under the sticky title. */
   scrollToProgramme() {
@@ -7365,7 +7380,16 @@ class Component extends DCLogic {
         showWeather: onInfo && this.props.showWeather !== false,
         showWeatherWord: false,
         weatherToggleLabel: 'Weather and festival info',
-        toggleWeather: () => this.setState({ view: 'info', weatherOpen: true, note: 'Festival info' }),
+        toggleWeather: () => this.setState(
+          { view: 'info', weatherOpen: true, note: 'Weather' },
+          () => requestAnimationFrame(() => {
+            const el = document.getElementById('fp-weather');
+            if (!el) return;
+            const top = el.getBoundingClientRect().top + window.scrollY
+              - ((this.state.headerH || 0) + 12);
+            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+          })
+        ),
 
         headerInnerStyle: { position: 'relative', display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 16px 8px' },
         titleStyle: {
@@ -7402,21 +7426,18 @@ class Component extends DCLogic {
         },
         /* three small floating groups instead of one wide card, so the
            calendar keeps as much of the screen as possible */
-        controlsBarStyle: {
+        controlsBarStyle: Object.assign({
           display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto',
           gridTemplateAreas: '"days picks"',
-          rowGap: 0, columnGap: 0,
-          padding: 0, background: 'none', border: 0, boxShadow: 'none'
-        },
+          rowGap: 0, columnGap: 0, alignItems: 'center',
+          padding: '5px', borderRadius: '28px'
+        }, cardSkin),
         /* Picks, filter and search share one pill; the open field takes the row. */
-        actionsGroupStyle: Object.assign({}, cardSkin, {
+        actionsGroupStyle: {
           gridArea: 'picks', display: 'flex', alignItems: 'center',
-          gap: '4px', width: 'auto', marginInline: 0,
-          padding: '5px 5px 5px 2px',
-          borderStartEndRadius: '28px', borderEndEndRadius: '28px',
-          borderStartStartRadius: 0, borderEndStartRadius: 0,
-          borderInlineStart: 0, boxShadow: 'none'
-        }),
+          gap: '2px', width: 'auto', marginInline: 0, padding: 0,
+          background: 'none', border: 0, boxShadow: 'none'
+        },
         searchSlotStyle: { display: 'none' },
         searchOpen: false, searchShut: false,
         showHeaderSearchBtn: isProgView && !S.searchOpen,
@@ -7441,11 +7462,11 @@ class Component extends DCLogic {
             ? 'fp-search-out 260ms cubic-bezier(.3,0,.8,.15) both'
             : 'fp-search-in 440ms cubic-bezier(.05,.7,.1,1) both'
         },
-        daysGroupStyle: Object.assign({}, cardSkin, {
-          gridArea: 'days', position: 'relative', display: 'flex', gap: '4px', minWidth: 0,
-          padding: '5px', borderStartStartRadius: '28px', borderEndStartRadius: '28px',
-          borderStartEndRadius: 0, borderEndEndRadius: 0, borderInlineEnd: 0
-        }),
+        daysGroupStyle: {
+          gridArea: 'days', position: 'relative', display: 'flex',
+          gap: '4px', minWidth: 0, padding: 0,
+          background: 'none', border: 0, boxShadow: 'none'
+        },
         switcherStyle: { display: 'none' },
         switcherPuckStyle: {
           position: 'absolute', top: '5px', left: '10px', zIndex: 0, pointerEvents: 'none',
