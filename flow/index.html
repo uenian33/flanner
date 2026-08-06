@@ -5188,7 +5188,7 @@ class Component extends DCLogic {
   iconBtn(on, bg, fg) {
     return {
       flex: 'none', display: 'grid', placeItems: 'center', width: '40px', height: '40px',
-      border: 0, borderRadius: '50%',
+      border: 0, padding: 0, borderRadius: '50%',
       /* A faint resting container so the icon reads as a button, not a glyph. */
       background: on ? bg : 'var(--state6,rgba(25,29,19,.055))', color: on ? fg : 'var(--on-var,#494E42)',
       cursor: 'pointer', WebkitTapHighlightColor: 'transparent',
@@ -6394,7 +6394,7 @@ class Component extends DCLogic {
             })),
             starStyle: {
               position: 'absolute', bottom: starGap + 'px', insetInlineEnd: starGap + 'px',
-              display: 'grid', placeItems: 'center',
+              display: 'grid', placeItems: 'center', padding: 0,
               width: starBox + 'px', height: starBox + 'px', border: 0, borderRadius: '50%',
               background: dark ? 'var(--star-chip-on,rgba(255,255,255,.18))' : 'var(--star-chip,rgba(255,255,255,.6))', color: 'inherit', cursor: 'pointer'
             },
@@ -7550,8 +7550,8 @@ class Component extends DCLogic {
           }
         })),
         daysPuckStyle: {
-          position: 'absolute', top: '5px', left: '5px', zIndex: 0, pointerEvents: 'none',
-          width: 'calc((100% - ' + (10 + (this.DAYS.length - 1) * 4) + 'px) / '
+          position: 'absolute', top: 0, left: 0, zIndex: 0, pointerEvents: 'none',
+          width: 'calc((100% - ' + ((this.DAYS.length - 1) * 4) + 'px) / '
             + this.DAYS.length + ')', height: '40px', borderRadius: '20px',
           background: 'var(--sec,#DCE8C0)',
           transform: 'translateX(calc((100% + 4px) * ' + dayIdx + '))',

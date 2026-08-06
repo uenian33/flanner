@@ -1898,6 +1898,45 @@ def patch_nav(src: str) -> str:
         "          background: 'none', border: 0, boxShadow: 'none'\n"
         "        },",
         "the day group has no skin of its own")
+    # The puck was measured off a group that carried 5px of padding on every
+    # side; the padding belongs to the row now, so the puck starts at the
+    # group's own corner and each day is a clean third of it.
+    src = sub_once(
+        src,
+        r"        daysPuckStyle: \{\n"
+        r"          position: 'absolute', top: '5px', left: '5px', zIndex: 0,"
+        r" pointerEvents: 'none',\n"
+        r"          width: 'calc\(\(100% - ' \+ \(10 \+ \(this\.DAYS\.length - 1\) \* 4\)"
+        r" \+ 'px\) / '\n"
+        r"            \+ this\.DAYS\.length \+ '\)', height: '40px', borderRadius: '20px',",
+        "        daysPuckStyle: {\n"
+        "          position: 'absolute', top: 0, left: 0, zIndex: 0,"
+        " pointerEvents: 'none',\n"
+        "          width: 'calc((100% - ' + ((this.DAYS.length - 1) * 4) + 'px) / '\n"
+        "            + this.DAYS.length + ')', height: '40px', borderRadius: '20px',",
+        "the puck sits on the day")
+    # A button keeps the browser's own padding unless it is told not to, and a
+    # 20px chip with 6px of it either side has 8px of content box for a 15px
+    # glyph — which overflows, and an overflowing item is aligned to the start
+    # rather than centred, so the star sat 3.5px right of its circle.
+    src = sub_once(
+        src,
+        r"      position: 'absolute', bottom: starGap \+ 'px',"
+        r" insetInlineEnd: starGap \+ 'px',\n"
+        r"              display: 'grid', placeItems: 'center',\n",
+        "      position: 'absolute', bottom: starGap + 'px',"
+        " insetInlineEnd: starGap + 'px',\n"
+        "              display: 'grid', placeItems: 'center', padding: 0,\n",
+        "the star sits in the middle of its circle")
+    src = sub_once(
+        src,
+        r"      flex: 'none', display: 'grid', placeItems: 'center',"
+        r" width: '40px', height: '40px',\n"
+        r"      border: 0, borderRadius: '50%',",
+        "      flex: 'none', display: 'grid', placeItems: 'center',"
+        " width: '40px', height: '40px',\n"
+        "      border: 0, padding: 0, borderRadius: '50%',",
+        "the icon buttons keep no padding")
     # The weather chip in the title bar goes to the weather. It took the reader
     # to Info and unfolded the card, and then left them at the top of the page
     # with the festival card in the way — on a phone the two cards are stacked,
