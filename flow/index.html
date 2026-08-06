@@ -3960,7 +3960,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
   <header ref="{{ headerRef }}" style="{{ headerStyle }}">
     <div style="{{ headerInnerStyle }}">
-      <h1 style="{{ titleStyle }}"><sc-if value="{{ picksOn }}"><span style="color:var(--plan,#2E4B12)">Your </span></sc-if>Flow Festival 2026</h1>
+      <h1 style="{{ titleStyle }}"><sc-if value="{{ picksOn }}"><span data-fp-your="" style="color:var(--plan,#2E4B12)">Your </span></sc-if>Flow Festival 2026</h1>
       <sc-if value="{{ showHeroFold }}">
       <button sc-camel-on-click="{{ toggleHero }}" aria-expanded="{{ heroOpen }}" aria-controls="fp-hero" aria-label="{{ heroToggleLabel }}" title="{{ heroToggleLabel }}" style="{{ heroToggleStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
         <svg aria-hidden="true" style="{{ heroChevStyle }}"><use href="#i-chev"></use></svg>
@@ -5080,9 +5080,7 @@ class Component extends DCLogic {
     const next = { festivalPlanned: on };
     if (on) {
       next.burst = 'festival';
-      next.burstParts = this.makeBurst(this.HEART_COLORS);
-      next.burstAt = rect ? { x: Math.round(rect.left + rect.width / 2), y: Math.round(rect.top + rect.height / 2) } : null;
-      next.burstColor = 'var(--heart,#8F4C0A)';
+      this.spawnBurst(rect, this.HEART_COLORS, 'var(--heart,#8F4C0A)');
     } else if (this.state.burst === 'festival') next.burst = null;
     this.setState(next);
     clearTimeout(this.burstTimer);
@@ -5139,16 +5137,12 @@ class Component extends DCLogic {
       if (on) {
         next.burst = id;
         /* The sparks are the stage's colours, so the blast belongs
-           to the cell it came from rather than to a fixed green. */
+           to the cell it came from rather than to a fixed green — and
+           they are thrown into a layer of their own, over the page,
+           clear of the scrolling panes and of each other. */
         const sp = this.stageColor(ev.s);
-        next.burstParts = this.makeBurst(
-          [sp.dot, sp.bg, sp.planBg, sp.planFg, sp.dot]);
-        /* The burst lives in a fixed layer over the page, so it escapes the
-           scrolling panes and the dialog instead of being clipped by them. */
-        next.burstAt = rect
-          ? { x: Math.round(rect.left + rect.width / 2), y: Math.round(rect.top + rect.height / 2) }
-          : null;
-        next.burstColor = this.stageColor(ev.s).planBg;
+        this.spawnBurst(rect, [sp.dot, sp.bg, sp.planBg, sp.planFg, sp.dot],
+          sp.planBg);
       } else if (s.burst === id) next.burst = null;
       return next;
     });
@@ -5668,6 +5662,86 @@ class Component extends DCLogic {
     el.addEventListener('pointercancel', this.onSheetUp);
   }
 
+  /* ---- one blast per press, however fast they come ----
+     The blast was a single slot in the state — one id, one set of sparks, one
+     timer — so a second star pressed while the first was still going took the
+     slot from it, and the sparks, being the same elements re-rendered with new
+     values, never restarted their animations: the second press looked like
+     nothing happened. Each press gets its own layer now, built from the same
+     parts, played by the browser and thrown away when it is done. Nothing is
+     shared, so nothing has to wait. */
+  spawnBurst(rect, palette, colour) {
+    if (!rect || !rect.width) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const layer = document.createElement('div');
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.cssText = 'position:fixed;z-index:90;width:40px;height:40px;'
+      + 'pointer-events:none;color:' + colour + ';left:'
+      + (rect.left + rect.width / 2 - 20).toFixed(1) + 'px;top:'
+      + (rect.top + rect.height / 2 - 20).toFixed(1) + 'px';
+    this.makeBurst(palette).forEach(p => {
+      const el = document.createElement('i');
+      Object.keys(p.style).forEach(k => {
+        const v = p.style[k];
+        if (k.charAt(0) === '-') el.style.setProperty(k, v);
+        else el.style[k] = v;
+      });
+      layer.appendChild(el);
+    });
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 1300);
+  }
+
+  /* ---- the plan is yours, and the title says so ----
+     Turning the picks on puts the word Your in front of the festival's name,
+     which is easy to miss at the top of a screen you are not looking at. The
+     star's own answer is a ring flooding out of the button — a state
+     changing. This is not that: it is paper thrown, a dozen slips in the
+     festival's own colours leaving the word and falling past it. No ring, no
+     disc, nothing round: M3's own line is that expressive motion is for the
+     moments worth marking, and it is drawn from the palette that is already
+     on the page. */
+  celebratePicks() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const el = document.querySelector('[data-fp-your]');
+    if (!el || !el.animate) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width) return;
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const layer = document.createElement('div');
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.cssText = 'position:fixed;inset:0;z-index:95;pointer-events:none';
+    document.body.appendChild(layer);
+    const N = 14, pal = this.STAGE_PALETTE.length;
+    for (let i = 0; i < N; i++) {
+      const spin = i % 2 ? 1 : -1;
+      const w = 5 + (i % 3) * 2, h = 9 + (i % 4) * 3;
+      const p = document.createElement('i');
+      p.style.cssText = 'position:absolute;left:' + cx.toFixed(1) + 'px;top:'
+        + cy.toFixed(1) + 'px;width:' + w + 'px;height:' + h + 'px;border-radius:1.5px;'
+        + 'background:' + this.stageColor(i % pal).dot + ';will-change:transform,opacity';
+      layer.appendChild(p);
+      /* Thrown up and out of the word, then let go of. */
+      const a = -Math.PI / 2 + ((i / (N - 1)) - .5) * 2.3;
+      const far = 46 + (i % 5) * 18;
+      const midX = Math.cos(a) * far * .62, midY = Math.sin(a) * far;
+      const endX = Math.cos(a) * far, endY = midY + 30 + (i % 4) * 10;
+      p.animate([
+        { transform: 'translate(-50%,-50%) rotate(0deg) scale(.5)', opacity: 1,
+          easing: 'cubic-bezier(.05,.7,.1,1)' },
+        { offset: .42, opacity: 1,
+          transform: 'translate(calc(-50% + ' + midX.toFixed(1) + 'px),calc(-50% + '
+            + midY.toFixed(1) + 'px)) rotate(' + (150 * spin) + 'deg) scale(1)',
+          easing: 'cubic-bezier(.3,0,.8,.15)' },
+        { transform: 'translate(calc(-50% + ' + endX.toFixed(1) + 'px),calc(-50% + '
+            + endY.toFixed(1) + 'px)) rotate(' + (430 * spin) + 'deg) scale(.92)',
+          opacity: 0 }
+      ], { duration: 820 + (i % 4) * 120, fill: 'forwards' });
+    }
+    clearTimeout(this.paperT);
+    this.paperT = setTimeout(() => layer.remove(), 1300);
+  }
+
   /* ---- throw to dismiss ---- */
   sheetDragOn() {
     const el = this.sheetEl;
@@ -5963,9 +6037,9 @@ class Component extends DCLogic {
       top: 0, bottom: 0, left: 0, width: '96px', flexDirection: 'column',
       alignItems: 'center', padding: '18px 0 16px', gap: '4px'
     });
-    const chromeOff = mob && !!S.chromeHidden && !S.navOpen && !S.filtersOpen && !S.searchOpen;
-    /* What the controls do instead, which is stay. */
-    const barOff = false;
+    /* Both of them stay: the title bar at the top and the three
+       floating things at the foot. */
+    const chromeOff = false, barOff = false;
     const backW = mini ? 50 : 64;
     const clusterLeft = 'calc(50% - min(94vw, 430px) / 2)';
     const barStyle = Object.assign({}, navBase, {
@@ -7090,9 +7164,17 @@ class Component extends DCLogic {
         background: S.onlyPicks ? 'var(--plan,#2E4B12)' : 'var(--sec,#DCE8C0)', color: S.onlyPicks ? 'var(--on-plan,#EDF6DA)' : 'var(--on-sec,#1F2D0A)',
         cursor: 'pointer', transition: 'background-color .2s cubic-bezier(.2,0,0,1), color .2s cubic-bezier(.2,0,0,1)'
       },
-      togglePicks: () => this.setState(s => ({ onlyPicks: !s.onlyPicks, note: s.onlyPicks ? 'Showing the full programme' : 'Showing only your picks' })),
+      togglePicks: () => this.setState(
+        s => ({ onlyPicks: !s.onlyPicks,
+          note: s.onlyPicks ? 'Showing the full programme'
+            : 'Showing only your picks' }),
+        () => { if (this.state.onlyPicks) requestAnimationFrame(
+          () => this.celebratePicks()); }
+      ),
       burstParts: S.burstParts,
-      burstOpen: !!S.burst && !!S.burstAt,
+      /* The old single-slot layer is inert: every blast now brings
+         its own. */
+      burstOpen: false,
       burstLayerStyle: {
         position: 'fixed', zIndex: 90, width: '40px', height: '40px',
         left: ((S.burstAt ? S.burstAt.x : 0) - 20) + 'px',

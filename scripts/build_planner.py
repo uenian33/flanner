@@ -1205,6 +1205,86 @@ SHEET_JS = """
     el.addEventListener('pointercancel', this.onSheetUp);
   }
 
+  /* ---- one blast per press, however fast they come ----
+     The blast was a single slot in the state — one id, one set of sparks, one
+     timer — so a second star pressed while the first was still going took the
+     slot from it, and the sparks, being the same elements re-rendered with new
+     values, never restarted their animations: the second press looked like
+     nothing happened. Each press gets its own layer now, built from the same
+     parts, played by the browser and thrown away when it is done. Nothing is
+     shared, so nothing has to wait. */
+  spawnBurst(rect, palette, colour) {
+    if (!rect || !rect.width) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const layer = document.createElement('div');
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.cssText = 'position:fixed;z-index:90;width:40px;height:40px;'
+      + 'pointer-events:none;color:' + colour + ';left:'
+      + (rect.left + rect.width / 2 - 20).toFixed(1) + 'px;top:'
+      + (rect.top + rect.height / 2 - 20).toFixed(1) + 'px';
+    this.makeBurst(palette).forEach(p => {
+      const el = document.createElement('i');
+      Object.keys(p.style).forEach(k => {
+        const v = p.style[k];
+        if (k.charAt(0) === '-') el.style.setProperty(k, v);
+        else el.style[k] = v;
+      });
+      layer.appendChild(el);
+    });
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 1300);
+  }
+
+  /* ---- the plan is yours, and the title says so ----
+     Turning the picks on puts the word Your in front of the festival's name,
+     which is easy to miss at the top of a screen you are not looking at. The
+     star's own answer is a ring flooding out of the button — a state
+     changing. This is not that: it is paper thrown, a dozen slips in the
+     festival's own colours leaving the word and falling past it. No ring, no
+     disc, nothing round: M3's own line is that expressive motion is for the
+     moments worth marking, and it is drawn from the palette that is already
+     on the page. */
+  celebratePicks() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const el = document.querySelector('[data-fp-your]');
+    if (!el || !el.animate) return;
+    const r = el.getBoundingClientRect();
+    if (!r.width) return;
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const layer = document.createElement('div');
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.cssText = 'position:fixed;inset:0;z-index:95;pointer-events:none';
+    document.body.appendChild(layer);
+    const N = 14, pal = this.STAGE_PALETTE.length;
+    for (let i = 0; i < N; i++) {
+      const spin = i % 2 ? 1 : -1;
+      const w = 5 + (i % 3) * 2, h = 9 + (i % 4) * 3;
+      const p = document.createElement('i');
+      p.style.cssText = 'position:absolute;left:' + cx.toFixed(1) + 'px;top:'
+        + cy.toFixed(1) + 'px;width:' + w + 'px;height:' + h + 'px;border-radius:1.5px;'
+        + 'background:' + this.stageColor(i % pal).dot + ';will-change:transform,opacity';
+      layer.appendChild(p);
+      /* Thrown up and out of the word, then let go of. */
+      const a = -Math.PI / 2 + ((i / (N - 1)) - .5) * 2.3;
+      const far = 46 + (i % 5) * 18;
+      const midX = Math.cos(a) * far * .62, midY = Math.sin(a) * far;
+      const endX = Math.cos(a) * far, endY = midY + 30 + (i % 4) * 10;
+      p.animate([
+        { transform: 'translate(-50%,-50%) rotate(0deg) scale(.5)', opacity: 1,
+          easing: 'cubic-bezier(.05,.7,.1,1)' },
+        { offset: .42, opacity: 1,
+          transform: 'translate(calc(-50% + ' + midX.toFixed(1) + 'px),calc(-50% + '
+            + midY.toFixed(1) + 'px)) rotate(' + (150 * spin) + 'deg) scale(1)',
+          easing: 'cubic-bezier(.3,0,.8,.15)' },
+        { transform: 'translate(calc(-50% + ' + endX.toFixed(1) + 'px),calc(-50% + '
+            + endY.toFixed(1) + 'px)) rotate(' + (430 * spin) + 'deg) scale(.92)',
+          opacity: 0 }
+      ], { duration: 820 + (i % 4) * 120, fill: 'forwards' });
+    }
+    clearTimeout(this.paperT);
+    this.paperT = setTimeout(() => layer.remove(), 1300);
+  }
+
   /* ---- throw to dismiss ---- */
   sheetDragOn() {
     const el = this.sheetEl;
@@ -1957,6 +2037,81 @@ def patch_nav(src: str) -> str:
         "          })\n"
         "        ),",
         "the weather chip goes to the weather")
+
+    # Each press throws its own sparks, in its own layer.
+    src = sub_once(
+        src,
+        r"        next\.burst = id;\n"
+        r"        /\* The sparks are the stage's colours, so the blast belongs\n"
+        r"           to the cell it came from rather than to a fixed green\. \*/\n"
+        r"        const sp = this\.stageColor\(ev\.s\);\n"
+        r"        next\.burstParts = this\.makeBurst\(\n"
+        r"          \[sp\.dot, sp\.bg, sp\.planBg, sp\.planFg, sp\.dot\]\);\n"
+        r"        /\* The burst lives in a fixed layer over the page, so it escapes the\n"
+        r"           scrolling panes and the dialog instead of being clipped by them\. \*/\n"
+        r"        next\.burstAt = rect\n"
+        r"          \? \{ x: Math\.round\(rect\.left \+ rect\.width / 2\),"
+        r" y: Math\.round\(rect\.top \+ rect\.height / 2\) \}\n"
+        r"          : null;\n"
+        r"        next\.burstColor = this\.stageColor\(ev\.s\)\.planBg;",
+        "        next.burst = id;\n"
+        "        /* The sparks are the stage's colours, so the blast belongs\n"
+        "           to the cell it came from rather than to a fixed green — and\n"
+        "           they are thrown into a layer of their own, over the page,\n"
+        "           clear of the scrolling panes and of each other. */\n"
+        "        const sp = this.stageColor(ev.s);\n"
+        "        this.spawnBurst(rect, [sp.dot, sp.bg, sp.planBg, sp.planFg, sp.dot],\n"
+        "          sp.planBg);",
+        "a layer per star")
+    src = sub_once(
+        src,
+        r"      next\.burstParts = this\.makeBurst\(this\.HEART_COLORS\);\n"
+        r"      next\.burstAt = rect \? \{ x: Math\.round\(rect\.left \+ rect\.width / 2\),"
+        r" y: Math\.round\(rect\.top \+ rect\.height / 2\) \} : null;\n"
+        r"      next\.burstColor = 'var\(--heart,#8F4C0A\)';",
+        "      this.spawnBurst(rect, this.HEART_COLORS, 'var(--heart,#8F4C0A)');",
+        "a layer for the festival heart")
+    src = sub_once(
+        src,
+        r"      burstOpen: !!S\.burst && !!S\.burstAt,",
+        "      /* The old single-slot layer is inert: every blast now brings\n"
+        "         its own. */\n"
+        "      burstOpen: false,",
+        "the old burst layer stands down")
+    # And starring the whole plan is worth a celebration rather than a state
+    # change: the word Your throws paper.
+    src = sub_once(
+        src,
+        r"      togglePicks: \(\) => this\.setState\(s => \(\{ onlyPicks: !s\.onlyPicks,"
+        r" note: s\.onlyPicks \? 'Showing the full programme'"
+        r" : 'Showing only your picks' \}\)\),",
+        "      togglePicks: () => this.setState(\n"
+        "        s => ({ onlyPicks: !s.onlyPicks,\n"
+        "          note: s.onlyPicks ? 'Showing the full programme'\n"
+        "            : 'Showing only your picks' }),\n"
+        "        () => { if (this.state.onlyPicks) requestAnimationFrame(\n"
+        "          () => this.celebratePicks()); }\n"
+        "      ),",
+        "the plan is worth a celebration")
+
+    # ---- the title bar stays ----
+    # It hid itself on the way down and came back on the way up, which is a
+    # pattern for a page of text rather than for a grid you drag in two
+    # directions: every diagonal drag read as forward, and hiding it changed
+    # the height of the page, which fired the scroll that brought it back. It
+    # is 56px, it names the festival and it holds the weather and the search.
+    # It stays, and the rule below is what is left of the mechanism — the bar
+    # at the foot still compacts itself, which costs nothing and moves nothing.
+    src = sub_once(
+        src,
+        r"    const chromeOff = mob && !!S\.chromeHidden"
+        r" && !S\.navOpen && !S\.filtersOpen && !S\.searchOpen;\n"
+        r"    /\* What the controls do instead, which is stay\. \*/\n"
+        r"    const barOff = false;",
+        "    /* Both of them stay: the title bar at the top and the three\n"
+        "       floating things at the foot. */\n"
+        "    const chromeOff = false, barOff = false;",
+        "the title bar stays")
 
     # ---- the title bar hides once, not once a frame ----
     # Hiding it changes the height of the page, which fires a scroll of its
@@ -2983,6 +3138,13 @@ def patch_template(tpl: str, fest: Festival) -> str:
     tpl = sub_once(tpl, r'    <article style="\{\{ heroCardStyle \}\}" ref="\{\{ heroCardRef \}\}">',
                    '    <article data-fp-card="" style="{{ heroCardStyle }}" '
                    'ref="{{ heroCardRef }}">', "festival card mark")
+
+    # The word the celebration throws its paper from.
+    tpl = sub_once(
+        tpl,
+        r'<span style="color:var\(--plan,#2E4B12\)">Your </span>',
+        '<span data-fp-your="" style="color:var(--plan,#2E4B12)">Your </span>',
+        "the word Your")
 
     # The page behind the sheet, marked so it can step back while one is open.
     tpl = sub_once(tpl, r'<div style="\{\{ shellStyle \}\}">',
