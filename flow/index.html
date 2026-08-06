@@ -1445,6 +1445,18 @@ svg.leaflet-image-layer.leaflet-interactive path {
    that ends in an ellipsis is one line and has nothing to justify. */
 [data-fp-shell] p,.ac p,.bio__text{
   text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+/* The measure belongs to the column, not to each paragraph: a ch is a
+   function of the font size, so a cap on every paragraph gives one width to
+   the introduction and another to the note beside it, and the column goes
+   ragged down its right edge. M3's readable line is 40–60 characters; the
+   card's own column is inside that at every width it is drawn, and the two
+   paragraphs the page has outside the card take the ceiling here. */
+[data-fp-shell] p{max-inline-size:66ch}
+/* The introduction was set at 15/1.55, between the type scale's two body
+   sizes. At Body Medium it is the size every other piece of supporting text
+   on the page is, and four more characters fit on each line — which is four
+   fewer spaces for the justification to stretch. */
+.bio__text{font-size:14px;line-height:20px;letter-spacing:.25px}
 [style*="text-align:center"] p,[style*="text-align: center"] p{
   text-align:center;hyphens:manual;-webkit-hyphens:manual}
 /* No double-tap zoom, and no rubber-banding past the page. */

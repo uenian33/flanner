@@ -405,6 +405,13 @@ button,a[href],[role=button],input,select{min-height:0}
    block looking broken. Headings, labels, chips and anything that ends in an
    ellipsis are one line, and one line has nothing to justify. */
 p,dd,blockquote,.lead{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+/* And a measure to justify inside. M3 puts a readable line at 40–60
+   characters, and the ceiling belongs to the column rather than to each
+   paragraph: a ch is a function of the font size, so capping every paragraph
+   gave the lead one width, the body another and the note a third, and the
+   column went ragged down its right edge. One measure, on the container, and
+   every paragraph in it ends where the one above it ends. */
+.wrap > article,.doc,.prose{max-inline-size:66ch}
 .endcap p,.empty,.empty p,
 [style*="text-align:center"] p,[style*="text-align: center"] p{
   text-align:center;hyphens:manual;-webkit-hyphens:manual}
