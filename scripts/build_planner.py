@@ -151,6 +151,10 @@ class Festival:
                 "cat": max(set(cats), key=cats.count),
                 "lat": s["lat"], "lng": s["lon"],
                 "note": s.get("blurb") or s.get("location") or "",
+                # Where it actually is, in the organiser's own words — the
+                # street or the corner, which is what a map app is given and
+                # what someone standing in the festival reads.
+                "where": s.get("location") or "",
             })
         return out
 
@@ -2234,14 +2238,11 @@ def patch_map(src: str, fest: Festival) -> str:
     # three sides and a 4dp one at the point — and it sits on M3's level-2
     # elevation.
     #
-    # And they are one colour, not ten. The stage palettes do real work in the
-    # timetable, where a column of colour is how you read the grid, and in the
-    # row and the card, where one act is one stage. Ten of them side by side on
-    # a pale map is the page spending colour on nothing: the pins are numbered,
-    # and the number is what tells you which stage this is. So every pin takes
-    # the same secondary container the rest of the app puts its quiet emphasis
-    # in — and the one you have just asked for takes the plan colour while it
-    # beats, which is colour spent on state, which is what M3 spends it on.
+    # The colour is the cell's: the container the timetable draws a set in,
+    # with the ink it writes the name in. A pin and the column it belongs to
+    # are then the same colour, which is the one thing colour has to say here.
+    # The one you have just asked for takes the plan colour while it beats,
+    # which is colour spent on state — what M3 spends it on.
     src = sub_once(
         src,
         r"      const html = '<div style=\"width:32px;height:32px;"
@@ -2251,13 +2252,15 @@ def patch_map(src: str, fest: Festival) -> str:
         r"        '<span style=\"transform:rotate\(45deg\);"
         r"font:700 14px Inter,system-ui,sans-serif;color:' \+ c\.fg \+ '\">' \+ st\.n"
         r" \+ '</span></div>';",
-        "      /* The resting colour is in the stylesheet, not here: the state\n"
-        "         below sets an inline background and clears it again, and a\n"
-        "         cleared inline style has to fall back to something. */\n"
+        "      /* The resting colour is set through a variable, not written in:\n"
+        "         the state below sets an inline background and clears it\n"
+        "         again, and a cleared inline style has to fall back to\n"
+        "         something. */\n"
         "      const html = '<div data-fp-pin=\"\" style=\"width:34px;height:34px;"
         "border-radius:20px 20px 20px 4px;transform:rotate(-45deg);"
         "box-shadow:0 1px 2px rgba(20,24,14,.30),"
         "0 2px 6px 2px rgba(20,24,14,.15);"
+        "--pin:' + c.bg + ';--pin-on:' + c.fg + ';"
         "display:grid;place-items:center\">' +\n"
         "        '<span style=\"transform:rotate(45deg);"
         "font:600 14px/20px Inter,system-ui,sans-serif;letter-spacing:.1px;"
@@ -2283,14 +2286,95 @@ def patch_map(src: str, fest: Festival) -> str:
         "color:var(--on-var,#494E42)\">' +",
         "map popup type")
 
-    # Pressing the row does what pressing the arrow beside a set does: it
-    # takes the map to the stage and the pin answers. The row only moved the
-    # map before, which left the reader looking for what had changed.
+    # Pressing the row does what pressing the arrow beside a set does — it
+    # takes the map to the stage and the pin answers — and it opens the row,
+    # which is where the address is and the two ways of leaving with it. One
+    # row is open at a time; pressing it again closes it.
     src = sub_once(
         src,
         r"        onClick: \(\) => this\.focusStage\(i\)\n      \};\n    \}\);",
-        "        onClick: () => this.navigateTo(i)\n      };\n    });",
-        "stage row goes to the map")
+        "        open: S.stageOpen === i,\n"
+        "        where: st.where || st.note,\n"
+        "        panelStyle: {\n"
+        "          overflow: 'hidden', borderRadius: '0 0 16px 16px',\n"
+        "          maxBlockSize: S.stageOpen === i ? '200px' : '0px',\n"
+        "          opacity: S.stageOpen === i ? 1 : 0,\n"
+        "          transition: 'max-block-size .4s cubic-bezier(.2,0,0,1),"
+        " opacity .2s cubic-bezier(.2,0,0,1)'\n"
+        "        },\n"
+        "        panelInnerStyle: {\n"
+        "          display: 'grid', gap: '10px', padding: '4px 12px 12px 12px'\n"
+        "        },\n"
+        "        whereStyle: {\n"
+        "          display: 'flex', alignItems: 'flex-start', gap: '8px',\n"
+        "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.25px',\n"
+        "          color: 'var(--on-var,#494E42)'\n"
+        "        },\n"
+        "        actionsStyle: { display: 'flex', flexWrap: 'wrap', gap: '8px' },\n"
+        "        /* M3 buttons at the sizes M3 states: a tonal one for the\n"
+        "           action you are most likely to want, an outlined one beside\n"
+        "           it, both 40 tall on a full-round corner. */\n"
+        "        openMapStyle: {\n"
+        "          display: 'inline-flex', alignItems: 'center', gap: '8px',\n"
+        "          height: '40px', padding: '0 16px', border: 0,\n"
+        "          borderRadius: '20px', background: 'var(--sec,#DCE8C0)',\n"
+        "          color: 'var(--on-sec,#1F2D0A)', fontFamily: 'inherit',\n"
+        "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',\n"
+        "          fontWeight: 500, cursor: 'pointer'\n"
+        "        },\n"
+        "        walkStyle: {\n"
+        "          display: 'inline-flex', alignItems: 'center', gap: '8px',\n"
+        "          height: '40px', padding: '0 16px',\n"
+        "          border: '1px solid var(--outline,#C7CBBA)',\n"
+        "          borderRadius: '20px', background: 'none',\n"
+        "          color: 'var(--on,#191D13)', fontFamily: 'inherit',\n"
+        "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',\n"
+        "          fontWeight: 500, cursor: 'pointer'\n"
+        "        },\n"
+        "        onOpenMap: (e) => { e.stopPropagation(); this.mapLink(i, false); },\n"
+        "        onWalk: (e) => { e.stopPropagation(); this.mapLink(i, true); },\n"
+        "        onClick: () => {\n"
+        "          this.navigateTo(i);\n"
+        "          this.setState(s => ({ stageOpen: s.stageOpen === i ? null : i }));\n"
+        "        }\n      };\n    });",
+        "stage row opens")
+
+    # The two ways of leaving with an address. A phone's own map app is what
+    # opens either one: Apple's on an Apple device, and everywhere else the
+    # geo: scheme, which is the one Android hands to whichever map app the
+    # reader has set as theirs. The https link is the fallback for a desktop
+    # browser, which has no map app to hand it to.
+    src = sub_once(
+        src,
+        r"  /\* Marker blast: an expanding ring at the stage plus a pop on the pin itself\. \*/",
+        "  mapLink(i, walk) {\n"
+        "    const st = this.STAGES[i];\n"
+        "    if (!st) return;\n"
+        "    const ll = st.lat + ',' + st.lng;\n"
+        "    const label = encodeURIComponent(st.name);\n"
+        "    const ua = navigator.userAgent || '';\n"
+        "    const apple = /iPad|iPhone|iPod/.test(ua)\n"
+        "      || (/Macintosh/.test(ua) && 'ontouchend' in document);\n"
+        "    let url;\n"
+        "    if (apple) {\n"
+        "      url = walk\n"
+        "        ? 'maps://?daddr=' + ll + '&dirflg=w'\n"
+        "        : 'maps://?ll=' + ll + '&q=' + label;\n"
+        "    } else if (/Android/.test(ua)) {\n"
+        "      url = walk\n"
+        "        ? 'google.navigation:q=' + ll + '&mode=w'\n"
+        "        : 'geo:' + ll + '?q=' + ll + '(' + label + ')';\n"
+        "    } else {\n"
+        "      url = walk\n"
+        "        ? 'https://www.google.com/maps/dir/?api=1&destination=' + ll\n"
+        "          + '&travelmode=walking'\n"
+        "        : 'https://www.google.com/maps/search/?api=1&query=' + ll;\n"
+        "    }\n"
+        "    try { window.open(url, '_blank', 'noopener'); }\n"
+        "    catch (e) { location.href = url; }\n"
+        "  }\n\n"
+        "  /* Marker blast: an expanding ring at the stage plus a pop on the pin itself. */",
+        "map links")
 
     # ---- pressing a stage takes the map to it ----
     # It jumped: setView with animate:true is a pan at one speed, and at a zoom
@@ -2443,10 +2527,10 @@ def patch_map(src: str, fest: Festival) -> str:
         r" color: c\.fg, fontSize: '13px', fontWeight: 700 \},",
         "        numStyle: { flex: 'none', display: 'grid', placeItems: 'center',\n"
         "          width: '32px', height: '32px', borderRadius: '12px',\n"
-        "          /* The pin's colour, for the same reason: the number is what\n"
-        "             identifies the stage, and ten hues down a list of ten\n"
-        "             rows is colour spent on nothing. */\n"
-        "          background: 'var(--sec,#DCE8C0)', color: 'var(--on-sec,#1F2D0A)',\n"
+        "          /* One dark container down the list, so the numbers read as\n"
+        "             a set rather than as ten separate colours; the stage's\n"
+        "             own colour is on its pin and in its column. */\n"
+        "          background: 'var(--on,#191D13)', color: 'var(--low,#F8F7F3)',\n"
         "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',\n"
         "          fontWeight: 600 },\n"
         "        nameStyle: mob\n"
@@ -2484,11 +2568,21 @@ def patch_map(src: str, fest: Festival) -> str:
         "          alignItems: mob ? 'center' : 'flex-start',\n"
         "          width: '100%', minBlockSize: mob ? '56px' : 'auto',\n"
         "          padding: mob ? '8px 8px 8px 10px' : '16px', border: 0,\n"
-        "          borderRadius: mob ? '16px' : '24px',\n"
-        "          background: 'var(--card,#F2F0EB)', fontFamily: 'inherit',\n"
+        "          /* On a phone the surface belongs to the wrapper, so the row\n"
+        "             and the panel that opens under it are one card. */\n"
+        "          borderRadius: mob ? '0px' : '24px',\n"
+        "          background: mob ? 'transparent' : 'var(--card,#F2F0EB)',\n"
+        "          fontFamily: 'inherit',\n"
         "          cursor: 'pointer', textAlign: 'start',\n"
         "          transition: 'background .2s cubic-bezier(.2,0,0,1)'\n"
         "        },\n"
+        "        /* The surface for both, and no clipping on it: the row is a\n"
+        "           grid item, and a grid item that hides its overflow is sized\n"
+        "           from something other than its contents here. The panel does\n"
+        "           its own clipping — it is the only part that needs it. */\n"
+        "        wrapStyle: mob\n"
+        "          ? { background: 'var(--card,#F2F0EB)', borderRadius: '16px' }\n"
+        "          : null,\n"
         "        goStyle: { flex: 'none', marginInlineStart: 'auto',\n"
         "          inlineSize: '20px', blockSize: '20px', fill: 'currentColor',\n"
         "          color: 'var(--on-var,#494E42)', opacity: .7 },",
@@ -2614,6 +2708,19 @@ def patch_template(tpl: str, fest: Festival) -> str:
         r'            <span style="\{\{ s\.numStyle \}\}">\{\{ s\.n \}\}</span>',
         '            <span style="{{ s.numStyle }}">{{ s.n }}</span>',
         "stage row number")
+    # The row and the panel under it are one item of the list, wrapped in one
+    # element: the aside is a grid, and two items in two auto rows meant the
+    # panel's row was sized from a box the animation had just set to zero — it
+    # stayed zero however tall its contents were. Inside a block of its own it
+    # is an ordinary box that opens.
+    tpl = sub_once(
+        tpl,
+        r'        <sc-for list="\{\{ stageCards \}\}" as="s" hint-placeholder-count="5">\n'
+        r'          <button',
+        '        <sc-for list="{{ stageCards }}" as="s" hint-placeholder-count="5">\n'
+        '          <div style="{{ s.wrapStyle }}">\n'
+        '          <button',
+        "stage row wrapper")
     tpl = sub_once(
         tpl,
         r'(            </span>\n)(          </button>\n        </sc-for>\n      </aside>)',
@@ -2622,8 +2729,32 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '              <svg aria-hidden="true" style="{{ s.goStyle }}">'
         '<use href="#i-near"></use></svg>\n'
         '            </sc-if>\n'
-        '          </button>\n        </sc-for>\n      </aside>',
-        "stage row arrow")
+        '          </button>\n'
+        '          <div style="{{ s.panelStyle }}">\n'
+        '            <div style="{{ s.panelInnerStyle }}">\n'
+        '              <p style="{{ s.whereStyle }}">\n'
+        '                <svg aria-hidden="true" style="flex:none;'
+        'width:18px;height:18px;fill:currentColor;margin-top:1px">'
+        '<use href="#i-pin"></use></svg>\n'
+        '                <span>{{ s.where }}</span>\n'
+        '              </p>\n'
+        '              <div style="{{ s.actionsStyle }}">\n'
+        '                <button sc-camel-on-click="{{ s.onOpenMap }}" '
+        'style="{{ s.openMapStyle }}">\n'
+        '                  <svg aria-hidden="true" style="width:18px;height:18px;'
+        'fill:currentColor"><use href="#i-pin"></use></svg>Open map\n'
+        '                </button>\n'
+        '                <button sc-camel-on-click="{{ s.onWalk }}" '
+        'style="{{ s.walkStyle }}">\n'
+        '                  <svg aria-hidden="true" style="width:18px;height:18px;'
+        'fill:currentColor"><use href="#i-near"></use></svg>Walk there\n'
+        '                </button>\n'
+        '              </div>\n'
+        '            </div>\n'
+        '          </div>\n'
+        '          </div>\n'
+        '        </sc-for>\n      </aside>',
+        "stage row panel")
 
     # The three lines of a list row were written at one size for every screen;
     # they are the row's own now, so a phone can take the scale down a step.
@@ -3469,10 +3600,9 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
   70%{opacity:.14}
   100%{transform:scale(2.9);opacity:0}
 }
-/* Every pin at rest is the one quiet container the app puts emphasis in; the
-   stage it stands for is the number written on it. */
+/* A pin is the colour of the cells in its column. */
 [data-fp-pin]{
-  background:var(--sec,#DCE8C0);color:var(--on-sec,#1F2D0A);
+  background:var(--pin,var(--sec,#DCE8C0));color:var(--pin-on,var(--on-sec,#1F2D0A));
   transition:background .3s cubic-bezier(.2,0,0,1),color .3s cubic-bezier(.2,0,0,1)}
 @media (prefers-reduced-motion:reduce){
   /* The map still travels to the stage; it just does not beat about it. */
