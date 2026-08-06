@@ -2353,11 +2353,20 @@ def patch_map(src: str, fest: Festival) -> str:
         "          background: c.planBg, color: c.planFg,\n"
         "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',\n"
         "          fontWeight: 600 },\n"
-        "        nameStyle: { fontSize: '16px', lineHeight: '24px',\n"
-        "          letterSpacing: '.15px', fontWeight: 500 },\n"
+        "        nameStyle: mob\n"
+        "          ? { fontSize: '14px', lineHeight: '20px',\n"
+        "              letterSpacing: '.1px', fontWeight: 600 }\n"
+        "          : { fontSize: '16px', lineHeight: '24px',\n"
+        "              letterSpacing: '.15px', fontWeight: 500 },\n"
         "        noteStyle: { fontSize: '14px', lineHeight: '20px',\n"
-        "          letterSpacing: '.25px', color: 'var(--on-var,#494E42)',\n"
-        "          textAlign: 'justify', hyphens: 'auto' },\n"
+        "          letterSpacing: '.25px', color: 'var(--on-var,#494E42)' },\n"
+        "        /* On a phone the row is the stage and the way to it. What the\n"
+        "           stage is like is two lines of prose per row and ten rows of\n"
+        "           it under a map you are trying to read; the act's own card\n"
+        "           carries it. The row becomes M3's one-line list item — 56dp,\n"
+        "           its number leading, the arrow that says it goes somewhere\n"
+        "           trailing. */\n"
+        "        showNote: !mob, showGo: mob,\n"
         "        countStyle: { fontSize: '14px', lineHeight: '20px',\n"
         "          letterSpacing: '.1px', fontWeight: 500,\n"
         "          color: 'var(--primary,#4C662B)' },\n"
@@ -2366,6 +2375,28 @@ def patch_map(src: str, fest: Festival) -> str:
         "           read. A phone keeps the stage and what it is. */\n"
         "        showCount: !mob,",
         "stage card type")
+    # The row itself: a one-line list item on a phone, a card with a paragraph
+    # in it above that.
+    src = sub_once(
+        src,
+        r"        style: \{ display: 'flex', gap: '14px', alignItems: 'flex-start',"
+        r" width: '100%', padding: '16px', border: 0, borderRadius: '24px',"
+        r" background: 'var\(--card,#F2F0EB\)', fontFamily: 'inherit',"
+        r" cursor: 'pointer', textAlign: 'start' \},",
+        "        style: {\n"
+        "          display: 'flex', gap: mob ? '12px' : '14px',\n"
+        "          alignItems: mob ? 'center' : 'flex-start',\n"
+        "          width: '100%', minBlockSize: mob ? '56px' : 'auto',\n"
+        "          padding: mob ? '8px 8px 8px 10px' : '16px', border: 0,\n"
+        "          borderRadius: mob ? '16px' : '24px',\n"
+        "          background: 'var(--card,#F2F0EB)', fontFamily: 'inherit',\n"
+        "          cursor: 'pointer', textAlign: 'start',\n"
+        "          transition: 'background .2s cubic-bezier(.2,0,0,1)'\n"
+        "        },\n"
+        "        goStyle: { flex: 'none', marginInlineStart: 'auto',\n"
+        "          inlineSize: '20px', blockSize: '20px', fill: 'currentColor',\n"
+        "          color: 'var(--on-var,#494E42)', opacity: .7 },",
+        "stage row")
 
     src = sub_once(
         src,
@@ -2472,11 +2503,31 @@ def patch_template(tpl: str, fest: Festival) -> str:
         r'              <span style="font-size:12\.5px;font-weight:500;'
         r'color:var\(--primary,#4C662B\)">\{\{ s\.count \}\}</span>',
         '              <span style="{{ s.nameStyle }}">{{ s.name }}</span>\n'
-        '              <span style="{{ s.noteStyle }}">{{ s.note }}</span>\n'
+        '              <sc-if value="{{ s.showNote }}" hint-placeholder-val="{{ true }}">\n'
+        '                <span style="{{ s.noteStyle }}">{{ s.note }}</span>\n'
+        '              </sc-if>\n'
         '              <sc-if value="{{ s.showCount }}" hint-placeholder-val="{{ true }}">\n'
         '                <span style="{{ s.countStyle }}">{{ s.count }}</span>\n'
         '              </sc-if>',
         "stage card lines")
+
+    # The arrow that says the row goes somewhere — the same glyph the row in
+    # the programme uses for it.
+    tpl = sub_once(
+        tpl,
+        r'            <span style="\{\{ s\.numStyle \}\}">\{\{ s\.n \}\}</span>',
+        '            <span style="{{ s.numStyle }}">{{ s.n }}</span>',
+        "stage row number")
+    tpl = sub_once(
+        tpl,
+        r'(            </span>\n)(          </button>\n        </sc-for>\n      </aside>)',
+        '            </span>\n'
+        '            <sc-if value="{{ s.showGo }}">\n'
+        '              <svg aria-hidden="true" style="{{ s.goStyle }}">'
+        '<use href="#i-near"></use></svg>\n'
+        '            </sc-if>\n'
+        '          </button>\n        </sc-for>\n      </aside>',
+        "stage row arrow")
 
     # The three lines of a list row were written at one size for every screen;
     # they are the row's own now, so a phone can take the scale down a step.
@@ -3304,29 +3355,19 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
   font-family:inherit;font-size:11px;line-height:16px;letter-spacing:.5px}
 .leaflet-control-attribution a{color:var(--primary,#4C662B)}
 
-/* ---- prose runs to both edges ----
-   The same rule the rest of the site takes, in the planner's own words: body
-   copy is justified rather than ragged, with hyphenation, because justifying
-   a 40-character measure without it opens rivers between the words. The card
-   is outside the shell, so it is named too. A paragraph inside a centred
-   block — the empty states — keeps its centre; a heading, a label or a line
-   that ends in an ellipsis is one line and has nothing to justify. */
-[data-fp-shell] p,.ac p,.bio__text{
-  text-align:justify;hyphens:auto;-webkit-hyphens:auto}
-/* The measure belongs to the column, not to each paragraph: a ch is a
-   function of the font size, so a cap on every paragraph gives one width to
-   the introduction and another to the note beside it, and the column goes
-   ragged down its right edge. M3's readable line is 40–60 characters; the
-   card's own column is inside that at every width it is drawn, and the two
-   paragraphs the page has outside the card take the ceiling here. */
+/* ---- the measure ----
+   M3 puts a readable line at 40–60 characters. Nothing in the planner is
+   justified: every measure here is a card's width, and justification needs a
+   line long enough to absorb the stretch — under about 55 characters the
+   spaces open so far to reach the right edge that the paragraph reads as full
+   of holes. The written pages, which hold a 66ch column, are where the site
+   justifies. What the planner takes from the same rule is the ceiling, for
+   the two paragraphs it has outside the card. */
 [data-fp-shell] p{max-inline-size:66ch}
 /* The introduction was set at 15/1.55, between the type scale's two body
    sizes. At Body Medium it is the size every other piece of supporting text
-   on the page is, and four more characters fit on each line — which is four
-   fewer spaces for the justification to stretch. */
-.bio__text{font-size:14px;line-height:20px;letter-spacing:.25px}
-[style*="text-align:center"] p,[style*="text-align: center"] p{
-  text-align:center;hyphens:manual;-webkit-hyphens:manual}"""
+   in the card is. */
+.bio__text{font-size:14px;line-height:20px;letter-spacing:.25px}"""
 
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}

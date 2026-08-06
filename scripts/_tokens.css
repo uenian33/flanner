@@ -395,23 +395,30 @@ button,a[href],[role=button],input,select{min-height:0}
   button,[role=button]{min-height:48px}
 }
 
-/* ── prose runs to both edges ──────────────────────────
-   Body copy is justified rather than ragged, at the user's request. Two
-   things go with it. Hyphenation, because justification without it opens
-   rivers between the words at a phone's measure — the browser breaks the long
-   words instead of stretching the spaces around them. And the exceptions
-   below: a paragraph that a centred block has centred stays centred, since
-   justify would take its last line back to the leading edge and leave the
-   block looking broken. Headings, labels, chips and anything that ends in an
-   ellipsis are one line, and one line has nothing to justify. */
-p,dd,blockquote,.lead{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
-/* And a measure to justify inside. M3 puts a readable line at 40–60
-   characters, and the ceiling belongs to the column rather than to each
-   paragraph: a ch is a function of the font size, so capping every paragraph
-   gave the lead one width, the body another and the note a third, and the
-   column went ragged down its right edge. One measure, on the container, and
-   every paragraph in it ends where the one above it ends. */
-.wrap > article,.doc,.prose{max-inline-size:66ch}
+/* ── prose runs to both edges, where there is room ────
+   Body copy is justified rather than ragged, at the user's request — but
+   justification needs a line long enough to absorb the stretch. M3 puts a
+   readable line at 40–60 characters, and below about 55 the spaces have to
+   open so far to reach the right edge that the paragraph reads as full of
+   holes. So it is the long-form column that is justified — the written pages,
+   which hold a 66ch measure — and the app's own copy, which is a card's width
+   and never near that, is left ragged.
+
+   Hyphenation goes with the justified column: the browser breaks a long word
+   rather than stretching the spaces around it. The measure is on the column
+   and not on each paragraph, because a ch is a function of the font size, and
+   capping every paragraph gave the lead one width and the body another. */
+.wrap > article,.doc,.prose{
+  max-inline-size:66ch;container-type:inline-size;container-name:prose}
+/* And only once the column is wide enough to be justified into. A phone holds
+   about 45 characters of this size, which is under the 55 it takes for the
+   spaces to close up; below that the column is set ragged and reads as
+   written rather than as stretched. 28rem is where the measure crosses. */
+@container prose (min-width: 28rem){
+  .wrap > article p,.wrap > article dd,.wrap > article li,
+  .doc p,.doc li,.prose p,.prose li,.lead{
+    text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+}
 .endcap p,.empty,.empty p,
 [style*="text-align:center"] p,[style*="text-align: center"] p{
   text-align:center;hyphens:manual;-webkit-hyphens:manual}

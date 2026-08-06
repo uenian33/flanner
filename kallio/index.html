@@ -1436,29 +1436,19 @@ svg.leaflet-image-layer.leaflet-interactive path {
   font-family:inherit;font-size:11px;line-height:16px;letter-spacing:.5px}
 .leaflet-control-attribution a{color:var(--primary,#4C662B)}
 
-/* ---- prose runs to both edges ----
-   The same rule the rest of the site takes, in the planner's own words: body
-   copy is justified rather than ragged, with hyphenation, because justifying
-   a 40-character measure without it opens rivers between the words. The card
-   is outside the shell, so it is named too. A paragraph inside a centred
-   block — the empty states — keeps its centre; a heading, a label or a line
-   that ends in an ellipsis is one line and has nothing to justify. */
-[data-fp-shell] p,.ac p,.bio__text{
-  text-align:justify;hyphens:auto;-webkit-hyphens:auto}
-/* The measure belongs to the column, not to each paragraph: a ch is a
-   function of the font size, so a cap on every paragraph gives one width to
-   the introduction and another to the note beside it, and the column goes
-   ragged down its right edge. M3's readable line is 40–60 characters; the
-   card's own column is inside that at every width it is drawn, and the two
-   paragraphs the page has outside the card take the ceiling here. */
+/* ---- the measure ----
+   M3 puts a readable line at 40–60 characters. Nothing in the planner is
+   justified: every measure here is a card's width, and justification needs a
+   line long enough to absorb the stretch — under about 55 characters the
+   spaces open so far to reach the right edge that the paragraph reads as full
+   of holes. The written pages, which hold a 66ch column, are where the site
+   justifies. What the planner takes from the same rule is the ceiling, for
+   the two paragraphs it has outside the card. */
 [data-fp-shell] p{max-inline-size:66ch}
 /* The introduction was set at 15/1.55, between the type scale's two body
    sizes. At Body Medium it is the size every other piece of supporting text
-   on the page is, and four more characters fit on each line — which is four
-   fewer spaces for the justification to stretch. */
+   in the card is. */
 .bio__text{font-size:14px;line-height:20px;letter-spacing:.25px}
-[style*="text-align:center"] p,[style*="text-align: center"] p{
-  text-align:center;hyphens:manual;-webkit-hyphens:manual}
 /* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 /* The bounce again, for the scrollers inside the page. The timetable, the
@@ -4323,11 +4313,16 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <span style="{{ s.numStyle }}">{{ s.n }}</span>
             <span style="min-width:0;display:grid;gap:4px;text-align:start">
               <span style="{{ s.nameStyle }}">{{ s.name }}</span>
-              <span style="{{ s.noteStyle }}">{{ s.note }}</span>
+              <sc-if value="{{ s.showNote }}" hint-placeholder-val="{{ true }}">
+                <span style="{{ s.noteStyle }}">{{ s.note }}</span>
+              </sc-if>
               <sc-if value="{{ s.showCount }}" hint-placeholder-val="{{ true }}">
                 <span style="{{ s.countStyle }}">{{ s.count }}</span>
               </sc-if>
             </span>
+            <sc-if value="{{ s.showGo }}">
+              <svg aria-hidden="true" style="{{ s.goStyle }}"><use href="#i-near"></use></svg>
+            </sc-if>
           </button>
         </sc-for>
       </aside>
@@ -6410,17 +6405,38 @@ class Component extends DCLogic {
       const c = this.stageColor(i), n = this.EVENTS.filter(e => e.s === i && e.d === this.state.day).length;
       return {
         n: st.n, name: st.name, note: st.note, count: n + ' acts on ' + this.DAY_WINDOW.short,
-        style: { display: 'flex', gap: '14px', alignItems: 'flex-start', width: '100%', padding: '16px', border: 0, borderRadius: '24px', background: 'var(--card,#F2F0EB)', fontFamily: 'inherit', cursor: 'pointer', textAlign: 'start' },
+        style: {
+          display: 'flex', gap: mob ? '12px' : '14px',
+          alignItems: mob ? 'center' : 'flex-start',
+          width: '100%', minBlockSize: mob ? '56px' : 'auto',
+          padding: mob ? '8px 8px 8px 10px' : '16px', border: 0,
+          borderRadius: mob ? '16px' : '24px',
+          background: 'var(--card,#F2F0EB)', fontFamily: 'inherit',
+          cursor: 'pointer', textAlign: 'start',
+          transition: 'background .2s cubic-bezier(.2,0,0,1)'
+        },
+        goStyle: { flex: 'none', marginInlineStart: 'auto',
+          inlineSize: '20px', blockSize: '20px', fill: 'currentColor',
+          color: 'var(--on-var,#494E42)', opacity: .7 },
         numStyle: { flex: 'none', display: 'grid', placeItems: 'center',
           width: '32px', height: '32px', borderRadius: '12px',
           background: c.planBg, color: c.planFg,
           fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',
           fontWeight: 600 },
-        nameStyle: { fontSize: '16px', lineHeight: '24px',
-          letterSpacing: '.15px', fontWeight: 500 },
+        nameStyle: mob
+          ? { fontSize: '14px', lineHeight: '20px',
+              letterSpacing: '.1px', fontWeight: 600 }
+          : { fontSize: '16px', lineHeight: '24px',
+              letterSpacing: '.15px', fontWeight: 500 },
         noteStyle: { fontSize: '14px', lineHeight: '20px',
-          letterSpacing: '.25px', color: 'var(--on-var,#494E42)',
-          textAlign: 'justify', hyphens: 'auto' },
+          letterSpacing: '.25px', color: 'var(--on-var,#494E42)' },
+        /* On a phone the row is the stage and the way to it. What the
+           stage is like is two lines of prose per row and ten rows of
+           it under a map you are trying to read; the act's own card
+           carries it. The row becomes M3's one-line list item — 56dp,
+           its number leading, the arrow that says it goes somewhere
+           trailing. */
+        showNote: !mob, showGo: mob,
         countStyle: { fontSize: '14px', lineHeight: '20px',
           letterSpacing: '.1px', fontWeight: 500,
           color: 'var(--primary,#4C662B)' },
