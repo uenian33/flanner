@@ -2948,7 +2948,13 @@ const catOf = f => CAT_BY_ID.get(f.category) || CAT_BY_ID.get(CAT_FALLBACK);
    every fifteen seconds, which the page has asked for since before this
    redesign — it stops for a pointer, a focus, a hidden tab or a track that has
    scrolled out of view. */
-const byDate = DATA.festivals.slice().sort((a, b) => a.start.localeCompare(b.start));
+/* What is about to open leads, and what opened weeks ago and is still on
+   follows it. Sorting on the start date alone put a festival that began in
+   June and runs until September at the head of the carousel all summer,
+   ahead of the one people are about to need. */
+const byDate = DATA.festivals.slice().sort((a, b) =>
+  (status(a).live ? 1 : 0) - (status(b).live ? 1 : 0)
+  || a.start.localeCompare(b.start));
 /* What is still to come, five at most: past a handful the dots stop being a
    way of reaching a particular festival, and the list below is already that. */
 const REEL_MAX = 5;

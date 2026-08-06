@@ -256,16 +256,31 @@ def js(value) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
 
 
+def _aspect(path: pathlib.Path) -> float:
+    """How wide a mark is for its height — a wordmark strip or a round one."""
+    if path.suffix.lower() == ".svg":
+        m = re.search(r'viewBox="([\d.\-]+) ([\d.\-]+) ([\d.]+) ([\d.]+)"',
+                      path.read_text())
+        return float(m.group(3)) / float(m.group(4)) if m else 1.0
+    if path.suffix.lower() == ".png":
+        b = path.read_bytes()
+        w = int.from_bytes(b[16:20], "big")
+        h = int.from_bytes(b[20:24], "big")
+        return w / h if h else 1.0
+    return 1.0
+
+
 def data_uri(path: pathlib.Path) -> str:
     import base64
-    mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png"}[
-        path.suffix.lstrip(".").lower()]
+    mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
+            "svg": "image/svg+xml"}[path.suffix.lstrip(".").lower()]
     return "data:%s;base64,%s" % (mime, base64.b64encode(path.read_bytes()).decode())
 
 
 # ── the substitutions ─────────────────────────────────
 def patch_script(src: str, fest: Festival) -> str:
     days, stages, events = fest.days, fest.stages, fest.events
+    f = fest.f
     first = days[0]["id"]
 
     src = sub_once(src, r"  STAGES = \[.*?\n  \];",
@@ -308,6 +323,34 @@ def patch_script(src: str, fest: Festival) -> str:
         "    const today = this.DAYS.find(x => x.date === d.toISOString().slice(0, 10));\n"
         "    if (!today || today.id !== this.state.day) return null;\n"
         "    return m < 360 ? m + 1440 : m;\n"
+        "  }\n"
+        "  /* Who the Lineup row shows. The festival names its own headliners\n"
+        "     and those come first, in the order it names them. The rest of\n"
+        "     the row is the timetable's own answer, the one every festival\n"
+        "     poster gives: the act that closes a stage is the act that stage\n"
+        "     was built around — one for each stage the headliners have not\n"
+        "     already spoken for, in the organiser's stage order, so the row\n"
+        "     stands for the whole festival rather than for its main stage.\n"
+        "     Anything over six hours is a day-long installation rather than\n"
+        "     a set, and is not what closes anything. */\n"
+        "  STARS = " + js(f.get("stars") or []) + ";\n"
+        "  get LINEUP() {\n"
+        "    if (this._lineup) return this._lineup;\n"
+        "    const out = [], seen = new Set();\n"
+        "    this.STARS.forEach(name => {\n"
+        "      const ev = this.EVENTS.find(e => e.title === name);\n"
+        "      if (ev && !seen.has(ev.id)) { out.push(ev); seen.add(ev.id); }\n"
+        "    });\n"
+        "    const stages = new Set(out.map(e => e.s));\n"
+        "    const last = new Map();\n"
+        "    this.EVENTS.forEach(ev => {\n"
+        "      if (ev.b - ev.a > 360 || stages.has(ev.s)) return;\n"
+        "      const cur = last.get(ev.s);\n"
+        "      if (!cur || ev.a > cur.a) last.set(ev.s, ev);\n"
+        "    });\n"
+        "    [...last.keys()].sort((x, y) => x - y).forEach(k => out.push(last.get(k)));\n"
+        "    this._lineup = out.slice(0, 12);\n"
+        "    return this._lineup;\n"
         "  }\n"
         "  /* One bar of the little sound level in the Live chip. */\n"
         "  liveBar(i) {\n"
@@ -2060,6 +2103,32 @@ def patch_nav(src: str) -> str:
         "      },\n"
         "      heartClipId2: 'fest-heart-2',\n"
         "      heartClipUrl2: 'url(#fest-heart-2)',\n"
+        "      /* The Lineup row. An act is its artwork in the stage's own\n"
+        "         tones — the tones its cell, its row and its card are drawn\n"
+        "         in — its name, and when it plays; a starred act wears the\n"
+        "         ring and the tick. Pressing one opens that act's card, the\n"
+        "         same card the timetable opens. */\n"
+        "      lineupTotal: this.EVENTS.length,\n"
+        "      seeAll: () => this.setState({ view: 'list', prog: 'list' }),\n"
+        "      lineup: this.LINEUP.map(ev => {\n"
+        "        const c = this.stageColor(ev.s), A = this.ART[ev.cat];\n"
+        "        const st = this.STAGES[ev.s], planned = !!S.star[ev.id];\n"
+        "        const day = this.DAYS.length > 1\n"
+        "          ? (this.DAYS.find(d => d.id === ev.d) || {}).short + ' ' : '';\n"
+        "        return {\n"
+        "          name: ev.title, when: day + ev.from, planned: planned,\n"
+        "          motif: A.motif,\n"
+        "          aria: ev.title + ', ' + day + ev.from + ' at ' + st.name\n"
+        "            + (planned ? ', in your plan' : ''),\n"
+        "          avatarClass: planned ? 'avatar avatar--on' : 'avatar',\n"
+        "          avatarStyle: { background: c.artBg, '--accent': c.art2 },\n"
+        "          artStyle: {\n"
+        "            '--art-bg': c.artBg, '--art-1': c.art1, '--art-2': c.art2,\n"
+        "            '--art-3': c.art3, '--art-ink': c.artInk\n"
+        "          },\n"
+        "          onOpen: () => this.setState({ sheet: ev.id })\n"
+        "        };\n"
+        "      }),\n"
         "      showHeroFold: true, showControls: true, filterScrim: false,",
         "the compact card's own state")
 
@@ -3410,6 +3479,34 @@ def patch_template(tpl: str, fest: Festival) -> str:
         ("#i-time", ("%d days" % days) if days > 1 else "%d hours" % hours),
         ("#i-mic-line", "%s acts" % stats.get("acts", "")),
     ]
+    # The hero is the festival's own photograph and its own mark where there
+    # is one — the picture the home page's card already shows, and the logo
+    # the organiser publishes. A scrim between them, because a logo drawn for
+    # paper has to hold over a daylit crowd. A festival with no picture keeps
+    # the strand artwork the design generates.
+    promo = ROOT / "assets" / "home" / f["promo"] if f.get("promo") else None
+    logo = ROOT / "assets" / f["logo"] if f.get("logo") else None
+    if promo and promo.exists():
+        hero_art = ('          <img class="hero__photo" src="%s" alt="">\n'
+                    '          <span class="hero__scrim"></span>\n' % data_uri(promo))
+        if logo and logo.exists():
+            # A mark is drawn for one background and this is not it, so it
+            # gets a surface of its own — the same wash the notch cuts into
+            # the opposite corner, so the two read as one idea. A wordmark
+            # long enough to be a strip stands shorter than a round one.
+            wide = _aspect(logo) >= 3
+            hero_art += ('          <span class="hero__mark">'
+                         '<img src="%s" alt="" aria-hidden="true" style="%s">'
+                         '</span>\n'
+                         % (data_uri(logo),
+                            "block-size:20px" if wide else "block-size:34px"))
+    else:
+        hero_art = ('          <svg class="hero__art" sc-camel-view-box="0 0 400 250"'
+                    ' sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img"'
+                    ' aria-label="%s strand artwork">\n'
+                    '            <use href="#i-art"></use>'
+                    '<use href="#i-motif-%s"></use>\n'
+                    '          </svg>\n' % (strand.title(), strand))
     genres = "".join("<li>%s</li>" % g for g in (f.get("tags") or []))
     tickets = ('        <a class="act" href="%s" target="_blank" rel="noopener noreferrer"'
                ' aria-label="Tickets" title="Tickets">\n'
@@ -3420,11 +3517,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '      <sc-if value="{{ phoneCard }}">\n'
         '      <div class="fest t-%(strand)s">\n'
         '        <div class="hero">\n'
-        '          <svg class="hero__art" sc-camel-view-box="0 0 400 250"'
-        ' sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img"'
-        ' aria-label="%(strandName)s strand artwork">\n'
-        '            <use href="#i-art"></use><use href="#i-motif-%(strand)s"></use>\n'
-        '          </svg>\n'
+        '%(heroArt)s'
         '          <div class="notch"><i></i><i></i><span>%(strandName)s</span></div>\n'
         '        </div>\n'
         '\n'
@@ -3480,6 +3573,33 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '%(tickets)s'
         '        </div>\n'
         '\n'
+        '        <div class="sec-head">\n'
+        '          <h2>Lineup</h2>\n'
+        '          <button type="button" sc-camel-on-click="{{ seeAll }}">'
+        'See all {{ lineupTotal }}</button>\n'
+        '        </div>\n'
+        '        <ul class="lineup" aria-label="Lineup">\n'
+        '          <sc-for list="{{ lineup }}" as="a" hint-placeholder-count="6">\n'
+        '            <li>\n'
+        '              <button class="who" type="button"'
+        ' sc-camel-on-click="{{ a.onOpen }}" aria-label="{{ a.aria }}">\n'
+        '                <span class="{{ a.avatarClass }}" style="{{ a.avatarStyle }}">\n'
+        '                  <svg class="who__art" sc-camel-view-box="0 0 400 250"'
+        ' sc-camel-preserve-aspect-ratio="xMidYMid slice" aria-hidden="true"'
+        ' style="{{ a.artStyle }}">\n'
+        '                    <use href="#i-art"></use><use href="{{ a.motif }}"></use>\n'
+        '                  </svg>\n'
+        '                  <sc-if value="{{ a.planned }}"><b aria-hidden="true">'
+        '<svg sc-camel-view-box="0 0 24 24"><use href="#i-check"></use></svg>'
+        '</b></sc-if>\n'
+        '                </span>\n'
+        '                <span class="who__name">{{ a.name }}</span>\n'
+        '                <span class="who__role">{{ a.when }}</span>\n'
+        '              </button>\n'
+        '            </li>\n'
+        '          </sc-for>\n'
+        '        </ul>\n'
+        '\n'
         '        <section class="{{ aboutClass }}">\n'
         '          <h2>About</h2>\n'
         '          <div class="about__clip" style="{{ aboutClipStyle }}"'
@@ -3499,6 +3619,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
     ) % {
         "strand": strand,
         "strandName": strand.title(),
+        "heroArt": hero_art,
         "name": name,
         "dates": f["dates"],
         # the hours alone: how many days it runs is a fact below, and a date
@@ -4633,6 +4754,25 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
   border-radius: 24px; overflow: hidden; background: var(--art-bg);
 }
 .fest .hero__art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+.fest .hero__photo {
+  position: absolute; inset: 0; inline-size: 100%; block-size: 100%;
+  object-fit: cover; display: block;
+}
+/* Only where the mark stands: the picture keeps its own light everywhere
+   else, and a scrim over all of it would read as a dimmed photograph
+   rather than as a surface something is written on. */
+.fest .hero__scrim {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top,
+    rgba(12,15,8,.62) 0, rgba(12,15,8,.34) 26%, rgba(12,15,8,0) 58%);
+}
+.fest .hero__mark {
+  position: absolute; inset-block-end: 12px; inset-inline-start: 12px;
+  display: grid; place-items: center; padding: 8px 11px;
+  border-radius: 16px; background: var(--wash,#FFFFFF);
+  box-shadow: 0 2px 12px rgba(20,24,14,.20);
+}
+.fest .hero__mark img { display: block; max-inline-size: 190px; object-fit: contain; }
 /* the card system's notch, cutting into the page rather than a card */
 .fest .notch {
   position: absolute; inset-block-end: 0; inset-inline-end: 0;
@@ -4733,6 +4873,66 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 .fest .plan:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .fest .plan svg { inline-size: 22px; block-size: 22px; overflow: visible; color: var(--heart,#8F4C0A); }
 .fest .plan[aria-pressed="true"] svg { color: currentColor; }
+
+/* ---------- the lineup, a row you scroll ----------
+   The row bleeds past the page's margin so a cut item shows at the edge;
+   that is the only affordance a scrolling row needs. Snap points align to
+   the margin rather than to the screen edge. */
+.fest .sec-head { display: flex; align-items: baseline; gap: 12px; margin: 26px 0 12px; }
+.fest .sec-head h2 { margin: 0; font-size: var(--title-size); font-weight: 650; letter-spacing: -.01em; }
+.fest .sec-head button {
+  /* the -12px is the rule the About card's Read more already follows: a
+     text button's label sits on the margin and its padding hangs off it */
+  margin-inline: auto -12px; padding: 8px 12px; min-block-size: 40px;
+  border: 0; border-radius: 20px; background: none; color: var(--primary);
+  font-size: 13.5px; font-weight: 650; font-family: inherit; cursor: pointer;
+  transition: background var(--effects);
+}
+.fest .sec-head button:hover { background: var(--state8); }
+.fest .sec-head button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.fest .lineup {
+  display: flex; gap: 14px; margin: 0 -16px; padding: 2px 16px 6px;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity; scroll-padding-inline-start: 16px;
+  scrollbar-width: none; list-style: none;
+}
+.fest .lineup::-webkit-scrollbar { block-size: 0; }
+.fest .lineup li { flex: none; inline-size: 84px; scroll-snap-align: start; }
+.fest .who {
+  display: grid; justify-items: center; gap: 8px; inline-size: 100%;
+  padding: 0; border: 0; background: none; color: inherit;
+  font-family: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.fest .who:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; border-radius: 12px; }
+.fest .avatar {
+  position: relative; inline-size: 72px; block-size: 72px; border-radius: 50%;
+  display: grid; place-items: center; overflow: visible;
+  transition: transform var(--spring);
+}
+.fest .who:active .avatar { transform: scale(.93); }
+/* clipped rather than hidden: the tick has to stand outside the circle */
+.fest .who__art { inline-size: 100%; block-size: 100%; clip-path: circle(50%); }
+.fest .avatar--on { box-shadow: 0 0 0 3px var(--wash,#FFFFFF), 0 0 0 5px var(--accent); }
+.fest .avatar b {
+  position: absolute; inset-block-end: -1px; inset-inline-end: -1px;
+  display: grid; place-items: center; inline-size: 22px; block-size: 22px;
+  border-radius: 50%; border: 2px solid var(--wash,#FFFFFF);
+  background: var(--accent); color: var(--wash,#FFFFFF);
+}
+.fest .avatar b svg { inline-size: 13px; block-size: 13px; fill: currentColor; }
+.fest .who__name {
+  font-size: 13px; font-weight: 600; line-height: 1.25; text-align: center;
+  min-block-size: 2.5em;               /* two lines kept, so the times line up */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+/* The time is what a lineup is scanned for, so it is set in tabular
+   figures and every row of them lines up. */
+.fest .who__role {
+  margin-block-start: -2px; inline-size: 100%;
+  font-size: 12px; font-weight: 550; line-height: 1.3; color: var(--on-var,#494E42);
+  font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap;
+}
 
 /* ---------- about ---------- */
 .fest .about {
