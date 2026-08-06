@@ -1842,28 +1842,36 @@ def patch_nav(src: str) -> str:
         "    const utils = navShown === 'bar'\n"
         "      ? []\n",
         "bar without More")
-    # With the switcher gone the card is the day, the stars and the filters,
-    # and the day takes the whole row rather than two thirds of it.
+    # One row, not two. The day, the stars and the filters are the same
+    # decision — which of the programme am I looking at — so they stand
+    # together on one line, the way the shape switch used to stand beside the
+    # day: the pills take the room, the two controls close the pill at its end.
     src = sub_once(
         src,
         r"          gridTemplateAreas: '\"picks picks\" \"days view\"',",
-        "          gridTemplateAreas: '\"picks picks\" \"days days\"',",
-        "the card without the switcher")
+        "          gridTemplateAreas: '\"days picks\"',",
+        "one control row")
     src = sub_once(
         src,
-        r"        daysGroupStyle: Object\.assign\(\{\}, cardSkin, \{\n"
-        r"          gridArea: 'days', position: 'relative', display: 'flex',"
-        r" gap: '4px', minWidth: 0,\n"
-        r"          padding: '5px', borderStartStartRadius: '28px',"
-        r" borderEndStartRadius: '28px',\n"
-        r"          borderStartEndRadius: 0, borderEndEndRadius: 0, borderInlineEnd: 0\n"
-        r"        \}\),",
-        "        daysGroupStyle: Object.assign({}, cardSkin, {\n"
-        "          gridArea: 'days', position: 'relative', display: 'flex',\n"
-        "          gap: '4px', minWidth: 0, padding: '5px',\n"
-        "          borderRadius: '28px'\n"
+        r"          rowGap: '8px', columnGap: 0,",
+        "          rowGap: 0, columnGap: 0,",
+        "no row gap")
+    src = sub_once(
+        src,
+        r"        actionsGroupStyle: Object\.assign\(\{\n"
+        r"          gridArea: 'picks', justifySelf: 'end', display: 'flex',\n"
+        r"          alignItems: 'center', gap: '12px',\n"
+        r"          width: 'auto', marginInline: 0, padding: '5px', borderRadius: '28px'\n"
+        r"        \}, cardSkin\),",
+        "        actionsGroupStyle: Object.assign({}, cardSkin, {\n"
+        "          gridArea: 'picks', display: 'flex', alignItems: 'center',\n"
+        "          gap: '4px', width: 'auto', marginInline: 0,\n"
+        "          padding: '5px 5px 5px 2px',\n"
+        "          borderStartEndRadius: '28px', borderEndEndRadius: '28px',\n"
+        "          borderStartStartRadius: 0, borderEndStartRadius: 0,\n"
+        "          borderInlineStart: 0, boxShadow: 'none'\n"
         "        }),",
-        "the day takes the row")
+        "the two controls close the row")
     src = sub_once(
         src,
         r"        switcherStyle: Object\.assign\(\{\}, cardSkin, \{\n"
@@ -1876,6 +1884,30 @@ def patch_nav(src: str) -> str:
         r"        \}\),",
         "        switcherStyle: { display: 'none' },",
         "no switcher on the phone")
+    # And the two of them are glyphs until they are on. A resting tonal circle
+    # under each says something is set when nothing is; the container arrives
+    # with the state, which is the M3 order — a toggle is unselected until it
+    # is selected, and then it fills.
+    src = sub_once(
+        src,
+        r"        picksBtnStyle: Object\.assign\(\{\}, V\.picksBtnStyle,"
+        r" \{ width: '40px', height: '40px' \}\),\n"
+        r"        filterBtnStyle: Object\.assign\(\{\}, V\.filterBtnStyle,"
+        r" \{ width: '40px', height: '40px' \}\),",
+        "        picksBtnStyle: Object.assign({}, V.picksBtnStyle, {\n"
+        "          width: '40px', height: '40px',\n"
+        "          background: S.onlyPicks ? 'var(--sec,#DCE8C0)' : 'transparent',\n"
+        "          color: S.onlyPicks\n"
+        "            ? 'var(--on-sec,#1F2D0A)' : 'var(--on-var,#494E42)'\n"
+        "        }),\n"
+        "        filterBtnStyle: Object.assign({}, V.filterBtnStyle, {\n"
+        "          width: '40px', height: '40px',\n"
+        "          background: (S.filtersOpen || hasFilters)\n"
+        "            ? 'var(--sec,#DCE8C0)' : 'transparent',\n"
+        "          color: (S.filtersOpen || hasFilters)\n"
+        "            ? 'var(--on-sec,#1F2D0A)' : 'var(--on-var,#494E42)'\n"
+        "        }),",
+        "quiet until they are on")
 
     # The bar keeps its compact height for the whole of the programme. It
     # already compacted itself the moment you scrolled the grid and came back
