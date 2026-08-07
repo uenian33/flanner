@@ -352,6 +352,20 @@ def patch_script(src: str, fest: Festival) -> str:
         "    this._lineup = out.slice(0, 12);\n"
         "    return this._lineup;\n"
         "  }\n"
+        "  /* Which name the bar carries: the site's while the festival's own\n"
+        "     card is on screen saying it at four times the size, its own once\n"
+        "     that card has gone under the bar. */\n"
+        "  TITLE_SWAP = {\n"
+        "    gridArea: '1 / 1', overflow: 'hidden', textOverflow: 'ellipsis',\n"
+        "    whiteSpace: 'nowrap', pointerEvents: 'none',\n"
+        "    transition: 'opacity .18s cubic-bezier(.3,0,.8,.15),'\n"
+        "      + ' transform .28s cubic-bezier(.05,.7,.1,1)'\n"
+        "  };\n"
+        "  get BAR_FEST() {\n"
+        "    const S = this.state;\n"
+        "    return !(this.mode() === 'bar' && (S.view || 'info') === 'info')\n"
+        "      || !!S.titleFest;\n"
+        "  }\n"
         "  /* One bar of the little sound level in the Live chip. */\n"
         "  liveBar(i) {\n"
         "    return {\n"
@@ -2124,6 +2138,8 @@ def patch_nav(src: str) -> str:
         "        this.setState(s => ({ aboutOpen: !s.aboutOpen,\n"
         "          aboutFull: p ? p.scrollHeight : s.aboutFull }));\n"
         "      },\n"
+        "      /* Which name the bar carries, and how the two change places. */\n"
+        "      festCardRef: (el) => { this.festCardEl = el; },\n"
         "      heartClipId2: 'fest-heart-2',\n"
         "      heartClipUrl2: 'url(#fest-heart-2)',\n"
         "      /* The Lineup row. An act is its artwork in the stage's own\n"
@@ -2154,6 +2170,33 @@ def patch_nav(src: str) -> str:
         "      }),\n"
         "      showHeroFold: true, showControls: true, filterScrim: false,",
         "the compact card's own state")
+
+    # The two names, stacked in one grid cell so the bar keeps its width and
+    # its ellipsis, and crossfaded: the one leaving falls out over 180ms on
+    # the accelerate, the one arriving rises 6px into place over 280 on the
+    # emphasised decelerate.
+    src = sub_once(
+        src,
+        r"        titleStyle: \{\n"
+        r"          margin: 0, minWidth: 0, fontSize: '17px', fontWeight: 600,"
+        r" lineHeight: '24px',\n"
+        r"          letterSpacing: '-\.014em', overflow: 'hidden',"
+        r" textOverflow: 'ellipsis', whiteSpace: 'nowrap'\n"
+        r"        \},",
+        "        titleStyle: {\n"
+        "          margin: 0, minWidth: 0, display: 'grid', fontSize: '17px',\n"
+        "          fontWeight: 600, lineHeight: '24px', letterSpacing: '-.014em',\n"
+        "          overflow: 'hidden'\n"
+        "        },\n"
+        "        titleHomeStyle: Object.assign({\n"
+        "          opacity: this.BAR_FEST ? 0 : 1,\n"
+        "          transform: this.BAR_FEST ? 'translateY(-6px)' : 'none'\n"
+        "        }, this.TITLE_SWAP),\n"
+        "        titleFestStyle: Object.assign({\n"
+        "          opacity: this.BAR_FEST ? 1 : 0,\n"
+        "          transform: this.BAR_FEST ? 'none' : 'translateY(6px)'\n"
+        "        }, this.TITLE_SWAP),",
+        "the bar's two names")
 
     # ---- one bar height, everywhere ----
     # The bar was 76 tall with its labels and 50 without, and the home page's
@@ -2525,6 +2568,14 @@ def patch_nav(src: str) -> str:
         "    }\n"
         "    const next = {};\n"
         "    if (mini !== this.state.barMini) next.barMini = mini;\n"
+        "    /* While the festival's own card is on screen the bar has nothing\n"
+        "       to add — the card says the name at four times the size — so it\n"
+        "       carries the site's instead, and takes the festival's when that\n"
+        "       card goes under it. */\n"
+        "    const fc = this.festCardEl;\n"
+        "    const gone = !!fc\n"
+        "      && fc.getBoundingClientRect().bottom <= (this.state.headerH || 56);\n"
+        "    if (gone !== !!this.state.titleFest) next.titleFest = gone;\n"
         "    if (hide !== !!this.state.chromeHidden) {\n"
         "      next.chromeHidden = hide;\n"
         "      this.chromeAt = now;\n"
@@ -3624,6 +3675,20 @@ def patch_template(tpl: str, fest: Festival) -> str:
                    '    <article data-fp-card="" style="{{ heroCardStyle }}" '
                    'ref="{{ heroCardRef }}">', "festival card mark")
 
+    # The bar carries both names and shows one.
+    tpl = sub_once(
+        tpl,
+        r'<h1 style="\{\{ titleStyle \}\}"><sc-if value="\{\{ picksOn \}\}">'
+        r'<span style="color:var\(--plan,#2E4B12\)">Your </span></sc-if>'
+        + re.escape(name) + r'</h1>',
+        '<h1 style="{{ titleStyle }}">'
+        '<span style="{{ titleHomeStyle }}">Flanner</span>'
+        '<span style="{{ titleFestStyle }}">'
+        '<sc-if value="{{ picksOn }}">'
+        '<span style="color:var(--plan,#2E4B12)">Your </span></sc-if>'
+        + name + '</span></h1>',
+        "the bar's two names, in the markup")
+
     # ---- the festival, at the compact breakpoint ----
     # festival-mobile.html's own markup, element for element: the hero and its
     # notch, the status chips, the headline, the meta list, the genre rail, the
@@ -3673,7 +3738,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
     compact = (
         '      <sc-if value="{{ phoneCard }}">\n'
         '      <div class="fest t-%(strand)s">\n'
-        '        <section class="fcard">\n'
+        '        <section class="fcard" ref="{{ festCardRef }}">\n'
         '        <div class="hero">\n'
         '%(heroArt)s'
         '          <div class="hero__overlay">\n'
@@ -4918,7 +4983,9 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
    name in the strand's tint; and the place as the pill that goes to the
    map. Which is why nothing under the picture repeats them. */
 .fest .hero__overlay {
-  position: relative; z-index: 1; display: grid; gap: 6px; padding: 0 16px 15px;
+  /* The three lines are three different things — when it runs, what it is,
+     where it is — so they stand a step apart rather than as one block. */
+  position: relative; z-index: 1; display: grid; gap: 11px; padding: 0 16px 18px;
 }
 .fest .hero__eyebrow {
   margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .1em;
@@ -4934,7 +5001,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 }
 .fest .hero__where {
   display: inline-flex; justify-self: start; align-items: center; gap: 8px;
-  margin: 3px 0 0; max-inline-size: 100%;
+  margin: 1px 0 0; max-inline-size: 100%;
   padding: 7px 12px 7px 10px; border: 0; border-radius: 20px;
   background: rgb(255 255 255 / .16);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
