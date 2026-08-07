@@ -2906,29 +2906,36 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
    starred is a second one asked over it. */
 body.plan-only .highlights{display:none}
 /* ── add to home screen ─────────────────────────────────
-   A tonal band above the plan, not a dialog over it: the offer belongs beside
-   the thing it is about and can be walked past. Secondary-container is M3's
-   step for a piece of the page asking for attention without taking the page's
-   one filled colour, which the plan's own stars are already wearing. */
+   A band above the plan, not a dialog over it: the offer belongs beside the
+   thing it is about and can be walked past.
+
+   One step of the surface ramp above the cards it stands over — they are on
+   surface-container-low and this is on -high, so it separates by a shade
+   rather than by weight. It was on secondary-container, four steps down,
+   which at these sizes is a slab: the eye went to the block instead of to
+   the words, and a block that heavy over a list of festivals reads as an
+   advertisement. The one filled shape left is the small disc, and that is
+   tonal now too — the mark is what draws the eye, not the field. */
 .a2hs{display:none;inline-size:100%;align-items:center;gap:14px;
   margin:0 0 clamp(14px,2vw,20px);padding:14px 16px;
   border:0;border-radius:20px;text-align:start;cursor:pointer;
-  background:var(--md-sys-color-secondary-container);
-  color:var(--md-sys-color-on-secondary-container);
+  background:var(--md-sys-color-surface-container-high);
+  color:var(--md-sys-color-on-surface);
   font-family:inherit;transition:filter .18s cubic-bezier(.2,0,0,1)}
 body.plan-only .a2hs:not([hidden]){display:flex}
 .a2hs:hover{filter:brightness(.97)}
 .a2hs:active{filter:brightness(.94)}
-.a2hs:focus-visible{outline:3px solid var(--md-sys-color-on-secondary-container);
+.a2hs:focus-visible{outline:3px solid var(--md-sys-color-on-surface);
   outline-offset:2px}
 .a2hs__ico{flex:none;display:grid;place-items:center;
   inline-size:40px;block-size:40px;border-radius:var(--md-sys-shape-corner-full);
-  background:var(--md-sys-color-on-secondary-container);
-  color:var(--md-sys-color-secondary-container)}
+  background:var(--md-sys-color-secondary-container);
+  color:var(--md-sys-color-on-secondary-container)}
 .a2hs__ico svg{inline-size:22px;block-size:22px}
 .a2hs__txt{flex:1 1 auto;min-inline-size:0;display:flex;flex-direction:column;gap:2px}
 .a2hs__txt b{font-size:14px;font-weight:650;letter-spacing:-.01em}
-.a2hs__txt i{font-style:normal;font-size:12.5px;line-height:1.35;opacity:.86}
+.a2hs__txt i{font-style:normal;font-size:12.5px;line-height:1.35;
+  color:var(--md-sys-color-on-surface-variant)}
 .a2hs__go{flex:none;opacity:.7}
 .a2hs__go svg{inline-size:20px;block-size:20px;fill:currentColor}
 .a2hs__steps{margin:0 0 12px;padding-inline-start:20px;
@@ -3994,7 +4001,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
     <div class="hslot" id="hslot">
     <div class="drop langwrap">
       <button class="lang" id="langTrig" aria-expanded="false" aria-controls="langSheet">
-        <svg class="i"><use href="#h-i-globe"/></svg><span id="langLabel">English</span>
+        <svg class="i"><use href="#h-i-globe"/></svg><span id="langLabel">EN</span>
         <svg class="i cv"><use href="#h-i-down"/></svg></button>
       <div class="sheet langsheet" id="langSheet" hidden role="dialog" aria-label="Choose a language">
         <h4>Language</h4>
@@ -4156,8 +4163,8 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
      also what pressing it can actually do. -->
 <button class="a2hs" id="a2hs" type="button" hidden>
   <span class="a2hs__ico"><svg class="i" aria-hidden="true"><use href="#h-i-star-sq"/></svg></span>
-  <span class="a2hs__txt"><b>Add this app to your home screen</b>
-    <i id="a2hsSub">so your plans are here next time</i></span>
+  <span class="a2hs__txt"><b>Add to Home Screen</b>
+    <i id="a2hsSub">Keeps your plans</i></span>
   <span class="a2hs__go"><svg class="i" aria-hidden="true"><use href="#h-i-next"/></svg></span>
 </button>
 <div class="sheet a2hssheet" id="a2hsSheet" hidden role="dialog" aria-label="Add to home screen">
@@ -5566,7 +5573,11 @@ let lang = Store.get('lang', LANGS.map(l => l.k));
 function paintLang() {
   const cur = LANGS.find(l => l.k === lang) || LANGS[0];
   document.documentElement.lang = cur.k;
-  $('#langLabel').textContent = cur.label;
+  /* The code, not the name: the bar sets this in uppercase with wide
+     tracking, where SVENSKA takes half the row from the search beside it.
+     The list underneath says the names in full, which is where a reader
+     who does not know the codes is looking anyway. */
+  $('#langLabel').textContent = cur.sub;
   const val = document.querySelector('#railLang .navval');
   if (val) val.textContent = cur.sub;
   $('#langOpts').querySelectorAll('.opt').forEach(o =>
@@ -5760,7 +5771,23 @@ sheets.forEach(([t, sh]) => $(t).onclick = e => {
   }
 });
 document.querySelectorAll('.sheet').forEach(el => el.onclick = e => e.stopPropagation());
-document.addEventListener('click', () => openSheet(null));
+/* A press outside an open sheet closes it, and does nothing else.
+   On the capture phase, which is what makes the second half true: the close
+   used to run while the press bubbled, so it reached whatever was under it as
+   well — reaching past the language list to shut it landed on a festival and
+   opened that festival's planner. Caught on the way down, the press is spent
+   on closing and never gets to the card.
+   A press inside the sheet is the sheet's own business and passes through;
+   with nothing open this does nothing at all, so every control on the page
+   behaves normally the rest of the time. */
+document.addEventListener('click', e => {
+  const open = sheets.some(([, sh]) => $(sh) && !$(sh).hidden);
+  if (!open) return;
+  if (e.target.closest && e.target.closest('.sheet')) return;
+  openSheet(null);
+  e.stopPropagation();
+  e.preventDefault();
+}, true);
 
 /* ── add to home screen ────────────────────────────────
    A plan lives on the device, so the page that keeps one should offer to be on
@@ -5802,9 +5829,9 @@ document.addEventListener('click', () => openSheet(null));
 
   const show = () => {
     bar.hidden = installed() || Store.get('a2hs') === '1';
-    $('#a2hsSub').textContent = deferred
-      ? 'so your plans are here next time'
-      : 'so your plans are here next time \u2014 takes two taps';
+    /* Two short lines. It said the same thing twice over three, and the
+       longer it ran the more it read as an advertisement to scroll past. */
+    $('#a2hsSub').textContent = 'Keeps your plans';
   };
 
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; show(); });

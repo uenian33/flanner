@@ -3221,8 +3221,46 @@ def _decls(block: str) -> dict:
         i = j + 1
 
 
-def theme_css(accent: str, design_css: str, *more: str) -> str:
-    """The whole scheme, in the festival's hue, both themes.
+# Two families the design drew in colours of their own — the forecast's pink,
+# and the amber a plan is starred in — go to the festival's hue as well.
+# Dynamic colour would put roles like those at tertiary, sixty degrees off, but
+# a page carrying its festival's colour plus two others is a page of three
+# colours, and these two are not saying anything the festival's own hue cannot.
+# They keep their own tones, so each is still a surface of its own rather than
+# the About card again. The names stay `--pink-*` and `--heart-*`; every use
+# site says so.
+OTHERS = ("--pink", "--heart", "--on-heart", "--warm-plan", "--on-warm")
+
+
+def _recipe_entry(name: str, value: str, force: bool) -> dict:
+    """One token, as what it is rather than as what it currently looks like.
+
+    A colour the scheme turns is a lightness and a chroma waiting for a hue; a
+    colour it leaves alone — too grey to have a hue, or a deliberate second
+    colour standing outside the seed's own — is just its value. Recording which
+    is which is what lets the browser do at runtime what the build does here,
+    without shipping it the rule for deciding.
+    """
+    import re as _re
+    v = value.strip()
+    m = _re.fullmatch(r"rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)", v)
+    if m:
+        base, alpha = "#%02x%02x%02x" % tuple(int(m.group(i)) for i in (1, 2, 3)), m.group(4)
+    elif _re.fullmatch(r"#[0-9a-fA-F]{6}", v):
+        base, alpha = v, None
+    else:
+        return {"n": name, "v": value}
+    L, C, h = _lch(base)
+    if C < 3 or (not force and abs((h - SEED_HUE + 180) % 360 - 180) > SEED_SPAN):
+        return {"n": name, "v": value}
+    out = {"n": name, "l": round(L, 6), "c": round(C, 6)}
+    if alpha is not None:
+        out["a"] = alpha
+    return out
+
+
+def theme_recipe(design_css: str, *more: str) -> dict:
+    """Every token the scheme turns, with the hue taken out of it.
 
     The values are read out of the design rather than restated here, because
     the design keeps them in three places and only one of them is a stylesheet:
@@ -3230,9 +3268,11 @@ def theme_css(accent: str, design_css: str, *more: str) -> str:
     nowhere but as the fallback written beside each use — `var(--heart,#8F4C0A)`
     — and the dark ones are declared once, by the design itself. A re-theme
     that missed the 26 would turn the dark page and leave the light one green.
+
+    What comes back is hue-independent, and therefore the same for every
+    festival there will ever be: it is shipped once and applied per accent.
     """
     import re as _re
-    hue = _lch(accent)[2]
     dark_block = _re.search(r'\[data-theme="dark"\]\s*{([^}]*)}', design_css)
     light_block = _re.search(r':root:not\(\[data-theme="dark"\]\)\s*{([^}]*)}', CARD_CSS)
     dark = _decls(dark_block.group(1)) if dark_block else {}
@@ -3242,31 +3282,73 @@ def theme_css(accent: str, design_css: str, *more: str) -> str:
         for name, fb in _re.findall(r"var\((--[a-z0-9-]+),\s*([^()]*?(?:\([^()]*\))?[^()]*?)\)", src):
             if name in dark and name not in light:
                 light[name] = fb.strip()
-    # Two families the design drew in colours of their own — the forecast's
-    # pink, and the amber a plan is starred in — go to the festival's hue as
-    # well. Dynamic colour would put roles like those at tertiary, sixty
-    # degrees off, but a page carrying its festival's colour plus two others
-    # is a page of three colours, and these two are not saying anything the
-    # festival's own hue cannot. They keep their own tones, so each is still a
-    # surface of its own rather than the About card again. The names stay
-    # `--pink-*` and `--heart-*`; every use site says so.
-    OTHERS = ("--pink", "--heart", "--on-heart", "--warm-plan", "--on-warm")
 
-    def turn(d):
+    def block(d):
+        return [_recipe_entry(k, v, k.startswith(OTHERS)) for k, v in d.items()]
+
+    return {
+        "light": block(light),
+        "dark": block(dark),
+        # The hero's tint is declared on the strand class rather than on the
+        # root, so it is in neither block above. It takes its light tone under
+        # both themes, because the line it colours always stands on the
+        # picture's own wash.
+        "tint": _recipe_entry("--hero-tint", "#CDEDA3", False),
+        "duo": _recipe_entry("--hero-duo", "#4C662B", False),
+        "stages": [{"k": k, "l": list(lt), "d": list(dk), "always": k in ALWAYS_DARK}
+                   for k, lt, dk in ROLES],
+    }
+
+
+def render_recipe(recipe: dict, accent: str, stages: int) -> str:
+    """The recipe at one hue — the same string `scripts/_theme.js` builds.
+
+    Kept here as well as there so the build can go on emitting a themed page
+    for the first paint, and so `tools/theme_parity.py` has something to hold
+    the JavaScript against.
+    """
+    import m3color
+    hue = _lch(accent)[2]
+
+    def one(e):
+        if "v" in e:
+            return e["v"]
+        t = m3color.tone(hue, e["c"], e["l"])
+        if "a" not in e:
+            return t
+        r, g, b = (int(t[i:i + 2], 16) for i in (1, 3, 5))
+        return "rgba(%d,%d,%d,%s)" % (r, g, b, e["a"])
+
+    def block(es):
+        return ";".join("%s:%s" % (e["n"], one(e)) for e in es)
+
+    def stage_block(dark):
         out = []
-        for k, v in d.items():
-            out.append("%s:%s" % (k, _turn(v, hue, force=k.startswith(OTHERS))))
+        for i in range(stages):
+            h = (hue + i * 137.507) % 360
+            for r in recipe["stages"]:
+                pair = r["d"] if dark or r["always"] else r["l"]
+                out.append("--st%d-%s:%s" % (i, r["k"].lower(), m3color.tone(h, *pair)))
         return ";".join(out)
-    # The hero's tint is declared on the strand class rather than on the root,
-    # so it is not in either block above; it is stated here at the same weight
-    # and later, and it takes its light tone under both themes because the
-    # line it colours always stands on the picture's own wash.
-    return ("/* %s's own hue — every tone the design chose, turned to it */\n"
-            ":root:not([data-theme=\"dark\"]){%s}\n"
-            "[data-theme=\"dark\"]{%s}\n"
-            ".fest{--hero-tint:%s;--hero-duo:%s}\n"
-            % (accent, turn(light), turn(dark),
-               _turn("#CDEDA3", hue), _turn("#4C662B", hue)))
+
+    out = ("/* %s's own hue — every tone the design chose, turned to it */\n"
+           ":root:not([data-theme=\"dark\"]){%s}\n"
+           "[data-theme=\"dark\"]{%s}\n"
+           ".fest{--hero-tint:%s;--hero-duo:%s}\n"
+           % (accent, block(recipe["light"]), block(recipe["dark"]),
+              one(recipe["tint"]), one(recipe["duo"])))
+    # The stages are a separate block at build time, where `stage_palette`
+    # emits them beside the keyframes that belong with them. Asking for them
+    # here is for the runtime's benefit, and for the parity check.
+    if stages:
+        out += (":root{%s}\n[data-theme=\"dark\"]{%s}\n"
+                % (stage_block(False), stage_block(True)))
+    return out
+
+
+def theme_css(accent: str, design_css: str, *more: str) -> str:
+    """The whole scheme, in the festival's hue, both themes."""
+    return render_recipe(theme_recipe(design_css, *more), accent, 0)
 
 def stage_palette(n: int, hue: float = SEED_HUE) -> tuple[list[dict], str]:
     """Hues by the golden angle rather than in equal steps.
