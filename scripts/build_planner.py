@@ -2763,11 +2763,12 @@ def _lch(hexstr: str) -> tuple[float, float, float]:
     return L, math.hypot(a, b), math.degrees(math.atan2(b, a)) % 360
 
 
-def _turn(value: str, hue: float) -> str:
-    """One colour, turned to the festival's hue if it is in the design's.
+def _turn(value: str, hue: float, force: bool = False) -> str:
+    """One colour, turned to the hue given.
 
-    Takes a hex or an rgba(); anything else, and anything too grey or too far
-    from the seed to be the seed's colour, comes back untouched."""
+    Takes a hex or an rgba(); anything else, and anything too grey to have a
+    hue, comes back untouched. Unless `force`, so does anything too far from
+    the design's own seed to be the design's own colour."""
     import m3color, re as _re
     v = value.strip()
     m = _re.fullmatch(r"rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)", v)
@@ -2779,7 +2780,7 @@ def _turn(value: str, hue: float) -> str:
     else:
         return value
     L, C, h = _lch(base)
-    if C < 3 or abs((h - SEED_HUE + 180) % 360 - 180) > SEED_SPAN:
+    if C < 3 or (not force and abs((h - SEED_HUE + 180) % 360 - 180) > SEED_SPAN):
         return value
     turned = m3color.tone(hue, C, L)
     if alpha is None:
@@ -2825,7 +2826,20 @@ def theme_css(accent: str, design_css: str, *more: str) -> str:
         for name, fb in _re.findall(r"var\((--[a-z0-9-]+),\s*([^()]*?(?:\([^()]*\))?[^()]*?)\)", src):
             if name in dark and name not in light:
                 light[name] = fb.strip()
-    turn = lambda d: ";".join("%s:%s" % (k, _turn(v, hue)) for k, v in d.items())
+    # The forecast is the one thing on the page that is neither the festival
+    # nor an act, and the design gave it a colour of its own — a pink, chosen
+    # against a green. Under dynamic colour that role is tertiary, and M3
+    # derives tertiary from the source at hue + 60, so that is where the whole
+    # family goes: the same tones it was drawn in, at the hue the festival's
+    # own colour puts it. The names stay `--pink-*`; every use site says so.
+    tert = (hue + 60) % 360
+
+    def turn(d):
+        out = []
+        for k, v in d.items():
+            pink = k.startswith("--pink")
+            out.append("%s:%s" % (k, _turn(v, tert if pink else hue, force=pink)))
+        return ";".join(out)
     # The hero's tint is declared on the strand class rather than on the root,
     # so it is not in either block above; it is stated here at the same weight
     # and later, and it takes its light tone under both themes because the
@@ -3593,7 +3607,9 @@ def patch_template(tpl: str, fest: Festival) -> str:
                     '            <use href="#i-art"></use>'
                     '<use href="#i-motif-%s"></use>\n'
                     '          </svg>\n' % (strand.title(), strand))
-    genres = "".join("<li>%s</li>" % g for g in (f.get("tags") or []))
+    # Four chips: what the festival is, and the three things it plays. A
+    # fifth only ever showed as a sliver at the screen edge.
+    genres = "".join("<li>%s</li>" % g for g in (f.get("tags") or [])[:3])
     tickets = ('        <a class="act" href="%s" target="_blank" rel="noopener noreferrer"'
                ' aria-label="Tickets" title="Tickets">\n'
                '          <svg aria-hidden="true" style="fill:currentColor">'
@@ -5194,7 +5210,7 @@ def build(fid: str) -> pathlib.Path:
 {art.other_css()}
 {stage_palette(len(fest.stages), _lch(fest.f['accent'])[2])[1]}
 {CARD_CSS}
-{theme_css(fest.f['accent'], art.other_css(), art.js)}
+{theme_css(fest.f['accent'], art.other_css(), art.js, script, template)}
 {FEST_CSS}
 {SHEET_CSS}
 {NO_ZOOM_CSS}
