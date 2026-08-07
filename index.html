@@ -6073,7 +6073,15 @@ document.addEventListener('keydown', e => {
     if (!mt) return;
     const h = parseFloat(getComputedStyle(document.documentElement)
       .getPropertyValue('--headh')) || 52;
+    /* My plan is a place you went to, not a section you scrolled into, so the
+       bar names it from the moment you arrive rather than waiting for its
+       heading to go under — the same way a planner's bar names the festival
+       you opened. Read off the heading so the words are decided once. */
     let name = 'Flanner';
+    if (planOnly) {
+      const h2 = document.querySelector('#all-festivals-headline');
+      return setBarTitle(h2 ? h2.textContent.trim() : 'My Plans');
+    }
     TITLE_SPOTS.forEach(spot => {
       const el = document.querySelector(spot.head);
       if (!el || !el.offsetParent) return;
