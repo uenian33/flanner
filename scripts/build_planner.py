@@ -143,13 +143,30 @@ class Festival:
 
     # -- stages ----------------------------------------
     @property
+    @property
+    def preview(self) -> bool:
+        """A festival whose venues are known and whose running order is not.
+
+        Several publish the line-up, and where each act plays, months before
+        they publish a clock time — and some publish the place before either.
+        A planner is still the right page for them: it says where the festival
+        is, puts its venues on the map, and says plainly that the times are not
+        out rather than drawing an empty grid and letting the reader wonder.
+        """
+        return not any(s.get("acts") for s in self.acts["stages"])
+
+    @property
     def stages(self) -> list[dict]:
         out = []
         for s in self.acts["stages"]:
             acts = s.get("acts", [])
-            if not acts:
+            # A stage nobody is playing on is noise on a planner that has a
+            # running order, and it is the whole of the map on one that does
+            # not. So it is dropped only where there is something to drop it in
+            # favour of.
+            if not acts and not self.preview:
                 continue
-            cats = [CAT_OF_TYPE.get(a["type"], "music") for a in acts]
+            cats = [CAT_OF_TYPE.get(a["type"], "music") for a in acts] or ["music"]
             out.append({
                 "n": len(out) + 1,
                 "name": s["name"],
@@ -1163,6 +1180,17 @@ SHEET_JS = """
   syncSheetShell() {
     const on = !!this.state.sheet && !this.sheetLeaving && this.mode() === 'bar';
     document.body.classList.toggle('fp-sheet', on);
+    /* Where the card stops, measured off the bar it has to stop under rather
+       than assumed. It was a flat 56px, and the bar is not 56px tall on a
+       phone with a notch — so a card with enough in it to reach its full
+       height put its own top, its rounded corner and its drag handle behind
+       the bar, and what was left looked like a hero sliced off mid-letter.
+       The bar's bottom edge already counts the safe area, being laid out
+       under it, so nothing is added for that; the 8 is the gap you can see
+       between the two. */
+    const bar = document.querySelector('header');
+    const stop = bar ? Math.round(bar.getBoundingClientRect().bottom) + 8 : 64;
+    document.documentElement.style.setProperty('--sheet-gap', stop + 'px');
   }
 
   /* A phone gets the modal bottom sheet; everything wider keeps the container
