@@ -1796,11 +1796,21 @@ def patch_rows(src: str) -> str:
         r"      \}, this\.mediaParts\(ev\.cat\), this\.starParts\(ev\.id, starred\)\)\);",
         "      }, this.mediaParts(ev.cat), mob ? {\n"
         "        /* The stage's palette rather than the category's, so the\n"
-        "           thumbnail, the cell and the card's hero are one colour. */\n"
-        "        artStyle: {\n"
+        "           thumbnail, the cell and the card's hero are one colour.\n"
+        "           Which tones of it depends on whether the act is in the\n"
+        "           plan: a starred row wears the deep artwork the card's hero\n"
+        "           is drawn in, and every other row wears the quiet tint the\n"
+        "           Lineup wears — so a list of eighty acts is a light column\n"
+        "           with the plan standing out of it, rather than eighty\n"
+        "           full-chroma squares among which the plan is lost. */\n"
+        "        artStyle: starred ? {\n"
         "          display: 'block', width: '100%', height: '100%',\n"
         "          '--art-bg': c.artBg, '--art-1': c.art1, '--art-2': c.art2,\n"
         "          '--art-3': c.art3, '--art-ink': c.artInk\n"
+        "        } : {\n"
+        "          display: 'block', width: '100%', height: '100%',\n"
+        "          '--art-bg': c.qBg, '--art-1': c.qTone, '--art-2': c.qInk,\n"
+        "          '--art-3': c.qTone, '--art-ink': c.qInk\n"
         "        }\n"
         "      } : null, this.starParts(ev.id, starred)));",
         "row artwork in the stage's colour")

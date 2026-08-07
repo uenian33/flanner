@@ -5431,11 +5431,21 @@ class Component extends DCLogic {
         }
       }, this.mediaParts(ev.cat), mob ? {
         /* The stage's palette rather than the category's, so the
-           thumbnail, the cell and the card's hero are one colour. */
-        artStyle: {
+           thumbnail, the cell and the card's hero are one colour.
+           Which tones of it depends on whether the act is in the
+           plan: a starred row wears the deep artwork the card's hero
+           is drawn in, and every other row wears the quiet tint the
+           Lineup wears — so a list of eighty acts is a light column
+           with the plan standing out of it, rather than eighty
+           full-chroma squares among which the plan is lost. */
+        artStyle: starred ? {
           display: 'block', width: '100%', height: '100%',
           '--art-bg': c.artBg, '--art-1': c.art1, '--art-2': c.art2,
           '--art-3': c.art3, '--art-ink': c.artInk
+        } : {
+          display: 'block', width: '100%', height: '100%',
+          '--art-bg': c.qBg, '--art-1': c.qTone, '--art-2': c.qInk,
+          '--art-3': c.qTone, '--art-ink': c.qInk
         }
       } : null, this.starParts(ev.id, starred)));
     });
