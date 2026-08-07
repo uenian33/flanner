@@ -109,7 +109,22 @@ body.shell-busy .shell-page{pointer-events:none}
   .dock .back:focus-visible{outline:2px solid var(--md-sys-color-primary);outline-offset:2px}
 
   /* --- the bar --- */
-  .dock .bar{grid-column:2;block-size:64px;padding:6px;min-inline-size:0}
+  .dock .bar{grid-column:2;block-size:64px;padding:6px;min-inline-size:0;
+    transition:block-size var(--nt-resize)}
+  /* --- out of the way while you are reading down the page ---
+     The planner's own rule, on the planner's own signal: past a dozen pixels
+     and still moving down, the bar gives up its labels and the height they
+     took; a nudge back up brings them straight back. A destination that is
+     56dp of glyph is still a destination, and the page under it gets 16dp it
+     did not have. */
+  body.nav-min .dock .bar{block-size:48px}
+  body.nav-min .dock .back{block-size:48px}
+  body.nav-min .dock .dest{gap:0}
+  body.nav-min .dock .dest__lab{
+    block-size:0;opacity:0;overflow:hidden;
+    transition:opacity var(--nt-exit),block-size var(--nt-resize)}
+  .dock .dest__lab{block-size:auto;transition:opacity var(--nt-effects),
+    block-size var(--nt-resize)}
   /* The track is the destination row itself, so the indicator is
      positioned against it directly — no allowance for the bar's
      padding and no column gap to throw the arithmetic off. */

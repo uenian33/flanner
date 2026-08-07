@@ -2968,7 +2968,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
          from the accessibility tree on purpose: the section states its own
          name in the <h2> below, and a bar that repeated it would put the same
          heading in the outline twice. -->
-    <p class="mtitle" id="mtitle" aria-hidden="true">All Festivals</p>
+    <p class="mtitle" id="mtitle" aria-hidden="true">Flanner</p>
     <div class="hslot" id="hslot">
     <div class="drop langwrap">
       <button class="lang" id="langTrig" aria-expanded="false" aria-controls="langSheet">
@@ -4525,8 +4525,13 @@ $('#catOpts').innerHTML = CATEGORIES.map(c =>
   `<button class="opt st" data-c="${esc(c.id)}" aria-pressed="false"
      title="${esc(c.blurb || '')}">${esc(c.label)}</button>`).join('');
 
+/* A festival states its headliners when it has any to state, and two of the
+   four do not — so spreading the field threw the moment anything was typed,
+   which took `apply` down with it and left every card on the page whatever
+   was in the box. Search has been dead site-wide on any query; nothing said
+   so, because the throw was inside a filter nobody was watching. */
 const haystack = f => [f.name, f.city, f.type, catOf(f).label, catOf(f).labelFi,
-                       ...f.tags, ...f.stars, f.description]
+                       ...(f.tags || []), ...(f.stars || []), f.description]
   .join(' ').toLowerCase();
 
 /* One predicate, asked by the list and by the calendar, so the two can never
@@ -4900,19 +4905,53 @@ document.addEventListener('keydown', e => {
      `--headh` is the masthead's own measured height, published by readStuck,
      so "under the bar" means under it rather than off the top of the screen. */
   const mt = $('#mtitle');
-  const TITLE_SPOTS = ['.highlights__headline', '#all-festivals-headline'];
+  /* Each heading with the region it names. A heading counts only while its
+     own region is still under the bar: once the highlight has scrolled away
+     entirely the bar has no business still saying Highlights over a list
+     whose own heading is in plain sight beneath it. */
+  const TITLE_SPOTS = [
+    {head: '.highlights__headline', region: '#hero'},
+    {head: '#all-festivals-headline', region: '.months'},
+  ];
+  /* The site's own name is what the bar carries before any section has gone
+     under it — a bar with a mark and nothing beside it is a bar that has not
+     loaded. It is the planner's arrangement: Flanner until the thing being
+     read has a name of its own, then that name. */
+  let shownTitle = null, titleT = null;
+  const setBarTitle = (name) => {
+    if (name === shownTitle) return;
+    const first = shownTitle === null;
+    shownTitle = name;
+    if (first) {
+      mt.textContent = name;
+      document.body.classList.add('title-up');
+      return;
+    }
+    /* Out on the accelerate, in on the emphasised decelerate — the two halves
+       of M3's fade-through, and the same swap a planner's bar makes. The CSS
+       owns both curves; this only decides when the word changes, which is at
+       the bottom of the fade rather than during it. */
+    document.body.classList.remove('title-up');
+    clearTimeout(titleT);
+    titleT = setTimeout(() => {
+      mt.textContent = name;
+      document.body.classList.add('title-up');
+    }, 180);
+  };
   const syncBarTitle = () => {
     if (!mt) return;
     const h = parseFloat(getComputedStyle(document.documentElement)
       .getPropertyValue('--headh')) || 52;
-    let name = '';
-    TITLE_SPOTS.forEach(sel => {
-      const el = document.querySelector(sel);
+    let name = 'Flanner';
+    TITLE_SPOTS.forEach(spot => {
+      const el = document.querySelector(spot.head);
       if (!el || !el.offsetParent) return;
-      if (el.getBoundingClientRect().top < h) name = el.textContent.trim();
+      if (el.getBoundingClientRect().top >= h) return;
+      const region = document.querySelector(spot.region);
+      if (region && region.getBoundingClientRect().bottom <= h) return;
+      name = el.textContent.trim();
     });
-    document.body.classList.toggle('title-up', !!name);
-    if (name && mt.textContent !== name) mt.textContent = name;
+    setBarTitle(name);
   };
   window.syncBarTitle = syncBarTitle;
   addEventListener('scroll', syncBarTitle, {passive: true});
@@ -4920,7 +4959,12 @@ document.addEventListener('keydown', e => {
   syncBarTitle();
 
   const atCards = on => document.body.classList.toggle('at-cards', on);
-  const cardsTabs = ['#nFest'].map($).filter(Boolean);
+  /* My plan as well as Festivals: both are the list, narrowed differently, and
+     the field searches inside whichever is showing — the plan is where a
+     search is most useful, being the shortest list and the one you came to
+     find something in. Watching only Festivals took the field away the moment
+     the plan was chosen. */
+  const cardsTabs = ['#nFest', '#nPlan'].map($).filter(Boolean);
   const syncCards = () => atCards(cardsTabs.some(t => t.classList.contains('on')));
   const spy = new MutationObserver(syncCards);
   cardsTabs.forEach(t => spy.observe(t, {attributes: true, attributeFilter: ['class']}));
@@ -4946,9 +4990,20 @@ document.addEventListener('keydown', e => {
   phone.addEventListener('change', place);
   place();
 
+  /* The bar gets out of the way, on the planner's own rule: past a dozen
+     pixels and still moving down it goes to its glyphs, and a nudge back up
+     brings the labels back. Read from the same scroll the frost is read from,
+     so the two never disagree about where the page is. */
+  let lastY = scrollY;
+  const shrinkBar = () => {
+    const y = scrollY, d = y - lastY;
+    lastY = y;
+    if (Math.abs(d) < 2) return;
+    document.body.classList.toggle('nav-min', y > 12 && d > 0);
+  };
   /* Scrolled at all is enough to earn the frosted panel behind the masthead. */
   const frost = () => document.body.classList.toggle('scrolled', scrollY > 8);
-  addEventListener('scroll', frost, {passive: true});
+  addEventListener('scroll', () => { frost(); shrinkBar(); }, {passive: true});
   frost();
   const dlg = $('#setDlg');
   const open = () => { dlg.showModal(); requestAnimationFrame(() => dlg.classList.add('in')); };

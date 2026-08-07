@@ -6422,6 +6422,61 @@ NO_ZOOM_JS = """(function () {
 
 
 # ── the page ──────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# The one thing that keeps being lost
+#
+# On a phone the act's card is a modal bottom sheet: it rises from the bottom
+# edge, and it is dragged back down to dismiss. Both have now been broken four
+# separate times by changes that had nothing to do with either — a lifecycle
+# guard that stopped firing, a `setState` inside a ref, a fresh arrow rebuilt
+# on every render, a lifted block that landed in the wrong place. Each time it
+# went unnoticed until someone opened the planner on a phone.
+#
+# Prose in the README did not survive contact with the next edit, so this is a
+# build failure instead. Each entry below is one of the four pieces the rise
+# and the drag are made of; if a change removes or renames any of them, no page
+# is written and the message says which one went.
+CARD_GESTURE_MARKS = (
+    ("the ref is the setter itself, so React does not reattach it every render",
+     "sheetRef: this.setSheetEl"),
+    ("the sheet rises from the bottom edge on a phone",
+     "el.animate([{ transform: 'translateY(100%)' }, { transform: 'none' }]"),
+    ("a phone's drag is routed to the bottom-sheet handler",
+     "if (this.sheetIsBottom()) { this.sheetDragOnBottom(); return; }"),
+    ("that handler exists", "sheetDragOnBottom()"),
+)
+
+
+def check_card_gestures(page: str, where: str) -> None:
+    """Fail the build if the act card lost its rise or its drag.
+
+    A ref that touches state is the other way this breaks — React calls a ref
+    while it is still committing, and a `setState` from inside one throws #185
+    and stops the component rendering, which on a phone looks like a card that
+    will not open or one that shudders under the finger. So the setter is
+    checked for one of those too.
+    """
+    missing = [why for why, mark in CARD_GESTURE_MARKS if mark not in page]
+    if missing:
+        raise SystemExit(
+            "%s: the act card lost its bottom-sheet behaviour \u2014 %s. "
+            "See CARD_GESTURE_MARKS in build_planner.py."
+            % (where, "; ".join(missing)))
+    start = page.find("setSheetEl = (el) => {")
+    if start == -1:
+        raise SystemExit("%s: setSheetEl is gone; the card has no ref." % where)
+    body = page[start:page.find("\n  }", start)]
+    # The call, not the word: the comment inside that setter explains why a
+    # setState may not be there, and looking for the bare name found the
+    # explanation and failed the build over it.
+    if "this.setState(" in body:
+        raise SystemExit(
+            "%s: setSheetEl calls setState. React calls a ref during the commit, "
+            "and a setState from there throws #185 and stops the whole component "
+            "rendering \u2014 on a phone the card never opens. Put it in openCard, "
+            "which is an event handler." % where)
+
+
 def build(fid: str) -> pathlib.Path:
     fest = FESTIVALS[fid]
     art = art_mod.Artifact()
@@ -6560,6 +6615,7 @@ x-dc{{display:none}}
 </body>
 </html>
 """
+    check_card_gestures(page, fest.out)
     out = ROOT / fest.out / "index.html"
     out.parent.mkdir(exist_ok=True)
     out.write_text(page)

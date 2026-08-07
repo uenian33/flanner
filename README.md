@@ -186,6 +186,36 @@ anchored the same way and commented where it is made:
 | The plan, as a picture | With the picks filter on, the page is showing one thing — what you starred — so the pill that carries the temperature carries the way to send it instead: the same pill, in the same place, saying what it does now. It draws the plan on a canvas and hands it to the share sheet, or saves it where there is no sheet. One layout: the schedule, as stage columns against the clock, with the site's own map under it. A column is headed by the pin the map drops for that stage — the same number in the same disc — so the two halves name a stage the same way and the plan can be read against the ground. The map is fitted to the box the stages occupy rather than to the basemap sheet: containing the whole sheet letterboxes a portrait map into a landscape panel, covering it crops the pins at the edges away, and a pin is the whole reason the map is there. The stages of the plan wear their pin in the stage's own dark container; the rest of the site is a light dot, there so the plan reads against the whole ground rather than against a map with holes in it. It draws the still basemap, which is same-origin — a live tile would taint the canvas and make the export throw online where it passed offline. Both carry the mark, `Flanner`, `Your Festival Planner`, the festival's name, its dates and its city, and a footer that says where it came from and that set times move. Every colour is read off the page's live custom properties, so a poster is in the festival's own hue and in the theme the reader has on, and everything in it is drawn — no map tile, no photograph, nothing that could taint the canvas and make the export throw online where it passed offline. It is all synchronous: iOS spends the tap's activation on the first `await`, and a share without activation is a `NotAllowedError`, so the PNG is made with `toDataURL` and turned into a blob by hand rather than fetched back — which `connect-src` would refuse anyway. A grid is one day's shape, so on a three-day festival it draws the day on screen and names it; the list carries the whole plan. |
 | A quieter filter card | Its foot carried a count and two buttons about the plan; the card keeps `Clear all`, at the top right. |
 
+## The act card's rise and drag
+
+On a phone the act's card is a modal bottom sheet: it **rises from the bottom
+edge** when a set is pressed, and it is **dragged back down** to dismiss. Both
+have been broken four separate times by changes that had nothing to do with
+either — a lifecycle guard that stopped firing, a `setState` inside a ref, a
+fresh arrow rebuilt on every render, a block lifted into the wrong file. Each
+time it went unnoticed until someone opened a planner on a phone.
+
+Prose here did not survive contact with the next edit, so the rule is enforced
+by the build. `CARD_GESTURE_MARKS` in `build_planner.py` lists the four pieces
+the behaviour is made of, and `check_card_gestures` refuses to write a page
+without them:
+
+| | |
+|---|---|
+| `sheetRef: this.setSheetEl` | The ref is the setter itself. React reads a callback ref by identity, so a fresh arrow in the render's bindings is a new ref every render — it detaches and reattaches the card each time, and since the ref is where the card is played in, the card plays in each time. |
+| `translateY(100%)` → `none` in `playSheetOpen` | The rise, on M3's emphasised decelerate. |
+| `if (this.sheetIsBottom()) { this.sheetDragOnBottom(); return; }` | A phone's drag goes to the bottom-sheet handler rather than to the throw-in-any-direction one a wide screen gets. |
+| `sheetDragOnBottom()` | That handler. |
+
+And `setSheetEl` may not call `setState`. React calls a ref while it is still
+committing; a `setState` from inside one throws error #185 and stops the whole
+component rendering — which on a phone looks like a card that will not open, or
+one that shudders under the finger. What a new card needs set is set in
+`openCard`, which is an event handler and may. The build checks for that too.
+
+If you are changing anything near the sheet, the check is the contract: break
+one of the five and no page is written, and the message says which.
+
 ## Going between pages
 
 A planner used to be one file with everything inside it, which is a good answer
