@@ -1392,17 +1392,56 @@ SHEET_JS = """
      The whole thing is one container transform at the duration M3 gives one,
      and the button answers with a beat of its own, which is what says the two
      are the same thing. */
-  flyToPlan(host) {
+  /* What a row sends to the plan. A row is the width of the screen, and a
+     thing that wide drawn through a 40px button is a curtain closing rather
+     than an act being put somewhere — which is why a row used to send
+     nothing at all. So it sends the act instead of the row: the picture and
+     the name, in the row's own container at the picture's height. Built here
+     rather than cloned, because there is no one node in a row holding those
+     two and only those two. */
+  rowFlyGhost(host, title) {
+    const art = host.querySelector('div');
+    if (!art) return null;
+    const ar = art.getBoundingClientRect();
+    if (!ar.width) return null;
+    const pad = 8, room = Math.max(120, Math.min(260, window.innerWidth - ar.left - 24));
+    const box = document.createElement('div');
+    box.setAttribute('aria-hidden', 'true');
+    box.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
+      + 'display:flex;align-items:center;gap:12px;padding:' + pad + 'px;'
+      + 'left:' + (ar.left - pad).toFixed(1) + 'px;'
+      + 'top:' + (ar.top - pad).toFixed(1) + 'px;'
+      + 'max-width:' + room.toFixed(1) + 'px;'
+      + 'border-radius:20px;background:var(--card,#F2F0EB);color:var(--on,#191D13);'
+      + 'overflow:hidden;transform-origin:50% 50%;will-change:transform,opacity;'
+      + 'box-shadow:0 8px 24px rgba(20,24,14,.18)';
+    const pic = art.cloneNode(true);
+    pic.style.flex = '0 0 auto';
+    box.appendChild(pic);
+    const name = document.createElement('span');
+    name.textContent = title || '';
+    name.style.cssText = 'min-width:0;overflow:hidden;text-overflow:ellipsis;'
+      + 'white-space:nowrap;font-size:14px;font-weight:600;letter-spacing:-.01em';
+    box.appendChild(name);
+    document.body.appendChild(box);
+    return box;
+  }
+
+  flyToPlan(host, prebuilt) {
     if (!host || !host.animate) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const target = document.querySelector('[data-fp-picks]');
-    if (!target) return;
-    const from = host.getBoundingClientRect(), to = target.getBoundingClientRect();
-    if (!from.width || !to.width) return;
-    const ghost = host.cloneNode(true);
+    if (!target) { if (prebuilt) prebuilt.remove(); return; }
+    /* A prebuilt ghost is already in the document and already placed, so it
+       is measured where it stands; a cloned one is measured off its host. */
+    const from = (prebuilt || host).getBoundingClientRect();
+    const to = target.getBoundingClientRect();
+    if (!from.width || !to.width) { if (prebuilt) prebuilt.remove(); return; }
+    const ghost = prebuilt || host.cloneNode(true);
+    const skin = getComputedStyle(prebuilt || host);
+    if (!prebuilt) {
     ghost.removeAttribute('id');
     ghost.setAttribute('aria-hidden', 'true');
-    const skin = getComputedStyle(host);
     ghost.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
       + 'left:' + from.left.toFixed(1) + 'px;top:' + from.top.toFixed(1) + 'px;'
       + 'width:' + from.width.toFixed(1) + 'px;height:' + from.height.toFixed(1) + 'px;'
@@ -1410,6 +1449,7 @@ SHEET_JS = """
       + 'transform-origin:50% 50%;will-change:transform,opacity;'
       + 'box-shadow:0 8px 24px rgba(20,24,14,.18)';
     document.body.appendChild(ghost);
+    }
     const dx = (to.left + to.width / 2) - (from.left + from.width / 2);
     const dy = (to.top + to.height / 2) - (from.top + from.height / 2);
     /* The corner the arc turns through, and it is above the line: the copy
@@ -2658,15 +2698,23 @@ def patch_nav(src: str) -> str:
         r"    const ev = this\.EVENTS\.find\(x => x\.id === id\);",
         "  starToggle(id, rect, srcEl) {\n"
         "    const ev = this.EVENTS.find(x => x.id === id);\n"
-        "    /* The cell the star was pressed in, which is what travels to the\n"
-        "       plan — measured before the state changes it. The grid only: a\n"
-        "       row in the list is the width of the screen, and a thing that\n"
-        "       wide being drawn through a 40px button is a curtain closing\n"
-        "       rather than an act being put somewhere. */\n"
+        "    /* What the star was pressed in, which is what travels to the\n"
+        "       plan — measured before the state changes it. A cell goes\n"
+        "       whole. A row does not: it is the width of the screen, and a\n"
+        "       thing that wide drawn through a 40px button is a curtain\n"
+        "       closing rather than an act being put somewhere, so what leaves\n"
+        "       a row is the act — its picture and its name — in a box the\n"
+        "       size of the picture. Both then take the same arc. */\n"
         "    const host = srcEl && srcEl.closest\n"
         "      ? srcEl.closest('[role=\"button\"]') : null;\n"
-        "    const inGrid = host && !host.closest('li');\n"
-        "    if (inGrid && !this.state.star[id]) this.flyToPlan(host);",
+        "    if (host && !this.state.star[id]) {\n"
+        "      if (host.closest('li')) {\n"
+        "        const g = this.rowFlyGhost(host, ev && ev.title);\n"
+        "        if (g) this.flyToPlan(host, g);\n"
+        "      } else {\n"
+        "        this.flyToPlan(host);\n"
+        "      }\n"
+        "    }",
         "the star knows what cell it was pressed in")
 
     # Each press throws its own sparks, in its own layer.
