@@ -1041,10 +1041,18 @@ svg.leaflet-image-layer.leaflet-interactive path {
 /* the planner's star: an outline flooded by a growing clip disc */
 .star__svg { overflow: visible; }
 .star__disc { transform: scale(0); transform-origin: 12px 12px; transition: transform .34s cubic-bezier(.34,1.3,.64,1); }
-.ac__tool[aria-pressed="true"] .star__disc { transform: scale(1); }
+/* The button that carries this star is .ac__fav-btn — the flood was written
+   for a .ac__tool that this card does not have, so a starred act kept an
+   outline star and the fill was clipped to nothing for good. It floods in the
+   colour the plan button is filled with, which is what being in the plan
+   looks like everywhere else on the card. */
+.ac__tool[aria-pressed="true"] .star__disc,
+.ac__fav-btn[aria-pressed="true"] .star__disc { transform: scale(1); }
 .star__outline { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; transition: opacity .2s ease; }
-.ac__tool[aria-pressed="true"] .star__outline { opacity: 0; transition-delay: .12s; }
+.ac__tool[aria-pressed="true"] .star__outline,
+.ac__fav-btn[aria-pressed="true"] .star__outline { opacity: 0; transition-delay: .12s; }
 .star__fill { fill: currentColor; stroke: none; }
+.ac__fav-btn[aria-pressed="true"] .star__fill { fill: var(--plan-on); }
 
 /* notch + chip — the card system's signature */
 .ac__notch {
@@ -7563,7 +7571,12 @@ class Component extends DCLogic {
           '--art-3': c.art3, '--art-ink': c.artInk
         }),
         onStar: (e) => this.starToggle(sev.id, e.currentTarget.getBoundingClientRect()),
-        onPlan: (e) => this.starToggle(sev.id, e.currentTarget.getBoundingClientRect())
+        onPlan: (e) => {
+          const star = document.querySelector('.ac__fav-btn');
+          this.starToggle(sev.id,
+            (star || e.currentTarget).getBoundingClientRect(),
+            e.currentTarget);
+        }
       }, this.mediaParts(sev.cat, 'lg'), this.starParts(sev.id, starred));
     }
 

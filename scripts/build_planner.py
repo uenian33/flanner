@@ -2233,6 +2233,22 @@ def patch_nav(src: str) -> str:
         "        }, this.TITLE_SWAP),",
         "the bar's two names")
 
+    # ---- both controls throw the sparks from the star ----
+    # The card's star and its Add to plan are the one state, and the blast
+    # was thrown from whichever was pressed. A blast out of the wide button
+    # says nothing; out of the star it says the star has changed.
+    src = sub_once(
+        src,
+        r"        onPlan: \(e\) => this\.starToggle\(sev\.id,"
+        r" e\.currentTarget\.getBoundingClientRect\(\)\)",
+        "        onPlan: (e) => {\n"
+        "          const star = document.querySelector('.ac__fav-btn');\n"
+        "          this.starToggle(sev.id,\n"
+        "            (star || e.currentTarget).getBoundingClientRect(),\n"
+        "            e.currentTarget);\n"
+        "        }",
+        "the plan button's sparks")
+
     # ---- one bar height, everywhere ----
     # The bar was 76 tall with its labels and 50 without, and the home page's
     # was 80: three heights for one component. M3's navigation bar is 80dp on
@@ -4497,10 +4513,18 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
 /* the planner's star: an outline flooded by a growing clip disc */
 .star__svg { overflow: visible; }
 .star__disc { transform: scale(0); transform-origin: 12px 12px; transition: transform .34s cubic-bezier(.34,1.3,.64,1); }
-.ac__tool[aria-pressed="true"] .star__disc { transform: scale(1); }
+/* The button that carries this star is .ac__fav-btn — the flood was written
+   for a .ac__tool that this card does not have, so a starred act kept an
+   outline star and the fill was clipped to nothing for good. It floods in the
+   colour the plan button is filled with, which is what being in the plan
+   looks like everywhere else on the card. */
+.ac__tool[aria-pressed="true"] .star__disc,
+.ac__fav-btn[aria-pressed="true"] .star__disc { transform: scale(1); }
 .star__outline { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; transition: opacity .2s ease; }
-.ac__tool[aria-pressed="true"] .star__outline { opacity: 0; transition-delay: .12s; }
+.ac__tool[aria-pressed="true"] .star__outline,
+.ac__fav-btn[aria-pressed="true"] .star__outline { opacity: 0; transition-delay: .12s; }
 .star__fill { fill: currentColor; stroke: none; }
+.ac__fav-btn[aria-pressed="true"] .star__fill { fill: var(--plan-on); }
 
 /* notch + chip — the card system's signature */
 .ac__notch {
