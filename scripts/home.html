@@ -1322,8 +1322,14 @@ __NAV_CSS__
    Titles are dropped from the grid: at this width they cannot be read anyway,
    and the spans still show what runs when. The list below carries the names. */
 @media (max-width: 599px) {
-  .cal-title { font-size: 22px; }
-  .cal-header { margin-block-end: 16px; gap: 2px 8px; padding-block: 6px; }
+  /* The row holds the month, the two arrows and Today at 360px: the short
+     month buys the space, and these take the rest of the way. */
+  .cal-title { font-size: 21px; padding: 6px 8px 6px 10px; }
+  .cal-title svg { inline-size: 20px; block-size: 20px; }
+  .cal-header { margin-block-end: 16px; gap: 2px 6px; padding-block: 6px; }
+  .cal-header__nav { gap: 6px; }
+  .calview .text-button { height: 40px; padding: 0 12px; font-size: 13px; }
+  .calview .icon-button { inline-size: 40px; block-size: 40px; }
   .weekdays { padding: 11px 0; }
   .weekdays .long  { display: none; }
   .weekdays .short { display: inline; }
@@ -3134,7 +3140,15 @@ const CAL = (() => {
   const labelEl = $('#monthLabel');
   const summary = $('#a11ySummary');
 
+  /* Two of them: a phone's calendar header carries the month, the two arrows
+     and Today on one row, and at 360px that row has 328 of which "September
+     2026" alone wants 223. The short month is what makes the row fit — no
+     size that keeps the long one readable does. */
   const fmtMonth = new Intl.DateTimeFormat('en-GB', {month: 'long', year: 'numeric', timeZone: 'UTC'});
+  const fmtMonthShort = new Intl.DateTimeFormat('en-GB', {month: 'short', year: 'numeric', timeZone: 'UTC'});
+  const narrowCal = window.matchMedia('(max-width: 599px)');
+  /* Turning the phone crosses that line, so the header restates itself. */
+  narrowCal.addEventListener('change', () => renderGrid());
   const fmtDay   = new Intl.DateTimeFormat('en-GB', {weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC'});
 
   const TODAY = parse(new Date().toISOString().slice(0, 10));
@@ -3156,7 +3170,9 @@ const CAL = (() => {
     const start  = first - offset * DAY;
     const all    = events();
 
-    labelEl.textContent = fmtMonth.format(new Date(first));
+    const when = new Date(first);
+    labelEl.textContent = (narrowCal.matches ? fmtMonthShort : fmtMonth).format(when);
+    labelEl.title = fmtMonth.format(when);
     weeksEl.textContent = '';
 
     for (let w = 0; w < 6; w++) {
