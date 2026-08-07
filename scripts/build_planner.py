@@ -2155,6 +2155,24 @@ def patch_nav(src: str) -> str:
         "      showHeroFold: true, showControls: true, filterScrim: false,",
         "the compact card's own state")
 
+    # ---- one bar height, everywhere ----
+    # The bar was 76 tall with its labels and 50 without, and the home page's
+    # was 80: three heights for one component. M3's navigation bar is 80dp on
+    # a handset, but this one floats over the page rather than sitting on its
+    # edge — it is a capsule with air under it, and at 80 it took a fifth of a
+    # phone's height for four words. 64 and 48, and the home page states the
+    # same two.
+    src = sub_once(
+        src,
+        r"      height: mini \? '50px' : '76px', padding: mini \? '5px' : '6px',",
+        "      height: mini ? '48px' : '64px', padding: mini ? '5px' : '6px',",
+        "bar height")
+    src = sub_once(
+        src,
+        r"          left: clusterLeft, width: backW \+ 'px', height: \(mini \? 50 : 76\) \+ 'px',",
+        "          left: clusterLeft, width: backW + 'px', height: (mini ? 48 : 64) + 'px',",
+        "back button height")
+
     # ---- a phone opens on Info ----
     # The grid is what the planner is for, and it is also the last thing you
     # want first: a wall of cells with no idea which festival it is, when it

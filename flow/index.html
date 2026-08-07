@@ -6577,7 +6577,7 @@ class Component extends DCLogic {
       bottom: 'calc(16px + env(safe-area-inset-bottom, 0px))',
       left: 'calc(' + clusterLeft + ' + ' + (backW + 8) + 'px)',
       width: 'calc(min(94vw, 430px) - ' + (backW + 8) + 'px)',
-      height: mini ? '50px' : '76px', padding: mini ? '5px' : '6px', flexDirection: 'row', borderRadius: '28px',
+      height: mini ? '48px' : '64px', padding: mini ? '5px' : '6px', flexDirection: 'row', borderRadius: '28px',
       transform: barOff ? 'translateY(calc(100% + 28px))' : 'none',
           opacity: barOff ? 0 : 1, pointerEvents: barOff ? 'none' : 'auto',
       transition: 'none',
@@ -8077,7 +8077,7 @@ class Component extends DCLogic {
         backBtnStyle: Object.assign({}, cardSkin, {
           position: 'fixed', zIndex: 60, display: 'grid', placeItems: 'center',
           bottom: 'calc(16px + env(safe-area-inset-bottom, 0px))',
-          left: clusterLeft, width: backW + 'px', height: (mini ? 50 : 76) + 'px',
+          left: clusterLeft, width: backW + 'px', height: (mini ? 48 : 64) + 'px',
           borderRadius: '28px', color: 'var(--on-var,#494E42)', cursor: 'pointer',
           WebkitTapHighlightColor: 'transparent',
           transform: barOff ? 'translateY(calc(100% + 28px))' : 'none',

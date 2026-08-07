@@ -1,0 +1,2518 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f5f5">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Flanner">
+<meta name="mobile-web-app-capable" content="yes">
+<title>__PAGETITLE__</title>
+<meta name="description" content="__METADESC__">
+<style>__FONTCSS__</style>
+<meta name="keywords" content="__KEYWORDS__">
+__OG__
+<style>
+__TOKENS__
+/* Only what this page owns. The palette, the type scale, the corners and the
+   easing all come from the tokens above, so a planner and the home page
+   cannot drift apart. Sampled from the organiser's own artwork: the poster's
+   neon green, its sky blue, and the orange-red of the 01.08. date. */
+:root{
+  --kbp-green:#b6fc46; --kbp-sky:#a8c4ee; --kbp-red:#fc6238; --kbp-sand:#e07e62;
+  --accent:var(--kbp-green); --live:var(--kbp-red);
+  --on-accent:#0a1400;
+  --sheet:var(--md-sys-color-surface-container-lowest); --sheet2:var(--md-sys-color-surface-container-high);
+  --lab:var(--md-sys-color-on-surface); --lab2:var(--md-sys-color-on-surface-variant); --lab3:var(--md-sys-color-on-surface-variant);
+  --fill:rgba(118,118,128,.26); --fill2:rgba(118,118,128,.17);
+  --chip-line:var(--md-sys-color-outline);
+  --cText:var(--md-sys-color-on-surface); --bgc:var(--md-sys-color-surface-container-low); --accent-ink:var(--kbp-green);
+  --gutter:58px; --colw:172px; --radius:var(--r-box);
+  --navn:3;   /* Schedule, Map, Settings */
+  --disp:var(--sans);
+  --vvshift:0px;
+}
+/* The bright theme is the tokens' default; these are the planner's own
+   adjustments on top of it — an accent dark enough to read as ink, and the
+   softer fills a dense grid needs. */
+:root[data-theme=light]{
+  --accent-ink:#3f6800; --on-accent:#000;
+  --fill:rgba(0,0,0,.09); --fill2:rgba(0,0,0,.055);
+  --chip-line:rgba(0,0,0,.26);
+}
+/* Stage hue is scoped to the element that sets --c, so the derived tokens must
+   be too: defining them on :root would resolve against an absent --c. */
+[style*="--c:"]{--cText:var(--c);--bgc:color-mix(in srgb,var(--c) 15%,var(--md-sys-color-surface-container-lowest))}
+:root[data-theme=light] [style*="--c:"]{
+  --cText:color-mix(in srgb,var(--c) 45%,#0a0a0a);
+  --bgc:color-mix(in srgb,var(--c) 24%,#fff);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
+/* A heavily blurred crop of the organiser's own poster, so the page sits on the
+   festival's colour rather than a flat field. */
+/* ── ground ────────────────────────────────────────────
+   The same paper as the home page: one 26px dot grid, no washes. The planner
+   used to lay a blurred festival photograph under here, which read as a
+   different surface on every page. */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  opacity:var(--dotop,1);
+  background-image:radial-gradient(circle at 1px 1px,
+    color-mix(in srgb,var(--md-sys-color-on-surface) 10%,transparent) 1px,transparent 0);
+  background-size:26px 26px}
+:root[data-theme=dark]{--dotop:.45}
+body{background:var(--md-sys-color-surface);color:var(--md-sys-color-on-surface);font:var(--f-caption)/1.45 var(--sans);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;
+  stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.13em}
+svg.i.fill{fill:currentColor;stroke:currentColor;stroke-width:1.2}
+/* The focus indicator is in scripts/_tokens.css. A second rule lived here on
+   --accent, which is the poster green: 1.18:1 against the light surface, and
+   it won on source order, so keyboard focus was unmarked in the default theme. */
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,3vw,32px)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ── header ───────────────────────────────────────────── */
+header{padding:clamp(20px,3vw,34px) 0 18px}
+/* The ornaments live inside the lockup, so they never reach the link buttons. */
+.lockup{position:relative;display:flex;flex-direction:column;align-items:center;
+  gap:12px;width:100%}
+/* Festival ornament: a handful of drawn glyphs in the stage palette, each on
+   its own slow loop. Transform/opacity only, low contrast, off for reduced
+   motion — decoration that never competes with the lockup. */
+@keyframes o-bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-6px) rotate(4deg)}}
+@keyframes o-sway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes o-spin{to{transform:rotate(360deg)}}
+@keyframes o-twinkle{0%,100%{opacity:.2;transform:scale(.75) rotate(0)}50%{opacity:.8;transform:scale(1.1) rotate(45deg)}}
+@keyframes o-rise{
+  0%{opacity:0;transform:translate(0,10px) rotate(-10deg)}
+  22%{opacity:.7}
+  75%{opacity:.45}
+  100%{opacity:0;transform:translate(12px,-30px) rotate(12deg)}
+}
+.deco{position:absolute;inset:-8px 0 -4px;pointer-events:none;z-index:0;overflow:hidden}
+.dx{position:absolute;left:var(--x);top:var(--y);color:var(--c);line-height:0;
+  --sz:calc(clamp(26px,3.4vw,38px) * var(--s,1));
+  animation-delay:var(--d);animation-iteration-count:infinite}
+.dx svg{width:var(--sz);height:var(--sz);stroke-width:1.5;opacity:.55}
+/* Ambient loops, not transitions. The duration tokens top out at 600ms because
+   they time a component changing state; an ornament drifting across a masthead
+   is measured in seconds, so these stay literal. */
+.dx.bob{animation-name:o-bob;animation-duration:3.4s;animation-timing-function:ease-in-out}
+.dx.sway{animation-name:o-sway;animation-duration:4.1s;animation-timing-function:ease-in-out}
+.dx.spin{animation-name:o-spin;animation-duration:14s;animation-timing-function:linear}
+.dx.rise{animation-name:o-rise;animation-duration:5s;animation-timing-function:ease-out}
+.dx.twinkle{animation-name:o-twinkle;animation-duration:3.8s;animation-timing-function:ease-in-out}
+:root[data-theme=light] .dx{color:color-mix(in srgb,var(--c) 58%,#0d1208)}
+:root[data-theme=light] .dx svg{opacity:.62;stroke-width:1.7}
+@media(prefers-reduced-motion:reduce){.dx{animation:none}.dx.rise svg{opacity:.4}}
+/* Phones get their own placement and a smaller scale, tucked into the margins
+   either side of the centred lockup rather than hidden. */
+@media(max-width:599px){
+  .dx{left:var(--mx,var(--x));top:var(--my,var(--y));
+    --sz:calc(clamp(24px,7vw,34px) * var(--ms,var(--s,1)))}
+}
+.brandline{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.logo{display:block;line-height:0}
+.logo img{width:clamp(132px,20vw,208px);height:auto;display:block;transition:var(--md-sys-motion-spring-default-effects)}
+.logo:hover img{transform:rotate(-1.5deg) scale(1.035)}
+/* Every size on this page is a step of the scale, so the masthead grows by
+   changing style at a breakpoint rather than by interpolating between two
+   of them: headline-small on a phone, display-small from the medium window
+   up, display-medium on the widest. */
+h1{margin:0 auto;font-family:var(--title);font-size:var(--md-sys-typescale-headline-small-size);line-height:var(--md-sys-typescale-headline-small-line-height);font-weight:var(--md-sys-typescale-body-weight);
+  letter-spacing:.006em;color:var(--md-sys-color-on-surface);text-transform:uppercase;
+  max-width:min(100%,18ch);text-wrap:balance}
+@media(min-width:600px){h1{font-size:var(--md-sys-typescale-display-small-size);
+  line-height:var(--md-sys-typescale-display-small-line-height)}}
+@media(min-width:1200px){h1{font-size:var(--md-sys-typescale-display-medium-size);
+  line-height:var(--md-sys-typescale-display-medium-line-height)}}
+.meta{color:var(--md-sys-color-on-surface-variant);font-size:var(--f-caption);margin:12px auto 0;display:flex;gap:5px 18px;flex-wrap:wrap;
+  align-items:center;justify-content:center;line-height:1.6}
+.meta b{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-title-weight)}
+.meta .g{white-space:nowrap}
+.meta i{opacity:.55;margin:0 3px}
+.meta i{font-style:normal;color:var(--md-sys-color-outline)}
+.hdr-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.ghost{font-size:var(--f-over);text-decoration:none;padding:7px 13px;border:1px solid var(--md-sys-color-outline);
+  border-radius:var(--r-pill);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects);display:inline-flex;align-items:center;gap:7px}
+.ghost:hover{color:var(--md-sys-color-on-surface);border-color:var(--md-sys-color-on-surface-variant);background:var(--md-sys-color-surface-container-low)}
+
+/* ── toolbar ──────────────────────────────────────────── */
+/* The desktop layout reserves 96px on the left for the section rail, so the
+   bar's own box starts there and its backdrop left a strip of bare page down
+   the side. Painting it on a pseudo-element stretched past both gutters makes
+   it full-bleed whatever the body padding is — the same trick the home page
+   uses for the same reason. */
+/* Over the festival block the bar is just type on the page; the frosted panel
+   only appears once there is content sliding under it. */
+.toolbar{position:sticky;top:0;z-index:40;margin-bottom:2px}
+.toolbar::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
+  background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects);pointer-events:none}
+body.past-head .toolbar::before{opacity:1}
+.toolbar > *{position:relative;z-index:1}
+/* While a second bar is pinned directly beneath it, the rule between them is
+   a seam through what should read as one block, so it is dropped for as long
+   as they are touching. */
+.tbar{display:flex;gap:10px;align-items:center;padding:13px 0;flex-wrap:nowrap}
+/* The bar borrows the home page's two faces so the two read as one product.
+   Scoped to the bar: the rest of the planner keeps its own typography. */
+.toolbar{font-family:var(--sans)}
+.tbar2{flex-wrap:nowrap}
+
+/* ── the Flanner mark, docked to the section nav ───────
+   Its own button rather than a fourth tab, because it leaves the planner
+   rather than switching a view within it. Offsets come from the measured nav,
+   which changes size when the mobile bar shrinks on scroll. */
+/* Always present, not revealed on scroll: the masthead is below the fold for
+   most of the page, so the bar is the only place the festival is named. */
+/* The same lockup as the home page's masthead, at the same sizes: mark, the
+   wordmark at display size, and the descriptor beneath it. The planner has no
+   place selector — there is only one festival on the page. */
+.brandmini{display:inline-flex;align-items:center;gap:clamp(11px,1.3vw,16px);
+  text-decoration:none;white-space:nowrap;flex:none}
+.wm{display:flex;flex-direction:column;gap:3px;min-width:0}
+.wm i{font-style:normal;font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-body-weight);
+  letter-spacing:.22em;text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);line-height:1}
+
+.brandmini .fpmark{width:clamp(30px,3.6vw,44px);height:clamp(30px,3.6vw,44px);flex:none;
+  stroke:none;fill:none}
+.brandmini b{font-family:var(--sans);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  font-size:var(--md-sys-typescale-headline-medium-size);letter-spacing:.008em;text-transform:uppercase;
+  line-height:1;white-space:nowrap;color:var(--md-sys-color-on-surface)}
+@media(max-width:839px){.brandmini b{display:none}}
+/* On a phone the identity is not something to reveal on scroll — with the
+   masthead far below the fold, the bar is the only place the festival is
+   named. It takes its own row so the search keeps its width. */
+/* On a phone the identity is not something to reveal on scroll — with the
+   masthead far below the fold, the bar is the only place the festival is
+   named. Everything stays on one row: the mark and the two buttons hold their
+   size and the search field absorbs whatever is left, down to a stub. */
+@media(max-width:599px){
+  .toolbar .tbar:not(.tbar2){gap:8px}
+  .brandmini{width:auto;margin:0;opacity:1;transform:none;overflow:visible;flex:none}
+  /* The home page's phone masthead, to the number. */
+  .brandmini b{display:block;font-size:var(--md-sys-typescale-headline-small-size)}
+  .brandmini .wm i{letter-spacing:.18em}
+  /* 44px here, matching the phone-sized buttons. Scoped through .toolbar
+     because this block sits above the base rule in the sheet and would
+     otherwise lose to it on equal specificity. */
+  .toolbar .srch{width:44px}
+  .toolbar .srch.open{width:min(100%,calc(100vw - 120px))}
+  .toolbar input[type=search]{height:44px;padding:0 16px 0 38px;font-size:var(--f-label)}
+  .toolbar .srch.open svg{left:14px}
+  .toolbar .iconbtn{width:44px;height:44px}
+}
+header{transition:none}
+.logo img{transform-origin:center center}
+body.scrolled .logo img{transform:scale(.72);opacity:.55}
+/* 1px border + 2px padding + a 44px button = the 50px every other control in
+   these bars is, so the segment lines up with the filter button beside it. */
+/* The switches fill the row. They used to change size when you switched view,
+   because list view put this bar in the narrow column of a two-column grid —
+   fixed now by lifting the bar out of that column entirely, so it is the full
+   width of the deck either way and the segments can stay flexible. */
+.seg{display:flex;flex:1 1 auto;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
+  border-radius:var(--r-pill);padding:2px;gap:3px}
+.seg button{display:inline-flex;flex:1 1 0;align-items:center;justify-content:center;gap:8px;
+  font-size:var(--f-label);font-weight:var(--md-sys-typescale-title-weight);padding:0 16px;
+  --shape:var(--md-sys-shape-corner-full);
+  --shape-pressed:var(--md-sys-shape-corner-pressed-m);
+  border-radius:var(--shape);color:var(--md-sys-color-on-surface-variant);
+  transition:var(--md-sys-motion-spring-fast-effects),
+             border-radius var(--md-sys-motion-spring-fast-spatial);
+  min-height:40px;white-space:nowrap}
+.seg button:active{--shape:var(--shape-pressed)}
+/* Day and view belong to the timetable, not to the whole page, so they live
+   inside the schedule section. A sticky child only pins within its parent's
+   box, which is exactly the behaviour wanted: they ride under the top bar
+   while the schedule is on screen and leave with it. */
+.schedbar{position:sticky;top:var(--toph,104px);z-index:30;margin:0 0 2px}
+.schedbar::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
+  background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  pointer-events:none}
+.schedbar > *{position:relative;z-index:1}
+.tbar2{padding:8px 0 10px;flex-wrap:wrap;row-gap:8px}
+.daybar{flex:1 1 auto}
+.daybar .dshort{display:none}
+@media(max-width:839px){
+  .tbar2{flex-wrap:wrap}
+  .daybar{flex:1 1 100%;margin-bottom:8px}
+  .daybar .dlong{display:none}
+  .daybar .dshort{display:inline}
+}
+/* the view switch only means something over the schedule itself */
+body.sched-off .schedbar{display:none}
+/* The field is a 50px circle at the end of the bar until it is asked for, then
+   it opens leftwards into a full search box. Collapsed it is the same shape as
+   every other control here, so the bar stays a row of pills either way. */
+.srch{position:relative;flex:0 0 auto;margin-left:auto;width:50px;min-width:0;
+  transition:width var(--md-sys-motion-spring-default-spatial)}
+.srch.open{width:min(100%,460px)}
+input[type=search]{width:100%}
+/* Every measurement in this bar is taken from the home page's, so the two read
+   as one product: 13px vertical padding, a 10px gap, 50px pill controls on a
+   1px --line2 hairline, and a backdrop of --bg at 86% behind a 16px blur. */
+.seg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest);font-weight:var(--md-sys-typescale-emphasized-label-weight);box-shadow:none}
+.seg button:hover{color:var(--md-sys-color-on-surface)}
+.srch{position:relative;display:flex;align-items:center}
+.srch svg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:18px;height:18px;color:var(--md-sys-color-on-surface-variant);pointer-events:none;
+  transition:left var(--md-sys-motion-spring-default-spatial),transform var(--md-sys-motion-spring-default-spatial),color var(--md-sys-motion-spring-fast-effects)}
+.srch.open svg{left:17px;transform:translate(0,-50%);width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
+input[type=search]{font-family:inherit;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
+  border-radius:var(--r-pill);padding:0 16px 0 44px;color:var(--md-sys-color-on-surface);width:100%;font-size:var(--f-label);
+  outline:none;height:50px;cursor:text;
+  transition:padding var(--md-sys-motion-spring-default-spatial),color var(--md-sys-motion-spring-fast-effects)}
+.srch:not(.open) input{padding:0;color:transparent;cursor:pointer}
+.srch:not(.open) input::placeholder{color:transparent}
+input[type=search]:focus{border-color:var(--md-sys-color-on-surface)}
+input[type=search]::placeholder{color:var(--md-sys-color-on-surface-variant)}
+.tspacer{flex:1 1 auto}
+.iconbtn{width:50px;height:50px;padding:0;border:1px solid var(--md-sys-color-outline);border-radius:var(--r-pill);color:var(--md-sys-color-on-surface-variant);
+  display:grid;place-items:center;font-size:var(--f-body);transition:var(--md-sys-motion-spring-fast-effects);background:var(--md-sys-color-surface-container-lowest)}
+.iconbtn:hover{color:var(--md-sys-color-on-surface);border-color:var(--md-sys-color-on-surface)}
+.iconbtn[aria-pressed=true]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.iconbtn[aria-pressed=true]:hover{filter:brightness(1.06);color:var(--on-accent)}
+.rel:has(.iconbtn[aria-pressed=true]) .fbadge{background:var(--on-accent);color:var(--accent);
+  box-shadow:0 0 0 1.5px var(--accent)}
+.fbadge{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;border-radius:var(--r-pill);
+  background:var(--accent);color:var(--on-accent);font-size:var(--f-micro);font-weight:var(--md-sys-typescale-emphasized-label-weight);display:grid;place-items:center;
+  padding:0 4px}
+.rel{position:relative}
+
+/* ── filters ──────────────────────────────────────────── */
+.toolbar>.wrap{position:relative;z-index:2}
+/* The drawer hangs below the pinned rows rather than growing them, so the bar
+   keeps sticking and the page below does not jump when it opens. */
+__SETTINGS_CSS__
+.filters{grid-template-columns:minmax(0,1fr);
+  display:grid;grid-template-rows:0fr;opacity:0;pointer-events:none;
+  transition:grid-template-rows var(--md-sys-motion-spring-default-spatial),opacity var(--md-sys-motion-spring-default-effects);
+  border-bottom:1px solid transparent}
+.filters.open{grid-template-rows:1fr;opacity:1;pointer-events:auto}
+.finner{min-height:0;overflow:hidden}
+/* The 0fr -> 1fr collapse only works if the grid child can actually reach
+   zero, so the wrap needs min-height:0 and overflow:hidden. This was
+   invisible while the drawer was absolutely positioned and its height did
+   not affect the page. */
+.filters>.wrap{min-width:0;min-height:0;overflow:hidden;width:100%;margin-inline:0}
+.finner{min-width:0;padding:8px 0 18px}
+.frow{display:flex;flex-wrap:wrap;align-items:center;margin-bottom:24px}
+.chipset{display:flex;flex-wrap:wrap;gap:11px 10px;width:100%}
+/* On a phone three wrapped chip fields run to most of a screen, so each group
+   becomes one swipeable row instead. The mask hints that it scrolls. */
+@media(max-width:839px){
+  .chipset{flex-wrap:nowrap;overflow-x:auto;gap:9px;padding:2px 22px 4px 0;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    overscroll-behavior-inline:contain;overscroll-behavior-y:auto;
+    scroll-snap-type:x proximity;
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);
+    mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
+  .chipset::-webkit-scrollbar{display:none}
+  .chipset .chip{flex:0 0 auto;scroll-snap-align:start}
+  .frow{margin-bottom:14px}
+  .finner{padding:8px 0 14px}
+}
+.frow:last-child{margin-bottom:0}
+.flab{width:100%;margin:0 0 1px;font-size:var(--f-micro);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--md-sys-color-on-surface-variant);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
+/* M3 filter chip: 32dp tall, small corner, label-large. */
+.chip{font-size:var(--md-sys-typescale-label-large-size);padding:6px 16px;
+  --shape:var(--md-sys-shape-corner-small);
+  --shape-pressed:var(--md-sys-shape-corner-extra-small);
+  border-radius:var(--shape);border:1px solid var(--chip-line);
+  color:var(--md-sys-color-on-surface-variant);
+  transition:var(--md-sys-motion-spring-fast-effects),
+             border-radius var(--md-sys-motion-spring-fast-spatial);white-space:nowrap;display:inline-flex;
+  align-items:center;gap:8px;min-height:32px}
+.chip:hover{border-color:var(--md-sys-color-on-surface-variant);color:var(--md-sys-color-on-surface)}
+.chip:active{--shape:var(--shape-pressed)}
+.chip[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest);font-weight:var(--md-sys-typescale-emphasized-label-weight);border-color:var(--md-sys-color-on-surface);
+  font-weight:var(--md-sys-typescale-title-weight)}
+.chip .dot{width:8px;height:8px;border-radius:var(--r-pill);background:var(--c,currentColor);flex:none}
+/* The starred filter sits in the toolbar rather than the sheet: it is the one
+   filter with a count worth seeing without opening anything. */
+.starfilter{flex:none;min-height:40px;font-size:var(--md-sys-typescale-label-large-size);
+  font-weight:var(--md-sys-typescale-title-weight);padding:0 16px}
+.starfilter[aria-pressed=true] svg.i{fill:currentColor}
+.starfilter:disabled{opacity:.45;cursor:default}
+.starfilter .nb{min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-pill);
+  display:inline-grid;place-items:center;font-size:var(--f-micro);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  background:var(--fill);color:inherit}
+.starfilter[aria-pressed=true] .nb{background:rgba(255,255,255,.24)}
+@media(max-width:839px){.starfilter .lbl{display:none}.starfilter{padding:0 12px}}
+.chip.stage[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#0a0c10}
+.chip.stage[aria-pressed=true] .dot{background:rgba(10,12,16,.55)}
+.chip .ct{font-size:var(--f-micro);opacity:.62;font-variant-numeric:tabular-nums}
+.fstat{display:flex;gap:14px;align-items:center;font-size:var(--f-over);color:var(--md-sys-color-on-surface-variant);padding-top:6px}
+.linkbtn{font-size:var(--f-over);color:var(--md-sys-color-on-surface-variant);text-decoration:underline;text-underline-offset:3px;
+  padding:4px 0}
+.linkbtn:hover{color:var(--md-sys-color-on-surface)}
+
+/* ── section frames ───────────────────────────────────── */
+.deck{display:block}
+@media(min-width:1200px){
+  /* In list view the timetable is a narrow column, so the map earns the space
+     beside it. The grid view already spans the full width. */
+  body[data-view=agenda] .deck{display:grid;grid-template-columns:minmax(0,1fr) minmax(380px,42%);
+    gap:clamp(20px,2.4vw,34px);align-items:start}
+  /* The bar and the plan run the whole width; only the list and the map share
+     the two columns. */
+  body[data-view=agenda] .deck > .schedbar{grid-column:1/-1}
+  /* The day row pins beneath the top bar, so the map column has to clear both
+     or its first rows sit behind them. This is the desktop side-by-side layout
+     only; on a phone the map is a normal block further down the page. */
+  /* The bar spans the deck above both columns now, so the map keeps the same
+     section margin as the list beside it rather than being pushed down by a
+     bar that is no longer above it. */
+  body[data-view=agenda] .deck #secMap{position:sticky;
+    top:calc(var(--toph,104px) + var(--tb2h,0px) + 18px)}
+  body[data-view=agenda] .deck .maplayout{grid-template-columns:1fr}
+  body[data-view=agenda] .deck .agenda{max-width:none}
+}
+/* A jump has to clear everything pinned above the target. That is the top bar
+   for every section, plus the day row for the schedule, which pins inside it —
+   an offset that only counted the top bar left each heading tucked under the
+   bar it had just scrolled beneath. */
+section.blk{margin:26px 0 0;scroll-margin-top:calc(var(--toph,104px) + 18px)}
+#secSchedule{scroll-margin-top:calc(var(--toph,104px) + var(--tb2h,0px) + 18px)}
+/* The heading pins under the top bar for as long as its own section is on
+   screen, so you always know which part of the planner you are reading. It is
+   a sticky child, so it arrives and leaves with the section by itself.
+
+   A pinned heading has to hide what slides beneath it, and a flat --bg plate
+   did that but read as a grey slab, because the page behind it carries a
+   gradient the flat colour cannot match. So it uses the same material as the
+   toolbar: mostly transparent, with a backdrop blur. It picks up whatever is
+   behind it, and content passing under is frosted rather than legible through
+   the type. */
+.shead{position:sticky;top:var(--toph,104px);z-index:26;
+  display:block;margin-bottom:12px;padding:9px 0 8px}
+.shead::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
+  background:color-mix(in srgb,var(--md-sys-color-surface) 62%,transparent);
+  -webkit-backdrop-filter:blur(15px) saturate(1.5);
+  backdrop-filter:blur(15px) saturate(1.5);pointer-events:none}
+.shead > *{position:relative;z-index:1}
+.shead h2{margin:0;font-family:var(--disp);font-size:var(--f-title);letter-spacing:-.02em;font-weight:var(--md-sys-typescale-emphasized-title-weight)}
+.shead p{margin:4px 0 0;color:var(--md-sys-color-on-surface-variant);font-size:var(--f-over)}
+.shead .tspacer{flex:1}
+
+/* ── timeline ─────────────────────────────────────────── */
+.board{overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:8px}
+.board-in{width:max-content;min-width:100%;position:relative}
+/* A horizontally scrolling container traps position:sticky on its children, so
+   the time ruler lives outside .board and mirrors its scrollLeft instead. */
+/* ── timetable ─────────────────────────────────────────
+   Time runs down and stages run across, which is how a festival day is
+   actually read. Both headers are position:sticky inside the one scroller, so
+   the hours stay on the left and the stage names on top without any of the
+   scroll-mirroring the horizontal version needed.
+
+   The vertical axis is pixels-per-minute rather than a percentage, so zoom is
+   one number and a set's height is honestly proportional to its length. */
+.board{position:relative;overflow:auto;overscroll-behavior:contain;
+  height:clamp(420px,66svh,860px);border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--r-box);
+  background:var(--md-sys-color-surface)}
+.board[hidden]{display:none}
+.board-in{position:relative;width:max-content;min-width:100%}
+.vhead{position:sticky;top:0;z-index:20;display:flex;background:var(--md-sys-color-surface);
+  box-shadow:0 1px 0 var(--md-sys-color-outline)}
+.vcorner{position:sticky;left:0;z-index:22;flex:none;width:var(--gutter);
+  background:var(--md-sys-color-surface);border-right:1px solid var(--md-sys-color-outline-variant)}
+.vstage{flex:none;width:var(--colw);min-width:0;display:flex;align-items:center;gap:8px;
+  padding:11px 10px;border-right:1px solid var(--md-sys-color-outline-variant);text-align:left;
+  transition:background var(--md-sys-motion-spring-fast-effects)}
+.vstage:last-child{border-right:none}
+.vstage:hover{background:var(--md-sys-color-surface-container-low)}
+.vstage:hover .snm{color:var(--cText)}
+.vstage .snm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vstage > svg.i{flex:none;font-size:var(--f-caption);color:var(--md-sys-color-on-surface-variant)}
+.vstage:hover > svg.i{color:var(--cText)}
+/* The stage number is a filled chip in that stage's own colour — it is the key
+   to the map pins, so it has to be recognisable at a glance. */
+.snum{flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:var(--r-box);
+  background:var(--c);color:#0a0c10;font-size:var(--f-over);font-weight:var(--md-sys-typescale-emphasized-label-weight);font-style:normal;
+  font-variant-numeric:tabular-nums;line-height:1}
+.snm{font-size:var(--f-caption);font-weight:var(--md-sys-typescale-title-weight);color:var(--md-sys-color-on-surface);font-family:var(--disp);
+  letter-spacing:-.012em}
+.vbody{display:flex;position:relative}
+.vgutter{position:sticky;left:0;z-index:15;flex:none;width:var(--gutter);
+  background:var(--md-sys-color-surface);border-right:1px solid var(--md-sys-color-outline-variant)}
+.vhour{position:absolute;left:0;right:0;text-align:center;font-size:var(--f-over);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  color:var(--md-sys-color-on-surface);font-variant-numeric:tabular-nums;transform:translateY(-50%);
+  letter-spacing:-.01em}
+.vhour.half{font-size:var(--f-micro);font-weight:var(--md-sys-typescale-title-weight);color:var(--md-sys-color-on-surface-variant)}
+.vcol{position:relative;flex:none;width:var(--colw);border-right:1px solid var(--md-sys-color-outline-variant)}
+.vcol:last-child{border-right:none}
+.vcol[hidden]{display:none}
+.vstage[hidden]{display:none}
+.glines{position:absolute;inset:0;pointer-events:none}
+.glines i{position:absolute;left:0;right:0;border-top:1px solid var(--md-sys-color-outline-variant);opacity:.55}
+.glines i.half{border-top-style:dotted;opacity:.26}
+.blk-act{position:absolute;border-radius:var(--radius);padding:5px 8px;overflow:hidden;
+  border:1px solid var(--c);background:var(--bgc);cursor:pointer;text-align:left;display:block;
+  transition:filter var(--md-sys-motion-spring-fast-effects),opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-fast-spatial),box-shadow var(--md-sys-motion-spring-fast-effects)}
+.blk-act:hover{filter:brightness(1.3);transform:translateY(-1px);z-index:6}
+.blk-act.dim{opacity:.12;filter:grayscale(.8)}
+.blk-act[hidden]{display:none}
+.blk-act .bt{display:block;font-size:var(--f-micro);line-height:1.25;color:var(--cText);
+  font-variant-numeric:tabular-nums;font-weight:var(--md-sys-typescale-emphasized-label-weight);letter-spacing:.015em}
+.blk-act .bn{display:block;font-size:var(--f-over);font-weight:var(--md-sys-typescale-title-weight);line-height:1.2;margin-top:1px;
+  overflow:hidden;font-family:var(--disp);letter-spacing:-.012em}
+.blk-act .btags{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;overflow:hidden}
+.tg{font-size:var(--f-micro);padding:1.5px 6px;border-radius:var(--r-pill);background:var(--fill2);
+  color:var(--md-sys-color-on-surface-variant);white-space:nowrap;line-height:1.35}
+.tg.ty{background:var(--c);color:#0a0c10;font-weight:var(--md-sys-typescale-emphasized-label-weight)}
+/* A short set has room for a name and nothing else. */
+.blk-act.narrow{padding:3px 7px}
+.blk-act.narrow .btags{display:none}
+.blk-act.narrow .bn{font-size:var(--f-over);white-space:nowrap;text-overflow:ellipsis}
+.blk-act.tiny .bt{display:none}
+.starbtn{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:var(--r-box);
+  display:grid;place-items:center;font-size:var(--f-over);color:var(--md-sys-color-on-surface-variant);opacity:0;transition:var(--md-sys-motion-spring-fast-effects);
+  background:color-mix(in srgb,var(--md-sys-color-surface) 55%,transparent)}
+.blk-act:hover .starbtn{opacity:1}
+.starbtn:hover{background:var(--fill);color:var(--md-sys-color-on-surface);transform:scale(1.08)}
+.blk-act.pick{box-shadow:0 0 0 1.5px var(--c),0 6px 20px -6px var(--c)}
+.blk-act.pick .starbtn{opacity:1;color:var(--c)}
+.nowline{position:absolute;left:0;right:0;height:2px;background:var(--live);z-index:9;
+  pointer-events:none}
+.nowline::before{content:"NOW";position:absolute;left:2px;top:-8px;font-size:var(--f-micro);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  color:#fff;background:var(--live);padding:2px 5px;border-radius:var(--r-box);font-family:var(--disp)}
+
+.faqbox{columns:2 320px;column-gap:34px}
+.faqq{break-inside:avoid;margin:0 0 20px}
+.faqq h3{margin:0 0 5px;font-size:var(--f-label);font-weight:var(--md-sys-typescale-emphasized-title-weight);letter-spacing:-.01em;color:var(--md-sys-color-on-surface)}
+.faqq p{margin:0;font-size:var(--f-caption);line-height:1.55;color:var(--md-sys-color-on-surface-variant)}
+.lineup{columns:3 220px;column-gap:26px}
+.lineup p{margin:0 0 7px;font-size:var(--f-caption);line-height:1.45;color:var(--md-sys-color-on-surface-variant);break-inside:avoid}
+.lineup b{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-title-weight)}
+.lineup i{font-style:normal;color:var(--md-sys-color-on-surface-variant)}
+
+/* ── agenda ───────────────────────────────────────────── */
+.agenda{max-width:760px}
+.ahsec{position:relative}
+.ahour{display:flex;align-items:center;gap:11px;position:sticky;
+  top:calc(var(--toph,104px) + var(--tb2h,0px));
+  z-index:14;background:var(--md-sys-color-surface);padding:14px 0 8px;margin:0}
+.ahsec:first-child .ahour{padding-top:6px}
+.ahour::after{content:"";position:absolute;left:0;right:0;top:100%;height:10px;
+  background:linear-gradient(var(--md-sys-color-surface),transparent);pointer-events:none}
+.ahour.livehour b{color:var(--live)}
+.ahour b{font-family:var(--disp);font-size:var(--f-body);font-weight:var(--md-sys-typescale-emphasized-label-weight);font-variant-numeric:tabular-nums;
+  letter-spacing:-.022em}
+.ahour span{font-size:var(--f-over);color:var(--md-sys-color-on-surface-variant)}
+.arow{position:relative;overflow:hidden;border-radius:var(--r-box);margin-bottom:7px;
+  touch-action:pan-y;background:var(--accent)}
+.arow.rm{background:var(--live)}
+.arowin{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;
+  background:var(--md-sys-color-surface-container-low);border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--r-box);padding:11px;
+  position:relative;z-index:1;transition:transform var(--md-sys-motion-spring-default-spatial),background var(--md-sys-motion-spring-fast-effects),border-color var(--md-sys-motion-spring-fast-effects)}
+.arowin.drag{transition:none;will-change:transform}
+.swipebg{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;color:var(--on-accent);font-weight:var(--md-sys-typescale-emphasized-label-weight);font-size:var(--f-over);font-family:var(--disp);
+  letter-spacing:.02em;z-index:0}
+.arow.rm .swipebg{color:#fff}
+.swipebg svg{width:19px;height:19px}
+.arow.dim{opacity:.3}
+.arow.pick .arowin{border-color:var(--c);
+  background:color-mix(in srgb,var(--c) 16%,var(--md-sys-color-surface-container-low))}
+.arow[hidden]{display:none}
+.atap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;
+  text-align:left;min-height:44px;width:100%}
+.atime{font-size:var(--f-over);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--cText);font-variant-numeric:tabular-nums;
+  font-family:var(--disp);width:42px;line-height:1.25}
+.atime i{display:block;font-style:normal;font-size:var(--f-micro);color:var(--md-sys-color-on-surface-variant);font-weight:var(--md-sys-typescale-title-weight)}
+.aname{display:block;font-family:var(--disp);font-size:var(--f-label);font-weight:var(--md-sys-typescale-title-weight);letter-spacing:-.015em;line-height:1.2}
+.ameta{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:5px}
+.astage{font-size:var(--f-micro);color:var(--cText);font-weight:var(--md-sys-typescale-title-weight);display:inline-flex;align-items:center;gap:4px}
+.astage .dot{width:6px;height:6px;border-radius:var(--r-pill);background:var(--c)}
+.astar{justify-self:end;width:46px;height:46px;display:grid;
+  /* Round at rest, square once starred: the toggle's own shape says
+     whether the act is in the plan, before colour does. */
+  --shape:var(--md-sys-shape-corner-full);
+  --shape-selected:var(--md-sys-shape-corner-medium);
+  --shape-pressed:var(--md-sys-shape-corner-pressed-s);
+  border-radius:var(--shape);border:1px solid var(--md-sys-color-outline);
+  place-items:center;font-size:var(--f-title);color:var(--md-sys-color-on-surface-variant);
+  transition:var(--md-sys-motion-spring-fast-effects),
+             border-radius var(--md-sys-motion-spring-fast-spatial);flex:none;
+  background:var(--md-sys-color-surface-container-lowest)}
+.astar:hover{color:var(--md-sys-color-on-surface);border-color:var(--md-sys-color-on-surface-variant)}
+.astar:active{--shape:var(--shape-pressed)}
+.astar[aria-pressed=true]{--shape:var(--shape-selected);color:#0a0c10;background:var(--c);border-color:var(--c)}
+.astar:active{transform:scale(.9)}
+@keyframes livedot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.72)}}
+@keyframes livering{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(2.3)}}
+.live{display:inline-flex;align-items:center;gap:5px;font-size:var(--f-micro);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  letter-spacing:.07em;color:#fff;background:var(--live);padding:2.5px 8px 2.5px 6px;
+  border-radius:var(--r-pill);font-family:var(--disp);position:relative;flex:none}
+.live i{width:6px;height:6px;border-radius:var(--r-pill);background:#fff;position:relative;
+  animation:livedot 1.5s ease-in-out infinite}
+.live i::after{content:"";position:absolute;inset:0;border-radius:var(--r-pill);background:#fff;
+  animation:livering 1.5s ease-out infinite}
+.arow.now .arowin{border-color:var(--live)}
+.blk-act.now{box-shadow:0 0 0 1.5px var(--live)}
+.blk-act .live{position:absolute;left:8px;bottom:6px;transform:scale(.85);transform-origin:left}
+.blk-act.narrow .live{display:none}
+.nowbtn{display:none;align-items:center;gap:7px;font-size:var(--f-over);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  padding:7px 13px;border-radius:var(--r-box);background:var(--live);color:#fff;min-height:38px;
+  font-family:var(--disp);letter-spacing:-.01em}
+.nowbtn.on{display:inline-flex}
+.nowbtn:hover{filter:brightness(1.1)}
+.nowbtn i{width:7px;height:7px;border-radius:var(--r-pill);background:#fff;
+  animation:livedot 1.5s ease-in-out infinite}
+.agenda-empty{color:var(--md-sys-color-on-surface-variant);text-align:center;padding:44px 0;font-size:var(--f-caption)}
+
+/* ── map ──────────────────────────────────────────────── */
+.maplayout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:22px;align-items:start}
+.mapshell{position:relative;border:1px solid var(--md-sys-color-outline);border-radius:var(--r-box);overflow:hidden;
+  background:var(--md-sys-color-surface-container-low);touch-action:none;cursor:grab;aspect-ratio:__MAP_AR__}
+.mapshell.drag{cursor:grabbing}
+.mapplane{position:absolute;inset:0;transform-origin:0 0;will-change:transform}
+.mapplane img{width:100%;height:100%;display:block;object-fit:cover;user-select:none;
+  -webkit-user-drag:none}
+.mapplane img.poster{object-fit:contain;background:var(--md-sys-color-surface-container-low)}
+.pin{position:absolute;transform:translate(-50%,-100%);transform-origin:50% 100%;
+  z-index:3;pointer-events:auto}
+.pin::before{content:"";position:absolute;left:15px;top:15px;width:46px;height:46px;
+  transform:translate(-50%,-50%)}
+.pin .knob{width:30px;height:30px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);
+  background:var(--c);display:grid;place-items:center;
+  box-shadow:0 5px 14px -3px rgba(0,0,0,.85),0 0 0 2px rgba(10,12,16,.6);
+  transition:transform var(--md-sys-motion-spring-fast-spatial),box-shadow var(--md-sys-motion-spring-fast-effects)}
+.pin .knob b{transform:rotate(45deg);font-family:var(--disp);font-size:var(--f-over);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  color:#0a0c10;line-height:1}
+.pin:hover .knob{transform:rotate(-45deg) scale(1.14)}
+.pin .plabel{position:absolute;left:50%;top:calc(100% + 5px);transform:translateX(-50%);
+  font-family:var(--disp);font-size:var(--f-micro);font-weight:var(--md-sys-typescale-emphasized-label-weight);white-space:nowrap;color:var(--md-sys-color-on-surface);
+  background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);border:1px solid var(--md-sys-color-outline);
+  padding:2.5px 7px;border-radius:var(--r-box);pointer-events:none;opacity:0;
+  transform:translateX(-50%) translateY(-3px);transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-fast-spatial)}
+.pin:hover .plabel,.pin.on .plabel,.mapshell.zoomed .plabel{opacity:1;transform:translateX(-50%)}
+.pin.poi .knob{width:22px;height:22px;background:var(--md-sys-color-surface-container-high);border:1px solid var(--md-sys-color-outline)}
+.pin.poi .knob b{color:var(--md-sys-color-on-surface-variant);font-size:var(--f-over);display:grid;place-items:center}
+.pin.on .knob{transform:rotate(-45deg) scale(1.3);
+  box-shadow:0 6px 22px -3px var(--c),0 0 0 3px rgba(10,12,16,.75)}
+.pin.on .plabel{background:var(--c);color:#0a0c10;border-color:var(--c)}
+@keyframes ping{0%{transform:translate(-50%,-50%) scale(.35);opacity:.85}
+  100%{transform:translate(-50%,-50%) scale(3.4);opacity:0}}
+.pin.on::after{content:"";position:absolute;left:50%;top:-15px;width:30px;height:30px;
+  border-radius:var(--r-pill);border:2px solid var(--c);animation:ping var(--md-sys-motion-spring-slow-spatial) 2;pointer-events:none}
+.mapctl{position:absolute;right:11px;bottom:11px;display:flex;flex-direction:column;gap:6px;z-index:5}
+.mapctl button{width:36px;height:36px;border-radius:var(--r-box);background:var(--glass);
+  border:1px solid var(--glass-line);color:var(--md-sys-color-on-surface-variant);display:grid;place-items:center;
+  font-size:var(--f-label);backdrop-filter:blur(14px) saturate(1.5)}
+.mapctl button:hover{color:var(--md-sys-color-on-surface);border-color:var(--md-sys-color-on-surface-variant)}
+.maplayers{position:absolute;left:11px;top:11px;z-index:5;display:flex;
+  background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-box);
+  padding:2px;gap:2px;backdrop-filter:blur(14px) saturate(1.5)}
+.maplayers button{font-size:var(--f-over);font-weight:var(--md-sys-typescale-title-weight);padding:6px 11px;border-radius:var(--r-box);
+  color:var(--md-sys-color-on-surface-variant);min-height:32px}
+.maplayers button[aria-pressed=true]{background:var(--md-sys-color-surface-container-lowest);color:var(--md-sys-color-on-surface)}
+@media(max-width:599px){
+  .maplayers{left:8px;right:8px;overflow-x:auto;scrollbar-width:none;
+    overscroll-behavior-inline:contain}
+  .maplayers button{flex:1 0 auto}
+}
+.mapattr{position:absolute;right:9px;top:9px;z-index:4;font-size:var(--f-micro);color:var(--md-sys-color-on-surface-variant);
+  background:var(--glass);padding:3px 7px;border-radius:var(--r-box);backdrop-filter:blur(6px)}
+.mapattr a{color:var(--md-sys-color-on-surface-variant)}
+.legend{display:flex;flex-direction:column;gap:2px}
+.lgi{display:grid;grid-template-columns:24px 1fr;gap:11px;padding:9px 10px;border-radius:var(--r-box);
+  font-size:var(--f-over);align-items:start;text-align:left;width:100%;transition:var(--md-sys-motion-spring-fast-effects);border:1px solid transparent}
+.lgi:hover{background:var(--md-sys-color-surface-container-low)}
+.lgi.on{background:var(--bgc);border-color:var(--c)}
+.lgi .n{width:21px;height:21px;border-radius:var(--r-box);background:var(--c);color:#0a0c10;display:grid;
+  place-items:center;font-weight:var(--md-sys-typescale-emphasized-label-weight);font-size:var(--f-micro);font-family:var(--disp)}
+.lgi .lnm{display:block;font-family:var(--disp);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--f-caption);letter-spacing:-.012em}
+.lgi .lds{display:block;color:var(--md-sys-color-on-surface-variant);font-size:var(--f-over);line-height:1.42;margin-top:3px}
+.stagebar{display:grid;grid-template-columns:auto 1fr auto;gap:13px;align-items:center;
+  margin-top:11px;padding:12px 14px;background:var(--md-sys-color-surface-container-low);border:0;
+  border-radius:var(--r-card)}
+.stagebar[hidden]{display:none}
+.stagebar .n{width:26px;height:26px;border-radius:var(--r-box);background:var(--c);color:#0a0c10;
+  display:grid;place-items:center;font-weight:var(--md-sys-typescale-emphasized-label-weight);font-size:var(--f-over);font-family:var(--disp)}
+.stagebar .nm{font-family:var(--disp);font-weight:var(--md-sys-typescale-emphasized-label-weight);font-size:var(--f-caption);letter-spacing:-.015em}
+.stagebar .sub{font-size:var(--f-over);color:var(--md-sys-color-on-surface-variant);margin-top:2px}
+.gacts{display:flex;gap:7px;flex-wrap:wrap}
+.gbtn{display:inline-flex;align-items:center;gap:7px;font-size:var(--f-over);font-weight:var(--md-sys-typescale-title-weight);
+  padding:8px 12px;border-radius:var(--r-box);border:1px solid var(--md-sys-color-outline);color:var(--md-sys-color-on-surface-variant);
+  text-decoration:none;transition:var(--md-sys-motion-spring-fast-effects);min-height:38px;white-space:nowrap}
+.gbtn:hover{color:var(--md-sys-color-on-surface);border-color:var(--c);background:var(--md-sys-color-surface-container-lowest)}
+.gbtn.solid{background:var(--c);color:#0a0c10;border-color:var(--c)}
+.gbtn.solid:hover{filter:brightness(1.1);color:#0a0c10}
+@media(max-width:599px){.stagebar{grid-template-columns:auto 1fr}.stagebar .gacts{grid-column:1/-1}}
+.mapcap{font-size:var(--f-over);color:var(--md-sys-color-on-surface-variant);margin-top:10px;line-height:1.5}
+.mapcap a{color:var(--md-sys-color-on-surface-variant)}
+
+/* ── route ────────────────────────────────────────────── */
+/* A card: same treatment as the home page's, from the reference — the
+   extra-large corner and a fill one step under the page, no outline. */
+.routebox{background:var(--md-sys-color-surface-container-low);border:0;border-radius:var(--r-card);
+  padding:clamp(15px,2vw,22px)}
+.rlist{display:flex;flex-direction:column}
+.ri{display:grid;grid-template-columns:74px 1fr auto;gap:12px;align-items:center;padding:11px 0;
+  border-top:1px solid var(--md-sys-color-outline-variant)}
+.ri:first-child{border-top:none}
+.rday{font-family:var(--disp);font-size:var(--f-over);font-weight:var(--md-sys-typescale-emphasized-label-weight);letter-spacing:.04em;
+  text-transform:uppercase;color:var(--md-sys-color-on-surface-variant);padding:14px 0 6px;border-top:1px solid var(--md-sys-color-outline-variant)}
+.rday:first-child{border-top:none;padding-top:2px}
+.ri .tm{font-size:var(--f-over);color:var(--md-sys-color-on-surface-variant);font-variant-numeric:tabular-nums;font-weight:var(--md-sys-typescale-title-weight)}
+.ri .nm{font-family:var(--disp);font-size:var(--f-caption);font-weight:var(--md-sys-typescale-title-weight);letter-spacing:-.012em;
+  text-align:left;padding:2px 0;color:var(--md-sys-color-on-surface)}
+.ri .nm:hover{color:var(--cText);text-decoration:underline;text-underline-offset:3px}
+.ri .st{font-size:var(--f-over);color:var(--cText);margin-top:2px;display:flex;align-items:center;gap:5px}
+.ri .rm{width:38px;height:38px;border-radius:var(--r-box);color:var(--md-sys-color-on-surface-variant);display:grid;place-items:center;
+  font-size:var(--f-label);border:1px solid transparent}
+.ri .rm:hover{color:var(--live);border-color:var(--md-sys-color-outline)}
+.ri.clash{background:color-mix(in srgb,var(--live) 8%,transparent);border-radius:var(--r-box)}
+.warn{font-size:var(--f-micro);color:color-mix(in srgb,var(--live) 70%,var(--md-sys-color-on-surface));background:color-mix(in srgb,var(--live) 18%,transparent);padding:2px 7px;border-radius:var(--r-pill);
+  margin-left:7px;white-space:nowrap;font-weight:var(--md-sys-typescale-title-weight)}
+.move{font-size:var(--f-over);color:var(--md-sys-color-on-surface-variant);padding:5px 0 5px 86px;display:flex;align-items:center;gap:6px}
+.move.tight{color:color-mix(in srgb,var(--live) 55%,var(--md-sys-color-on-surface-variant))}
+.rempty{color:var(--md-sys-color-on-surface-variant);font-size:var(--f-caption);padding:26px 0;text-align:center;line-height:1.7}
+.ract{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;align-items:center}
+
+/* ── card dialog ──────────────────────────────────────────
+   Type and colour follow the iOS HIG dark-mode label ramp: Title1 for the
+   name, Body 17px for anything tappable, Footnote for section headers, and
+   Apple's label / secondaryLabel / tertiaryLabel opacities over the sheet. */
+dialog.card{border:none;padding:0;background:transparent;max-width:none;max-height:none;
+  width:100%;height:100%;overflow:visible;color:var(--md-sys-color-on-surface)}
+dialog.card::backdrop{background:rgba(4,6,9,.66);backdrop-filter:blur(9px) saturate(140%);
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects)}
+dialog.card.in::backdrop{opacity:var(--dim,1)}
+.cardpos{position:fixed;inset:0;display:grid;place-items:center;padding:20px;pointer-events:none}
+.cardbox{position:relative;width:min(440px,100%);max-height:min(88vh,780px);background:var(--sheet);
+  border:0;border-radius:var(--r-card);overflow:hidden auto;
+  pointer-events:auto;color:var(--lab);
+  box-shadow:0 34px 90px -20px rgba(0,0,0,.92);
+  opacity:0;transform:translateY(14px) scale(.965);
+  transition:opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial);overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch}
+dialog.card.in .cardbox{opacity:1;transform:none}
+/* The class flip is applied a frame after showModal(); @starting-style covers
+   engines that coalesce that frame, so the entry never snaps. */
+@starting-style{
+  dialog.card.in .cardbox{opacity:0;transform:translateY(14px) scale(.965)}
+  dialog.card.in::backdrop{opacity:0}
+}
+.chero{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--sheet2)}
+.grabber{display:none;position:absolute;left:50%;top:8px;transform:translateX(-50%);width:38px;
+  height:5px;border-radius:var(--r-pill);background:rgba(255,255,255,.42);z-index:4;pointer-events:none}
+.cardbox.dragging{transition:none;will-change:transform}
+.chero>img,.chero>svg{width:100%;height:100%;object-fit:cover;display:block}
+.chero .scrim{position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 22%,color-mix(in srgb,var(--sheet) 62%,transparent) 70%,var(--sheet) 100%)}
+.cclose{position:absolute;z-index:6;top:12px;right:12px;width:44px;height:44px;border-radius:var(--r-pill);
+  background:rgba(28,28,30,.62);backdrop-filter:blur(20px) saturate(180%);color:#fff;
+  display:grid;place-items:center;font-size:var(--f-body);border:.5px solid rgba(255,255,255,.16);
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.3)}
+.cclose:hover{background:rgba(58,58,60,.85)}
+.chero .cstage{position:absolute;left:18px;bottom:15px;display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--disp);font-size:var(--f-over);font-weight:var(--md-sys-typescale-emphasized-label-weight);letter-spacing:.05em;text-transform:uppercase;
+  color:#0a1400;background:var(--c);padding:5px 12px;border-radius:var(--r-pill)}
+.chero .csrc{position:absolute;right:14px;bottom:15px;font-size:var(--f-over);color:rgba(255,255,255,.62);
+  background:rgba(28,28,30,.6);padding:3px 8px;border-radius:var(--r-box);backdrop-filter:blur(10px)}
+.cbody{padding:18px 20px 24px}
+.cbody h2{margin:0 0 8px;color:var(--lab);font-family:var(--disp);
+  font-size:var(--f-h2);line-height:1.14;letter-spacing:-.028em;font-weight:var(--md-sys-typescale-emphasized-title-weight)}
+.cwhen{color:var(--lab2);font-size:var(--f-label);line-height:1.33;font-variant-numeric:tabular-nums;
+  display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.cwhen i{font-style:normal;color:var(--lab3)}
+.cwhere{color:var(--lab2);font-size:var(--f-label);line-height:1.33;margin-top:5px;display:flex;
+  align-items:center;gap:7px}
+.cwhere button{color:var(--lab2);font-size:var(--f-label);text-align:left;text-decoration:underline;
+  text-underline-offset:3px;text-decoration-color:var(--lab3)}
+.cwhere button:hover{color:var(--lab)}
+.ctags{display:flex;gap:7px;flex-wrap:wrap;margin:15px 0}
+.ctags .tg{font-size:var(--f-caption);padding:5px 12px;background:var(--fill2);color:var(--lab2);
+  border:none;line-height:1.3}
+.ctags .tg.ty{background:var(--c);color:#0a0c10;font-weight:var(--md-sys-typescale-emphasized-label-weight)}
+.cnote{font-size:var(--f-label);color:var(--lab2);line-height:1.47;padding:13px 15px;background:var(--fill2);
+  border-radius:var(--r-box);margin-bottom:4px}
+.cstagerow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+  width:100%;text-align:left;margin-top:14px;padding:12px 13px;border-radius:var(--r-box);
+  background:color-mix(in srgb,var(--c) 14%,transparent);
+  border:1px solid color-mix(in srgb,var(--c) 42%,transparent);
+  transition:var(--md-sys-motion-spring-fast-effects);min-height:56px}
+.cstagerow:hover{background:color-mix(in srgb,var(--c) 22%,transparent)}
+.cstagerow:active{transform:scale(.99)}
+.csnum{width:30px;height:30px;border-radius:var(--r-box);background:var(--c);color:#0a1400;display:grid;
+  place-items:center;font-weight:var(--md-sys-typescale-emphasized-label-weight);font-size:var(--f-caption);font-family:var(--disp)}
+.csname{display:block;font-family:var(--disp);font-size:var(--f-label);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  letter-spacing:-.018em;color:var(--cText)}
+.cswhere{display:block;font-size:var(--f-caption);color:var(--lab2);margin-top:2px;line-height:1.32}
+.csgo{display:inline-flex;align-items:center;gap:5px;font-size:var(--f-caption);font-weight:var(--md-sys-typescale-title-weight);
+  color:var(--cText);white-space:nowrap}
+h3.ch{font-size:var(--f-caption);letter-spacing:.02em;color:var(--lab3);margin:22px 0 10px;font-weight:var(--md-sys-typescale-title-weight)}
+/* icon rail: one tap target per service, 56px square, Apple's 44pt floor cleared */
+.icorail{display:flex;gap:10px;flex-wrap:wrap}
+.icolink{width:58px;height:58px;border-radius:var(--r-box);background:var(--fill2);
+  border:.5px solid rgba(255,255,255,.08);display:grid;place-items:center;text-decoration:none;
+  color:var(--lab);position:relative;transition:var(--md-sys-motion-spring-fast-effects)}
+.icolink svg{width:25px;height:25px;stroke-width:1.7}
+.icolink:hover{background:var(--fill);transform:translateY(-2px)}
+.icolink:active{transform:scale(.94)}
+.icolink[data-verified="1"]{background:color-mix(in srgb,var(--c) 18%,transparent);
+  border-color:color-mix(in srgb,var(--c) 50%,transparent);color:var(--cText)}
+.icolink .vd{position:absolute;top:-3px;right:-3px;width:15px;height:15px;border-radius:var(--r-pill);
+  background:var(--c);color:#0a1400;display:grid;place-items:center;border:2px solid var(--sheet)}
+.icolink .vd svg{width:9px;height:9px;stroke-width:3.4}
+.icocap{font-size:var(--f-caption);color:var(--lab3);margin:10px 0 0;line-height:1.4}
+.cadd{width:100%;margin-top:22px;padding:16px;border-radius:var(--r-box);background:var(--c);
+  color:#0a1400;font-weight:var(--md-sys-typescale-emphasized-label-weight);font-size:var(--f-body);font-family:var(--disp);letter-spacing:-.01em;
+  transition:var(--md-sys-motion-spring-fast-effects);display:flex;align-items:center;justify-content:center;gap:9px;
+  min-height:52px;border:none}
+.cadd:hover{filter:brightness(1.08)}
+.cadd:active{transform:scale(.985)}
+.cadd[aria-pressed="true"]{background:var(--fill);color:var(--lab)}
+.cadd[aria-pressed="true"]:hover{background:var(--fill2)}
+
+@media(min-width:840px) and (min-aspect-ratio:1/1){
+  /* Match the card's proportions to the window's: artwork beside the detail
+     rather than a phone sheet floating in the middle of a wide screen. */
+  .cardbox{width:min(900px,92vw);height:min(78vh,580px);max-height:min(78vh,580px);
+    overflow:hidden}
+  .cardin{display:grid;grid-template-columns:minmax(0,40%) minmax(0,60%);height:100%}
+  .chero{aspect-ratio:auto;height:100%;min-height:0;min-width:0}
+  .chero>img,.chero>svg{height:100%}
+  .chero .scrim{background:linear-gradient(180deg,transparent 55%,
+    color-mix(in srgb,#000 45%,transparent) 100%)}
+  .cbody{overflow-y:auto;overscroll-behavior:contain;padding:26px 28px 30px;min-height:0}
+  .cbody h2{font-size:var(--f-h2)}
+  .cclose{top:14px;right:14px}
+  .grabber{display:none}
+}
+
+/* ── consent ──────────────────────────────────────────── */
+dialog.consent{border:none;padding:0;background:transparent;max-width:none;max-height:none;
+  width:100%;height:100%;overflow:visible;color:var(--md-sys-color-on-surface)}
+dialog.consent::backdrop{background:rgba(4,6,9,.66);backdrop-filter:blur(9px) saturate(140%);
+  opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects)}
+dialog.consent.in::backdrop{opacity:1}
+.consentbox{position:fixed;left:50%;bottom:calc(18px + var(--safe-b));
+  transform:translate(-50%,14px);opacity:0;width:min(420px,calc(100vw - 28px));
+  background:var(--sheet);border:1px solid var(--md-sys-color-outline);border-radius:var(--r-panel);
+  padding:22px 22px 20px;text-align:center;
+  box-shadow:0 26px 70px -18px rgba(0,0,0,.8);
+  transition:opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
+dialog.consent.in .consentbox{opacity:1;transform:translate(-50%,0)}
+@media(min-width:600px){
+  .consentbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 14px))}
+  dialog.consent.in .consentbox{transform:translate(-50%,-50%)}
+}
+.cmark{width:46px;height:46px;border-radius:var(--r-box);background:var(--accent);color:var(--on-accent);
+  display:grid;place-items:center;margin:0 auto 13px}
+.cmark svg{width:23px;height:23px;stroke-width:2}
+.consentbox h2{margin:0 0 8px;font-family:var(--disp);font-size:var(--f-h3);letter-spacing:-.024em;
+  line-height:1.15;color:var(--md-sys-color-on-surface)}
+.clede{margin:0 0 18px;font-size:var(--f-caption);line-height:1.5;color:var(--md-sys-color-on-surface-variant);text-wrap:pretty}
+.clede b{color:var(--md-sys-color-on-surface);font-weight:var(--md-sys-typescale-title-weight)}
+.cbtns{display:grid;gap:9px}
+.cyes,.cno{min-height:48px;border-radius:var(--r-box);font-size:var(--f-label);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  font-family:var(--disp);letter-spacing:-.01em;transition:var(--md-sys-motion-spring-fast-effects)}
+.cyes{background:var(--accent);color:var(--on-accent);border:1px solid var(--accent)}
+.cyes:hover{filter:brightness(1.07)}
+.cyes:active{transform:scale(.99)}
+.cno{background:transparent;color:var(--md-sys-color-on-surface-variant);border:1px solid var(--md-sys-color-outline)}
+.cno:hover{color:var(--md-sys-color-on-surface);border-color:var(--md-sys-color-on-surface-variant);background:var(--md-sys-color-surface-container-low)}
+.cfine{margin:13px 0 0;font-size:var(--f-over);line-height:1.5;color:var(--md-sys-color-on-surface-variant)}
+.storeoff{color:var(--md-sys-color-on-surface-variant)}
+
+/* ── toast ────────────────────────────────────────────── */
+.toast{position:fixed;left:50%;bottom:calc(22px + var(--safe-b));transform:translate(-50%,16px);
+  background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface);border:1px solid var(--md-sys-color-outline);border-radius:var(--r-box);padding:11px 14px;
+  display:flex;align-items:center;gap:12px;font-size:var(--f-caption);z-index:200;opacity:0;pointer-events:none;
+  transition:var(--md-sys-motion-spring-default-effects);box-shadow:0 18px 44px -12px rgba(0,0,0,.9);max-width:calc(100vw - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast b{font-weight:var(--md-sys-typescale-title-weight)}
+.toast button{font-size:var(--f-over);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--accent-ink);padding:5px 9px;border-radius:var(--r-box);
+  border:1px solid var(--md-sys-color-outline);min-height:34px}
+.toast button:hover{background:var(--md-sys-color-surface-container-low)}
+
+/* ── mobile bottom nav ────────────────────────────────── */
+__NAV_CSS__
+
+__FOOTER_CSS__
+
+
+/* ── responsive ───────────────────────────────────────── */
+@media (max-width:1199px){
+  .maplayout{grid-template-columns:1fr}
+}
+@media (max-width:839px){
+  :root{--gutter:46px; --colw:148px}
+  header{padding:18px 0 16px}
+  .brandline{gap:14px}
+  .lockup{gap:10px}
+  h1{line-height:1.06}
+  .meta{font-size:var(--f-over);gap:5px 18px;line-height:1.7;margin:18px auto 0;max-width:34ch}
+  .hdr-links{margin-top:4px}
+  .vstage{padding:8px 8px}
+  .sloc{display:none}
+  .snm{font-size:var(--f-over)}
+  input[type=search]{width:100%}
+  /* The phone bottom bar and the Home button live in scripts/_nav.css. An
+     earlier copy of those rules sat here and lost its selectors when they were
+     extracted; the leftover declarations closed this media query early, which
+     dropped everything below and leaked the phone sheet to every width. */
+  .cardpos{padding:0;place-items:end center}
+  /* The sheet is always full height and the detent is a translate, so moving
+     between detents is a compositor transform rather than a height reflow. */
+  .cardbox{width:100%;height:94svh;max-height:94svh;border-radius:var(--r-panel) var(--r-panel) 0 0;
+    border-bottom:none;padding-bottom:var(--safe-b);opacity:1;transform:translateY(100%);
+    transition:transform var(--md-sys-motion-spring-default-spatial)}
+  dialog.card.in .cardbox{transform:translateY(30svh)}
+  dialog.card.in .cardbox.large{transform:translateY(0)}
+  @starting-style{ dialog.card.in .cardbox{transform:translateY(100%)} }
+  .chero{aspect-ratio:5/3}
+  .grabber{display:block}
+  .ri{grid-template-columns:66px 1fr auto}
+  .move{padding-left:78px}
+  .routebox{padding:14px}
+  .toast{bottom:calc(92px + var(--safe-b));transform:translate(-50%,calc(16px + var(--vvshift)))}
+  .toast.on{transform:translate(-50%,var(--vvshift))}
+}
+@media (hover:none){
+  .stagebtn{min-height:44px}
+  .starbtn{opacity:1;width:34px;height:34px;font-size:var(--f-label);top:2px;right:2px}
+  .blk-act{padding-right:30px}
+}
+@media (prefers-reduced-motion:reduce){
+  /* Shortening the duration is the wrong lever for a loop: an infinite
+     animation at 50ms is a 20Hz strobe, which is the opposite of what was
+     asked for. Anything that repeats stops outright; one-shot transitions
+     collapse to nothing. */
+  *{animation-iteration-count:1!important;animation-duration:.01ms!important;
+    transition-duration:.01ms!important}
+  .live i,.live i::after,.nowbtn i{animation:none!important;opacity:1;transform:none}
+}
+@media print{
+  .toolbar,.filters,.mnav,.navhome,.ract,.mapctl,.maplayers,.starbtn{display:none!important}
+  body{background:#fff;color:#000}
+}
+__THEME__
+</style>
+</head>
+<body data-sec="nSched" class="fx-shell">
+
+<svg class="sr" aria-hidden="true"><defs>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-rows" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+<symbol id="i-cols" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10M15 10v10"/></symbol>
+<symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H14a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5.5"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></symbol>
+<symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h10M18 18h2"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></symbol>
+<symbol id="i-disc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 18a4.5 4.5 0 0 0 .3-9 6 6 0 0 0-11.6 1.6A3.7 3.7 0 0 0 7 18Z"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5z"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 1 2-2h13"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></symbol>
+<symbol id="i-note" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 14 9 5 9-5"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6h16M9 6V4h6v2M6 6l1 14h10l1-14"/></symbol>
+<symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="m10 21 2-6-2.5-2.5 1-5.5 3 2 3 1"/><path d="m9.5 12.5-2 3.5"/><path d="M15 21l-1.5-5"/></symbol>
+<symbol id="i-wheel" viewBox="0 0 24 24"><circle cx="12" cy="10.4" r="7.4"/><circle cx="12" cy="10.4" r="1.5"/><path d="M12 3v5.9M12 11.9v5.9M4.6 10.4h5.9M13.5 10.4h5.9M6.8 5.2l3.1 3.1M14.1 12.5l3.1 3.1M17.2 5.2l-3.1 3.1M9.9 12.5l-3.1 3.1"/><path d="M8.6 21.2 12 17.8l3.4 3.4"/></symbol>
+<symbol id="i-drum" viewBox="0 0 24 24"><ellipse cx="12" cy="9.4" rx="8" ry="3.4"/><path d="M4 9.4v5.2c0 1.9 3.6 3.4 8 3.4s8-1.5 8-3.4V9.4"/><path d="M6.6 18.6 4 21.6M17.4 18.6 20 21.6M9 6.6 5.6 3.4M15 6.6 18.4 3.4"/></symbol>
+<symbol id="i-sax" viewBox="0 0 24 24"><path d="M9.6 2.6v7.6a5.4 5.4 0 0 0 5.4 5.4h.6a3.2 3.2 0 0 1 0 6.4h-4"/><path d="M7.4 2.6h4.4"/><circle cx="12.2" cy="7" r=".9"/><circle cx="12.2" cy="10.4" r=".9"/></symbol>
+<symbol id="i-star4" viewBox="0 0 24 24"><path d="M12 2.6c.7 5 3.7 8 8.8 8.7-5.1.7-8.1 3.7-8.8 8.7-.7-5-3.7-8-8.8-8.7 5.1-.7 8.1-3.7 8.8-8.7z"/></symbol>
+<symbol id="i-balloon" viewBox="0 0 24 24"><path d="M12 15.4c3.3 0 6-3 6-6.6A6 6 0 0 0 6 8.8c0 3.6 2.7 6.6 6 6.6z"/><path d="M12 15.4v1.6M10.8 17h2.4l-.6 1.4h-1.2z"/><path d="M12 18.4c0 1.6 1.8 1.6 1.8 3"/></symbol>
+<symbol id="i-headphones" viewBox="0 0 24 24"><path d="M4 15v-2.6a8 8 0 0 1 16 0V15"/><rect x="2.6" y="14.4" width="4.4" height="6.4" rx="2.2"/><rect x="17" y="14.4" width="4.4" height="6.4" rx="2.2"/></symbol>
+<symbol id="i-tram" viewBox="0 0 24 24"><rect x="5" y="4.4" width="14" height="13.2" rx="3"/><path d="M5 10.4h14M12 2.2v2.2M8.4 21.4l1.8-3.8M15.6 21.4l-1.8-3.8"/><circle cx="9.2" cy="14.4" r="1"/><circle cx="14.8" cy="14.4" r="1"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2.4" width="6" height="11.2" rx="3"/><path d="M5.4 11.4a6.6 6.6 0 0 0 13.2 0M12 18v3.4"/></symbol>
+<symbol id="i-synth" viewBox="0 0 24 24"><rect x="2.4" y="7.2" width="19.2" height="9.6" rx="2"/><path d="M6.6 7.2v5.6M10.2 7.2v5.6M13.8 7.2v5.6M17.4 7.2v5.6"/></symbol>
+<symbol id="i-speaker" viewBox="0 0 24 24"><rect x="5.4" y="2.8" width="13.2" height="18.4" rx="2.6"/><circle cx="12" cy="15" r="3.5"/><circle cx="12" cy="7.2" r="1.4"/></symbol>
+<symbol id="i-cathedral" viewBox="0 0 24 24"><path d="M12 1.8v2.4M10.9 3h2.2"/><path d="M8.6 10.4a3.4 3.4 0 0 1 6.8 0"/><path d="M6.2 20.6V13M17.8 20.6V13M6.2 13h11.6"/><path d="M9.4 20.6v-3.9a2.6 2.6 0 0 1 5.2 0v3.9"/><path d="M3.6 20.6h16.8"/></symbol>
+<symbol id="i-robot" viewBox="0 0 24 24"><rect x="4.2" y="8" width="15.6" height="11" rx="3.6"/><path d="M12 4.8V8"/><circle cx="12" cy="3.5" r="1.3"/><circle cx="9.2" cy="12.8" r="1.05"/><circle cx="14.8" cy="12.8" r="1.05"/><path d="M9.8 16.2h4.4"/><path d="M4.2 11.6H2.3M19.8 11.6h1.9"/></symbol>
+<!-- The Flanner mark: six petals bursting from a centre. Everywhere this page
+     draws it, it is under 40px, which is where the brand's own spec asks for
+     the simplified cut — wider petals, one tone, no centre dot. The silhouette
+     is the same one the full mark and the favicon carry. The tone follows the
+     theme through --mark-ink. -->
+<symbol id="i-logo" viewBox="0 0 96 96">
+  <g fill="var(--mark-ink,currentColor)">
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(60 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(120 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(180 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(240 48 48)"/>
+    <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(300 48 48)"/>
+  </g>
+</symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H5M11 18l-6-6 6-6"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.3M12 19.1v2.3M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.6 12h2.3M19.1 12h2.3M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.7 8.7 0 1 0 10.8 10.8z"/></symbol>
+<symbol id="i-spotify" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.4"/><path d="M7.1 9.3c3.3-.85 6.9-.5 9.8 1.05"/><path d="M7.7 12.5c2.7-.65 5.6-.35 8 .95"/><path d="M8.3 15.5c2.1-.45 4.3-.2 6.2.8"/></symbol>
+<symbol id="i-youtube" viewBox="0 0 24 24"><rect x="2.4" y="5.4" width="19.2" height="13.2" rx="4.2"/><path d="M10.3 9.3v5.4l4.7-2.7z"/></symbol>
+<symbol id="i-soundcloud" viewBox="0 0 24 24"><path d="M3 15.3v-2.6M6.1 16.6v-5.7M9.2 16.6V8.9"/><path d="M12.3 16.6V7.9a4.4 4.4 0 0 1 8.3 2 3.4 3.4 0 0 1-.5 6.7z"/></symbol>
+<symbol id="i-bandcamp" viewBox="0 0 24 24"><path d="M3.4 17.2 9.6 6.8h11L14.4 17.2z"/></symbol>
+<symbol id="i-nav" viewBox="0 0 24 24"><path d="M3.4 10.6 21 3l-7.6 17.6-2.2-7.8z"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+</defs></svg>
+
+
+<div class="toolbar">
+  <div class="wrap">
+  <div class="tbar">
+    <a class="brandmini" href="#top" aria-label="Flanner — back to the top">
+      <svg class="fpmark" aria-hidden="true"><use href="#i-logo"/></svg>
+      <span class="wm"><b>Flanner</b><i>__BRANDNAME__</i></span></a>
+    <label class="srch"><span class="sr">Search artists</span>
+      <svg class="i"><use href="#i-search"/></svg>
+      <input type="search" id="q" placeholder="Search artist, stage, genre…" autocomplete="off">
+    </label>
+  </div>
+  </div>
+</div>
+
+<div class="wrap" id="top">
+<header>
+
+  <div class="brandline">
+    <div class="lockup">
+__DECO__
+    <a class="logo" href="__SITE_URL__" target="_blank" rel="noopener">
+      <img src="__LOGO__" alt="__BRANDNAME__ __YEAR__" width="339" height="245"></a>
+    <div>
+      <h1 class="sr">__BRANDNAME__ Planner</h1>
+      <div class="meta">
+        <span class="g"><b id="statActs">—</b> acts <i>·</i> <b>__STAGES__</b> stages</span>
+        <span class="g">__WHEN__</span>
+        <span class="g">__WHERE__</span></div>
+    </div>
+    </div>
+    <div class="hdr-links">
+      <a class="ghost" href="__SCHEDULE_URL__" target="_blank" rel="noopener">
+        __SCHEDULE_LABEL__ <svg class="i"><use href="#i-ext"/></svg></a>
+      <a class="ghost" href="__SITE_URL__" target="_blank" rel="noopener">
+        __SITE_LABEL__ <svg class="i"><use href="#i-ext"/></svg></a>
+    </div>
+  </div>
+</header>
+__TICKER__
+<div id="hSentinel" aria-hidden="true"></div>
+</div>
+<div class="wrap">
+
+<div class="deck">
+  <div class="schedbar">
+  <div class="tbar tbar2">
+    <div class="seg daybar" id="dayBar" role="group" aria-label="Festival day" hidden></div>
+    <div class="seg" role="group" aria-label="Schedule view">
+      <button id="vTimeline" aria-pressed="false"><svg class="i"><use href="#i-cols"/></svg>Timetable</button>
+      <button id="vAgenda" aria-pressed="false"><svg class="i"><use href="#i-rows"/></svg>List</button>
+    </div>
+    <button class="chip st starfilter" id="starOnly" aria-pressed="false"
+      title="Show only the acts you have starred">
+      <svg class="i"><use href="#i-star"/></svg><span class="lbl">Starred</span>
+      <span class="nb" id="starCount" hidden>0</span></button>
+    <span class="rel"><button class="iconbtn" id="fToggle" aria-pressed="false" aria-label="Filters">
+      <svg class="i"><use href="#i-sliders"/></svg></button>
+      <span class="fbadge" id="fBadge" hidden>0</span></span>
+    <button class="nowbtn" id="nowBtn"><i></i>Now</button>
+  </div>
+  <div class="filters" id="filters"><div class="wrap"><div class="finner">
+    <div class="frow"><span class="flab">Type</span><span class="chipset" id="fType"></span></div>
+    <div class="frow"><span class="flab">Genre</span><span class="chipset" id="fGenre"></span></div>
+    <div class="frow"><span class="flab">Stage</span><span class="chipset" id="fStage"></span></div>
+    <div class="fstat"><span id="matchCount"></span>
+      <button class="linkbtn" id="rCopy">Copy starred</button>
+      <button class="linkbtn" id="rClear">Clear stars</button>
+      <button class="linkbtn" id="reset">Clear all</button></div>
+  </div></div></div>
+  </div>
+<section class="blk" id="secSchedule">
+  <!-- The one subtree on the standard motion scheme rather than expressive:
+       a bounce on a 22px half-hour block reads as a wobble, not as life. -->
+  <div class="board motion-standard" id="board" hidden><div class="board-in" id="boardIn"></div></div>
+  <div class="agenda" id="agenda" hidden></div>
+</section>
+
+<section class="blk" id="secMap">
+  <div class="shead">
+    <h2>Map</h2>
+  </div>
+  <div class="maplayout">
+    <div>
+      <div class="mapshell" id="mapShell">
+        <div class="mapplane" id="mapPlane">
+          <img id="mapStreet" src="__BASEMAP__" alt="Street map of the festival area in Alppila" draggable="false">
+          <img id="mapStreetLight" src="__BASEMAP_LIGHT__" alt="Street map of the festival area in Alppila" draggable="false" hidden>
+          <img id="mapSat" src="__SATELLITE__" alt="Satellite view of the festival area" draggable="false" hidden>
+          <img id="mapPoster" class="poster" src="__POSTER__" alt="The organiser's official festival map" draggable="false" hidden>
+          <div id="pins"></div>
+        </div>
+        <div class="maplayers" role="group" aria-label="Map layer">
+          <button id="layStreet" aria-pressed="true">Street</button>
+          <button id="laySat" aria-pressed="false">Satellite</button>
+          <button id="layPoster" aria-pressed="false" hidden>Official</button>
+        </div>
+        <div class="mapattr" id="mapAttr">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a></div>
+        <div class="mapctl">
+          <button id="mIn" aria-label="Zoom in"><svg class="i"><use href="#i-plus"/></svg></button>
+          <button id="mOut" aria-label="Zoom out"><svg class="i"><use href="#i-minus"/></svg></button>
+          <button id="mFit" aria-label="Reset map"><svg class="i"><use href="#i-target"/></svg></button>
+        </div>
+      </div>
+      <div class="stagebar" id="stageBar" hidden></div>
+      <p class="mapcap" id="mapCap"></p>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+</section>
+</div>
+
+<section class="blk" id="secLineup">
+  <div class="shead"><h2>Line-up A–Z</h2></div>
+  <div class="lineup" id="lineup"></div>
+</section>
+
+<!-- Real text, not just JSON-LD: the answers have to appear in the document
+     before the page can rank on the words they contain. Half are in Finnish
+     because that is how most of this festival's audience searches. -->
+<section class="blk" id="secFaq">
+  <div class="shead"><h2>Questions · Kysyttyä</h2></div>
+  <div class="faqbox">
+__FAQHTML__
+  </div>
+</section>
+
+__FOOTER__
+</div>
+
+<a class="navhome" href="__HOME__" aria-label="Flanner — all festival planners"
+   title="Flanner — all festival planners"><svg aria-hidden="true"><use href="#i-logo"/></svg></a>
+
+<nav class="mnav" aria-label="Sections">
+  <span class="pill" id="navPill" aria-hidden="true"></span>
+  <a class="navhome-m" href="__HOME__"><svg class="i"><use href="#i-logo"/></svg><span class="lbl">Home</span></a>
+  <button id="nSched" class="on"><svg class="i"><use href="#i-rows"/></svg><span class="lbl">Schedule</span></button>
+  <button id="nMap"><svg class="i"><use href="#i-pin"/></svg><span class="lbl">Map</span></button>
+  <button id="nSet"><svg class="i"><use href="#i-gear"/></svg><span class="lbl">Settings</span></button>
+</nav>
+
+__SETTINGS__
+
+<dialog class="consent" id="consent" aria-labelledby="consentTitle">
+  <div class="consentbox">
+    <span class="cmark"><svg class="i"><use href="#i-star"/></svg></span>
+    <h2 id="consentTitle">Keep your plan?</h2>
+    <p class="clede">Your starred acts stay in a cookie on this device.
+      <b>No tracking, no analytics, nothing sent anywhere</b> — this page has no server.</p>
+    <div class="cbtns">
+      <button class="cyes" id="cAllow">Keep my plan</button>
+      <button class="cno" id="cDeny">Not now</button>
+    </div>
+    <p class="cfine">“Not now” still works — picks just clear when you close the tab.</p>
+  </div>
+</dialog>
+<dialog class="card" id="card"><div class="cardpos"><div class="cardbox" id="cardBox"></div></div></dialog>
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">Undo</button></div>
+
+<script>
+const DATA = __DATA__;
+const ART = __ART__;
+const B = DATA.basemap;
+const DAYS = DATA.days;
+let day = DAYS[0];                       // active festival day
+let D0 = day.start, DSPAN = day.end - day.start;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct = m => (m - D0) / DSPAN * 100;
+const ico = n => `<svg class="i"><use href="#i-${n}"/></svg>`;
+const isTouch = matchMedia('(hover:none)').matches;
+const narrowVP = () => matchMedia('(max-width:839px)').matches;
+
+const everyAct = [];
+DATA.stages.forEach(s => s.acts.forEach(a => {
+  a.stage = s; a.key = s.id + '|' + a.day + '|' + a.q + '|' + a.s; everyAct.push(a);
+}));
+everyAct.sort((x, y) => x.sm - y.sm);
+/* Only the active day is rendered; the route may still span the whole weekend. */
+let allActs = everyAct.filter(a => a.day === day.id);
+const actByKey = k => everyAct.find(a => a.key === k);
+$('#statActs').textContent = everyAct.length;
+
+
+/* ══ storage & consent ═════════════════════════════════
+   Everything is first-party and stays on the device: this page has no server,
+   no analytics and no third-party script, so there is nothing that could phone
+   home. Cookies are the primary store; browsers block document.cookie on
+   file:// URLs, so localStorage is the fallback for the offline copy. */
+const Store = (() => {
+  const NS = 'kbp26';
+  const KEYS = ['route', 'view', 'viewPinned', 'theme', 'day'];
+  const YEAR = 60 * 60 * 24 * 400;
+  /* Secure is only valid over https; setting it on http would drop the cookie. */
+  const SEC = location.protocol === 'https:' ? ';Secure' : '';
+  let granted = false, mem = {};
+
+  const cookiesWork = (() => {
+    try {
+      document.cookie = NS + '_probe=1;path=/;SameSite=Lax' +
+        (location.protocol === 'https:' ? ';Secure' : '');
+      const ok = document.cookie.indexOf(NS + '_probe=1') !== -1;
+      document.cookie = NS + '_probe=;Max-Age=0;path=/;SameSite=Lax';
+      return ok;
+    } catch (e) { return false; }
+  })();
+  const wc = (k, v) => { try {
+    document.cookie = NS + '_' + k + '=' + encodeURIComponent(v) +
+      ';path=/;Max-Age=' + YEAR + ';SameSite=Lax' + SEC;
+  } catch (e) {} };
+  const rc = k => {
+    try {
+      const m = document.cookie.match(new RegExp('(?:^|; )' + NS + '_' + k + '=([^;]*)'));
+      return m ? decodeURIComponent(m[1]) : null;
+    } catch (e) { return null; }
+  };
+  const dc = k => { try {
+    document.cookie = NS + '_' + k + '=;Max-Age=0;path=/;SameSite=Lax' + SEC;
+  } catch (e) {} };
+  const ls = {
+    get: k => { try { return localStorage.getItem(NS + k); } catch (e) { return null; } },
+    set: (k, v) => { try { localStorage.setItem(NS + k, v); } catch (e) {} },
+    del: k => { try { localStorage.removeItem(NS + k); } catch (e) {} },
+  };
+
+  return {
+    cookiesWork,
+    get granted() { return granted; },
+    /* The consent answer itself is strictly necessary, so it is always kept. */
+    readConsent() {
+      const v = (cookiesWork ? rc('consent') : null) || ls.get('_consent');
+      granted = v === '1';
+      return v === undefined ? null : v;          // null means never asked
+    },
+    setConsent(yes) {
+      granted = !!yes;
+      if (cookiesWork) wc('consent', yes ? '1' : '0');
+      ls.set('_consent', yes ? '1' : '0');
+      if (yes) Object.keys(mem).forEach(k => Store.set(k, mem[k]));
+      else KEYS.forEach(k => { dc(k); ls.del(k); });
+    },
+    get(k) {
+      if (!granted) return k in mem ? mem[k] : null;
+      const c = cookiesWork ? rc(k) : null;
+      return c !== null ? c : ls.get(k);
+    },
+    set(k, v) {
+      mem[k] = v;
+      if (!granted) return;
+      if (cookiesWork) wc(k, v);
+      ls.set(k, v);                               // mirrored so file:// keeps working
+    },
+    forget() { KEYS.forEach(k => { dc(k); ls.del(k); }); mem = {}; },
+  };
+})();
+
+/* The route is stored as indices into the act list rather than names, so a full
+   day of picks stays comfortably inside one cookie. */
+const routeToStore = keys => 'v1:' + keys
+  .map(k => everyAct.findIndex(a => a.key === k)).filter(i => i >= 0).join(',');
+const routeFromStore = raw => {
+  if (!raw) return [];
+  if (raw.indexOf('v1:') === 0) return raw.slice(3).split(',').filter(Boolean)
+    .map(n => everyAct[+n]).filter(Boolean).map(a => a.key);
+  try { return JSON.parse(raw); } catch (e) { return []; }
+};
+
+const state = {
+  types: new Set(), genres: new Set(), stages: new Set(), q: '', starred: false,
+  view: narrowVP() ? 'agenda' : 'timeline',
+  route: new Set(),                    // filled once consent is read
+};
+
+const svar = s => `--c:${s.color}`;   // --bgc is derived from --c in CSS, per theme
+
+/* ══ filters ═══════════════════════════════════════════ */
+function countBy(fn) { const m = {}; allActs.forEach(a => fn(a).forEach(k => m[k] = (m[k]||0)+1)); return m; }
+const typeCounts = countBy(a => [a.type]), genreCounts = countBy(a => a.genres);
+
+function chips(host, entries, set, cls, colorOf) {
+  host.innerHTML = entries.map(([k, label, n]) =>
+    `<button class="chip st ${cls}" data-k="${esc(k)}" aria-pressed="false"` +
+    (colorOf ? ` style="--c:${colorOf(k)}"><i class="dot"></i>` : '>') +
+    esc(label) + (n != null ? ` <i class="ct">${n}</i>` : '') + '</button>').join(' ');
+  host.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    const k = b.dataset.k;
+    set.has(k) ? set.delete(k) : set.add(k);
+    b.setAttribute('aria-pressed', set.has(k));
+    apply();
+  });
+}
+chips($('#fType'), Object.entries(DATA.typeLabels).map(([k,v]) => [k,v,typeCounts[k]]), state.types, 'type');
+chips($('#fGenre'), Object.entries(DATA.genreLabels).map(([k,v]) => [k,v,genreCounts[k]]), state.genres, 'genre');
+chips($('#fStage'), DATA.stages.map(s => [s.id, s.short, s.acts.length]), state.stages, 'stage',
+      k => DATA.stages.find(s => s.id === k).color);
+
+/* ══ timeline ══════════════════════════════════════════ */
+/* Pixels per minute. Zoom scales this one number, so a set's height stays
+   honestly proportional to how long it runs at every zoom level. */
+let ppm = 1.9;
+/* Hour labels straddle their own gridline, so without a little air at the top
+   the first one is cut in half by the sticky header. */
+const VTOP = 14;
+const yOf = m => (m - D0) * ppm + VTOP;
+
+function buildTimeline() {
+  const stages = DATA.stages;
+  const bodyH = Math.round(yOf(day.end)) + 20;
+
+  let head = '<div class="vcorner"></div>';
+  stages.forEach(s => {
+    /* The whole cell is the affordance: it takes you to the stage on the map
+       and starts the walking directions, so the address does not need
+       spelling out here as well. */
+    head += `<button class="vstage" data-stage="${s.id}" data-goto="${s.id}" style="${svar(s)}"
+        title="${esc(s.name)} — show on the map">
+      ${s.num ? `<i class="snum">${s.num}</i>` : '<i class="snum">·</i>'}<span class="snm">${esc(s.short)}</span>
+      ${ico('pin')}</button>`;
+  });
+
+  let hours = '';
+  for (let m = D0; m <= day.end; m += 30) {
+    const full = m % 60 === 0;
+    hours += `<div class="vhour${full ? '' : ' half'}" style="top:${yOf(m)}px">` +
+      `${String((m / 60 | 0) % 24).padStart(2, '0')}:${full ? '00' : '30'}</div>`;
+  }
+
+  let gl = '';
+  for (let m = D0; m <= day.end; m += 30)
+    gl += `<i class="${m % 60 ? 'half' : ''}" style="top:${yOf(m)}px"></i>`;
+
+  let cols = '';
+  stages.forEach(s => {
+    const lanes = s.lanes[day.id] || 1;
+    const blocks = s.acts.filter(a => a.day === day.id).map(a => {
+      const h = Math.max(22, yOf(a.em) - yOf(a.sm) - 3);
+      const cls = h < 34 ? ' narrow tiny' : h < 62 ? ' narrow' : '';
+      const tags = `<i class="tg ty">${esc(DATA.typeLabels[a.type])}</i>` +
+        a.genres.map(g => `<i class="tg">${esc(DATA.genreLabels[g])}</i>`).join('');
+      return `<button class="blk-act${cls}${state.route.has(a.key) ? ' pick' : ''}"
+        data-key="${esc(a.key)}" title="${esc(a.name)} · ${a.s}–${a.e} · ${esc(s.name)}"
+        style="top:${yOf(a.sm)}px;height:${h}px;
+               left:calc(${a.lane / lanes * 100}% + 3px);
+               width:calc(${100 / lanes}% - 6px)">
+        <span class="bt">${a.s}</span><span class="bn">${esc(a.name)}</span>
+        <span class="btags">${tags}</span>${a.nomusic ? '' :
+        `<span class="starbtn" data-star="${esc(a.key)}" role="button" aria-label="Add to plan">
+          <svg class="i${state.route.has(a.key) ? ' fill' : ''}"><use href="#i-star"/></svg></span>`}</button>`;
+    }).join('');
+    cols += `<div class="vcol" data-stage="${s.id}" style="${svar(s)}">
+      <div class="glines">${gl}</div>${blocks}</div>`;
+  });
+
+  $('#boardIn').innerHTML =
+    `<div class="vhead">${head}</div>
+     <div class="vbody" style="height:${bodyH}px">
+       <div class="vgutter">${hours}</div>${cols}
+     </div>`;
+  addNowLine($('#boardIn'));
+  $('#boardIn').querySelectorAll('.blk-act').forEach(b => b.onclick = e => {
+    const st = e.target.closest('[data-star]');
+    if (st) { e.stopPropagation(); toggleRoute(st.dataset.star); return; }
+    openCard(b.dataset.key);
+  });
+}
+/* Festival day only. Returns minutes-since-midnight while the party is on,
+   otherwise null, so every live affordance has a single source of truth. */
+function nowMinutes() {
+  const n = new Date();
+  const [y, mo, d] = (day.date || '').split('-').map(Number);
+  if (!y) return null;
+  let m = n.getHours() * 60 + n.getMinutes();
+  const sameDay = n.getFullYear() === y && n.getMonth() === mo - 1 && n.getDate() === d;
+  // a day that runs past midnight is still "today" until it ends
+  const nextDay = new Date(y, mo - 1, d + 1);
+  const isNext = n.getFullYear() === nextDay.getFullYear() &&
+                 n.getMonth() === nextDay.getMonth() && n.getDate() === nextDay.getDate();
+  if (isNext) m += 1440; else if (!sameDay) return null;
+  return (m >= D0 && m <= day.end) ? m : null;
+}
+const LIVE_PILL = '<span class="live"><i></i>LIVE</span>';
+
+function addNowLine(root) {
+  const m = nowMinutes();
+  if (m == null) return;
+  root.querySelectorAll('.vcol').forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'nowline'; d.style.top = yOf(m) + 'px'; c.appendChild(d);
+  });
+}
+
+/* Re-marks whatever is on stage right now. Cheap enough to run on a timer so
+   the page stays correct while it sits open in a pocket. */
+function markLive() {
+  const m = nowMinutes();
+  $('#nowBtn').classList.toggle('on', m != null);
+  allActs.forEach(a => {
+    const on = m != null && a.sm <= m && m < a.em;
+    const row = $(`.arow[data-row="${CSS.escape(a.key)}"]`);
+    if (row) {
+      row.classList.toggle('now', on);
+      const host = row.querySelector('.ameta');
+      const has = host && host.querySelector('.live');
+      if (host && on && !has) host.insertAdjacentHTML('afterbegin', LIVE_PILL);
+      if (has && !on) has.remove();
+    }
+    const bl = $(`.blk-act[data-key="${CSS.escape(a.key)}"]`);
+    if (bl) {
+      bl.classList.toggle('now', on);
+      const has = bl.querySelector('.live');
+      if (on && !has) bl.insertAdjacentHTML('beforeend', LIVE_PILL);
+      if (has && !on) has.remove();
+    }
+  });
+  document.querySelectorAll('.nowline').forEach(l => { if (m != null) l.style.top = yOf(m) + 'px'; });
+  const hr = m == null ? null : Math.floor(m / 60);
+  document.querySelectorAll('.ahour').forEach(hd => {
+    const on = hd.dataset.hour === String(hr);
+    hd.classList.toggle('livehour', on);
+    const slot = hd.querySelector('.hlive');
+    if (slot) slot.innerHTML = on ? LIVE_PILL.replace('LIVE', 'ON NOW') : '';
+  });
+}
+
+function scrollToNow(smooth) {
+  const m = nowMinutes();
+  if (m == null) return false;
+  const behavior = smooth ? 'smooth' : 'auto';
+  if (state.view === 'agenda') {
+    const hr = Math.min(Math.floor(day.end / 60) - 1, Math.floor(m / 60));
+    const el = $(`.ahour[data-hour="${hr}"]`);
+    if (el) scrollToSection('#' + el.id, behavior);
+  } else {
+    /* Time is the vertical axis now, so "go to now" scrolls the board down and
+       leaves a little of the preceding hour visible for context. */
+    const b = $('#board');
+    const head = b.querySelector('.vhead');
+    const headH = head ? head.getBoundingClientRect().height : 0;
+    b.scrollTo({top: Math.max(0, yOf(m) - b.clientHeight * 0.3 + headH), behavior});
+    scrollToSection('#secSchedule', behavior);
+  }
+  setActiveNav('nSched');
+  return true;
+}
+$('#nowBtn').onclick = () => scrollToNow(true);
+
+/* ══ line-up ═══════════════════════════════════════════
+   Every act as plain crawlable text. The grid and the list are both built at
+   runtime from a JSON blob, so without this a search engine — and anyone
+   looking for one artist by name — finds a page with no performers on it. */
+function buildLineup() {
+  const seen = new Map();
+  everyAct.filter(a => !a.nomusic).forEach(a => {
+    if (!seen.has(a.name)) seen.set(a.name, []);
+    seen.get(a.name).push(a);
+  });
+  const names = [...seen.keys()].sort((x, y) => x.localeCompare(y, 'fi'));
+  $('#lineup').innerHTML = names.map(n => {
+    const where = seen.get(n).map(a => {
+      const d = DAYS.length > 1 ? `${DAYS.find(x => x.id === a.day)?.short || ''} ` : '';
+      return `${d}${a.s}, ${esc(a.stage.short)}`;
+    }).join(' · ');
+    return `<p><b>${esc(n)}</b> <i>${where}</i></p>`;
+  }).join('');
+}
+
+/* ══ agenda ════════════════════════════════════════════ */
+function buildAgenda() {
+  let h = '', lastHour = -1;
+  allActs.forEach(a => {
+    const hr = Math.floor(a.sm / 60);
+    if (hr !== lastHour) {
+      if (lastHour !== -1) h += '</section>';
+      lastHour = hr;
+      const n = allActs.filter(x => Math.floor(x.sm/60) === hr).length;
+      h += `<section class="ahsec" data-sec="${hr}">
+        <div class="ahour" data-hour="${hr}"><b>${String(hr%24).padStart(2,'0')}:00</b>
+        <span class="hcount">${n} start${n>1?'s':''}</span><span class="hlive"></span></div>`;
+    }
+    const s = a.stage;
+    const tags = `<i class="tg ty">${esc(DATA.typeLabels[a.type])}</i>` +
+      a.genres.slice(0,3).map(g => `<i class="tg">${esc(DATA.genreLabels[g])}</i>`).join('');
+    h += `<div class="arow${state.route.has(a.key)?' pick':''}" data-row="${esc(a.key)}" style="${svar(s)}">
+      <span class="swipebg" aria-hidden="true"><span class="sl">${ico('star')} ROUTE</span>
+        <span class="sr2">ROUTE ${ico('star')}</span></span>
+      <div class="arowin">
+      <button class="atap" data-open="${esc(a.key)}">
+        <span class="atime">${a.s}<i>${a.e}</i></span>
+        <span><span class="aname">${esc(a.name)}</span>
+          <span class="ameta"><span class="astage"><i class="dot"></i>${esc(s.name)}</span>${tags}</span>
+        </span></button>
+      ${a.nomusic?'<span></span>':
+      `<button class="astar" data-star="${esc(a.key)}" aria-pressed="${state.route.has(a.key)}"
+        aria-label="Add ${esc(a.name)} to my route">
+        <svg class="i${state.route.has(a.key)?' fill':''}"><use href="#i-star"/></svg></button>`}
+      </div></div>`;
+  });
+  h += '</section><div class="agenda-empty" id="agEmpty" hidden>No acts match these filters.</div>';
+  $('#agenda').innerHTML = h;
+  $('#agenda').querySelectorAll('[data-open]').forEach(b => b.onclick = () => openCard(b.dataset.open));
+  $('#agenda').querySelectorAll('.astar').forEach(b => b.onclick = () => toggleRoute(b.dataset.star));
+}
+
+/* ══ view switching ════════════════════════════════════ */
+function setView(v, byUser) {
+  state.view = v;
+  document.body.dataset.view = v;      // drives the desktop deck layout
+  if (byUser) Store.set('viewPinned', '1');
+  $('#board').hidden = v !== 'timeline';
+  $('#agenda').hidden = v !== 'agenda';
+  $('#vTimeline').setAttribute('aria-pressed', v === 'timeline');
+  $('#vAgenda').setAttribute('aria-pressed', v === 'agenda');
+  Store.set('view', v);
+  apply();
+  if (typeof markLive === 'function') markLive();
+}
+function setDay(id) {
+  if (id === day.id) return;
+  day = DAYS.find(d => d.id === id) || DAYS[0];
+  D0 = day.start; DSPAN = day.end - day.start;
+  allActs = everyAct.filter(a => a.day === day.id);
+  $('#dayBar').querySelectorAll('[data-day]').forEach(b =>
+    b.setAttribute('aria-pressed', b.dataset.day === day.id));
+  buildTimeline(); buildAgenda();
+  renderRoute(); apply(); markLive();
+  Store.set('day', day.id);
+}
+function buildDayBar() {
+  const bar = $('#dayBar');
+  if (DAYS.length < 2) { bar.hidden = true; return; }
+  bar.hidden = false;
+  bar.innerHTML = DAYS.map(d =>
+    `<button data-day="${esc(d.id)}" aria-pressed="${d.id === day.id}">
+       <span class="dlong">${esc(d.label)}</span><span class="dshort">${esc(d.short || d.label)}</span>
+     </button>`).join('');
+  bar.querySelectorAll('[data-day]').forEach(b => b.onclick = () => setDay(b.dataset.day));
+}
+
+$('#vTimeline').onclick = () => setView('timeline', true);
+$('#vAgenda').onclick = () => setView('agenda', true);
+
+/* The timeline grid is unusable on a phone, so narrow viewports default to the
+   list and keep the filter drawer shut. Re-evaluated on resize and rotation
+   unless the reader has explicitly chosen a view. */
+function applyBreakpointDefaults() {
+  const narrow = narrowVP();
+  if (!Store.get('viewPinned'))
+    setView(narrow ? 'agenda' : 'timeline');
+}
+matchMedia('(max-width:839px)').addEventListener('change', applyBreakpointDefaults);
+
+
+/* Zoom stretches the time axis. Rebuilding is cheap and keeps every block,
+   grid line and hour label in agreement rather than scaling them separately. */
+const setZoom = v => {
+  const next = Math.max(0.9, Math.min(6, v));
+  if (Math.abs(next - ppm) < 0.001) return;
+  const b = $('#board');
+  const anchor = b ? (b.scrollTop / Math.max(1, ppm)) : 0;
+  ppm = next;
+  buildTimeline();
+  markLive();
+  if (b) b.scrollTop = anchor * ppm;
+};
+/* Pinch on the board stretches the time axis, and a trackpad pinch (which the
+   browser reports as ctrl+wheel) does the same on a laptop. Rebuilding on each
+   frame keeps the type crisp, where scaling the whole grid would blur it. */
+(() => {
+  const board = $('#board');
+  if (!board) return;
+  const gap = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  let start = null, queued = false, want = ppm;
+
+  const commit = () => {
+    queued = false;
+    setZoom(want);
+  };
+  const ask = v => {
+    want = v;
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(commit);
+  };
+
+  board.addEventListener('touchstart', e => {
+    if (e.touches.length === 2) start = {d: gap(e.touches), ppm: ppm};
+  }, {passive: true});
+  board.addEventListener('touchmove', e => {
+    if (!start || e.touches.length !== 2) return;
+    e.preventDefault();
+    ask(start.ppm * (gap(e.touches) / start.d));
+  }, {passive: false});
+  const end = () => { start = null; };
+  board.addEventListener('touchend', end, {passive: true});
+  board.addEventListener('touchcancel', end, {passive: true});
+
+  board.addEventListener('wheel', e => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    ask(ppm * (1 - e.deltaY * 0.01));
+  }, {passive: false});
+})();
+
+/* ══ filtering ═════════════════════════════════════════ */
+function matches(a) {
+  if (state.starred && !state.route.has(a.key)) return false;
+  if (state.types.size && !state.types.has(a.type)) return false;
+  if (state.genres.size && !a.genres.some(g => state.genres.has(g))) return false;
+  if (state.stages.size && !state.stages.has(a.stage.id)) return false;
+  if (state.q) {
+    const t = (a.name + ' ' + a.stage.name + ' ' + a.genres.map(g => DATA.genreLabels[g]).join(' ')
+      + ' ' + DATA.typeLabels[a.type]).toLowerCase();
+    if (!t.includes(state.q)) return false;
+  }
+  return true;
+}
+function apply() {
+  const nf = state.types.size + state.genres.size + state.stages.size +
+             (state.q ? 1 : 0) + (state.starred ? 1 : 0);
+  const active = nf > 0;
+  let n = 0; const perStage = {};
+  allActs.forEach(a => {
+    const ok = matches(a);
+    if (ok) { n++; perStage[a.stage.id] = (perStage[a.stage.id]||0)+1; }
+    const bl = $(`.blk-act[data-key="${CSS.escape(a.key)}"]`);
+    if (bl) bl.classList.toggle('dim', active && !ok);
+    const row = $(`.arow[data-row="${CSS.escape(a.key)}"]`);
+    if (row) row.hidden = active && !ok;
+  });
+  DATA.stages.forEach(s => {
+    const off = active && !perStage[s.id];
+    document.querySelectorAll(`.vcol[data-stage="${s.id}"],.vstage[data-stage="${s.id}"]`)
+      .forEach(el => { el.hidden = off; });
+  });
+  $('#agenda').querySelectorAll('.ahsec').forEach(sec =>
+    sec.hidden = !sec.querySelector('.arow:not([hidden])'));
+  const ae = $('#agEmpty'); if (ae) ae.hidden = n > 0;
+  $('#matchCount').textContent = active ? `${n} of ${allActs.length} acts match` : `${allActs.length} acts, nothing filtered`;
+  const badge = $('#fBadge');
+  badge.hidden = !nf; badge.textContent = nf;
+  $('#fToggle').setAttribute('aria-pressed', $('#filters').classList.contains('open'));
+}
+$('#q').oninput = e => { state.q = e.target.value.trim().toLowerCase(); apply(); };
+$('#reset').onclick = () => {
+  state.types.clear(); state.genres.clear(); state.stages.clear(); state.q = '';
+  state.starred = false;
+  $('#starOnly').setAttribute('aria-pressed', 'false');
+  $('#q').value = '';
+  document.querySelectorAll('.chip[aria-pressed=true]').forEach(c => c.setAttribute('aria-pressed','false'));
+  apply();
+};
+function setFilters(open) {
+  $('#filters').classList.toggle('open', open);
+  document.body.classList.toggle('filters-open', open);
+  $('#fToggle').setAttribute('aria-pressed', open);
+  if (typeof measureTop === 'function') measureTop();
+}
+$('#fToggle').onclick = () => setFilters(!$('#filters').classList.contains('open'));
+/* Click away to dismiss. The search field counts as part of the drawer, since
+   typing there is filtering too. */
+document.addEventListener('pointerdown', e => {
+  if (!$('#filters').classList.contains('open')) return;
+  if (e.target.closest('#filters, #fToggle, .srch')) return;
+  setFilters(false);
+}, true);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $('#filters').classList.contains('open')) setFilters(false);
+});
+
+/* ══ artwork ═══════════════════════════════════════════ */
+function hash(s) { let h = 2166136261; for (let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);} return h>>>0; }
+function initials(name) {
+  const w = name.replace(/\(.*?\)/g,'').split(/[\s&·]+/).filter(Boolean);
+  return ((w[0]||'?')[0] + (w.length>1 ? w[w.length-1][0] : (w[0]||'?')[1]||'')).toUpperCase();
+}
+function generativeCover(a) {
+  const c = a.stage.color, h = hash(a.q);
+  const ang = h % 360, r1 = 26 + (h >> 3) % 22, r2 = 16 + (h >> 7) % 18;
+  const cx1 = 18 + (h >> 11) % 64, cy1 = 20 + (h >> 15) % 60;
+  const cx2 = 22 + (h >> 19) % 60, cy2 = 24 + (h >> 23) % 55;
+  return `<svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" role="img"
+    aria-label="Generated cover for ${esc(a.name)}">
+    <defs><linearGradient id="g${h}" gradientTransform="rotate(${ang} .5 .5)">
+      <stop offset="0" stop-color="${c}" stop-opacity=".30"/>
+      <stop offset="1" stop-color="${c}" stop-opacity=".05"/></linearGradient></defs>
+    <rect width="160" height="90" fill="#151a24"/>
+    <rect width="160" height="90" fill="url(#g${h})"/>
+    <circle cx="${cx1}" cy="${cy1}" r="${r1}" fill="${c}" opacity=".13"/>
+    <circle cx="${cx2+62}" cy="${cy2}" r="${r2}" fill="${c}" opacity=".17"/>
+    <text x="80" y="52" text-anchor="middle" font-family="Arial,Helvetica,sans-serif"
+      font-size="30" font-weight="700" letter-spacing="-1.4" fill="${c}" opacity=".92"
+      >${esc(initials(a.name))}</text></svg>`;
+}
+
+/* ══ card ══════════════════════════════════════════════ */
+const SERVICES = ['spotify','youtube','soundcloud','bandcamp','instagram','deezer','wikipedia','homepage'];
+const LICO = {spotify:'spotify',deezer:'note',soundcloud:'soundcloud',bandcamp:'bandcamp',
+              youtube:'youtube',instagram:'camera',wikipedia:'book',homepage:'globe'};
+const LNAME = {spotify:'Spotify',deezer:'Deezer',soundcloud:'SoundCloud',bandcamp:'Bandcamp',
+               youtube:'YouTube',instagram:'Instagram',wikipedia:'Wikipedia',homepage:'Website'};
+const dlg = $('#card');
+let cardKey = null, cardSeq = 0;   // cardSeq invalidates a pending close
+
+function openCard(key) {
+  const a = actByKey(key); if (!a) return;
+  cardKey = key;
+  const s = a.stage, art = ART[a.q];
+  const links = [];
+  SERVICES.forEach(k => {
+    if (a.direct[k]) links.push([k, a.direct[k], 1]);
+    else if (a.search[k]) links.push([k, a.search[k], 0]);
+  });
+  const nVerified = links.filter(l => l[2]).length;
+  const rail = links.map(([k, u, v]) =>
+    `<a class="icolink" href="${esc(u)}" target="_blank" rel="noopener" data-verified="${v}"
+        title="${LNAME[k]} — ${v?'verified profile':'search'}" aria-label="${LNAME[k]}${v?'':' search'}">
+      ${ico(LICO[k]||'globe')}${v?`<span class="vd">${ico('check')}</span>`:''}</a>`).join('');
+  $('#cardBox').innerHTML = `<div class="cardin" style="${svar(s)}">
+    <button class="cclose" id="cX" aria-label="Close">${ico('x')}</button>
+    <div class="chero">
+      ${art ? `<img src="${art.src}" alt="${esc(a.name)}">` : generativeCover(a)}
+      <div class="scrim"></div><span class="grabber"></span>
+      <span class="cstage">${s.num?s.num+' · ':''}${esc(s.short)}</span>
+      ${art ? `<span class="csrc">${art.source === 'deezer' ? 'Deezer' : 'Apple Music'}</span>` : ''}
+    </div>
+    <div class="cbody">
+      <h2 id="cardTitle">${esc(a.name)}</h2>
+      <div class="cwhen">${ico('clock')} ${a.s} – ${a.e} <i>·</i> ${a.em-a.sm} min
+        ${a.b2b?'<i>·</i> back-to-back':''}${a.allday?'<i>·</i> all day':''}</div>
+      <button class="cstagerow" data-goto="${s.id}">
+        <span class="csnum">${s.num || '·'}</span>
+        <span class="csbody"><span class="csname">${esc(s.name)}</span>
+          ${s.location ? `<span class="cswhere">${esc(s.location)}</span>` : ''}</span>
+        <span class="csgo">${ico('pin')}Map</span></button>
+      <div class="gacts" style="margin-top:11px">
+        <a class="gbtn" href="${gWalk(s)}" target="_blank" rel="noopener">${ico('nav')}Walk here</a>
+        <a class="gbtn" href="${gPlace(s)}" target="_blank" rel="noopener">${ico('ext')}Google Maps</a>
+      </div>
+      <div class="ctags"><span class="tg ty">${esc(DATA.typeLabels[a.type])}</span>
+        ${a.genres.map(g=>`<span class="tg">${esc(DATA.genreLabels[g])}</span>`).join('')}</div>
+      ${a.note?`<div class="cnote">${esc(a.note)}</div>`:''}
+      ${a.nomusic?'<div class="cnote">Non-musical programme — no listening links.</div>':''}
+      ${links.length?`<h3 class="ch">Listen</h3><div class="icorail">${rail}</div>
+        <p class="icocap">${nVerified
+          ? (nVerified === links.length ? 'All verified profiles.'
+             : `${nVerified} verified profile${nVerified>1?'s':''} (ticked); the rest open a search.`)
+          : 'No confirmed profile for this act — these open a search.'}</p>`:''}
+      ${a.nomusic?'':`<button class="cadd" id="cAdd" aria-pressed="${state.route.has(a.key)}">
+        <svg class="i${state.route.has(a.key)?' fill':''}"><use href="#i-star"/></svg>
+        ${state.route.has(a.key)?'In my route — tap to remove':'Add to my route'}</button>`}
+      <h3 class="ch">About ${esc(s.short)}</h3>
+      <div class="cnote">${esc(s.blurb)}</div>
+    </div></div>`;
+  const box = $('#cardBox');
+  cardSeq++;                     // any in-flight close no longer applies
+  delete dlg.dataset.closing;
+  box.classList.remove('large');
+  if (!dlg.open) {
+    // A dialog goes from display:none straight to shown, so there is no start
+    // value to transition from. Paint the closed state, then flip a frame later.
+    dlg.classList.remove('in');
+    dlg.showModal();
+    void dlg.offsetWidth;
+    requestAnimationFrame(() => dlg.classList.add('in'));
+  }
+  // showModal() autofocuses, and the UA scrolls that element into view a frame
+  // later — which buries the hero. Focus without scrolling, then pin to top.
+  $('#cX').focus({preventScroll: true});
+  box.scrollTop = 0;
+  requestAnimationFrame(() => { box.scrollTop = 0; });
+  $('#cX').onclick = closeCard;
+  const add = $('#cAdd'); if (add) add.onclick = () => { toggleRoute(key); openCard(key); };
+  $('#cardBox').querySelectorAll('[data-goto]').forEach(b =>
+    b.onclick = () => { closeCard(); gotoStage(b.dataset.goto); });
+}
+/* dialog.close() removes the element from the box tree immediately, so the
+   exit has to be played first and the native close called on completion. */
+function closeCard() {
+  if (!dlg.open || dlg.dataset.closing) return;
+  dlg.dataset.closing = '1';
+  const b = $('#cardBox');
+  b.style.transform = '';
+  b.classList.remove('dragging');
+  dlg.style.removeProperty('--dim');
+  dlg.classList.remove('in');          // reverses whichever entry ran
+  const seq = ++cardSeq;
+  let done = false;
+  const finish = () => {
+    if (done || seq !== cardSeq) return;   // a reopen happened mid-exit
+    done = true;
+    delete dlg.dataset.closing;
+    b.classList.remove('large');
+    dlg.close();
+  };
+  b.addEventListener('transitionend', e => { if (e.propertyName === 'transform') finish(); }, {once: true});
+  setTimeout(finish, 520);
+}
+dlg.addEventListener('click', e => { if (e.target === dlg) closeCard(); });
+dlg.addEventListener('cancel', e => { e.preventDefault(); closeCard(); });
+
+/* ══ gestures ══════════════════════════════════════════
+   Touch events rather than pointer events: a vertical pointer drag inside a
+   scrollable sheet gets cancelled the moment the browser claims it as a
+   scroll, so the drag has to preventDefault on touchmove while it owns the
+   axis. Mouse is handled separately for the desktop case. */
+const TAP = 8;                       // px of slop before a drag owns an axis
+
+/* Sheet: swipe down to dismiss, with velocity so a flick works too. */
+(() => {
+  const BOX = $('#cardBox');                 // static node — no per-frame lookup
+  const box = () => BOX;
+  let sx = 0, sy = 0, dy = 0, axis = null, live = false, t0 = 0;
+  let pending = null, raf = 0, lastDim = -1;
+  const paint = () => {
+    raf = 0;
+    if (pending === null) return;
+    BOX.style.transform = `translateY(${pending}px)`;
+    pending = null;
+  };
+  /* touchmove outruns the compositor, so writes are coalesced to one a frame
+     and the backdrop opacity only steps every 5% — its blur is the expensive
+     part and re-rasterising it 60x a second is what made the drag feel heavy. */
+  const push = (offset, dim) => {
+    pending = offset;
+    if (!raf) raf = requestAnimationFrame(paint);
+    if (dim !== null) {
+      const q = Math.round(dim * 20) / 20;
+      if (q !== lastDim) { lastDim = q; dlg.style.setProperty('--dim', String(q)); }
+    }
+  };
+  const begin = (x, y) => {
+    if (box().scrollTop > 0) return;
+    live = true; axis = null; dy = 0; sx = x; sy = y; t0 = performance.now();
+  };
+  const move = (x, y, ev) => {
+    if (!live) return;
+    const ddx = x - sx, ddy = y - sy;
+    if (!axis) {
+      if (Math.abs(ddx) < TAP && Math.abs(ddy) < TAP) return;
+      axis = Math.abs(ddy) > Math.abs(ddx) ? 'y' : 'x';
+      // Decide ownership before preventing anything. A pull up on a sheet that
+      // is already at full height belongs to the scroller, not the sheet —
+      // otherwise the rest of the card can never be read.
+      const expanded = !narrowVP() || box().classList.contains('large');
+      if (axis !== 'y' || (ddy < 0 && expanded)) { live = false; return; }
+      box().classList.add('dragging');
+    }
+    if (axis !== 'y') { live = false; return; }
+    if (ev && ev.cancelable) ev.preventDefault();
+    dy = ddy;
+    const b = box();
+    const base = narrowVP() ? (b.classList.contains('large') ? 0 : innerHeight * .30) : 0;
+    // resist past the top detent instead of letting the sheet fly off
+    const off = dy < -base ? -base - Math.pow(-(dy + base), .72) : dy;
+    push(base + off, dy > 0 ? 1 - Math.min(.7, dy / 520) : null);
+  };
+  const end = () => {
+    if (!live) return;
+    live = false;
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    pending = null; lastDim = -1;
+    const b = box();
+    b.classList.remove('dragging');
+    const v = Math.abs(dy) / Math.max(1, performance.now() - t0);
+    b.style.transform = ''; dlg.style.removeProperty('--dim');
+    const big = b.classList.contains('large');
+    if (!narrowVP()) {
+      if (dy > 120 || (dy > 40 && v > .5)) closeCard();
+    } else if (dy < 0) {                            // swipe up
+      if (!big && (-dy > 52 || v > .45)) b.classList.add('large');
+    } else if (big) {                               // swipe down from tall
+      if (dy > 80 || v > .5) b.classList.remove('large');
+    } else if (dy > 110 || (dy > 40 && v > .5)) {
+      closeCard();
+    }
+    dy = 0;
+  };
+  dlg.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) begin(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive: true});
+  dlg.addEventListener('touchmove', e => {
+    if (e.touches.length === 1) move(e.touches[0].clientX, e.touches[0].clientY, e);
+  }, {passive: false});
+  dlg.addEventListener('touchend', end);
+  dlg.addEventListener('touchcancel', end);
+  dlg.addEventListener('mousedown', e => {
+    if (e.target.closest('a,button,input')) return;
+    begin(e.clientX, e.clientY);
+  });
+  window.addEventListener('mousemove', e => { if (live) move(e.clientX, e.clientY, null); });
+  window.addEventListener('mouseup', end);
+})();
+
+/* List rows: swipe either way to add to or drop from the route. */
+(() => {
+  let row = null, inner = null, sx = 0, sy = 0, dx = 0, axis = null;
+  let pending = null, raf = 0;
+  const paint = () => { raf = 0;
+    if (pending !== null && inner) inner.style.transform = `translateX(${pending}px)`;
+    pending = null; };
+  const THRESH = 68;
+  const reset = () => {
+    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    pending = null;
+    if (inner) { inner.classList.remove('drag'); inner.style.transform = ''; }
+    row && row.classList.remove('rm');
+    row = inner = null; axis = null; dx = 0;
+  };
+  $('#agenda').addEventListener('touchstart', e => {
+    const r = e.target.closest('.arow');
+    if (!r || e.touches.length !== 1 || r.querySelector('.astar') === null) return;
+    row = r; inner = r.querySelector('.arowin'); axis = null; dx = 0;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }, {passive: true});
+  $('#agenda').addEventListener('touchmove', e => {
+    if (!row || e.touches.length !== 1) return;
+    const ddx = e.touches[0].clientX - sx, ddy = e.touches[0].clientY - sy;
+    if (!axis) {
+      if (Math.abs(ddx) < TAP && Math.abs(ddy) < TAP) return;
+      axis = Math.abs(ddx) > Math.abs(ddy) ? 'x' : 'y';
+      if (axis === 'x') inner.classList.add('drag');
+    }
+    if (axis !== 'x') { reset(); return; }
+    if (e.cancelable) e.preventDefault();
+    dx = Math.max(-140, Math.min(140, ddx));
+    const on = state.route.has(row.dataset.row);
+    // right reveals "add", left reveals "remove" — but only the useful one
+    row.classList.toggle('rm', dx < 0 ? on : false);
+    pending = dx;
+    if (!raf) raf = requestAnimationFrame(paint);
+  }, {passive: false});
+  const done = () => {
+    if (!row) return;
+    const key = row.dataset.row, on = state.route.has(key), hit = Math.abs(dx) > THRESH;
+    if (hit && ((dx > 0 && !on) || (dx < 0 && on))) toggleRoute(key);
+    reset();
+  };
+  $('#agenda').addEventListener('touchend', done);
+  $('#agenda').addEventListener('touchcancel', reset);
+})();
+
+/* ══ map ═══════════════════════════════════════════════ */
+function project(lat, lon) {
+  const n = (1 << B.z) * B.tile;
+  const x = (lon + 180) / 360 * n;
+  const r = lat * Math.PI / 180;
+  const y = (1 - Math.log(Math.tan(r) + 1/Math.cos(r)) / Math.PI) / 2 * n;
+  return { x: (x - B.originX) / B.wLogical * 100, y: (y - B.originY) / B.hLogical * 100 };
+}
+function buildMap() {
+  let h = '';
+  DATA.stages.forEach(s => {
+    const p = project(s.lat, s.lon);
+    h += `<button class="pin" data-pin="${s.id}" style="${svar(s)};left:${p.x}%;top:${p.y}%"
+      aria-label="${esc(s.name)}"><span class="knob"><b>${s.num||'·'}</b></span>
+      <span class="plabel">${esc(s.short)}</span></button>`;
+  });
+  (DATA.poi||[]).forEach((p, i) => {
+    const q = project(p.lat, p.lon);
+    h += `<button class="pin poi" data-poi="${i}" style="--c:var(--md-sys-color-outline);left:${q.x}%;top:${q.y}%"
+      aria-label="${esc(p.name)}"><span class="knob"><b>${ico('note')}</b></span>
+      <span class="plabel">${esc(p.name)}</span></button>`;
+  });
+  $('#pins').innerHTML = h;
+  $('#pins').querySelectorAll('[data-pin]').forEach(b =>
+    b.onclick = e => { e.stopPropagation(); selectStage(b.dataset.pin, false); });
+  $('#mapCap').innerHTML = `Nine stages plus the activities area at Åshöjdens grundskola. ` +
+    `Pins sit on the junctions the organiser's map marks. ` +
+    `<a href="https://www.openstreetmap.org/#map=16/${DATA.stages[0].lat}/${DATA.stages[0].lon}" target="_blank" rel="noopener">Open in OpenStreetMap ↗</a>`;
+  $('#legend').innerHTML = DATA.stages.map(s =>
+    `<button class="lgi" data-pin="${s.id}" style="${svar(s)}">
+      <span class="n">${s.num||'·'}</span>
+      <span><span class="lnm">${esc(s.name)}</span><span class="lds">${esc(s.blurb)}</span></span>
+     </button>`).join('');
+  $('#legend').querySelectorAll('[data-pin]').forEach(b =>
+    b.onclick = () => selectStage(b.dataset.pin, false));
+}
+
+let mz = 1, mx = 0, my = 0;
+function applyMapT() {
+  const pl = $('#mapPlane');
+  $('#mapShell').classList.toggle('zoomed', mz >= 1.8);
+  pl.style.transform = `translate3d(${mx}px,${my}px,0) scale(${mz})`;
+  pl.style.setProperty('--s', mz);
+  pl.querySelectorAll('.pin').forEach(p =>
+    p.style.transform = `translate(-50%,-100%) scale(${(1/mz).toFixed(3)})`);
+}
+function clampPan() {
+  // A little overscroll either side, so a drag always moves something.
+  const r = $('#mapShell').getBoundingClientRect();
+  const padX = r.width * .35, padY = r.height * .35;
+  mx = Math.min(padX, Math.max(-r.width * (mz - 1) - padX, mx));
+  my = Math.min(padY, Math.max(-r.height * (mz - 1) - padY, my));
+}
+function setMapZoom(z, ax, ay) {
+  const r = $('#mapShell').getBoundingClientRect();
+  ax = ax ?? r.width / 2; ay = ay ?? r.height / 2;
+  const nz = Math.max(1, Math.min(4.5, z));
+  mx = ax - (ax - mx) * (nz / mz); my = ay - (ay - my) * (nz / mz);
+  mz = nz; clampPan(); applyMapT();
+}
+$('#mIn').onclick = () => setMapZoom(mz * 1.55);
+$('#mOut').onclick = () => setMapZoom(mz / 1.55);
+$('#mFit').onclick = () => { mz = 1; mx = my = 0; applyMapT(); selectStage(null); };
+(() => {
+  const sh = $('#mapShell'); let down = false, sx = 0, sy = 0, ox = 0, oy = 0, moved = 0;
+  sh.addEventListener('pointerdown', e => {
+    if (layer !== 'street' && layer !== 'sat') return;
+    if (e.target.closest('.pin,.mapctl,.maplayers')) return;
+    down = true; moved = 0; sx = e.clientX; sy = e.clientY; ox = mx; oy = my;
+    try { sh.setPointerCapture(e.pointerId); } catch (_) {}
+    sh.classList.add('drag');
+  });
+  sh.addEventListener('pointermove', e => {
+    if (!down) return;
+    moved = Math.max(moved, Math.abs(e.clientX-sx) + Math.abs(e.clientY-sy));
+    mx = ox + (e.clientX - sx); my = oy + (e.clientY - sy); clampPan(); applyMapT();
+  });
+  const up = () => { down = false; sh.classList.remove('drag'); };
+  sh.addEventListener('pointerup', up); sh.addEventListener('pointercancel', up);
+  sh.addEventListener('wheel', e => {
+    if (layer !== 'street' && layer !== 'sat') return;
+    e.preventDefault();
+    const r = sh.getBoundingClientRect();
+    setMapZoom(mz * (e.deltaY < 0 ? 1.16 : 1/1.16), e.clientX - r.left, e.clientY - r.top);
+  }, {passive:false});
+  // two-finger pinch, anchored between the fingers
+  let pinch = null;
+  const dist = ts => Math.hypot(ts[0].clientX - ts[1].clientX, ts[0].clientY - ts[1].clientY);
+  const mid  = ts => ({x: (ts[0].clientX + ts[1].clientX) / 2, y: (ts[0].clientY + ts[1].clientY) / 2});
+  sh.addEventListener('touchstart', e => {
+    if (layer !== 'street' && layer !== 'sat') return;
+    if (e.touches.length === 2) { down = false; pinch = {d: dist(e.touches), z: mz}; }
+  }, {passive: true});
+  sh.addEventListener('touchmove', e => {
+    if (!pinch || e.touches.length !== 2) return;
+    if (e.cancelable) e.preventDefault();
+    const r = sh.getBoundingClientRect(), m = mid(e.touches);
+    setMapZoom(pinch.z * (dist(e.touches) / pinch.d), m.x - r.left, m.y - r.top);
+  }, {passive: false});
+  const endPinch = e => { if (!e.touches || e.touches.length < 2) pinch = null; };
+  sh.addEventListener('touchend', endPinch);
+  sh.addEventListener('touchcancel', endPinch);
+
+  sh.addEventListener('dblclick', e => {
+    if (layer !== 'street' && layer !== 'sat') return;
+    const r = sh.getBoundingClientRect();
+    setMapZoom(mz >= 3 ? 1 : mz * 1.8, e.clientX - r.left, e.clientY - r.top);
+  });
+})();
+$('#layStreet').onclick = () => setLayer('street');
+$('#laySat').onclick = () => setLayer('sat');
+$('#layPoster').onclick = () => setLayer('poster');
+let layer = 'street';
+const ATTR_STREET = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>';
+const ATTR_SAT = 'Imagery © <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a>, Maxar, Earthstar Geographics';
+function setLayer(l) {
+  layer = l;
+  const raster = l === 'street' || l === 'sat';
+  const lightUI = document.documentElement.dataset.theme === 'light';
+  $('#mapStreet').hidden = l !== 'street' || lightUI;
+  $('#mapStreetLight').hidden = l !== 'street' || !lightUI;
+  $('#mapSat').hidden = l !== 'sat';
+  $('#mapPoster').hidden = l !== 'poster';
+  $('#pins').style.display = raster ? '' : 'none';
+  $('#mapAttr').style.display = raster ? '' : 'none';
+  $('#mapAttr').innerHTML = l === 'sat' ? ATTR_SAT : ATTR_STREET;
+  [['street','layStreet'],['sat','laySat'],['poster','layPoster']]
+    .forEach(([k, id]) => $('#'+id).setAttribute('aria-pressed', l === k));
+}
+
+/* Google Maps URL scheme — keyless, and hands off to the native app on a
+   phone. The offline map above stays the in-page reference. */
+const gPlace = s => `https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}`;
+const gWalk  = s => `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lon}&travelmode=walking`;
+let selected = null;
+function selectStage(id, recentre = true) {
+  selected = id;
+  document.querySelectorAll('.pin[data-pin]').forEach(p =>
+    p.classList.toggle('on', p.dataset.pin === id));
+  document.querySelectorAll('.lgi').forEach(l => l.classList.toggle('on', l.dataset.pin === id));
+  renderStageBar(id);
+  if (!id) return;
+  const s = DATA.stages.find(x => x.id === id);
+  if (layer !== 'street' && layer !== 'sat') setLayer('street');
+  if (recentre) {
+    const r = $('#mapShell').getBoundingClientRect(), p = project(s.lat, s.lon);
+    mz = Math.max(mz, 2);
+    mx = r.width/2 - (p.x/100) * r.width * mz;
+    my = r.height/2 - (p.y/100) * r.height * mz;
+    clampPan(); applyMapT();
+  }
+}
+function renderStageBar(id) {
+  const bar = $('#stageBar');
+  if (!id) { bar.hidden = true; return; }
+  const s = DATA.stages.find(x => x.id === id);
+  const now = new Date();
+  const live = (now.getFullYear() === 2026 && now.getMonth() === 7 && now.getDate() === 1)
+    ? now.getHours() * 60 + now.getMinutes() : null;
+  const next = live != null ? s.acts.find(a => a.em > live) : s.acts[0];
+  bar.hidden = false;
+  bar.setAttribute('style', svar(s));
+  bar.innerHTML = `<span class="n">${s.num||'·'}</span>
+    <span><span class="nm">${esc(s.name)}</span>
+      <span class="sub">${esc(s.location)}${next?` · ${live!=null?'next':'opens'} ${next.s} ${esc(next.name)}`:''}</span></span>
+    <span class="gacts">
+      <a class="gbtn solid" href="${gWalk(s)}" target="_blank" rel="noopener">
+        ${ico('nav')}Walk here</a>
+      <a class="gbtn" href="${gPlace(s)}" target="_blank" rel="noopener">
+        ${ico('ext')}Google Maps</a></span>`;
+}
+function gotoStage(id) {
+  scrollToSection('#secMap');
+  selectStage(id, true);
+  setActiveNav('nMap');
+}
+
+/* ══ route ═════════════════════════════════════════════ */
+let lastToggle = null, toastT = null;
+function toggleRoute(key, quiet) {
+  const on = !state.route.has(key);
+  on ? state.route.add(key) : state.route.delete(key);
+  Store.set('route', routeToStore([...state.route]));
+  syncOne(key);
+  renderRoute();
+  if (!quiet) {
+    const a = actByKey(key);
+    lastToggle = key;
+    showToast(`${on ? 'Added' : 'Removed'} <b>${esc(a.name)}</b> · ${state.route.size} in route`);
+  }
+}
+function syncOne(key) {
+  const on = state.route.has(key);
+  const bl = $(`.blk-act[data-key="${CSS.escape(key)}"]`);
+  if (bl) { bl.classList.toggle('pick', on);
+    const sv = bl.querySelector('.starbtn svg'); if (sv) sv.classList.toggle('fill', on); }
+  const row = $(`.arow[data-row="${CSS.escape(key)}"]`);
+  if (row) { row.classList.toggle('pick', on);
+    const st = row.querySelector('.astar');
+    if (st) { st.setAttribute('aria-pressed', on); st.querySelector('svg').classList.toggle('fill', on); } }
+  if (cardKey === key && dlg.open) {
+    const ad = $('#cAdd');
+    if (ad) { ad.setAttribute('aria-pressed', on);
+      ad.innerHTML = `<svg class="i${on?' fill':''}"><use href="#i-star"/></svg>` +
+        (on ? 'In my route — tap to remove' : 'Add to my route'); }
+  }
+}
+function showToast(html) {
+  $('#toastMsg').innerHTML = html;
+  $('#toast').classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => $('#toast').classList.remove('on'), 3200);
+}
+$('#toastUndo').onclick = () => {
+  if (lastToggle) toggleRoute(lastToggle, true);
+  $('#toast').classList.remove('on');
+};
+const dayIndex = id => DAYS.findIndex(d => d.id === id);
+const routeActs = () => everyAct.filter(a => state.route.has(a.key))
+  .sort((x, y) => dayIndex(x.day) - dayIndex(y.day) || x.sm - y.sm || x.em - y.em);
+
+/* A plan is not a place any more. Starring an act filters the timetable and
+   the list to what you starred, which is the same thing the old "My plan"
+   section showed — in the view you were already reading, at the time you were
+   reading it. What is left of it is two actions, in the filter sheet. */
+function renderRoute() {
+  const n = state.route.size;
+  const c = $('#starCount');
+  if (c) { c.hidden = !n; c.textContent = n; }
+  const star = $('#starOnly');
+  if (star) star.disabled = !n && !state.starred;
+  /* Nothing starred and the filter still on would show an empty page. */
+  if (!n && state.starred) { state.starred = false; if (star) star.setAttribute('aria-pressed', 'false'); }
+  apply();
+}
+$('#starOnly').onclick = () => {
+  state.starred = !state.starred;
+  $('#starOnly').setAttribute('aria-pressed', String(state.starred));
+  apply();
+};
+$('#rClear').onclick = () => {
+  [...state.route].forEach(k => toggleRoute(k, true));
+  renderRoute();
+  showToast('Stars cleared');
+};
+$('#rCopy').onclick = () => {
+  if (!state.route.size) { showToast('Nothing starred yet'); return; }
+  const t = '__BRANDNAME__ __YEAR__ — my plan\n' + routeActs()
+    .map(a => `${a.s}-${a.e}  ${a.name}  (${a.stage.name}${a.stage.num?', stage '+a.stage.num:''})`).join('\n');
+  navigator.clipboard.writeText(t).then(() => showToast('Starred acts copied to clipboard'));
+};
+
+/* ══ theme ═════════════════════════════════════════════ */
+/* The search opens on demand and folds away again once it is empty and no
+   longer focused, so the bar is not carrying a wide empty field all the time. */
+(() => {
+  const box = document.querySelector('.srch'), q = $('#q');
+  if (!box || !q) return;
+  const open = () => { box.classList.add('open'); q.focus(); };
+  box.addEventListener('click', () => { if (!box.classList.contains('open')) open(); });
+  box.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && !box.classList.contains('open')) {
+      e.preventDefault(); open();
+    }
+  });
+  q.addEventListener('blur', () => { if (!q.value) box.classList.remove('open'); });
+  q.addEventListener('input', () => { if (q.value) box.classList.add('open'); });
+  if (q.value) box.classList.add('open');
+})();
+
+/* ── settings ──────────────────────────────────────────
+   Every choice here goes through Store, so it lands in a cookie once cookies
+   are allowed and stays in memory for the tab when they are not. */
+function paintSettings() {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  document.querySelectorAll('#themeSeg button').forEach(b =>
+    b.setAttribute('aria-pressed', (b.dataset.themeSet === 'dark') === dark));
+  const answered = Store.readConsent();
+  document.querySelectorAll('#cookieSeg button').forEach(b =>
+    b.setAttribute('aria-pressed', answered !== null && b.dataset.consent === answered));
+  const st = $('#cookieState');
+  if (st) st.textContent = !Store.cookiesWork
+    ? 'This page is open from a file, so choices are kept in local storage instead.'
+    : answered === '1' ? 'On — your choices are remembered on this device.'
+    : answered === '0' ? 'Off — your choices last until you close the tab.'
+    : 'Not set yet.';
+}
+document.querySelectorAll('#themeSeg button').forEach(b =>
+  b.onclick = () => { applyTheme(b.dataset.themeSet); });
+document.querySelectorAll('#cookieSeg button').forEach(b =>
+  b.onclick = () => { Store.setConsent(b.dataset.consent === '1'); paintSettings(); });
+const setDlg = $('#setDlg');
+function openSettings() {
+  paintSettings();
+  setDlg.showModal();
+  requestAnimationFrame(() => setDlg.classList.add('in'));
+}
+function closeSettings() {
+  setDlg.classList.remove('in');
+  setTimeout(() => { if (setDlg.open) setDlg.close(); }, 260);
+}
+$('#setClose').onclick = closeSettings;
+setDlg.addEventListener('click', e => { if (e.target === setDlg) closeSettings(); });
+setDlg.addEventListener('cancel', e => { e.preventDefault(); closeSettings(); });
+
+function applyTheme(mode) {
+  const dark = mode === 'dark';
+  document.documentElement.dataset.theme = mode;
+  if (typeof paintSettings === 'function') paintSettings();
+  document.querySelector('meta[name=theme-color]').content = dark ? '#101010' : '#f5f5f5';
+  if (typeof layer !== 'undefined') setLayer(layer);
+  Store.set('theme', mode);
+}
+applyTheme(Store.get('theme') || 'light');   // bright by default
+
+/* ══ mobile nav ════════════════════════════════════════ */
+/* scroll-margin-top is not honoured on a section that is itself sticky — the
+   map is, in list view — so the offset is computed rather than declared. */
+function scrollToSection(sel, behavior = 'smooth') {
+  const el = typeof sel === 'string' ? $(sel) : sel;
+  if (!el) return;
+  const cs = getComputedStyle(document.documentElement);
+  const toph = parseFloat(cs.getPropertyValue('--toph')) || 0;
+  const y = el.getBoundingClientRect().top + scrollY - toph - 12;
+  scrollTo({top: Math.max(0, y), behavior});
+}
+
+const NAVMAP = {nSched:'#secSchedule', nMap:'#secMap'};
+function setActiveNav(id) {
+  document.body.dataset.sec = id;
+  if (typeof window.holdNavOpen === 'function') window.holdNavOpen();
+  const keys = Object.keys(NAVMAP);
+  keys.forEach(k => $('#'+k).classList.toggle('on', k === id));
+  $('#navPill').style.setProperty('--i', Math.max(0, keys.indexOf(id)));
+  if (typeof measureTop === 'function') measureTop();
+}
+
+/* The full logo shrinks away and a compact mark takes its place in the sticky
+   bar, so the planner keeps a title on screen at every scroll position. */
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver(
+    ([e]) => document.body.classList.toggle('scrolled', !e.isIntersecting),
+    {rootMargin: '-6px 0px 0px 0px', threshold: 0}
+  ).observe($('#hSentinel'));
+}
+$('.brandmini').onclick = e => {
+  e.preventDefault();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+};
+Object.entries(NAVMAP).forEach(([id, sel]) => $('#'+id).onclick = () => {
+  scrollToSection(sel); setActiveNav(id);
+});
+/* Settings is a panel, not a place on the page, so it opens rather than
+   scrolls and never takes the active indicator. */
+$('#nSet').onclick = () => {
+  if (typeof window.holdNavOpen === 'function') window.holdNavOpen();
+  openSettings();
+};
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver(([e]) =>
+    document.body.classList.toggle('sched-off', !e.isIntersecting),
+    {threshold: 0, rootMargin: '-60px 0px 0px 0px'}).observe($('#secSchedule'));
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting) {
+      const k = Object.keys(NAVMAP).find(k => $(NAVMAP[k]) === e.target);
+      if (k) setActiveNav(k);
+    }});
+  }, {rootMargin:'-45% 0px -50% 0px'});
+  Object.values(NAVMAP).forEach(s => io.observe($(s)));
+}
+
+/* Mobile browsers slide their own toolbar away as you scroll, but a fixed
+   element stays pinned to the layout viewport — so the bar hangs where the
+   chrome used to be. VisualViewport reports the real visible edge; the
+   difference is applied as a transform. */
+(() => {
+  const vv = window.visualViewport;
+  if (!vv) return;
+  let raf = 0;
+  const apply = () => {
+    raf = 0;
+    const shift = Math.round(vv.offsetTop + vv.height - window.innerHeight);
+    document.documentElement.style.setProperty('--vvshift', shift + 'px');
+  };
+  const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
+  vv.addEventListener('resize', queue);
+  vv.addEventListener('scroll', queue);
+  addEventListener('orientationchange', queue);
+  apply();
+})();
+
+/* The bottom bar collapses while reading down the page and springs back the
+   moment the reader scrolls up, or reaches either end. */
+(() => {
+  let lastY = scrollY, ticking = false;
+  /* Tapping a section scrolls the page, which would immediately read as
+     "scrolling down" and fold the bar the user just used. Hold it open until
+     that programmatic scroll has settled. */
+  let holdUntil = 0;
+  window.holdNavOpen = (ms = 900) => {
+    document.body.classList.remove('nav-min');
+    holdUntil = Date.now() + ms;
+  };
+  const update = () => {
+    ticking = false;
+    const y = Math.max(0, scrollY);
+    if (Date.now() < holdUntil) { lastY = y; return; }
+    const atEnd = y + innerHeight >= document.documentElement.scrollHeight - 40;
+    if (y < 90 || atEnd) document.body.classList.remove('nav-min');
+    else if (y > lastY + 6) document.body.classList.add('nav-min');
+    else if (y < lastY - 6) document.body.classList.remove('nav-min');
+    lastY = y;
+  };
+  addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, {passive: true});
+  /* open on arrival, whatever scroll position the browser restored */
+  document.body.classList.remove('nav-min');
+})();
+
+/* ══ consent flow ══════════════════════════════════════ */
+const cdlg = $('#consent');
+function openConsent() {
+  if (cdlg.open) return;
+  cdlg.classList.remove('in');
+  cdlg.showModal();
+  void cdlg.offsetWidth;
+  requestAnimationFrame(() => cdlg.classList.add('in'));
+}
+function closeConsent() {
+  if (!cdlg.open) return;
+  cdlg.classList.remove('in');
+  setTimeout(() => cdlg.close(), 340);
+}
+function describeStore() {
+  const el = $('#storeState');
+  if (!el) return;
+  if (Store.granted) {
+    el.textContent = Store.cookiesWork
+      ? 'Your plan is saved in a first-party cookie on this device.'
+      : 'Your plan is saved in this browser\u2019s local storage (cookies are blocked for local files).';
+    el.className = '';
+  } else {
+    el.textContent = 'Nothing is being stored — your plan clears when you close the tab.';
+    el.className = 'storeoff';
+  }
+}
+function answerConsent(yes) {
+  Store.setConsent(yes);
+  if (yes) {
+    Store.set('route', routeToStore([...state.route]));
+    Store.set('theme', document.documentElement.dataset.theme);
+    Store.set('view', state.view);
+  }
+  describeStore();
+  closeConsent();
+  showToast(yes ? 'Saved on this device. <b>Nothing leaves your browser.</b>'
+                : 'Nothing stored. Your plan lasts for this visit only.');
+}
+$('#cAllow').onclick = () => answerConsent(true);
+$('#cDeny').onclick  = () => answerConsent(false);
+cdlg.addEventListener('cancel', e => { e.preventDefault(); answerConsent(false); });
+/* The footer button that used to open this moved into the settings card, so
+   the hook is optional now. Dereferencing it unguarded threw before boot and
+   took the whole planner down with it. */
+const privacyBtn = $('#privacyBtn');
+if (privacyBtn) privacyBtn.onclick = openConsent;
+
+/* ══ global stage-name clicks + boot ═══════════════════ */
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-goto]');
+  if (g && !g.closest('#cardBox')) gotoStage(g.dataset.goto);
+});
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement !== $('#q')) { e.preventDefault(); $('#q').focus(); }
+});
+
+/* Every sticky offset keys off the real toolbar height, which changes when the
+   filter drawer opens or the controls wrap at a new breakpoint. */
+/* The field shrinks to fit the row, so the placeholder has to shrink with it
+   rather than be clipped mid-word. */
+(() => {
+  const q = $('#q');
+  const narrow = matchMedia('(max-width:599px)');
+  const set = () => { q.placeholder = narrow.matches ? 'Search artists…' : 'Search artist, stage, genre…'; };
+  narrow.addEventListener ? narrow.addEventListener('change', set) : narrow.addListener(set);
+  addEventListener('resize', set, {passive: true});
+  set();
+})();
+
+/* Whichever bar pins under the toolbar — the day row in the schedule, the
+   heading in the other sections — the two should read as one block while they
+   touch, so the rule between them is dropped for as long as they do. */
+(() => {
+  const joined = () => {
+    const toph = parseFloat(getComputedStyle(document.documentElement)
+      .getPropertyValue('--toph')) || 0;
+    /* "at or above the offset" would also match a bar that has scrolled far
+       out of sight, so this asks for one actually resting at the offset and
+       still on screen. */
+    const touching = [...document.querySelectorAll('.schedbar, .shead')].some(el => {
+      const r = el.getBoundingClientRect();
+      return r.height > 0 && r.bottom > toph + 1 && Math.abs(r.top - toph) <= 1.5;
+    });
+    document.body.classList.toggle('bars-joined', touching);
+  };
+  addEventListener('scroll', joined, {passive: true});
+  addEventListener('resize', joined, {passive: true});
+  joined();
+})();
+
+/* The bar frosts only once the festival block has gone past it. */
+(() => {
+  const head = document.querySelector('header');
+  if (!head) return;
+  const read = () => document.body.classList.toggle('past-head',
+    head.getBoundingClientRect().bottom <= 4);
+  addEventListener('scroll', read, {passive: true});
+  addEventListener('resize', read, {passive: true});
+  read();
+})();
+
+const measureTop = () => {
+  const bar = $('.tbar').getBoundingClientRect().height;
+  const border = parseFloat(getComputedStyle($('.toolbar')).borderBottomWidth) || 0;
+  document.documentElement.style.setProperty('--toph', Math.round(bar + border) + 'px');
+  const t2 = $('.schedbar');
+  const h2 = !t2 || getComputedStyle(t2).display === 'none'
+    ? 0 : t2.getBoundingClientRect().height;
+  document.documentElement.style.setProperty('--tb2h', Math.round(h2) + 'px');
+};
+if ('ResizeObserver' in window) {
+  new ResizeObserver(measureTop).observe($('.toolbar'));
+  if ($('.schedbar')) new ResizeObserver(measureTop).observe($('.schedbar'));
+}
+addEventListener('resize', measureTop);
+
+const consentAnswer = Store.readConsent();
+routeFromStore(Store.get('route')).forEach(k => state.route.add(k));
+
+const savedDay = Store.get('day');
+if (savedDay && DAYS.some(d => d.id === savedDay)) {
+  day = DAYS.find(d => d.id === savedDay);
+  D0 = day.start; DSPAN = day.end - day.start;
+  allActs = everyAct.filter(a => a.day === day.id);
+}
+if (DATA.hasPoster) $('#layPoster').hidden = false;
+buildDayBar();
+buildTimeline(); buildAgenda(); buildMap(); buildLineup(); measureTop(); applyMapT();
+const pinned = Store.get('viewPinned') && Store.get('view');
+if (pinned) setView(pinned); else applyBreakpointDefaults();
+$('#fToggle').setAttribute('aria-pressed', 'false');   // drawer starts closed
+renderRoute(); apply(); markLive(); describeStore();
+if (consentAnswer === null) setTimeout(openConsent, 700);
+// Land the reader on what is happening right now rather than at 12:00.
+requestAnimationFrame(() => scrollToNow(false));
+setInterval(markLive, 30000);
+/* The Flanner button sits above the rail on desktop and beside the bar on
+   mobile; both offsets are derived from the nav's measured box, which changes
+   when the bar shrinks on scroll. */
+(() => {
+  const nav = document.querySelector('.mnav');
+  if (!nav) return;
+  const wrap = document.querySelector('.wrap');
+  const sync = () => {
+    const r = nav.getBoundingClientRect();
+    const root = document.documentElement.style;
+    root.setProperty('--navh', Math.round(r.height) + 'px');
+    root.setProperty('--navw', Math.round(r.width) + 'px');
+    /* On a wide screen the content sits in a centred column, so a rail pinned
+       to the window edge drifts far away from what it controls. Park it just
+       outside the column, never closer than 16px to the edge. */
+    if (wrap && innerWidth > 820) {
+      const x = Math.max(16, Math.round(wrap.getBoundingClientRect().left - r.width - 20));
+      root.setProperty('--railx', x + 'px');
+    } else {
+      root.removeProperty('--railx');
+    }
+  };
+  sync();
+  if (window.ResizeObserver) new ResizeObserver(sync).observe(nav);
+  addEventListener('resize', sync, {passive: true});
+})();
+
+</script>
+<script>
+/* Installable, and every page stays readable once it has been opened — which
+   is the point at a festival, where the signal goes and the timetable is the
+   thing you need. Skipped on file:// where workers cannot register. */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  addEventListener('load', () => {
+    navigator.serviceWorker.register('../sw.js', {scope: '../'}).catch(() => {});
+  });
+}
+</script>
+__OFFLINE__
+__PAGEFX__
+</body>
+</html>
