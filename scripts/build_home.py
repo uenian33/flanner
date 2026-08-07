@@ -51,6 +51,9 @@ def shell_libs() -> list[str]:
 def main():
     # Validated and normalised before anything is rendered — see schema.py.
     cfg = schema.load()
+    # Where the site's festivals are, for the place filter — derived from the
+    # records rather than listed a second time.
+    cfg["places"] = schema.places(cfg)
     for f in cfg["festivals"]:
         # A festival we have not built a planner for has no poster and no
         # wordmark of its own; its card draws the category's artwork instead.

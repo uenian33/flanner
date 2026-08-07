@@ -759,6 +759,9 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* The trigger sits at the right edge, so the panel hangs from that edge. On a
    phone the general .sheet rule takes over and spans the column instead. */
 .langsheet{right:0;left:auto;max-width:min(92vw,320px)}
+/* Its trigger sits at the end of the filter row, so the panel hangs from
+   that edge rather than running off the column. */
+.placewrap .sheet{right:0;left:auto;max-width:min(92vw,320px)}
 .langsheet .opts{flex-direction:column;align-items:stretch}
 .langsheet .opt{width:100%}
 .opt.find{display:flex;align-items:center;gap:9px;width:100%;margin-top:10px;
@@ -2621,7 +2624,14 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
      to be given room for it. They say one word each now, so a third of the
      column is more than Time needs and less than Type had. */
   .dropset{grid-area:filters;display:flex;gap:8px;align-items:center}
-  .vseg{margin-inline-start:auto}
+  /* The two shapes a list can take are a preference someone sets once and
+     then never touches, and on a phone the row has three controls' worth of
+     width. Where a festival is, on the other hand, is the question a phone is
+     most often asking. So the switcher goes and the place takes its slot; the
+     list keeps whichever shape was last chosen, and every width above this one
+     still offers the choice. */
+  .vseg{display:none}
+  .placewrap{margin-inline-start:auto}
   /* Sized to their names rather than to a share of the row. They used to
      carry whatever had been chosen — "3 kinds", a month — so they were given
      the width and an ellipsis to absorb it; now that each says one short word
@@ -4097,6 +4107,18 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
       </div>
     </div>
   </div>
+  <div class="drop placewrap">
+    <button class="trig st" id="placeTrig" aria-expanded="false" aria-controls="placeSheet">
+      <svg class="i"><use href="#h-i-place"/></svg><span id="placeLabel">Place</span>
+      <svg class="i cv"><use href="#h-i-down"/></svg></button>
+    <div class="sheet" id="placeSheet" hidden role="dialog" aria-label="Filter by place">
+      <h4>Where</h4>
+      <div class="opts" id="placeOpts" role="radiogroup"></div>
+      <button class="opt find" id="placeFind">
+        <svg class="i"><use href="#h-i-place"/></svg>Use my location</button>
+      <p class="locnote" id="placeNote">Your coordinates stay in this browser. Nothing is sent anywhere.</p>
+    </div>
+  </div>
   <div class="vseg" id="viewSeg" role="group" aria-label="How to show festivals">
     <!-- The indicator is one element that travels, not a state on each button:
          a disc that fades in where you pressed says the choice was made, a
@@ -4382,7 +4404,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <section class="page shell-page" id="pKallio" hidden></section>
 
 <script>
-const DATA = {"site":{"name":"Festival Planner","tagline":"Timetables you can actually plan with. One page per festival, works offline once loaded.","contact":"flanner47@gmail.com"},"festivals":[{"id":"biennial","name":"Helsinki Biennial","year":"","start":"2026-06-12","end":"2026-09-27","city":"Vallisaari Island","type":"Contemporary art","tags":["Ferry included","Guided tours","Uneven terrain"],"accent":"#855318","ink":"#4a2a02","description":"Site-specific commissions spread across an old garrison island, shown alongside the fortifications and meadows they were made for.","facts":{"time":"Open daily 11:00–18:00","place":"Ferry from Market Square, 20 min","price":"€22 · free under 18"},"official":"https://helsinkibiennaali.fi/en/","tickets":"https://helsinkibiennaali.fi/en/","free":false,"highlight":false,"category":"art","stats":{"days":108},"month":"2026-06","dates":"12 June – 27 September 2026"},{"id":"kbp","name":"Kallio Block Party","year":"2026","planner":"kallio/","logoInvert":false,"start":"2026-08-01","end":"2026-08-01","dates":"1 August 2026","month":"2026-08","city":"Alppila, Helsinki","type":"Street festival","tags":["Techno","Rap","House","Indie"],"accent":"#b6fc46","ink":"#0a1400","description":"One free day across the streets of Alppila. Nine independently run stages, from a live band stage by Linnanmäki to hard techno on Kirstinkatu.","stats":{"acts":98,"stages":9,"days":1},"stars":["Julma-Henri","Rony Rex","Nukkuvat Linnut","Stepa & Polarsoul"],"official":"https://www.kallioblockparty.org/","tickets":null,"free":true,"highlight":true,"category":"music","promoSrc":"./assets/home/kbp-promo.jpg","logoSrc":"./assets/logo.png"},{"id":"flow","name":"Flow Festival","year":"2026","planner":"flow/","logoInvert":false,"cardArt":"photo","start":"2026-08-14","end":"2026-08-16","dates":"14–16 August 2026","month":"2026-08","city":"Suvilahti, Helsinki","type":"City festival","tags":["Pop","Electronic","Indie","Jazz"],"accent":"#fff203","ink":"#000000","description":"Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.","stats":{"acts":156,"stages":10,"days":3},"stars":["Florence + The Machine","Nick Cave & the Bad Seeds","Turnstile","Zara Larsson","Lykke Li"],"official":"https://www.flowfestival.com/en/","tickets":"https://www.flowfestival.com/en/tickets/","free":false,"highlight":true,"category":"music","promoSrc":"./assets/home/flow-promo.jpg","logoSrc":"./assets/flow-logo.svg"},{"id":"juhlaviikot","name":"Helsinki Festival","year":"2026","start":"2026-08-18","end":"2026-09-05","city":"Helsinki","type":"Arts festival","tags":["Opera","Classical","Theatre","World music"],"accent":"#ffc861","ink":"#101010","description":"The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.","official":"https://helsinkifestival.fi/en/","tickets":"https://helsinkifestival.fi/en/programme/","free":false,"highlight":false,"category":"culture","stats":{"days":19},"month":"2026-08","dates":"18 August – 5 September 2026"},{"id":"blockfest","name":"Blockfest","year":"2026","start":"2026-08-21","end":"2026-08-22","city":"Ratinanniemi, Tampere","type":"Hip-hop festival","tags":["Hip-hop","Two days","Stadium"],"accent":"#FFD8E8","ink":"#441B2F","description":"The Nordics' largest hip-hop festival, two days at the Ratina stadium and the event park beside it.","official":"https://www.blockfest.fi/en/","tickets":"https://www.blockfest.fi/en/tickets/","free":false,"highlight":false,"category":"music","stats":{"days":2},"month":"2026-08","dates":"21–22 August 2026"},{"id":"espoocine","name":"Espoo Ciné","year":"2026","start":"2026-08-21","end":"2026-08-30","city":"Kino Tapiola, Espoo","type":"Film festival","tags":["New releases","International","Ten days"],"accent":"#b69df8","ink":"#101010","description":"Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.","official":"https://espoocine.fi/en/","tickets":"https://espoocine.fi/en/shop/tickets/","free":false,"highlight":false,"category":"film","stats":{"days":10},"month":"2026-08","dates":"21–30 August 2026"},{"id":"anarchy","name":"Love & Anarchy","year":"","start":"2026-09-17","end":"2026-09-27","city":"Five cinemas, Helsinki","type":"Film festival","tags":["Indoors","Subtitled","Director talks"],"accent":"#6750a4","ink":"#341e73","description":"Around 200 features and shorts from the year's festival circuit, with director talks and a late-night strand that runs past midnight.","facts":{"time":"Screenings from 12:00 daily","place":"Bio Rex, Kinopalatsi, Orion and two more","price":"Single film €14 · festival pass €120"},"linkLabel":"Programme","official":"https://hiff.fi/en/","tickets":"https://hiff.fi/en/","free":false,"highlight":false,"category":"film","stats":{"days":11},"month":"2026-09","dates":"17–27 September 2026"},{"id":"lostinmusic","name":"Lost In Music","year":"2026","start":"2026-10-01","end":"2026-10-02","city":"Tampere","type":"Club festival","tags":["Club venues","Two nights","Wristband"],"accent":"#FFD8E8","ink":"#441B2F","description":"Two evenings across Tampere's own venues — Tavara-asema, Telakka, G Livelab, Olympia and more — on one wristband.","facts":{"price":"2 days €69 · 1 day €49"},"official":"https://lostinmusic.fi/fi/","tickets":"https://lostinmusic.fi/fi/liput/","free":false,"highlight":false,"category":"music","stats":{"days":2},"month":"2026-10","dates":"1–2 October 2026"},{"id":"tamperejazz","name":"Tampere Jazz Happening","year":"2026","start":"2026-10-29","end":"2026-11-01","city":"Tampere","type":"Jazz festival","tags":["Contemporary jazz","Four days"],"accent":"#FFD8E8","ink":"#441B2F","description":"Four days of contemporary jazz, long known for its warm room and its broad idea of what the music can be.","facts":{"price":"€10–25"},"official":"https://www.tamperejazz.fi/en/","tickets":"https://www.tamperejazz.fi/en/tickets/","free":false,"highlight":false,"category":"music","stats":{"days":4},"month":"2026-10","dates":"29 October – 1 November 2026"}],"categories":[{"id":"music","label":"Music","labelFi":"Musiikki","color":"#FFD8E8","ink":"#441B2F","blurb":"Concerts, club nights and music festivals."},{"id":"film","label":"Film","labelFi":"Elokuva","color":"#b69df8","ink":"#101010","blurb":"Screenings, film festivals and cinema events."},{"id":"art","label":"Art","labelFi":"Taide","color":"#ff9ec4","ink":"#101010","blurb":"Exhibitions, installations and gallery weekends."},{"id":"culture","label":"Culture","labelFi":"Kulttuuri","color":"#ffc861","ink":"#101010","blurb":"Street festivals, city events, food and heritage."},{"id":"others","label":"Others","labelFi":"Muut","color":"#d9d9d9","ink":"#101010","blurb":"Anything the four above do not describe."}],"categoryFallback":"others"};
+const DATA = {"site":{"name":"Festival Planner","tagline":"Timetables you can actually plan with. One page per festival, works offline once loaded.","contact":"flanner47@gmail.com"},"festivals":[{"id":"biennial","name":"Helsinki Biennial","year":"","start":"2026-06-12","end":"2026-09-27","city":"Vallisaari, Helsinki","type":"Contemporary art","tags":["Ferry included","Guided tours","Uneven terrain"],"accent":"#855318","ink":"#4a2a02","description":"Site-specific commissions spread across an old garrison island, shown alongside the fortifications and meadows they were made for.","facts":{"time":"Open daily 11:00–18:00","place":"Ferry from Market Square, 20 min","price":"€22 · free under 18"},"official":"https://helsinkibiennaali.fi/en/","tickets":"https://helsinkibiennaali.fi/en/","free":false,"highlight":false,"category":"art","stats":{"days":108},"month":"2026-06","dates":"12 June – 27 September 2026"},{"id":"kbp","name":"Kallio Block Party","year":"2026","planner":"kallio/","logoInvert":false,"start":"2026-08-01","end":"2026-08-01","dates":"1 August 2026","month":"2026-08","city":"Alppila, Helsinki","type":"Street festival","tags":["Techno","Rap","House","Indie"],"accent":"#b6fc46","ink":"#0a1400","description":"One free day across the streets of Alppila. Nine independently run stages, from a live band stage by Linnanmäki to hard techno on Kirstinkatu.","stats":{"acts":98,"stages":9,"days":1},"stars":["Julma-Henri","Rony Rex","Nukkuvat Linnut","Stepa & Polarsoul"],"official":"https://www.kallioblockparty.org/","tickets":null,"free":true,"highlight":true,"category":"music","promoSrc":"./assets/home/kbp-promo.jpg","logoSrc":"./assets/logo.png"},{"id":"flow","name":"Flow Festival","year":"2026","planner":"flow/","logoInvert":false,"cardArt":"photo","start":"2026-08-14","end":"2026-08-16","dates":"14–16 August 2026","month":"2026-08","city":"Suvilahti, Helsinki","type":"City festival","tags":["Pop","Electronic","Indie","Jazz"],"accent":"#fff203","ink":"#000000","description":"Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.","stats":{"acts":156,"stages":10,"days":3},"stars":["Florence + The Machine","Nick Cave & the Bad Seeds","Turnstile","Zara Larsson","Lykke Li"],"official":"https://www.flowfestival.com/en/","tickets":"https://www.flowfestival.com/en/tickets/","free":false,"highlight":true,"category":"music","promoSrc":"./assets/home/flow-promo.jpg","logoSrc":"./assets/flow-logo.svg"},{"id":"juhlaviikot","name":"Helsinki Festival","year":"2026","start":"2026-08-18","end":"2026-09-05","city":"Helsinki","type":"Arts festival","tags":["Opera","Classical","Theatre","World music"],"accent":"#ffc861","ink":"#101010","description":"The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.","official":"https://helsinkifestival.fi/en/","tickets":"https://helsinkifestival.fi/en/programme/","free":false,"highlight":false,"category":"culture","stats":{"days":19},"month":"2026-08","dates":"18 August – 5 September 2026"},{"id":"blockfest","name":"Blockfest","year":"2026","start":"2026-08-21","end":"2026-08-22","city":"Ratinanniemi, Tampere","type":"Hip-hop festival","tags":["Hip-hop","Two days","Stadium"],"accent":"#FFD8E8","ink":"#441B2F","description":"The Nordics' largest hip-hop festival, two days at the Ratina stadium and the event park beside it.","official":"https://www.blockfest.fi/en/","tickets":"https://www.blockfest.fi/en/tickets/","free":false,"highlight":false,"category":"music","stats":{"days":2},"month":"2026-08","dates":"21–22 August 2026"},{"id":"espoocine","name":"Espoo Ciné","year":"2026","start":"2026-08-21","end":"2026-08-30","city":"Kino Tapiola, Espoo","type":"Film festival","tags":["New releases","International","Ten days"],"accent":"#b69df8","ink":"#101010","description":"Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.","official":"https://espoocine.fi/en/","tickets":"https://espoocine.fi/en/shop/tickets/","free":false,"highlight":false,"category":"film","stats":{"days":10},"month":"2026-08","dates":"21–30 August 2026"},{"id":"anarchy","name":"Love & Anarchy","year":"","start":"2026-09-17","end":"2026-09-27","city":"Five cinemas, Helsinki","type":"Film festival","tags":["Indoors","Subtitled","Director talks"],"accent":"#6750a4","ink":"#341e73","description":"Around 200 features and shorts from the year's festival circuit, with director talks and a late-night strand that runs past midnight.","facts":{"time":"Screenings from 12:00 daily","place":"Bio Rex, Kinopalatsi, Orion and two more","price":"Single film €14 · festival pass €120"},"linkLabel":"Programme","official":"https://hiff.fi/en/","tickets":"https://hiff.fi/en/","free":false,"highlight":false,"category":"film","stats":{"days":11},"month":"2026-09","dates":"17–27 September 2026"},{"id":"lostinmusic","name":"Lost In Music","year":"2026","start":"2026-10-01","end":"2026-10-02","city":"Tampere","type":"Club festival","tags":["Club venues","Two nights","Wristband"],"accent":"#FFD8E8","ink":"#441B2F","description":"Two evenings across Tampere's own venues — Tavara-asema, Telakka, G Livelab, Olympia and more — on one wristband.","facts":{"price":"2 days €69 · 1 day €49"},"official":"https://lostinmusic.fi/fi/","tickets":"https://lostinmusic.fi/fi/liput/","free":false,"highlight":false,"category":"music","stats":{"days":2},"month":"2026-10","dates":"1–2 October 2026"},{"id":"tamperejazz","name":"Tampere Jazz Happening","year":"2026","start":"2026-10-29","end":"2026-11-01","city":"Tampere","type":"Jazz festival","tags":["Contemporary jazz","Four days"],"accent":"#FFD8E8","ink":"#441B2F","description":"Four days of contemporary jazz, long known for its warm room and its broad idea of what the music can be.","facts":{"price":"€10–25"},"official":"https://www.tamperejazz.fi/en/","tickets":"https://www.tamperejazz.fi/en/tickets/","free":false,"highlight":false,"category":"music","stats":{"days":4},"month":"2026-10","dates":"29 October – 1 November 2026"}],"categories":[{"id":"music","label":"Music","labelFi":"Musiikki","color":"#FFD8E8","ink":"#441B2F","blurb":"Concerts, club nights and music festivals."},{"id":"film","label":"Film","labelFi":"Elokuva","color":"#b69df8","ink":"#101010","blurb":"Screenings, film festivals and cinema events."},{"id":"art","label":"Art","labelFi":"Taide","color":"#ff9ec4","ink":"#101010","blurb":"Exhibitions, installations and gallery weekends."},{"id":"culture","label":"Culture","labelFi":"Kulttuuri","color":"#ffc861","ink":"#101010","blurb":"Street festivals, city events, food and heritage."},{"id":"others","label":"Others","labelFi":"Muut","color":"#d9d9d9","ink":"#101010","blurb":"Anything the four above do not describe."}],"categoryFallback":"others","places":[{"name":"Helsinki","count":5,"lat":60.1699,"lon":24.9384},{"name":"Tampere","count":3,"lat":61.4978,"lon":23.761},{"name":"Espoo","count":1,"lat":60.2055,"lon":24.6559}]};
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ico = n => `<svg class="i"><use href="#h-i-${n}"/></svg>`;
@@ -5663,9 +5685,84 @@ let when = 'any', cats = new Set(), draft = new Set(), q = '';
    all keep working inside it — a page of its own would have had to grow
    each of them again, and they would have drifted. */
 let planOnly = false;
+/* Empty is everywhere, which is what the site is a list of until someone says
+   otherwise. Not remembered between visits: a filter that silently hides two
+   thirds of the page on arrival is a bug report waiting to happen. */
+let place = '';
 
 $('#whenOpts').innerHTML = WHEN.map(w =>
   `<button class="opt st" role="radio" data-k="${w.k}" aria-checked="${w.k === when}">${w.label}</button>`).join('');
+/* A record says "Suvilahti, Helsinki" — a venue and the city it is in — so the
+   city is the last part of it. Derived here as well as in the build, because
+   the filter asks the question of a festival and the build asks it of the
+   whole list; one rule, two callers. */
+const cityOf = f => String(f.city || '').split(',').pop().trim();
+const PLACES = DATA.places || [];
+
+function paintPlace() {
+  $('#placeLabel').textContent = place || 'Place';
+  $('#placeTrig').classList.toggle('is-set', !!place);
+  $('#placeOpts').querySelectorAll('.opt').forEach(o =>
+    o.setAttribute('aria-checked', (o.dataset.place || '') === place));
+}
+$('#placeOpts').innerHTML =
+  `<button class="opt st" role="radio" data-place="" aria-checked="true">Everywhere</button>`
+  + PLACES.map(p => `<button class="opt st" role="radio" data-place="${esc(p.name)}"
+       aria-checked="false">${esc(p.name)} <span class="ct">${p.count}</span></button>`).join('');
+$('#placeOpts').querySelectorAll('.opt').forEach(o => o.onclick = () => {
+  place = o.dataset.place || '';
+  paintPlace();
+  openSheet(null);
+  apply();
+});
+
+/* Nothing is stored and nothing leaves the page: the browser is asked once,
+   the answer is compared against the cities the site covers, and the nearest
+   one is chosen. A city the table has no coordinate for can still be picked
+   by hand — it simply cannot be the answer to this question, and the note
+   says which it was rather than silently choosing something else. */
+const kmBetween = (a, b) => {
+  const R = 6371, rad = d => d * Math.PI / 180;
+  const dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
+  const h = Math.sin(dLat / 2) ** 2 +
+            Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+};
+$('#placeFind').onclick = (e) => {
+  e.stopPropagation();
+  const note = $('#placeNote');
+  const known = PLACES.filter(p => typeof p.lat === 'number');
+  if (!navigator.geolocation) {
+    note.textContent = 'This browser cannot report a location.';
+    return;
+  }
+  if (!known.length) {
+    note.textContent = 'No coordinates for the places on this list yet.';
+    return;
+  }
+  note.textContent = 'Asking your browser…';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const here = {lat: pos.coords.latitude, lon: pos.coords.longitude};
+      const near = known.slice().sort((a, b) => kmBetween(here, a) - kmBetween(here, b))[0];
+      const away = Math.round(kmBetween(here, near));
+      place = near.name;
+      paintPlace();
+      apply();
+      note.textContent = away < 400
+        ? `You are about ${away} km from ${near.name} — showing what is on there.`
+        : `Nearest covered place is ${near.name}, about ${away} km away.`;
+    },
+    err => {
+      note.textContent = err.code === err.PERMISSION_DENIED
+        ? 'Location denied. Pick a place from the list instead.'
+        : 'Could not read a location. Pick a place from the list instead.';
+    },
+    {timeout: 8000, maximumAge: 600000}
+  );
+};
+paintPlace();
+
 $('#catOpts').innerHTML = CATEGORIES.map(c =>
   `<button class="opt st" data-c="${esc(c.id)}" aria-pressed="false"
      title="${esc(c.blurb || '')}">${esc(c.label)}</button>`).join('');
@@ -5685,6 +5782,7 @@ function matches(f) {
   const w = WHEN.find(x => x.k === when);
   const needle = q.trim().toLowerCase();
   return w.test(f)
+    && (!place || cityOf(f) === place)
     && (!planOnly || Plan.has(f.id))
     && (!needle || haystack(f).includes(needle))
     && (!cats.size || cats.has(catOf(f).id));
@@ -5775,6 +5873,7 @@ function apply() {
    sets the same filter — but nothing opens it any more: its trigger shows the
    calendar instead. */
 const sheets = [['#catTrig', '#catSheet'], ['#langTrig', '#langSheet'],
+                ['#placeTrig', '#placeSheet'],
                 ['#a2hs', '#a2hsSheet']];
 function openSheet(which) {
   sheets.forEach(([t, sh]) => {

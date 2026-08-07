@@ -394,3 +394,42 @@ if __name__ == "__main__":
     for f in cfg["festivals"]:
         print(f"  {f['id']:8} {f['category']:8} {f['dates']} "
               f"({f['stats']['days']}d)")
+
+
+# Where the site's festivals actually are, for the place filter. A record says
+# "Suvilahti, Helsinki" — a venue and the city it is in — so the city is the
+# last part of it, and a record with no comma is its own place.
+#
+# The coordinates are only for "use my location", which answers the question
+# "which of these am I nearest to". A city not in this table is still a place
+# you can pick from the list; it simply cannot be the answer to that question,
+# and the sheet says so rather than guessing.
+CITY_COORDS = {
+    "Helsinki": (60.1699, 24.9384),
+    "Espoo":    (60.2055, 24.6559),
+    "Vantaa":   (60.2941, 25.0400),
+    "Tampere":  (61.4978, 23.7610),
+    "Turku":    (60.4518, 22.2666),
+    "Oulu":     (65.0121, 25.4651),
+}
+
+
+def city_of(f: dict) -> str:
+    """The city a festival is in, off the end of its own place line."""
+    return str(f.get("city", "")).split(",")[-1].strip()
+
+
+def places(cfg: dict) -> list[dict]:
+    """One entry per city the site has something in, most-stocked first."""
+    counted: dict[str, int] = {}
+    for f in cfg["festivals"]:
+        name = city_of(f)
+        if name:
+            counted[name] = counted.get(name, 0) + 1
+    out = []
+    for name, n in sorted(counted.items(), key=lambda kv: (-kv[1], kv[0])):
+        here = {"name": name, "count": n}
+        if name in CITY_COORDS:
+            here["lat"], here["lon"] = CITY_COORDS[name]
+        out.append(here)
+    return out
