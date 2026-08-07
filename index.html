@@ -3571,12 +3571,6 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 </div>
 
 </section>
-<!-- The two screens a planner is mounted into, empty until the first time one
-     is asked for. What arrives is the planner document's own <x-dc> and its
-     logic script, compiled where they stand — see scripts/_shell.html. -->
-<section class="page shell-page" id="pFlow" hidden></section>
-<section class="page shell-page" id="pKallio" hidden></section>
-
 <!-- The destination list is m3.material.io's own, copied at the user's request:
      same seven labels in the same order, the same glyphs, the same leading
      search action and the same pair of utility circles at the foot. The names
@@ -3743,6 +3737,18 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 </footer>
 
 </div>
+
+<!-- The two screens a planner is mounted into, empty until the first time one
+     is asked for. What arrives is the planner document's own <x-dc> and its
+     logic script, compiled where they stand — see scripts/_shell.html.
+
+     Outside .wrap, deliberately. A planner is written to be the document: it
+     sets its own measure, its cards run to the edge of the screen and its bar
+     is positioned against the viewport. Inside the list's column it inherited
+     a 1100px measure and 16-32px of padding on both sides, which is what made
+     every card in it too narrow. -->
+<section class="page shell-page" id="pFlow" hidden></section>
+<section class="page shell-page" id="pKallio" hidden></section>
 
 <script>
 const DATA = {"site":{"name":"Festival Planner","tagline":"Timetables you can actually plan with. One page per festival, works offline once loaded.","contact":"flanner47@gmail.com"},"festivals":[{"id":"biennial","name":"Helsinki Biennial","year":"","start":"2026-06-12","end":"2026-09-27","city":"Vallisaari Island","type":"Contemporary art","tags":["Ferry included","Guided tours","Uneven terrain"],"accent":"#855318","ink":"#4a2a02","description":"Site-specific commissions spread across an old garrison island, shown alongside the fortifications and meadows they were made for.","facts":{"time":"Open daily 11:00–18:00","place":"Ferry from Market Square, 20 min","price":"€22 · free under 18"},"official":"https://helsinkibiennaali.fi/en/","tickets":"https://helsinkibiennaali.fi/en/","free":false,"highlight":false,"category":"art","stats":{"days":108},"month":"2026-06","dates":"12 June – 27 September 2026"},{"id":"kbp","name":"Kallio Block Party","year":"2026","planner":"kallio/","logoInvert":false,"start":"2026-08-01","end":"2026-08-01","dates":"1 August 2026","month":"2026-08","city":"Alppila, Helsinki","type":"Street festival","tags":["Techno","Rap","House","Indie"],"accent":"#b6fc46","ink":"#0a1400","description":"One free day across the streets of Alppila. Nine independently run stages, from a live band stage by Linnanmäki to hard techno on Kirstinkatu.","stats":{"acts":98,"stages":9,"days":1},"stars":["Julma-Henri","Rony Rex","Nukkuvat Linnut","Stepa & Polarsoul"],"official":"https://www.kallioblockparty.org/","tickets":null,"free":true,"highlight":true,"category":"music","promoSrc":"./assets/home/kbp-promo.jpg","logoSrc":"./assets/logo.png"},{"id":"flow","name":"Flow Festival","year":"2026","planner":"flow/","logoInvert":false,"cardArt":"photo","start":"2026-08-14","end":"2026-08-16","dates":"14–16 August 2026","month":"2026-08","city":"Suvilahti, Helsinki","type":"City festival","tags":["Pop","Electronic","Indie","Jazz"],"accent":"#fff203","ink":"#000000","description":"Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.","stats":{"acts":156,"stages":10,"days":3},"stars":["Florence + The Machine","Nick Cave & the Bad Seeds","Turnstile","Zara Larsson","Lykke Li"],"official":"https://www.flowfestival.com/en/","tickets":"https://www.flowfestival.com/en/tickets/","free":false,"highlight":true,"category":"music","promoSrc":"./assets/home/flow-promo.jpg","logoSrc":"./assets/flow-logo.svg"},{"id":"anarchy","name":"Love & Anarchy","year":"","start":"2026-09-17","end":"2026-09-27","city":"Five cinemas, Helsinki","type":"Film festival","tags":["Indoors","Subtitled","Director talks"],"accent":"#6750a4","ink":"#341e73","description":"Around 200 features and shorts from the year's festival circuit, with director talks and a late-night strand that runs past midnight.","facts":{"time":"Screenings from 12:00 daily","place":"Bio Rex, Kinopalatsi, Orion and two more","price":"Single film €14 · festival pass €120"},"linkLabel":"Programme","official":"https://hiff.fi/en/","tickets":"https://hiff.fi/en/","free":false,"highlight":false,"category":"film","stats":{"days":11},"month":"2026-09","dates":"17–27 September 2026"}],"categories":[{"id":"music","label":"Music","labelFi":"Musiikki","color":"#FFD8E8","ink":"#441B2F","blurb":"Concerts, club nights and music festivals."},{"id":"film","label":"Film","labelFi":"Elokuva","color":"#7fc4ff","ink":"#101010","blurb":"Screenings, film festivals and cinema events."},{"id":"art","label":"Art","labelFi":"Taide","color":"#ff9ec4","ink":"#101010","blurb":"Exhibitions, installations and gallery weekends."},{"id":"culture","label":"Culture","labelFi":"Kulttuuri","color":"#ffc861","ink":"#101010","blurb":"Street festivals, city events, food and heritage."},{"id":"others","label":"Others","labelFi":"Muut","color":"#d9d9d9","ink":"#101010","blurb":"Anything the four above do not describe."}],"categoryFallback":"others"};
@@ -5345,19 +5351,18 @@ body.shell-busy .shell-page{pointer-events:none}
     border-radius:var(--md-sys-shape-corner-large);background:var(--md-sys-color-secondary-container)}
   .dock .pill span{display:block;block-size:var(--nt-lab)}
 
-  /* A planner mounted here brings its own dock. One bar serves both
-     screens, so its own is taken out of the layout — not merely
-     hidden, because the shell's cells click through to it. */
-  .shell-page[data-planner] nav[aria-label="Main"],
-  .shell-page[data-planner] button[aria-label="Go back"],
-  .shell-page[data-planner] button[aria-label^="Flanner"]{
-    position:absolute!important;inline-size:1px;block-size:1px;
-    overflow:hidden;clip:rect(0 0 0 0);pointer-events:none;opacity:0;
-  }
-  /* Everything in the column that is not a screen belongs to the list: the
-     footer, its wave, the settings card. The drawer and its scrim stay,
-     because More opens them from either screen. */
-  body.shell-deep .wrap > *:not(.shell-page):not(.mnav):not(.navscrim){display:none}
+  /* A planner keeps its own dock, untouched. Substituting the shell's took
+     the day switcher, the star filter, the funnel and the weather pill with
+     it, and left the control card above sitting on nothing. The shell's dock
+     is the list's; it stands down while a planner is up. */
+  body.shell-deep .dock{opacity:0;pointer-events:none;
+    transition:opacity var(--nt-exit)}
+  /* The list's whole column steps aside — the header, the cards, the footer
+     and the wave that divides them. `.wrap` itself, not its children: an <hr>
+     inside it was slipping through a child selector and drawing a line across
+     the planner. The drawer and its scrim are lifted out of it while they are
+     open, because More belongs to both screens. */
+  body.shell-deep .wrap{display:none}
   /* The dot grid is the list's weave. A planner brings its own ground. */
   body.shell-deep::before{opacity:0}
   .shell-page[data-planner]{background:var(--pl-wash,var(--md-sys-color-surface))}

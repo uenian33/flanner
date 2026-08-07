@@ -180,19 +180,18 @@ body.shell-busy .shell-page{pointer-events:none}
     border-radius:var(--md-sys-shape-corner-large);background:var(--md-sys-color-secondary-container)}
   .dock .pill span{display:block;block-size:var(--nt-lab)}
 
-  /* A planner mounted here brings its own dock. One bar serves both
-     screens, so its own is taken out of the layout — not merely
-     hidden, because the shell's cells click through to it. */
-  .shell-page[data-planner] nav[aria-label="Main"],
-  .shell-page[data-planner] button[aria-label="Go back"],
-  .shell-page[data-planner] button[aria-label^="Flanner"]{
-    position:absolute!important;inline-size:1px;block-size:1px;
-    overflow:hidden;clip:rect(0 0 0 0);pointer-events:none;opacity:0;
-  }
-  /* Everything in the column that is not a screen belongs to the list: the
-     footer, its wave, the settings card. The drawer and its scrim stay,
-     because More opens them from either screen. */
-  body.shell-deep .wrap > *:not(.shell-page):not(.mnav):not(.navscrim){display:none}
+  /* A planner keeps its own dock, untouched. Substituting the shell's took
+     the day switcher, the star filter, the funnel and the weather pill with
+     it, and left the control card above sitting on nothing. The shell's dock
+     is the list's; it stands down while a planner is up. */
+  body.shell-deep .dock{opacity:0;pointer-events:none;
+    transition:opacity var(--nt-exit)}
+  /* The list's whole column steps aside — the header, the cards, the footer
+     and the wave that divides them. `.wrap` itself, not its children: an <hr>
+     inside it was slipping through a child selector and drawing a line across
+     the planner. The drawer and its scrim are lifted out of it while they are
+     open, because More belongs to both screens. */
+  body.shell-deep .wrap{display:none}
   /* The dot grid is the list's weave. A planner brings its own ground. */
   body.shell-deep::before{opacity:0}
   .shell-page[data-planner]{background:var(--pl-wash,var(--md-sys-color-surface))}

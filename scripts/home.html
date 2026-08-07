@@ -2716,12 +2716,6 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 </div>
 
 </section>
-<!-- The two screens a planner is mounted into, empty until the first time one
-     is asked for. What arrives is the planner document's own <x-dc> and its
-     logic script, compiled where they stand — see scripts/_shell.html. -->
-<section class="page shell-page" id="pFlow" hidden></section>
-<section class="page shell-page" id="pKallio" hidden></section>
-
 <!-- The destination list is m3.material.io's own, copied at the user's request:
      same seven labels in the same order, the same glyphs, the same leading
      search action and the same pair of utility circles at the foot. The names
@@ -2786,6 +2780,18 @@ __SETTINGS__
 
 __FOOTER__
 </div>
+
+<!-- The two screens a planner is mounted into, empty until the first time one
+     is asked for. What arrives is the planner document's own <x-dc> and its
+     logic script, compiled where they stand — see scripts/_shell.html.
+
+     Outside .wrap, deliberately. A planner is written to be the document: it
+     sets its own measure, its cards run to the edge of the screen and its bar
+     is positioned against the viewport. Inside the list's column it inherited
+     a 1100px measure and 16-32px of padding on both sides, which is what made
+     every card in it too narrow. -->
+<section class="page shell-page" id="pFlow" hidden></section>
+<section class="page shell-page" id="pKallio" hidden></section>
 
 <script>
 const DATA = __DATA__;
