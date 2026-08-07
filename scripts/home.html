@@ -877,9 +877,13 @@ __NAV_CSS__
    variant by construction — so the page gets its count without getting a hue
    that belongs to no festival on it. */
 .mnav .ind,.dock .dest__ico{position:relative}
+/* Placed against the glyph rather than against the box around it. The two
+   navs sit their icon differently inside that box — the bar nudges it up to
+   make room for the label, the rail centres it — so a badge offset from the
+   box's own centre lands on the icon in one and floats in the gap above it in
+   the other. The corner it sits on is measured, in syncPlanBadge. */
 .mnav .planbadge,.dock .planbadge{
-  grid-area:1 / 1; justify-self:center; align-self:center;
-  transform:translate(13px,-11px);
+  position:absolute;
   min-inline-size:18px; block-size:18px; padding:0 5px;
   border-radius:var(--md-sys-shape-corner-full);
   background:var(--md-sys-color-error); color:var(--md-sys-color-on-error);
@@ -3355,49 +3359,34 @@ function bez(x1, y1, x2, y2) {
 }
 
 function planGhost(host) {
-  const rb = host.getBoundingClientRect();
-  if (!rb.width) return null;
-  const wrap = document.createElement('div');
-  wrap.setAttribute('aria-hidden', 'true');
-  /* A row is cut at its star; anything else goes whole. */
-  const row = host.closest('.grid.list') ? host.querySelector('.plan-toggle') : null;
-  const rr = row ? row.getBoundingClientRect() : null;
-  const cut = rr && rr.width ? Math.max(96, rr.left - rb.left - 6) : rb.width;
-  wrap.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
-    + 'left:' + rb.left.toFixed(1) + 'px;top:' + rb.top.toFixed(1) + 'px;'
-    + 'width:' + cut.toFixed(1) + 'px;height:' + rb.height.toFixed(1) + 'px;'
-    + 'border-radius:' + getComputedStyle(host).borderRadius + ';overflow:hidden;'
+  /* The picture, and only the picture. A row is the width of the screen and a
+     thing that wide drawn through a 54px cell is a curtain closing; a tile is
+     tall enough to read as the page leaving. The picture is already the
+     festival, already the shape of the thing it is going into, and can be
+     made small without anything in it having to be squeezed — a word cannot,
+     and a squeezed word is the one thing that reads as a trick. */
+  const art = host.querySelector('.card__media') || host;
+  const ab = art.getBoundingClientRect();
+  if (!ab.width) return null;
+  const g = art.cloneNode(true);
+  g.removeAttribute('id');
+  g.setAttribute('aria-hidden', 'true');
+  g.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
+    + 'left:' + ab.left.toFixed(1) + 'px;top:' + ab.top.toFixed(1) + 'px;'
+    + 'width:' + ab.width.toFixed(1) + 'px;height:' + ab.height.toFixed(1) + 'px;'
+    + 'border-radius:' + getComputedStyle(art).borderRadius + ';overflow:hidden;'
     + 'transform-origin:50% 50%;will-change:transform,opacity;'
     + 'box-shadow:0 8px 24px rgba(20,24,14,.18)';
-  const copy = host.cloneNode(true);
-  copy.removeAttribute('id');
-  copy.setAttribute('aria-hidden', 'true');
-  copy.style.position = 'absolute';
-  copy.style.margin = '0';
-  copy.style.left = '0';
-  copy.style.top = '0';
-  copy.style.width = rb.width.toFixed(1) + 'px';
-  copy.style.height = rb.height.toFixed(1) + 'px';
-  /* Nothing in a copy is reachable, and an input in it would answer to the
-     same id as the one still on the page. */
-  copy.querySelectorAll('input,button,a,label').forEach(n => {
-    n.removeAttribute('id'); n.removeAttribute('for');
-    n.setAttribute('tabindex', '-1');
-  });
-  wrap.appendChild(copy);
-  document.body.appendChild(wrap);
-  return wrap;
+  document.body.appendChild(g);
+  return g;
 }
 
 /* Which element on screen is My plan. Below the rail's width the visible bar
    is the app shell's dock and the page's own button is a hidden proxy it
-   relays to — so the copy has to be thrown at what the reader can see. The
-   dock keys its cells; the rail is the page's own. */
+   relays to, so the copy has to be thrown at what the reader can see; above
+   it the rail's own cell is the one showing. Both exist at every width and
+   each hides the other, so the test is which one has a box. */
 function planCell() {
-  /* Whichever of the two is on screen. Both exist at every width — the dock
-     is the phone's bar and the rail is the wide page's column, and each hides
-     the other — so it is the one with a box that the count belongs on and the
-     one a copy should be thrown at. */
   const dock = document.querySelector('.dock .dest[data-dest="plan"]');
   if (dock && dock.getBoundingClientRect().width) return dock;
   const rail = document.querySelector('#nPlan');
@@ -3432,33 +3421,24 @@ function flyToPlan(host) {
   const dist = Math.hypot(dx, dy);
   const lift = Math.max(80, Math.min(220, dist * .45));
   const cx = dx * .58, cy = -lift;
-  const move = bez(.2, 0, 0, 1), shrink = bez(.3, 0, .8, .15), neck = bez(.2, 0, 0, 1);
-  /* Two scales either side of the travel angle, so one works along the line
-     to the cell and the other across it: along, the copy is pulled long and
-     then collapses; across, it necks the whole way, which is what reads as
-     being drawn through rather than parked in front. */
-  const ang = Math.atan2(dy, dx) * 180 / Math.PI;
-  const short = Math.min(from.width, from.height);
-  const endAlong = Math.max(.05, (to.width * .8) / Math.max(from.width, 1));
-  const endAcross = Math.max(.05, (to.height * .8) / Math.max(short, 1));
-  const r0 = parseFloat(getComputedStyle(ghost).borderTopLeftRadius) || 0, r1 = short / 2;
+  const move = bez(.2, 0, 0, 1), shrink = bez(.3, 0, .8, .15);
+  /* One scale for both axes: a picture keeps its proportions. The stretch and
+     neck of a desktop minimise is for a thing whose shape is arbitrary — warp
+     a picture and it reads as the picture being wrong rather than as the
+     picture being put away. What is left is the part that carries the meaning:
+     an eased arc up and over, an eased shrink along it. */
+  const endEven = Math.max(.05, Math.min(to.width / Math.max(from.width, 1),
+    to.height / Math.max(from.height, 1)) * .82);
   const N = 26, frames = [];
   for (let i = 0; i <= N; i++) {
     const t = i / N, p = move(t), q = 1 - p;
     const x = 2 * q * p * cx + p * p * dx;
     const y = 2 * q * p * cy + p * p * dy;
-    const pull = t < .34 ? 1 + .22 * neck(t / .34)
-      : 1.22 + (endAlong - 1.22) * shrink((t - .34) / .66);
-    const across = 1 + (endAcross - 1) * neck(t);
-    const m = neck(Math.min(1, t / .5));
     frames.push({
       offset: t, easing: 'linear',
-      opacity: t < .72 ? 1 : Math.max(0, 1 - (t - .72) / .28),
-      borderRadius: (r0 + (r1 - r0) * m).toFixed(1) + 'px',
+      opacity: t < .78 ? 1 : Math.max(0, 1 - (t - .78) / .22),
       transform: 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) '
-        + 'rotate(' + ang.toFixed(2) + 'deg) '
-        + 'scale(' + pull.toFixed(4) + ',' + across.toFixed(4) + ') '
-        + 'rotate(' + (-ang).toFixed(2) + 'deg)'
+        + 'scale(' + (1 + (endEven - 1) * shrink(t)).toFixed(4) + ')'
     });
   }
   ghost.animate(frames, {duration: 500, fill: 'forwards'});
@@ -3505,6 +3485,15 @@ function syncPlanBadge(pop) {
   const was = dot.textContent;
   const now = String(n);
   if (was !== now) dot.textContent = now;
+  /* On the icon's own top-right corner, measured: see the rule above. */
+  const glyph = mark.querySelector('svg') || mark;
+  const mb = mark.getBoundingClientRect(), gb = glyph.getBoundingClientRect();
+  if (mb.width && gb.width) {
+    const left = (gb.right - mb.left - 9).toFixed(1) + 'px';
+    const top = (gb.top - mb.top - 9).toFixed(1) + 'px';
+    if (dot.style.left !== left) dot.style.left = left;
+    if (dot.style.top !== top) dot.style.top = top;
+  }
   /* The number arrives with the copy rather than before it. */
   if (pop && dot.animate && was !== now) {
     dot.animate([
