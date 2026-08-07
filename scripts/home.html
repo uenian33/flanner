@@ -158,6 +158,11 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
   padding-bottom:clamp(10px,1.3vw,14px)}
 .mark{display:inline-flex;align-items:center;gap:clamp(11px,1.3vw,16px);
   text-decoration:none;white-space:nowrap}
+/* Only where the bar is the only thing at the top of the screen. From 600 up
+   the masthead says the site's name in full and the section says its own, at
+   28px, a finger's width below — a third copy between the two would be the
+   same word three times in one glance. */
+.mtitle{display:none}
 .wm{display:flex;flex-direction:column;gap:3px;min-width:0}
 .wm b{font-family:var(--title);font-weight:var(--md-sys-typescale-emphasized-title-weight);
   font-size:var(--md-sys-typescale-headline-small-size);
@@ -813,6 +818,27 @@ __SETTINGS_CSS__
   .wm{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
     white-space:nowrap}
   .logo{width:28px;height:28px}
+
+  /* The room the hidden wordmark leaves is where the section's name goes, and
+     it is the planner's bar title to the value — 17/24 at 600, -.014em — so
+     the two bars are one bar with two things to say rather than two bars.
+
+     It crosses on the planners' own swap: opacity out over 180ms on the
+     accelerate, the arriving name rising 6px into place over 280 on the
+     emphasised decelerate. Same signal as the search beside it, `at-cards`,
+     which is on while the Festivals cell is the one the page is under — so
+     the name and the field arrive together and leave together. */
+  .mtitle{display:block;flex:1 1 auto;min-width:0;margin:0;
+    font-size:17px;line-height:24px;font-weight:600;letter-spacing:-.014em;
+    color:var(--md-sys-color-on-surface);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    opacity:0;transform:translateY(6px);pointer-events:none;
+    transition:opacity .18s cubic-bezier(.3,0,.8,.15),
+               transform .28s cubic-bezier(.05,.7,.1,1)}
+  body.at-cards .mtitle{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    .mtitle{transition:none;transform:none}
+  }
 
   /* The two controls sit side by side. The place you are in stays on screen
      while you browse; the search joins it once there is a list to search. */
@@ -1895,6 +1921,15 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   --sel-fg: var(--md-sys-color-on-primary);
 }
 __ARTCSS__
+/* ── the plan, as a filter ──────────────────────────────
+   The highlight is a rail of what is coming up rather than of what you chose,
+   so it steps out while the list is narrowed to the plan — the page is
+   answering one question then, and a carousel of festivals you have not
+   starred is a second one asked over it. */
+body.plan-only .highlights{display:none}
+/* And the line that closes the list is about what else there is to find,
+   which is not what this list is. */
+body.plan-only #endCap{display:none}
 /* ── the favourite blast ───────────────────────────────
    The planner's own, keyframe for keyframe: two rings, a wave of streaks, a
    wave of sparks and a wave of stars, thrown out of the button that was
@@ -2885,6 +2920,12 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
   <div class="top">
     <a class="mark" href="./"><svg class="logo" aria-hidden="true"><use href="#h-i-logo"/></svg>
       <span class="wm"><b>Flanner</b><i>Festival planner</i></span></a>
+    <!-- The name of the section being read, in the bar, the way a planner's
+         bar carries the festival's name once its card has gone under. Hidden
+         from the accessibility tree on purpose: the section states its own
+         name in the <h2> below, and a bar that repeated it would put the same
+         heading in the outline twice. -->
+    <p class="mtitle" id="mtitle" aria-hidden="true">All Festivals</p>
     <div class="hslot" id="hslot">
     <div class="drop locwrap">
       <button class="loc" id="locTrig" aria-expanded="false" aria-controls="locSheet">
@@ -4414,6 +4455,12 @@ const WHEN = [
    rather than a detail under it. Genres are still searchable; they are just
    not a filter. The chips carry the category id and show its label. */
 let when = 'any', cats = new Set(), draft = new Set(), q = '';
+/* My plan is a fourth filter rather than a page of its own: the same list,
+   the same three controls over it, narrowed to what you starred. Written
+   this way the time filter, the kinds and the three shapes the list takes
+   all keep working inside it — a page of its own would have had to grow
+   each of them again, and they would have drifted. */
+let planOnly = false;
 
 $('#whenOpts').innerHTML = WHEN.map(w =>
   `<button class="opt st" role="radio" data-k="${w.k}" aria-checked="${w.k === when}">${w.label}</button>`).join('');
@@ -4431,6 +4478,7 @@ function matches(f) {
   const w = WHEN.find(x => x.k === when);
   const needle = q.trim().toLowerCase();
   return w.test(f)
+    && (!planOnly || Plan.has(f.id))
     && (!needle || haystack(f).includes(needle))
     && (!cats.size || cats.has(catOf(f).id));
 }
@@ -4469,6 +4517,14 @@ function apply() {
       : `${n} of ${total} shown`;
     g.hidden = !n;
   });
+  /* What the list is a list of. The heading is the page's own title for it —
+     there is no other on this page at any width — and the empty line has to
+     say which of the two nothing-found it is. */
+  $('#all-festivals-headline').textContent = planOnly ? 'My Plans' : 'All Festivals';
+  $('#empty').textContent = planOnly
+    ? (Plan.size() ? 'Nothing in your plan matches that filter.'
+                   : 'Nothing in your plan yet — star a festival to put it here.')
+    : 'No festivals match that filter.';
   $('#empty').hidden = shown > 0 || document.body.dataset.view === 'cal';
   $('#endCap').hidden = shown === 0;
   if (window.redrawCal) window.redrawCal();
@@ -4584,19 +4640,37 @@ document.addEventListener('keydown', e => {
     setActive(id);
     scrollTo({top: Math.max(0, el.getBoundingClientRect().top + scrollY - 90), behavior: 'smooth'});
   };
-  $('#nTop').onclick = () => { setActive('nTop'); scrollTo({top: 0, behavior: 'smooth'}); };
+  $('#nTop').onclick = () => { window.leavePlan(); setActive('nTop'); scrollTo({top: 0, behavior: 'smooth'}); };
   /* The toolbar is where the festivals section begins in every view — .months
      is hidden outright when the calendar is showing, the bar never is. It
      lands flush at the pin rather than 90px short of it, so the highlight
      leaves the screen entirely and the festivals arrive as a page. */
   const festBtn = $('#nFest');
-  if (festBtn) festBtn.onclick = () => { setActive('nFest'); scrollToTools(); };
+  if (festBtn) festBtn.onclick = () => { window.leavePlan(); setActive('nFest'); scrollToTools(); };
 
-  /* My plan has no page yet. The button is in the rail because the plan is
-     part of what this site is for, and it is aria-disabled rather than absent
-     so it says that rather than silently doing nothing. */
+  /* My plan narrows the list to what you starred. The other two destinations
+     are places on the page and this one is a state of it, so reaching either
+     of them leaves it — otherwise Festivals would scroll you to a list still
+     showing three of forty and say nothing about why. */
+  const setPlan = (on) => {
+    planOnly = on;
+    document.body.classList.toggle('plan-only', on);
+    const b = $('#nPlan');
+    if (b) b.setAttribute('aria-pressed', String(on));
+    apply();
+  };
+  window.leavePlan = () => { if (planOnly) setPlan(false); };
   const planBtn = $('#nPlan');
-  if (planBtn) planBtn.onclick = e => e.preventDefault();
+  if (planBtn) {
+    planBtn.removeAttribute('aria-disabled');
+    planBtn.removeAttribute('title');
+    planBtn.setAttribute('aria-pressed', 'false');
+    planBtn.onclick = () => {
+      setPlan(!planOnly);
+      setActive(planOnly ? 'nPlan' : 'nFest');
+      if (planOnly) scrollToTools();
+    };
+  }
   /* What is already in the plan, on the cell, from the first paint — the count
      is kept on the device, so a reader who comes back finds it there. */
   syncPlanBadge(false);
@@ -4625,6 +4699,10 @@ document.addEventListener('keydown', e => {
     const io = new IntersectionObserver(es => {
       es.forEach(e => {
         if (!e.isIntersecting) return;
+        /* While the plan is the filter, the destination is the plan — the
+           list is still the same element and scrolling it would take the
+           mark straight back to Festivals. */
+        if (planOnly) return;
         const spot = SPOTS.find(s => document.querySelector(s.sel) === e.target);
         if (spot) setActive(spot.id);
       });
