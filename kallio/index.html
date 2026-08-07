@@ -3715,8 +3715,8 @@ class Component extends DCLogic {
           if (tries > 0) requestAnimationFrame(() => wire(tries - 1));
           return;
         }
+        /* setSheetEl plays it in — one place, or it rises twice. */
         this.setSheetEl(el);
-        if (el) requestAnimationFrame(() => this.playSheetOpen());
       };
       wire(6);
       if (this.state.bioOpen || this.state.bioFits || this.state.embedReady) {
