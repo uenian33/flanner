@@ -25,7 +25,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import planner as art_mod
 import schema
 import seo
-from planner import MissingAnchor, inline_js, sub_once
+from planner import MissingAnchor, sub_once
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -337,6 +337,7 @@ def patch_script(src: str, fest: Festival) -> str:
         "  FEST_NAME = " + js("%s %s" % (f["name"], f.get("year") or "")).strip() + ";\n"
         "  FEST_WHEN = " + js("%s · %s" % (f["dates"], f["city"])) + ";\n"
         "  FEST_SLUG = " + js(fest.fid) + ";\n"
+        "  BASE_BOUNDS = " + js(fest.basemap["bounds"]) + ";\n"
         "  get LINEUP() {\n"
         "    if (this._lineup) return this._lineup;\n"
         "    const out = [], seen = new Set();\n"
@@ -2281,7 +2282,13 @@ def patch_nav(src: str) -> str:
         "      wxIcon: S.onlyPicks ? '#i-share' : (S.wx ? S.wx.icon : '#wi-cloudy'),",
         "the pill's glyph")
 
-    # ---- one bar height, everywhere ----
+    # ---- one bar height, and one name across the navigation ----
+    # The names are what let the page-to-page layer treat this bar and the
+    # home page's as one component: same name on both sides, so the browser
+    # morphs rather than replaces. The back button carries the second name
+    # because it exists on this side only and has to arrive somehow. The
+    # animations for both are in scripts/_pagefx.html.
+    #
     # The bar was 76 tall with its labels and 50 without, and the home page's
     # was 80: three heights for one component. M3's navigation bar is 80dp on
     # a handset, but this one floats over the page rather than sitting on its
@@ -2291,12 +2298,14 @@ def patch_nav(src: str) -> str:
     src = sub_once(
         src,
         r"      height: mini \? '50px' : '76px', padding: mini \? '5px' : '6px',",
-        "      height: mini ? '48px' : '64px', padding: mini ? '5px' : '6px',",
+        "      height: mini ? '48px' : '64px', padding: mini ? '5px' : '6px',\n"
+        "      viewTransitionName: 'navbar',",
         "bar height")
     src = sub_once(
         src,
         r"          left: clusterLeft, width: backW \+ 'px', height: \(mini \? 50 : 76\) \+ 'px',",
-        "          left: clusterLeft, width: backW + 'px', height: (mini ? 48 : 64) + 'px',",
+        "          left: clusterLeft, width: backW + 'px', height: (mini ? 48 : 64) + 'px',\n"
+        "          viewTransitionName: 'navback',",
         "back button height")
 
     # ---- a phone opens on Info ----
@@ -3245,7 +3254,7 @@ def patch_weather(src: str, fest: Festival) -> str:
     # The component gains the weather methods, and asks for the forecast when it
     # mounts and whenever the day changes.
     src = sub_once(src, r"  componentDidMount\(\) \{",
-                   block + "\n  componentDidMount() {\n    this.loadWeather();",
+                   block + "\n  componentDidMount() {\n    this.loadWeather();\n    this.posterMapLoad();",
                    "weather methods")
     src = sub_once(src, r"  componentDidUpdate\((prevProps, prevState)?\) \{",
                    "  componentDidUpdate(prevProps, prevState) {\n    this.loadWeather();",
@@ -3372,7 +3381,7 @@ POSTER_JS = r"""
     c.fillStyle = t.on; this.posterFont(30, 700, -0.75);
     c.fillText('Flanner', 122, 74);
     c.fillStyle = t.onVar; this.posterFont(18, 700, 2.7);
-    c.fillText('YOUR FESTIVAL PLANNER', 122, 104);
+    c.fillText('YOUR FESTIVAL PLANNER · UENIAN33.GITHUB.IO/FLANNER', 122, 104);
 
     if (n) {
       const label = n + (n === 1 ? ' set' : ' sets');
@@ -3405,7 +3414,7 @@ POSTER_JS = r"""
     c.fillStyle = t.outline; c.fillRect(P.m, 1244, R - P.m, 2);
     c.fillStyle = t.onVar; this.posterFont(18, 400, 0.6);
     c.textAlign = 'left';
-    c.fillText('Made with Flanner · uenian33.github.io/flanner', P.m, 1294);
+    c.fillText('Made with Flanner', P.m, 1294);
     c.textAlign = 'right';
     c.fillText('Set times as published', R, 1294);
     c.textAlign = 'left';
@@ -3421,45 +3430,11 @@ POSTER_JS = r"""
     c.textAlign = 'left';
   }
 
-  /* ── the programme, as rows ──────────────────────────── */
-  posterList(c, t, sets, top) {
-    const P = this.POSTER, R = P.w - P.m, W = R - P.m;
-    const rowH = 92, gap = 12;
-    const room = 1220 - top;
-    const fits = Math.max(1, Math.floor((room + gap) / (rowH + gap)));
-    const shown = sets.slice(0, fits - (sets.length > fits ? 1 : 0));
-    let y = top;
-    for (const ev of shown) {
-      const st = this.STAGES[ev.s], col = t.stage(ev.s);
-      c.fillStyle = t.card;
-      c.beginPath(); c.roundRect(P.m, y, W, rowH, 24); c.fill();
-      c.fillStyle = col.dot;
-      c.beginPath(); c.roundRect(P.m + 20, y + 22, 6, rowH - 44, 3); c.fill();
-      c.fillStyle = t.on; this.posterFont(26, 600, 0.1);
-      c.fillText(ev.from + ' – ' + ev.to, P.m + 42, y + 40);
-      this.posterFont(30, 700, -0.3);
-      c.fillText(this.posterCut(ev.title, W - 320), P.m + 42, y + 74);
-      c.fillStyle = t.onVar; this.posterFont(22, 500, 0.2);
-      c.textAlign = 'right';
-      c.fillText(this.posterCut(st.name, 260), R - 24, y + 74);
-      if (this.DAYS.length > 1) {
-        const d = this.DAYS.find(x => x.id === ev.d);
-        if (d) c.fillText(d.short, R - 24, y + 40);
-      }
-      c.textAlign = 'left';
-      y += rowH + gap;
-    }
-    if (sets.length > shown.length) {
-      c.fillStyle = t.onVar; this.posterFont(24, 500, 0.2);
-      c.fillText('and ' + (sets.length - shown.length) + ' more', P.m + 8, y + 34);
-    }
-  }
-
   /* ── the schedule, as columns ─────────────────────────
      One column for each stage the plan touches, the clock down the side, and
      a block where a set is. It is the timetable, holding only what was
      starred, which is what makes it a plan rather than a programme. */
-  posterGrid(c, t, all, top) {
+  posterGrid(c, t, all, top, floor) {
     const P = this.POSTER, R = P.w - P.m;
     /* A grid is one day's shape — two days of sets in one set of columns is
        two afternoons on top of each other — so it draws the day on screen and
@@ -3476,15 +3451,25 @@ POSTER_JS = r"""
     const lo = Math.floor(Math.min(...sets.map(e => e.a)) / 60) * 60;
     const hi = Math.ceil(Math.max(...sets.map(e => e.b)) / 60) * 60;
     const gutter = 92, colGap = 10;
-    const bottom = 1200;
+    const bottom = floor - 20;
     const colW = (R - P.m - gutter - colGap * (stages.length - 1)) / stages.length;
     const px = (bottom - top - 44) / Math.max(60, hi - lo);
     const yAt = m => top + 44 + (m - lo) * px;
 
-    c.fillStyle = t.onVar; this.posterFont(20, 600, 0.4);
+    /* The head of a column is the pin the map drops for that stage: the same
+       number in the same dark disc, so the two views name a stage the same
+       way and the poster can be read against the map beneath it. */
     stages.forEach((s, i) => {
+      const st = this.STAGES[s];
       const x = P.m + gutter + i * (colW + colGap);
-      c.fillText(this.posterCut(this.STAGES[s].name, colW), x, top + 26);
+      c.fillStyle = t.on;
+      c.beginPath(); c.roundRect(x, top + 4, 30, 30, 10); c.fill();
+      c.fillStyle = t.low; this.posterFont(18, 600, 0.1);
+      c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText(String(st.n), x + 15, top + 20);
+      c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+      c.fillStyle = t.onVar; this.posterFont(19, 600, 0.3);
+      c.fillText(this.posterCut(st.name, colW - 38), x + 38, top + 26);
     });
 
     this.posterFont(20, 500, 0.4);
@@ -3500,20 +3485,93 @@ POSTER_JS = r"""
       if (i < 0) continue;
       const col = t.stage(ev.s);
       const x = P.m + gutter + i * (colW + colGap);
-      const y = yAt(ev.a), h = Math.max(52, (ev.b - ev.a) * px - 4);
+      const y = yAt(ev.a), h = Math.max(62, (ev.b - ev.a) * px - 4);
       c.fillStyle = col.bg;
       c.beginPath(); c.roundRect(x, y + 2, colW, h, 16); c.fill();
       c.fillStyle = col.fg;
       this.posterFont(19, 600, 0.2); c.globalAlpha = .82;
-      c.fillText(ev.from, x + 14, y + 28);
+      c.fillText(ev.from, x + 14, y + 26);
       c.globalAlpha = 1;
       this.posterFont(22, 700, -0.2);
-      c.fillText(this.posterCut(ev.title, colW - 28), x + 14, y + 56);
+      c.fillText(this.posterCut(ev.title, colW - 28), x + 14, y + 52);
     }
   }
 
+  /* The site itself, under the plan. The still basemap is same-origin, so it
+     draws into the canvas without tainting it; a live tile would not, and the
+     export would throw online where it passed at my desk. It is fetched when
+     the page mounts so the share can stay synchronous. */
+  posterMapLoad() {
+    if (this._mapImg || !this.BASE_STREET) return;
+    const im = new Image();
+    im.onload = () => { this._mapImg = im; };
+    im.src = this.BASE_STREET;
+  }
+
+  posterMap(c, t, x, y, w, h) {
+    const B = this.BASE_BOUNDS;
+    c.save();
+    c.beginPath(); c.roundRect(x, y, w, h, 28); c.clip();
+    c.fillStyle = t.card; c.fillRect(x, y, w, h);
+    /* Web Mercator, the projection the basemap was cut to — and both axes in
+       its units, radians. Mixing degrees across with mercator down drew the
+       picture sixty times too wide, which is what a handful of stretched
+       pixels across a panel looks like. */
+    const mx = lon => lon * Math.PI / 180;
+    const my = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
+    const xW = mx(B.w), xE = mx(B.e), yN = my(B.n), yS = my(B.s);
+    const bw = xE - xW, bh = yN - yS;
+    /* Fitted to the stages rather than to the basemap: containing the whole
+       sheet letterboxes a portrait map into a landscape panel and draws mostly
+       empty ground, and covering it crops the pins at the edges away. The box
+       the stages actually occupy, with a margin, fills the panel and cannot
+       lose one. */
+    const pts = this.STAGES.filter(st => st.lat != null && st.lng != null)
+      .map(st => ({ x: mx(st.lng), y: my(st.lat) }));
+    let box = { x0: xW, x1: xE, y0: yS, y1: yN };
+    if (pts.length) {
+      box = {
+        x0: Math.min(...pts.map(p => p.x)), x1: Math.max(...pts.map(p => p.x)),
+        y0: Math.min(...pts.map(p => p.y)), y1: Math.max(...pts.map(p => p.y))
+      };
+      const padX = Math.max((box.x1 - box.x0) * .12, bw * .04);
+      const padY = Math.max((box.y1 - box.y0) * .22, bh * .04);
+      box = { x0: box.x0 - padX, x1: box.x1 + padX, y0: box.y0 - padY, y1: box.y1 + padY };
+    }
+    const scale = Math.min(w / (box.x1 - box.x0), h / (box.y1 - box.y0));
+    const ox = x + (w - (box.x1 - box.x0) * scale) / 2 - (box.x0 - xW) * scale;
+    const oy = y + (h - (box.y1 - box.y0) * scale) / 2 - (yN - box.y1) * scale;
+    if (this._mapImg) c.drawImage(this._mapImg, ox, oy, bw * scale, bh * scale);
+    const at = (lat, lon) => ({
+      x: ox + (mx(lon) - xW) * scale,
+      y: oy + (yN - my(lat)) * scale
+    });
+    /* The stages of the plan wear their pin; the rest of the site is a dot,
+       there so the plan can be read against the whole ground rather than
+       against a map with holes in it. */
+    const going = new Set(this.planSets().map(e => e.s));
+    this.STAGES.forEach((st, i) => {
+      if (st.lat == null || st.lng == null) return;
+      const p = at(st.lat, st.lng);
+      if (going.has(i)) return;
+      c.fillStyle = t.outline;
+      c.beginPath(); c.arc(p.x, p.y - 6, 7, 0, Math.PI * 2); c.fill();
+    });
+    this.STAGES.forEach((st, i) => {
+      if (st.lat == null || st.lng == null || !going.has(i)) return;
+      const p = at(st.lat, st.lng), col = t.stage(i);
+      c.fillStyle = col.bg;
+      c.beginPath(); c.roundRect(p.x - 17, p.y - 34, 34, 34, [12, 12, 12, 4]); c.fill();
+      c.fillStyle = col.fg; this.posterFont(19, 700, 0.1);
+      c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText(String(st.n), p.x, p.y - 17);
+      c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+    });
+    c.restore();
+  }
+
   /* The picture itself, drawn whole and returned as a PNG data URL. */
-  posterPNG(kind) {
+  posterPNG() {
     const P = this.POSTER;
     const cv = document.createElement('canvas');
     cv.width = P.w * P.s; cv.height = P.h * P.s;
@@ -3524,14 +3582,18 @@ POSTER_JS = r"""
     const t = this.posterInk();
     c.fillStyle = t.wash; c.fillRect(0, 0, P.w, P.h);
     const sets = this.planSets();
-    const shown = (kind === 'grid' && this.DAYS.length > 1)
+    const shown = this.DAYS.length > 1
       ? sets.filter(e => e.d === this.DAY_WINDOW.id) : sets;
     const top = this.posterHead(c, t, shown.length);
+    /* The plan above, where it is, below. A timetable says when and a map
+       says where, and a plan someone is sent needs both. */
+    const mapH = 300, gap = 16;
+    const planH = 1220 - top - mapH - gap;
     c.fillStyle = t.low;
-    c.beginPath(); c.roundRect(P.m, top, P.w - P.m * 2, 1220 - top, 48); c.fill();
+    c.beginPath(); c.roundRect(P.m, top, P.w - P.m * 2, planH, 48); c.fill();
     if (!sets.length) this.posterEmpty(c, t, top + 40);
-    else if (kind === 'grid') this.posterGrid(c, t, sets, top + 28);
-    else this.posterList(c, t, sets, top + 28);
+    else this.posterGrid(c, t, sets, top + 28, top + planH);
+    this.posterMap(c, t, P.m, top + planH + gap, P.w - P.m * 2, mapH);
     this.posterFoot(c, t);
     return cv.toDataURL('image/png');
   }
@@ -3546,10 +3608,9 @@ POSTER_JS = r"""
   }
 
   sharePlan() {
-    const kind = (this.state.view === 'list') ? 'list' : 'grid';
     let file;
     try {
-      file = new File([this.posterBlob(this.posterPNG(kind))],
+      file = new File([this.posterBlob(this.posterPNG())],
         this.FEST_SLUG + '-plan.png', { type: 'image/png' });
     } catch (e) { this.setState({ note: 'Could not draw the plan' }); return; }
     const data = { files: [file], title: this.FEST_NAME, text: 'My plan' };
@@ -4103,9 +4164,16 @@ def patch_template(tpl: str, fest: Festival) -> str:
     promo = ROOT / "assets" / "home" / f["promo"] if f.get("promo") else None
     logo = ROOT / "assets" / f["logo"] if f.get("logo") else None
     if promo and promo.exists():
-        hero_art = ('          <img class="hero__photo" src="%s" alt="">\n'
+        # The same file the home page's card draws, named rather than carried:
+        # a reader who arrived from the list has it already, and one who did
+        # not gets it as a picture the browser can prioritise, decode off the
+        # main thread and keep — none of which it can do with 96 KB of base64
+        # sitting in the middle of the markup.
+        hero_art = ('          <img class="hero__photo" src="../%s" alt=""'
+                    ' fetchpriority="high" decoding="async">\n'
                     '          <span class="hero__duo"></span>\n'
-                    '          <span class="hero__scrim"></span>\n' % data_uri(promo))
+                    '          <span class="hero__scrim"></span>\n'
+                    % promo.relative_to(ROOT).as_posix())
     else:
         hero_art = ('          <svg class="hero__art" sc-camel-view-box="0 0 400 250"'
                     ' sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img"'
@@ -4583,6 +4651,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
                    ">%d stages across %s. Pins sit on the organiser's own map "
                    "marks — tap one to see what is on.<"
                    % (len(fest.stages), f["city"].split(",")[0]), "map blurb")
+
     return tpl
 
 
@@ -5250,6 +5319,27 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
    level-1 elevation, the shape scale for the corners, and the type scale for
    the words. */
 .leaflet-container{font-family:inherit}
+
+/* ---------- the map, before there is a map ----------
+   The basemap used to arrive inside the page, so this view was never empty.
+   It is a file now, fetched the first time the reader opens the map, and
+   between the press and the first tile there was nothing to look at.
+
+   So the surface waits in the same placeholder tone and the same 1.6s sweep
+   the page-transition skeleton uses, and it stops on its own: `:has()` makes
+   the rule hold only while no layer has painted, so the moment the still
+   image or the first live tile lands the shimmer is no longer matched. No
+   listener to attach to Leaflet, and nothing left animating under a map. */
+.leaflet-container{background:var(--hover,#EAE8DF);position:relative}
+.leaflet-container:not(:has(.leaflet-image-layer,.leaflet-tile-loaded))::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgb(255 255 255 / .5) 52%,transparent);
+  animation:fx-sweep 1.6s cubic-bezier(.4,0,.2,1) infinite}
+[data-theme=dark] .leaflet-container:not(:has(.leaflet-image-layer,.leaflet-tile-loaded))::after{
+  background:linear-gradient(90deg,transparent,rgb(255 255 255 / .06) 52%,transparent)}
+@media (prefers-reduced-motion:reduce){
+  .leaflet-container::after{animation:none;background:none}}
 .leaflet-bar,.leaflet-touch .leaflet-bar{
   border:0;border-radius:16px;overflow:hidden;
   box-shadow:0 1px 2px rgba(20,24,14,.24),0 1px 3px 1px rgba(20,24,14,.12)}
@@ -5801,6 +5891,10 @@ def build(fid: str) -> pathlib.Path:
 <meta name="description" content="{desc}">
 {og}
 <style>
+/* The runtime hides the raw template itself, but only once it has loaded and
+   run. Declaring the rule here puts it in force while the template is being
+   parsed, so a slow device never paints a frame of uncompiled bindings. */
+x-dc{{display:none}}
 {art.font_css()}
 {art.other_css()}
 {stage_palette(len(fest.stages), _lch(fest.f['accent'])[2])[1]}
@@ -5813,18 +5907,10 @@ def build(fid: str) -> pathlib.Path:
 <script>/* the page holds its scale on a touch screen */
 {NO_ZOOM_JS}
 </script>
-<script>/* react */
-{inline_js(art.libs['react'])}
-</script>
-<script>/* react-dom */
-{inline_js(art.libs['react-dom'])}
-</script>
-<script>/* leaflet */
-{inline_js(art.libs['leaflet'])}
-</script>
-<script>/* dc-runtime */
-{inline_js(art.libs['dc-runtime'])}
-</script>
+<!-- React, ReactDOM, Leaflet and the runtime, as the four files both planners
+     share rather than 351 KB inlined into each of them. Classic tags, in load
+     order: the runtime needs React in the document before it compiles. -->
+{art.lib_tags()}
 </head>
 <body>
 <x-dc>
