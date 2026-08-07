@@ -4499,8 +4499,9 @@ function planGhost(host) {
   const art = host.querySelector('.card__media') || host;
   const ab = art.getBoundingClientRect();
   if (!ab.width) return null;
-  const g = art.cloneNode(true);
-  g.removeAttribute('id');
+  /* A wrapper holds the position and the copy keeps its own style, so nothing
+     the picture had is written over on the way out. */
+  const g = document.createElement('div');
   g.setAttribute('aria-hidden', 'true');
   g.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
     + 'left:' + ab.left.toFixed(1) + 'px;top:' + ab.top.toFixed(1) + 'px;'
@@ -4508,6 +4509,27 @@ function planGhost(host) {
     + 'border-radius:' + getComputedStyle(art).borderRadius + ';overflow:hidden;'
     + 'transform-origin:50% 50%;will-change:transform,opacity;'
     + 'box-shadow:0 8px 24px rgba(20,24,14,.18)';
+  /* The festival's own five travel with it. They are declared on the card and
+     inherited by the picture, and the copy leaves the card behind — without
+     them a drawn cover arrives at the plan in the page's fallback grey. */
+  const cs = getComputedStyle(host);
+  ['--art-bg', '--art-1', '--art-2', '--art-3', '--art-ink'].forEach(k => {
+    const v = cs.getPropertyValue(k);
+    if (v) g.style.setProperty(k, v.trim());
+  });
+  const copy = art.cloneNode(true);
+  copy.removeAttribute('id');
+  copy.setAttribute('aria-hidden', 'true');
+  /* The notch says what kind of festival it is. On the way to the plan this
+     is a picture rather than a labelled card, and a word shrinking into a
+     54px cell is the thing this whole shape was changed to avoid. */
+  copy.querySelectorAll('.card__notch').forEach(n => n.remove());
+  copy.style.position = 'absolute';
+  copy.style.margin = '0';
+  copy.style.inset = '0';
+  copy.style.width = '100%';
+  copy.style.height = '100%';
+  g.appendChild(copy);
   document.body.appendChild(g);
   return g;
 }

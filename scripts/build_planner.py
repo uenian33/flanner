@@ -1412,8 +1412,11 @@ SHEET_JS = """
     if (!art) return null;
     const ab = art.getBoundingClientRect();
     if (!ab.width) return null;
-    const g = art.cloneNode(true);
-    g.removeAttribute('id');
+    /* A wrapper holds the position and the copy keeps its own style. Writing
+       the position onto the copy instead replaced everything it had inline —
+       including the ground its motif is drawn on, which is set there — so the
+       picture left the row without its own colour under it. */
+    const g = document.createElement('div');
     g.setAttribute('aria-hidden', 'true');
     /* Read by flyToPlan: travel and shrink, no stretch and no neck. */
     g.setAttribute('data-fp-plain', '');
@@ -1423,6 +1426,18 @@ SHEET_JS = """
       + 'border-radius:' + getComputedStyle(art).borderRadius + ';overflow:hidden;'
       + 'transform-origin:50% 50%;will-change:transform,opacity;'
       + 'box-shadow:0 8px 24px rgba(20,24,14,.18)';
+    const copy = art.cloneNode(true);
+    copy.removeAttribute('id');
+    copy.setAttribute('aria-hidden', 'true');
+    copy.style.position = 'absolute';
+    copy.style.margin = '0';
+    copy.style.inset = '0';
+    copy.style.width = '100%';
+    copy.style.height = '100%';
+    /* Resolved rather than named: the copy leaves the row, and a colour it
+       was inheriting from something above the row would not follow it. */
+    copy.style.background = getComputedStyle(art).backgroundColor;
+    g.appendChild(copy);
     document.body.appendChild(g);
     return g;
   }
