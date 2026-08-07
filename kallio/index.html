@@ -29,6 +29,10 @@
      pinching. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#f5f5f5">
+<!-- A stage is called Main Stage and a set runs 21:00-22:00; iOS reads
+     both as things to link and paints them blue. The page says what it
+     means by them itself. -->
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1347,6 +1351,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
 :root:not([data-theme="dark"]){--wash:#FFFFFF;--low:#F8F7F3;--card:#F2F0EB;--card-a:#f0f3e9;--card-f:#F4F0F7;--hover:#e6e9e0;--on:#1a1d13;--on-var:#4a4e42;--outline:#c6cbba;--primary:#4f6529;--sec:#dbe8c0;--on-sec:#202d09;--plan:#334a0e;--on-plan:#edf6da;--sec-a:#dce6c7;--on-sec-a:#2B1700;--plan-a:#6B4310;--on-plan-a:#FFEEDC;--sec-f:#E8DEF8;--on-sec-f:#1D192B;--plan-f:#4F378B;--on-plan-f:#EADDFF;--dot-m:#b2cc83;--dot-a:#E5C193;--dot-f:#CFC1E8;--art-m-bg:#e6f0d0;--art-m-1:#d2eca1;--art-m-ink:#32490e;--art-a-bg:#e8f0d6;--art-a-1:#FFDDB3;--art-a-2:#855318;--art-a-ink:#4A2A02;--art-f-bg:#EFE6FA;--art-f-2:#6750A4;--art-f-ink:#341E73;--state6:rgba(26,29,19,.055);--state8:rgba(26,29,19,.08);--state10:rgba(26,29,19,.10);--scrim:rgba(21,24,13,.32);--state9:rgba(26,29,19,.09);--heart-cont:#dde9c4;--on-heart-cont:#171e01;--heart:#436805;--bar-edge:rgba(198,203,186,.6);--state5:rgba(26,29,19,.045);--line1:#dbded4;--line2:#eaede5;--dim-on:#606556;--tag-edge:rgba(26,29,19,.22);--star-chip-on:rgba(255,255,255,.18);--star-chip:rgba(255,255,255,.6);--pink-row:#e0e6d2;--pink-on:#171e00;--pink-card:#f3f6ed;--pink-primary:#4e632a;--bar:rgba(255,255,255,.94);--warm-plan:#3b5314;--on-warm-plan:#edf3de;--state7:rgba(26,29,19,.07);--pink-on-var:#404e27;--pink-track:#c9d5b1;--state-primary:rgba(79,101,41,.12);--state-sec:rgba(32,45,9,.08)}
 [data-theme="dark"]{--wash:#13160b;--low:#181c10;--card:#1c2015;--card-a:#221A11;--card-f:#1C1A22;--hover:#282e1d;--on:#e0e4d6;--on-var:#c2c9b2;--dim-on:#8e9482;--outline:#424933;--line1:#2b331e;--line2:#222817;--primary:#b6d087;--sec:#384e14;--on-sec:#d2eca1;--plan:#d2eca1;--on-plan:#202d09;--heart:#b6ce8a;--heart-cont:#3b5314;--on-heart-cont:#edf3de;--warm-plan:#b6ce8a;--on-warm-plan:#171e01;--dot-m:#859f59;--dot-a:#9A6C31;--dot-f:#8C7BB8;--sec-a:#4A2E08;--on-sec-a:#FFDDB3;--plan-a:#FFDDB3;--on-plan-a:#2B1700;--sec-f:#362A56;--on-sec-f:#EADDFF;--plan-f:#D6C4F5;--on-plan-f:#1D192B;--art-m-bg:#262f16;--art-m-1:#546a2f;--art-m-ink:#d2eca1;--art-a-bg:#2E2113;--art-a-1:#6B4A20;--art-a-2:#E0B183;--art-a-ink:#FFDDB3;--art-f-bg:#221C2E;--art-f-2:#C6B2F0;--art-f-ink:#EADDFF;--pink-card:#131802;--pink-row:#1f290c;--pink-track:#293811;--pink-primary:#bdcda0;--pink-on:#dde6cb;--pink-on-var:#b9c69e;--state5:rgba(224,228,214,.06);--state6:rgba(224,228,214,.07);--state7:rgba(224,228,214,.08);--state8:rgba(224,228,214,.09);--state9:rgba(224,228,214,.11);--state10:rgba(224,228,214,.12);--tag-edge:rgba(224,228,214,.28);--state-sec:rgba(19,22,11,.10);--state-primary:rgba(182,208,135,.14);--bar:rgba(19,22,11,.92);--bar2:rgba(19,22,11,.9);--glass:rgba(19,22,11,.78);--star-chip:rgba(19,22,11,.4);--star-chip-on:rgba(19,22,11,.22);--scrim:rgba(0,0,0,.6);--bar-edge:rgba(66,73,51,.7)}
 .fest{--hero-tint:#d2eca1;--hero-duo:#4f6529}
+
+/* iOS wraps what its detectors find in an anchor of its own. Where it
+   does, the anchor takes the colour of the text it replaced — the blue
+   and the underline are the OS's opinion, not the page's. */
+a[x-apple-data-detectors] {
+  color: inherit !important; -webkit-text-fill-color: inherit !important;
+  text-decoration: none !important; pointer-events: none;
+}
 
 /* ---------- the festival, compact ---------- */
 /* The design's own type scale, which it declares on the root and this page
@@ -5180,11 +5192,21 @@ class Component extends DCLogic {
     const wx = this.state.wx;
     if (!wx) return '';
     const wet = wx.rows.reduce((a, r) => (r.rain > a.rain ? r : a), wx.rows[0]);
+    const past = this.wxPast();
     return (wet.rain >= 40
-      ? 'Rain likely around ' + wet.time + ' — ' + wet.rain + '% at its highest. '
+      ? (past ? 'Rain around ' : 'Rain likely around ')
+        + wet.time + ' — ' + wet.rain + '% at its highest. '
       : (wet.rain >= 15 ? 'A ' + wet.rain + '% chance of rain at its highest. '
-                        : 'Little rain in the forecast. '))
-      + 'Forecast from Open-Meteo, for the festival site.';
+                        : (past ? 'Little rain that day. '
+                                : 'Little rain in the forecast. ')))
+      + (this.wxPast() ? 'Recorded by Open-Meteo, at the festival site.'
+                       : 'Forecast from Open-Meteo, for the festival site.');
+  }
+  /* A festival that has been is not forecast, it is remembered: Open-Meteo
+     answers for a past date too, and what it sends back is what happened. */
+  wxPast() {
+    const d = this.DAY_WINDOW;
+    return !!d && !!d.date && d.date < new Date().toISOString().slice(0, 10);
   }
 
   componentDidMount() {
@@ -7231,7 +7253,7 @@ class Component extends DCLogic {
              and the panel that opens under it are one card. */
           borderRadius: mob ? '0px' : '24px',
           background: mob ? 'transparent' : 'var(--card,#F2F0EB)',
-          fontFamily: 'inherit',
+          fontFamily: 'inherit', color: 'var(--on,#191D13)',
           cursor: 'pointer', textAlign: 'start',
           transition: 'background .2s cubic-bezier(.2,0,0,1)'
         },
@@ -7253,11 +7275,13 @@ class Component extends DCLogic {
           background: 'var(--on,#191D13)', color: 'var(--low,#F8F7F3)',
           fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',
           fontWeight: 600 },
+        /* Stated, not inherited: iOS reads a stage name as a place,
+           wraps it in a link of its own and paints it blue. */
         nameStyle: mob
-          ? { fontSize: '14px', lineHeight: '20px',
-              letterSpacing: '.1px', fontWeight: 600 }
-          : { fontSize: '16px', lineHeight: '24px',
-              letterSpacing: '.15px', fontWeight: 500 },
+          ? { color: 'var(--on,#191D13)', fontSize: '14px',
+              lineHeight: '20px', letterSpacing: '.1px', fontWeight: 600 }
+          : { color: 'var(--on,#191D13)', fontSize: '16px',
+              lineHeight: '24px', letterSpacing: '.15px', fontWeight: 500 },
         noteStyle: { fontSize: '14px', lineHeight: '20px',
           letterSpacing: '.25px', color: 'var(--on-var,#494E42)' },
         /* On a phone the row is the stage and the way to it. What the
@@ -7541,7 +7565,7 @@ class Component extends DCLogic {
           ? { marginBlockStart: 'auto', display: 'grid', gap: '8px', justifyItems: 'center', paddingBlockStart: '12px' }
           : { display: 'grid', placeItems: 'center', flex: 'none' },
       dests: dests, utils: markUtil(utils), selectors: selectors, shellStyle: shellStyle,
-      weatherPlace: "Alppila · illustrative",
+      weatherPlace: "Alppila" + (this.wxPast() ? ' · recorded' : ' · forecast'),
       themeRaysStyle: themeRaysStyle, themeDiscStyle: themeDiscStyle, themeBiteStyle: themeBiteStyle,
 
       /* hero */

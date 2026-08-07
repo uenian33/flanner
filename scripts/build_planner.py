@@ -3191,8 +3191,12 @@ def patch_weather(src: str, fest: Festival) -> str:
          "weather label"),
         # The caption under the artwork names the festival's own site, not a
         # city picked from a list of three.
+        # The design's caption called its sample numbers illustrative, and
+        # they were. These are Open-Meteo's, for this festival's own
+        # coordinates, so the caption says so.
         (r"weatherPlace: \(this\.PLACES\.find\(p => p\.id === S\.place\) \|\| this\.PLACES\[0\]\)\.site \+ ' · illustrative',",
-         "weatherPlace: %s," % js("%s · illustrative" % fest.f["city"].split(",")[0]),
+         "weatherPlace: %s + (this.wxPast() ? ' · recorded' : ' · forecast'),"
+         % js(fest.f["city"].split(",")[0]),
          "artwork label"),
     ]:
         src = sub_once(src, old, new, what)
@@ -3215,11 +3219,21 @@ WEATHER_NOTE_JS = """
     const wx = this.state.wx;
     if (!wx) return '';
     const wet = wx.rows.reduce((a, r) => (r.rain > a.rain ? r : a), wx.rows[0]);
+    const past = this.wxPast();
     return (wet.rain >= 40
-      ? 'Rain likely around ' + wet.time + ' — ' + wet.rain + '% at its highest. '
+      ? (past ? 'Rain around ' : 'Rain likely around ')
+        + wet.time + ' — ' + wet.rain + '% at its highest. '
       : (wet.rain >= 15 ? 'A ' + wet.rain + '% chance of rain at its highest. '
-                        : 'Little rain in the forecast. '))
-      + 'Forecast from Open-Meteo, for the festival site.';
+                        : (past ? 'Little rain that day. '
+                                : 'Little rain in the forecast. ')))
+      + (this.wxPast() ? 'Recorded by Open-Meteo, at the festival site.'
+                       : 'Forecast from Open-Meteo, for the festival site.');
+  }
+  /* A festival that has been is not forecast, it is remembered: Open-Meteo
+     answers for a past date too, and what it sends back is what happened. */
+  wxPast() {
+    const d = this.DAY_WINDOW;
+    return !!d && !!d.date && d.date < new Date().toISOString().slice(0, 10);
   }
 """
 
@@ -3550,11 +3564,13 @@ def patch_map(src: str, fest: Festival) -> str:
         "          background: 'var(--on,#191D13)', color: 'var(--low,#F8F7F3)',\n"
         "          fontSize: '14px', lineHeight: '20px', letterSpacing: '.1px',\n"
         "          fontWeight: 600 },\n"
+        "        /* Stated, not inherited: iOS reads a stage name as a place,\n"
+        "           wraps it in a link of its own and paints it blue. */\n"
         "        nameStyle: mob\n"
-        "          ? { fontSize: '14px', lineHeight: '20px',\n"
-        "              letterSpacing: '.1px', fontWeight: 600 }\n"
-        "          : { fontSize: '16px', lineHeight: '24px',\n"
-        "              letterSpacing: '.15px', fontWeight: 500 },\n"
+        "          ? { color: 'var(--on,#191D13)', fontSize: '14px',\n"
+        "              lineHeight: '20px', letterSpacing: '.1px', fontWeight: 600 }\n"
+        "          : { color: 'var(--on,#191D13)', fontSize: '16px',\n"
+        "              lineHeight: '24px', letterSpacing: '.15px', fontWeight: 500 },\n"
         "        noteStyle: { fontSize: '14px', lineHeight: '20px',\n"
         "          letterSpacing: '.25px', color: 'var(--on-var,#494E42)' },\n"
         "        /* On a phone the row is the stage and the way to it. What the\n"
@@ -3589,7 +3605,7 @@ def patch_map(src: str, fest: Festival) -> str:
         "             and the panel that opens under it are one card. */\n"
         "          borderRadius: mob ? '0px' : '24px',\n"
         "          background: mob ? 'transparent' : 'var(--card,#F2F0EB)',\n"
-        "          fontFamily: 'inherit',\n"
+        "          fontFamily: 'inherit', color: 'var(--on,#191D13)',\n"
         "          cursor: 'pointer', textAlign: 'start',\n"
         "          transition: 'background .2s cubic-bezier(.2,0,0,1)'\n"
         "        },\n"
@@ -4945,7 +4961,15 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
 #
 # The type scale it declares on :root is declared on .fest here, for the same
 # reason: the planner has its own and they are not the same numbers.
-FEST_CSS = """/* ---------- the festival, compact ---------- */
+FEST_CSS = """/* iOS wraps what its detectors find in an anchor of its own. Where it
+   does, the anchor takes the colour of the text it replaced — the blue
+   and the underline are the OS's opinion, not the page's. */
+a[x-apple-data-detectors] {
+  color: inherit !important; -webkit-text-fill-color: inherit !important;
+  text-decoration: none !important; pointer-events: none;
+}
+
+/* ---------- the festival, compact ---------- */
 /* The design's own type scale, which it declares on the root and this page
    cannot: the planner's root already carries a scale of its own. The colour
    roles it declares there are the planner's roles under the planner's names,
@@ -5370,6 +5394,10 @@ def build(fid: str) -> pathlib.Path:
      pinching. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#f5f5f5">
+<!-- A stage is called Main Stage and a set runs 21:00-22:00; iOS reads
+     both as things to link and paints them blue. The page says what it
+     means by them itself. -->
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
