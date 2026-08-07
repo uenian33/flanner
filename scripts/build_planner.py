@@ -2192,9 +2192,18 @@ def patch_nav(src: str) -> str:
         "          opacity: this.BAR_FEST ? 0 : 1,\n"
         "          transform: this.BAR_FEST ? 'translateY(-6px)' : 'none'\n"
         "        }, this.TITLE_SWAP),\n"
+        "        /* Three names in the one cell, and the same crossing between\n"
+        "           any two of them: the site's, the festival's, and the\n"
+        "           festival's with Your in front of it when the plan is the\n"
+        "           only thing showing. */\n"
         "        titleFestStyle: Object.assign({\n"
-        "          opacity: this.BAR_FEST ? 1 : 0,\n"
-        "          transform: this.BAR_FEST ? 'none' : 'translateY(6px)'\n"
+        "          opacity: this.BAR_FEST && !S.onlyPicks ? 1 : 0,\n"
+        "          transform: this.BAR_FEST && !S.onlyPicks ? 'none'\n"
+        "            : (this.BAR_FEST ? 'translateY(-6px)' : 'translateY(6px)')\n"
+        "        }, this.TITLE_SWAP),\n"
+        "        titlePicksStyle: Object.assign({\n"
+        "          opacity: this.BAR_FEST && S.onlyPicks ? 1 : 0,\n"
+        "          transform: this.BAR_FEST && S.onlyPicks ? 'none' : 'translateY(6px)'\n"
         "        }, this.TITLE_SWAP),",
         "the bar's two names")
 
@@ -3683,9 +3692,9 @@ def patch_template(tpl: str, fest: Festival) -> str:
         + re.escape(name) + r'</h1>',
         '<h1 style="{{ titleStyle }}">'
         '<span style="{{ titleHomeStyle }}">Flanner</span>'
-        '<span style="{{ titleFestStyle }}">'
-        '<sc-if value="{{ picksOn }}">'
-        '<span style="color:var(--plan,#2E4B12)">Your </span></sc-if>'
+        '<span style="{{ titleFestStyle }}">' + name + '</span>'
+        '<span style="{{ titlePicksStyle }}">'
+        '<span style="color:var(--plan,#2E4B12)">Your </span>'
         + name + '</span></h1>',
         "the bar's two names, in the markup")
 

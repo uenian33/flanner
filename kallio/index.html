@@ -4305,7 +4305,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 
   <header ref="{{ headerRef }}" style="{{ headerStyle }}">
     <div style="{{ headerInnerStyle }}">
-      <h1 style="{{ titleStyle }}"><span style="{{ titleHomeStyle }}">Flanner</span><span style="{{ titleFestStyle }}"><sc-if value="{{ picksOn }}"><span style="color:var(--plan,#2E4B12)">Your </span></sc-if>Kallio Block Party 2026</span></h1>
+      <h1 style="{{ titleStyle }}"><span style="{{ titleHomeStyle }}">Flanner</span><span style="{{ titleFestStyle }}">Kallio Block Party 2026</span><span style="{{ titlePicksStyle }}"><span style="color:var(--plan,#2E4B12)">Your </span>Kallio Block Party 2026</span></h1>
       <sc-if value="{{ showHeroFold }}">
       <button sc-camel-on-click="{{ toggleHero }}" aria-expanded="{{ heroOpen }}" aria-controls="fp-hero" aria-label="{{ heroToggleLabel }}" title="{{ heroToggleLabel }}" style="{{ heroToggleStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
         <svg aria-hidden="true" style="{{ heroChevStyle }}"><use href="#i-chev"></use></svg>
@@ -8175,9 +8175,18 @@ class Component extends DCLogic {
           opacity: this.BAR_FEST ? 0 : 1,
           transform: this.BAR_FEST ? 'translateY(-6px)' : 'none'
         }, this.TITLE_SWAP),
+        /* Three names in the one cell, and the same crossing between
+           any two of them: the site's, the festival's, and the
+           festival's with Your in front of it when the plan is the
+           only thing showing. */
         titleFestStyle: Object.assign({
-          opacity: this.BAR_FEST ? 1 : 0,
-          transform: this.BAR_FEST ? 'none' : 'translateY(6px)'
+          opacity: this.BAR_FEST && !S.onlyPicks ? 1 : 0,
+          transform: this.BAR_FEST && !S.onlyPicks ? 'none'
+            : (this.BAR_FEST ? 'translateY(-6px)' : 'translateY(6px)')
+        }, this.TITLE_SWAP),
+        titlePicksStyle: Object.assign({
+          opacity: this.BAR_FEST && S.onlyPicks ? 1 : 0,
+          transform: this.BAR_FEST && S.onlyPicks ? 'none' : 'translateY(6px)'
         }, this.TITLE_SWAP),
         headerStyle: {
           position: fixedPage ? 'relative' : 'sticky', top: '0px', zIndex: 31, flex: 'none',
