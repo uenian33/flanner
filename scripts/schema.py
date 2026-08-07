@@ -51,6 +51,38 @@ OPTIONAL = {"planner": str, "logo": str, "promo": str, "linkLabel": str,
             "previewNote": str}
 DERIVED = ("month", "dates", "stats.days")
 
+# Where a festival's picks are kept on the reader's device. Two documents write
+# and read this: a planner saves what you starred, and the list page asks
+# whether a festival has anything saved before offering to open it at your
+# picks. It is stated once, here, because the two agreeing is the whole feature
+# — a namespace edited on one side and not the other is a plan that silently
+# stops being found. The prefix matches the versioned one the list page's Store
+# uses for its own settings, and the id is the festival's own, not its planner
+# directory: Kallio's record is `kbp` and its planner lives at `kallio/`.
+PICKS_NS = "flanner1.picks."
+
+
+def picks_key(festival_id: str) -> str:
+    return PICKS_NS + festival_id
+
+
+def planner_dirs() -> list[str]:
+    """The directory each planner is published at — `flow`, `kallio`, …"""
+    return [f["planner"].strip("/") for f in load()["festivals"] if f.get("planner")]
+
+
+def pagefx() -> str:
+    """The page-to-page layer, with the list of planners written into it.
+
+    Every builder includes this partial, and it has to know which paths are
+    planners so a navigation to one draws a planner's skeleton rather than an
+    article's. The two the site started with were written into a regular
+    expression in it; five more arriving did not make that list incomplete so
+    much as wrong. Read off the records here, once, for all of them.
+    """
+    return (ROOT / "scripts" / "_pagefx.html").read_text().replace(
+        "__PLANNERS__", json.dumps(planner_dirs(), separators=(",", ":")))
+
 
 class DataError(SystemExit):
     """Raised with every problem found, not just the first."""

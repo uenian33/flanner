@@ -1163,12 +1163,17 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       </div>`,
   };
 
-  /* Which of the three a URL is. The planners are the two directories that
-     carry one; everything else with a path segment is an article. */
+  /* Which of the three a URL is. A planner gets the shape of a planner and
+     everything else with a path segment is an article. The two the site
+     started with were written in here; five more arriving made the list wrong
+     rather than incomplete — a planner drawn as an article is a skeleton that
+     does not match what lands on it. Written by the build now, off the same
+     records the planners themselves come from. */
+  const PLANNER_DIRS = ["kallio","flow","juhlaviikot","blockfest","espoocine","lostinmusic","tamperejazz"];
   const shapeFor = (url) => {
     const rest = url.href.slice(BASE.length).replace(/index\.html$/, '');
     if (!rest) return 'home';
-    return /^(flow|kallio)\//.test(rest) ? 'planner' : 'page';
+    return PLANNER_DIRS.some((p) => rest.indexOf(p + '/') === 0) ? 'planner' : 'page';
   };
 
   /* ── 3. fetching ahead ──────────────────────────────

@@ -293,6 +293,11 @@ body.shell-busy .shell-page{pointer-events:none}
   const screens = {
     home: {el: document.getElementById('pHome'), scroll: 0, title: document.title, url: BASE},
   };
+  /* The planner directories, in the order the records list them. The screen
+     each one mounts into is empty markup this page already carries, written by
+     the same builder off the same list. */
+  const PLANNERS = __PLANNERS__;
+  const screenId = (key) => 'p' + key[0].toUpperCase() + key.slice(1);
   let current = 'home', busy = false;
 
   const ICONS = {
@@ -401,10 +406,12 @@ body.shell-busy .shell-page{pointer-events:none}
      <x-dc> and logic script moved into the screen — which is all the
      runtime needs to compile and mount it where it stands. */
   let libs = null;
-  const loadScript = (src) => new Promise((res, rej) => {
+  const got = new Set();
+  const loadScript = (src) => got.has(src) ? Promise.resolve() : new Promise((res, rej) => {
+    got.add(src);
     const s = document.createElement('script');
     s.src = src; s.async = false;
-    s.onload = () => res(); s.onerror = () => rej(new Error('load ' + src));
+    s.onload = () => res(); s.onerror = () => { got.delete(src); rej(new Error('load ' + src)); };
     document.head.appendChild(s);
   });
   /* Resolved against the site root rather than against the document, because
@@ -440,16 +447,30 @@ body.shell-busy .shell-page{pointer-events:none}
     document.head.appendChild(lastWord);   /* always last */
   }
 
+  /* Every mounted planner's own data, by key — see the note where it is set. */
+  const FPS = window.__FP_BY__ = window.__FP_BY__ || {};
+
   async function mountPlanner(key, href) {
-    const el = document.getElementById('p' + key[0].toUpperCase() + key.slice(1));
-    if (!el) return null;
+    const el = document.getElementById(screenId(key));
+    if (!el) throw new Error('planner ' + key + ': no screen to mount into');
     if (el.dataset.mounted) return el;
     await ensureLibs();
     const html = await (await fetch(href, {credentials: 'same-origin'})).text();
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const xdc = doc.querySelector('x-dc');
-    const logic = doc.querySelector('script[data-dc-script]');
-    if (!xdc || !logic) return null;
+    /* The two files a planner is made of, named on the page rather than
+       guessed at: the design, which every planner shares, and the festival's
+       own values. This used to lift the compiled element straight out of the
+       fetched document — and the day the component moved into a file of its
+       own that element stopped existing, so what a phone got on pressing a
+       festival was a blank screen under the dock. It is built here now, the
+       same way the planner's own page builds it. */
+    const code = doc.getElementById('fp-code');
+    const data = doc.getElementById('fp-data');
+    const props = doc.querySelector('meta[name="fp-props"]');
+    if (!xdc || !code || !data) {
+      throw new Error('planner ' + key + ': nothing to mount');
+    }
 
     /* A planner writes its scheme on :root. Two of them in one document and
        the second would repaint the first — and the list with it. Each one's
@@ -484,11 +505,24 @@ body.shell-busy .shell-page{pointer-events:none}
 
     el.dataset.planner = key;
     el.appendChild(document.importNode(xdc, true));
+    /* The design once, whichever planner asks for it first; then this
+       festival's own values, which the data file leaves on two globals. */
+    await loadScript(new URL(code.getAttribute('src'), href).href);
+    await loadScript(new URL(data.getAttribute('src'), href).href);
+    /* Kept under its own name, because `FP` is one global and a second planner
+       mounted into this document would take it from the first — which nobody
+       would see until they went back to a planner they had already opened and
+       found another festival's dates in it. Each one closes over its own. */
+    FPS[key] = window.__FP_DATA__;
     const s2 = document.createElement('script');
     s2.type = 'text/x-dc';
     s2.setAttribute('data-dc-script', '');
-    s2.setAttribute('data-props', logic.getAttribute('data-props') || '');
-    s2.textContent = logic.textContent;
+    s2.setAttribute('data-props', props ? props.getAttribute('content') : '');
+    /* One declaration in front of the component, so every `FP` inside it is
+       this festival's. The runtime compiles the whole thing as one function
+       body, so a `const` at the top of it shadows the global for all of it. */
+    s2.textContent = 'const FP = window.__FP_BY__[' + JSON.stringify(key) + '];\n'
+      + window.__FP_SRC__;
     el.appendChild(s2);
 
     /* The runtime names its root from the address, so the URL is
@@ -549,7 +583,7 @@ body.shell-busy .shell-page{pointer-events:none}
     screens[current].scroll = window.scrollY;
     if (forward) {
       dock.toggleAttribute('data-deep', true);
-      let el = document.getElementById('p' + key[0].toUpperCase() + key.slice(1));
+      let el = document.getElementById(screenId(key));
       screens[key] = screens[key] || {el, scroll: 0, title: document.title, url: href};
       screens[key].el = el;
       /* The address comes first. The runtime names its root from the path and
@@ -563,6 +597,12 @@ body.shell-busy .shell-page{pointer-events:none}
       }
       swapDestinations(() => plannerSet(el));
       crossfade(from, el, true);
+      /* A planner mounts once and is kept, so the second visit to the same
+         festival is a screen that has already decided what it is showing. The
+         address has changed under it — a link out of My plan asks for the
+         picks — and `pushState` fires nothing, so it is told. Harmless on a
+         first mount, which read the same address itself. */
+      dispatchEvent(new CustomEvent('fp:open', {detail: {key: key}}));
       document.body.classList.add('shell-deep');
       watch(el);
     } else {
@@ -619,8 +659,29 @@ body.shell-busy .shell-page{pointer-events:none}
     if (!href) return null;
     const u = new URL(href, location.href);
     if (!u.href.startsWith(BASE)) return null;
-    const m = /^(flow|kallio)\/$/.exec(u.href.slice(BASE.length).replace(/index\.html$/, ''));
-    return m ? {key: m[1], href: u.href} : null;
+    /* Every planner the site publishes, written by the build rather than
+       listed here — the two this shell was born with stayed in a regular
+       expression through five more being added, and the five it did not name
+       quietly fell through to a document navigation on a phone: the same page,
+       without the shell that is the whole reason the phone feels the way it
+       does. The path is matched without the fragment, because a link into
+       someone's picks carries one and it is the planner's to read. */
+    const rel = u.href.slice(BASE.length).replace(/index\.html$/, '').replace(/#.*$/, '');
+    const key = PLANNERS.find((p) => rel === p + '/');
+    if (!key) return null;
+    /* One planner at a time. The runtime names its root off the address —
+       every planner's path ends in a slash, so every one of them is called
+       `Root` — and it keeps one component under a name and one element at
+       `#dc-root`. A second planner mounted beside the first takes both: the
+       screen you opened before would be redrawn as the festival you opened
+       after, which is a worse answer than a page load. So the shell takes the
+       press for the planner it is already holding, and lets any other one be
+       the link it already is — which is what every width above 600px does with
+       all of them anyway. */
+    const busy = [...document.querySelectorAll('.shell-page[data-mounted]')]
+      .find((el) => el.id !== screenId(key));
+    if (busy) return null;
+    return {key: key, href: u.href};
   };
 
   /* Capture, and stop there. preventDefault is not enough on its own: the

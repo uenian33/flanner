@@ -10,10 +10,13 @@
      forced by the design's runtime and both scoped to the planners.
 
      'unsafe-eval': the dc-runtime compiles the component from source at load,
-     so the class arrives as a string and is evaluated. Nothing on this page
-     takes input from anywhere — no query is read, no message is accepted, no
-     third-party script is loaded — so the string it evaluates is the one that
-     shipped with it.
+     so the class arrives as a string and is evaluated. What the page reads
+     from outside itself cannot reach that string: no message is accepted, no
+     third-party script is loaded, no query is parsed, and the two things it
+     does read from the address — whether the fragment is exactly '#picks', and
+     whether the referrer is this site — are each one comparison yielding a
+     boolean. Nothing off the URL is concatenated, evaluated or written to the
+     document, so the string that is evaluated is the one that shipped with it.
 
      The two tile hosts: the basemap travels with the page as an image, and
      these are asked for only if a probe finds a signal.
@@ -2000,6 +2003,11 @@ body{overscroll-behavior:none}
      them: one file for the whole site, which themes a planner from the
      accent on <html> above. -->
 <script src="../assets/js/theme-cd8b355c10.js"></script>
+<!-- The design's own settings, for the element built at the foot of this page.
+     Also here so the list page can build that element without executing this
+     one: a meta is something a parsed document answers, a line of JavaScript
+     is not. -->
+<meta name="fp-props" content="{&quot;navMode&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;auto&quot;, &quot;drawer&quot;, &quot;rail&quot;, &quot;bar&quot;], &quot;default&quot;: &quot;auto&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Adaptive shell&quot;}, &quot;density&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;compact&quot;, &quot;default&quot;, &quot;roomy&quot;], &quot;default&quot;: &quot;default&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Adaptive shell&quot;}, &quot;startView&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;timetable&quot;, &quot;list&quot;, &quot;map&quot;, &quot;plan&quot;, &quot;info&quot;], &quot;default&quot;: &quot;timetable&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Adaptive shell&quot;}, &quot;showWeather&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Adaptive shell&quot;}}">
 </head>
 <body>
 <x-dc>
@@ -2897,9 +2905,16 @@ body{overscroll-behavior:none}
      the element the runtime reads the component out of. That element has to be
      inline — the runtime takes the component from a script's textContent, and
      an external script has none — so the page makes it here, at the end of the
-     body, which is before the runtime's own DOMContentLoaded boot. -->
-<script src="../data/tamperejazz/planner.js"></script>
-<script src="../assets/js/planner-f1ea716cb3.js"></script>
+     body, which is before the runtime's own DOMContentLoaded boot.
+
+     The two are named, because this page is also read by another one: on a
+     phone the list mounts a planner into its own document rather than
+     navigating to it, and to do that it has to find the same two files and
+     build the same element. It used to look for the element itself, which
+     stopped existing the day the component moved out of the page — and a
+     shell that cannot find it showed a reader an empty screen. -->
+<script id="fp-data" src="../data/tamperejazz/planner.js"></script>
+<script id="fp-code" src="../assets/js/planner-d8e5a61307.js"></script>
 <script>
 (() => {
   const s = document.createElement('script');
@@ -3223,12 +3238,17 @@ body{overscroll-behavior:none}
       </div>`,
   };
 
-  /* Which of the three a URL is. The planners are the two directories that
-     carry one; everything else with a path segment is an article. */
+  /* Which of the three a URL is. A planner gets the shape of a planner and
+     everything else with a path segment is an article. The two the site
+     started with were written in here; five more arriving made the list wrong
+     rather than incomplete — a planner drawn as an article is a skeleton that
+     does not match what lands on it. Written by the build now, off the same
+     records the planners themselves come from. */
+  const PLANNER_DIRS = ["kallio","flow","juhlaviikot","blockfest","espoocine","lostinmusic","tamperejazz"];
   const shapeFor = (url) => {
     const rest = url.href.slice(BASE.length).replace(/index\.html$/, '');
     if (!rest) return 'home';
-    return /^(flow|kallio)\//.test(rest) ? 'planner' : 'page';
+    return PLANNER_DIRS.some((p) => rest.indexOf(p + '/') === 0) ? 'planner' : 'page';
   };
 
   /* ── 3. fetching ahead ──────────────────────────────

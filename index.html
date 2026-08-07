@@ -4514,8 +4514,13 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
      is positioned against the viewport. Inside the list's column it inherited
      a 1100px measure and 16-32px of padding on both sides, which is what made
      every card in it too narrow. -->
-<section class="page shell-page" id="pFlow" hidden></section>
 <section class="page shell-page" id="pKallio" hidden></section>
+<section class="page shell-page" id="pFlow" hidden></section>
+<section class="page shell-page" id="pJuhlaviikot" hidden></section>
+<section class="page shell-page" id="pBlockfest" hidden></section>
+<section class="page shell-page" id="pEspoocine" hidden></section>
+<section class="page shell-page" id="pLostinmusic" hidden></section>
+<section class="page shell-page" id="pTamperejazz" hidden></section>
 
 <script>
 const DATA = {"site":{"name":"Festival Planner","tagline":"Timetables you can actually plan with. One page per festival, works offline once loaded.","contact":"flanner47@gmail.com"},"festivals":[{"id":"biennial","name":"Helsinki Biennial","year":"","start":"2026-06-12","end":"2026-09-27","city":"Vallisaari, Helsinki","type":"Contemporary art","tags":["Ferry included","Guided tours","Uneven terrain"],"accent":"#855318","ink":"#4a2a02","description":"Site-specific commissions spread across an old garrison island, shown alongside the fortifications and meadows they were made for.","facts":{"time":"Open daily 11:00–18:00","place":"Ferry from Market Square, 20 min","price":"€22 · free under 18"},"official":"https://helsinkibiennaali.fi/en/","tickets":"https://helsinkibiennaali.fi/en/","free":false,"highlight":false,"category":"art","stats":{"days":108},"month":"2026-06","dates":"12 June – 27 September 2026"},{"id":"kbp","name":"Kallio Block Party","year":"2026","planner":"kallio/","logoInvert":false,"start":"2026-08-01","end":"2026-08-01","dates":"1 August 2026","month":"2026-08","city":"Alppila, Helsinki","type":"Street festival","tags":["Techno","Rap","House","Indie"],"accent":"#b6fc46","ink":"#0a1400","description":"One free day across the streets of Alppila. Nine independently run stages, from a live band stage by Linnanmäki to hard techno on Kirstinkatu.","stats":{"acts":98,"stages":9,"days":1},"stars":["Julma-Henri","Rony Rex","Nukkuvat Linnut","Stepa & Polarsoul"],"official":"https://www.kallioblockparty.org/","tickets":null,"free":true,"highlight":true,"category":"music","promoSrc":"./assets/home/kbp-promo.jpg","logoSrc":"./assets/logo.png"},{"id":"flow","name":"Flow Festival","year":"2026","planner":"flow/","logoInvert":false,"cardArt":"photo","start":"2026-08-14","end":"2026-08-16","dates":"14–16 August 2026","month":"2026-08","city":"Suvilahti, Helsinki","type":"City festival","tags":["Pop","Electronic","Indie","Jazz"],"accent":"#fff203","ink":"#000000","description":"Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.","stats":{"acts":156,"stages":10,"days":3},"stars":["Florence + The Machine","Nick Cave & the Bad Seeds","Turnstile","Zara Larsson","Lykke Li"],"official":"https://www.flowfestival.com/en/","tickets":"https://www.flowfestival.com/en/tickets/","free":false,"highlight":true,"category":"music","promoSrc":"./assets/home/flow-promo.jpg","logoSrc":"./assets/flow-logo.svg"},{"id":"juhlaviikot","name":"Helsinki Festival","year":"2026","start":"2026-08-18","end":"2026-09-05","city":"Helsinki","type":"Arts festival","tags":["Opera","Classical","Theatre","World music"],"accent":"#ffc861","ink":"#101010","description":"The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.","official":"https://helsinkifestival.fi/en/","tickets":"https://helsinkifestival.fi/en/programme/","free":false,"highlight":false,"category":"culture","planner":"juhlaviikot/","previewNote":"Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet.","stats":{"days":19},"month":"2026-08","dates":"18 August – 5 September 2026"},{"id":"blockfest","name":"Blockfest","year":"2026","start":"2026-08-21","end":"2026-08-22","city":"Ratinanniemi, Tampere","type":"Hip-hop festival","tags":["Hip-hop","Two days","Stadium"],"accent":"#FFD8E8","ink":"#441B2F","description":"The Nordics' largest hip-hop festival, two days at the Ratina stadium and the event park beside it.","official":"https://www.blockfest.fi/en/","tickets":"https://www.blockfest.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"blockfest/","previewNote":"Blockfest has published its line-up and the names of its three stages, not its running order. Set times appear on blockfest.fi closer to the weekend.","stats":{"days":2},"month":"2026-08","dates":"21–22 August 2026"},{"id":"espoocine","name":"Espoo Ciné","year":"2026","start":"2026-08-21","end":"2026-08-30","city":"Kino Tapiola, Espoo","type":"Film festival","tags":["New releases","International","Ten days"],"accent":"#b69df8","ink":"#101010","description":"Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.","official":"https://espoocine.fi/en/","tickets":"https://espoocine.fi/en/shop/tickets/","free":false,"highlight":false,"category":"film","planner":"espoocine/","previewNote":"Espoo Ciné publishes screening times per film rather than as a grid. The programme is on espoocine.fi; none of it is transcribed here yet.","stats":{"days":10},"month":"2026-08","dates":"21–30 August 2026"},{"id":"anarchy","name":"Love & Anarchy","year":"","start":"2026-09-17","end":"2026-09-27","city":"Five cinemas, Helsinki","type":"Film festival","tags":["Indoors","Subtitled","Director talks"],"accent":"#6750a4","ink":"#341e73","description":"Around 200 features and shorts from the year's festival circuit, with director talks and a late-night strand that runs past midnight.","facts":{"time":"Screenings from 12:00 daily","place":"Bio Rex, Kinopalatsi, Orion and two more","price":"Single film €14 · festival pass €120"},"linkLabel":"Programme","official":"https://hiff.fi/en/","tickets":"https://hiff.fi/en/","free":false,"highlight":false,"category":"film","stats":{"days":11},"month":"2026-09","dates":"17–27 September 2026"},{"id":"lostinmusic","name":"Lost In Music","year":"2026","start":"2026-10-01","end":"2026-10-02","city":"Tampere","type":"Club festival","tags":["Club venues","Two nights","Wristband"],"accent":"#FFD8E8","ink":"#441B2F","description":"Two evenings across Tampere's own venues — Tavara-asema, Telakka, G Livelab, Olympia and more — on one wristband.","facts":{"price":"2 days €69 · 1 day €49"},"official":"https://lostinmusic.fi/fi/","tickets":"https://lostinmusic.fi/fi/liput/","free":false,"highlight":false,"category":"music","planner":"lostinmusic/","previewNote":"Lost In Music has published which artists play which venue, but not when — the festival says the detailed timetable comes closer to the event.","stats":{"days":2},"month":"2026-10","dates":"1–2 October 2026"},{"id":"tamperejazz","name":"Tampere Jazz Happening","year":"2026","start":"2026-10-29","end":"2026-11-01","city":"Tampere","type":"Jazz festival","tags":["Contemporary jazz","Four days"],"accent":"#FFD8E8","ink":"#441B2F","description":"Four days of contemporary jazz, long known for its warm room and its broad idea of what the music can be.","facts":{"price":"€10–25"},"official":"https://www.tamperejazz.fi/en/","tickets":"https://www.tamperejazz.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"tamperejazz/","previewNote":"Tampere Jazz Happening publishes its running order closer to the weekend. The venues are here; the clock is not.","stats":{"days":4},"month":"2026-10","dates":"29 October – 1 November 2026"}],"categories":[{"id":"music","label":"Music","labelFi":"Musiikki","color":"#FFD8E8","ink":"#441B2F","blurb":"Concerts, club nights and music festivals."},{"id":"film","label":"Film","labelFi":"Elokuva","color":"#b69df8","ink":"#101010","blurb":"Screenings, film festivals and cinema events."},{"id":"art","label":"Art","labelFi":"Taide","color":"#ff9ec4","ink":"#101010","blurb":"Exhibitions, installations and gallery weekends."},{"id":"culture","label":"Culture","labelFi":"Kulttuuri","color":"#ffc861","ink":"#101010","blurb":"Street festivals, city events, food and heritage."},{"id":"others","label":"Others","labelFi":"Muut","color":"#d9d9d9","ink":"#101010","blurb":"Anything the four above do not describe."}],"categoryFallback":"others","places":[{"name":"Helsinki","count":5,"lat":60.1699,"lon":24.9384},{"name":"Tampere","count":3,"lat":61.4978,"lon":23.761},{"name":"Espoo","count":1,"lat":60.2055,"lon":24.6559}]};
@@ -4606,6 +4611,24 @@ const Store = (() => {
    the preferences: on the device, no identifiers, nothing sent anywhere. The
    set is filtered against the festivals this page actually knows, so a stale
    id neither counts nor gets written back. */
+/* ── what someone picked inside a planner ───────────────
+   This page's plan holds festivals; a planner's stars hold that festival's
+   acts, and they are two different lists on two different documents. This
+   reads the second one — only to ask whether it has anything in it, which is
+   what decides whether pressing a festival in My plan opens its planner at the
+   top or at what you picked. Offering the filtered view of an empty plan would
+   land a reader on a blank grid, which is a worse answer than the ordinary one.
+
+   The key is written by `schema.py` and used by both documents; the value is
+   the planner's, and nothing here looks inside it beyond its length. */
+const PICKS_NS = 'flanner1.picks.';
+const hasPicks = (id) => {
+  try {
+    const raw = localStorage.getItem(PICKS_NS + id);
+    return !!raw && JSON.parse(raw).length > 0;
+  } catch (e) { return false; }
+};
+
 const Plan = (() => {
   const known = new Set(DATA.festivals.map(f => f.id));
   const set = new Set(Store.get('plan').split(',').filter(id => known.has(id)));
@@ -5534,6 +5557,18 @@ const CAL = (() => {
 function calDay() { return CAL ? CAL.on() : null; }
 
 /* ── month groups ─────────────────────────────────────── */
+/* My plan is a fourth filter rather than a page of its own: the same list,
+   the same three controls over it, narrowed to what you starred. Written this
+   way the time filter, the kinds and the three shapes the list takes all keep
+   working inside it — a page of its own would have had to grow each of them
+   again, and they would have drifted.
+
+   Declared here rather than beside the other filters, which is where it reads
+   as belonging: the month sections are built once at the foot of this script,
+   which calls `card` before that point, and a `let` read before its
+   declaration throws rather than answering false. */
+let planOnly = false;
+
 const MONTH = ['January','February','March','April','May','June',
                'July','August','September','October','November','December'];
 const groups = {};
@@ -5647,11 +5682,12 @@ function card(f) {
      opens its own site in a new tab. The row stretches this link over itself,
      so a keyboard has the same target a pointer does. */
   const away = !f.planner;
-  const href = f.planner || link.href;
+  const dest = f.planner || null;
+  const href = dest || link.href;
   return `<article class="card theme-${esc(catOf(f).id)}${st.past ? ' past' : ''}"
              data-id="${esc(f.id)}" data-cat="${esc(catOf(f).id)}"
              data-cost="${f.free ? 'free' : 'paid'}"${
-               f.planner ? ` data-planner="${esc(f.planner)}"`
+               f.planner ? ` data-planner="${esc(dest)}"`
                          : ` data-away="${esc(link.href)}"`}>
     <div class="card__media">
       ${cardArt(f)}
@@ -5852,12 +5888,7 @@ const WHEN = [
    rather than a detail under it. Genres are still searchable; they are just
    not a filter. The chips carry the category id and show its label. */
 let when = 'any', cats = new Set(), draft = new Set(), q = '';
-/* My plan is a fourth filter rather than a page of its own: the same list,
-   the same three controls over it, narrowed to what you starred. Written
-   this way the time filter, the kinds and the three shapes the list takes
-   all keep working inside it — a page of its own would have had to grow
-   each of them again, and they would have drifted. */
-let planOnly = false;
+/* `planOnly` is declared above `card`, which reads it — see its note there. */
 /* Empty is everywhere, which is what the site is a list of until someone says
    otherwise. Not remembered between visits: a filter that silently hides two
    thirds of the page on arrival is a bug report waiting to happen. */
@@ -5966,6 +5997,32 @@ function matches(f) {
    drawn on a day and missing from the list below it. */
 const onCal = f => matches(f) && !status(f).past;
 
+/* Where a card goes, which is not the same question in both lists.
+
+   In My plan it goes to what you picked: the planner opens on its schedule
+   with the picks filter already on, which is the view this list is a list of.
+   In the festivals list it opens the planner the ordinary way — that list is a
+   list of festivals, and arriving at one already filtered would hide the
+   programme somebody came to read.
+
+   Only where the device has something stored for that festival, so the filter
+   always has something to show; a planner opened at an empty plan is a blank
+   grid, which is a worse answer than the ordinary one.
+
+   Set here rather than written into the card, because narrowing the list hides
+   cards rather than building them again — a destination decided at build time
+   would be whichever list happened to be showing when the page loaded. Both
+   the link and the attribute, because the words are a link and the rest of the
+   card is a press the page answers by assignment. */
+function planDest(el, f) {
+  if (!f.planner) return;
+  const dest = f.planner + (planOnly && hasPicks(f.id) ? '#picks' : '');
+  if (el.dataset.planner === dest) return;
+  el.dataset.planner = dest;
+  const a = el.querySelector('.card__link');
+  if (a) a.setAttribute('href', dest);
+}
+
 function apply() {
   let shown = 0;
   DATA.festivals.forEach(f => {
@@ -5985,6 +6042,7 @@ function apply() {
     }
     el.hidden = !ok;
     if (ok) shown++;
+    planDest(el, f);
   });
   document.querySelectorAll('.mgroup').forEach(g => {
     const n = g.querySelectorAll('.card:not([hidden])').length;
@@ -7057,6 +7115,11 @@ body.shell-busy .shell-page{pointer-events:none}
   const screens = {
     home: {el: document.getElementById('pHome'), scroll: 0, title: document.title, url: BASE},
   };
+  /* The planner directories, in the order the records list them. The screen
+     each one mounts into is empty markup this page already carries, written by
+     the same builder off the same list. */
+  const PLANNERS = ["kallio","flow","juhlaviikot","blockfest","espoocine","lostinmusic","tamperejazz"];
+  const screenId = (key) => 'p' + key[0].toUpperCase() + key.slice(1);
   let current = 'home', busy = false;
 
   const ICONS = {
@@ -7165,10 +7228,12 @@ body.shell-busy .shell-page{pointer-events:none}
      <x-dc> and logic script moved into the screen — which is all the
      runtime needs to compile and mount it where it stands. */
   let libs = null;
-  const loadScript = (src) => new Promise((res, rej) => {
+  const got = new Set();
+  const loadScript = (src) => got.has(src) ? Promise.resolve() : new Promise((res, rej) => {
+    got.add(src);
     const s = document.createElement('script');
     s.src = src; s.async = false;
-    s.onload = () => res(); s.onerror = () => rej(new Error('load ' + src));
+    s.onload = () => res(); s.onerror = () => { got.delete(src); rej(new Error('load ' + src)); };
     document.head.appendChild(s);
   });
   /* Resolved against the site root rather than against the document, because
@@ -7204,16 +7269,30 @@ body.shell-busy .shell-page{pointer-events:none}
     document.head.appendChild(lastWord);   /* always last */
   }
 
+  /* Every mounted planner's own data, by key — see the note where it is set. */
+  const FPS = window.__FP_BY__ = window.__FP_BY__ || {};
+
   async function mountPlanner(key, href) {
-    const el = document.getElementById('p' + key[0].toUpperCase() + key.slice(1));
-    if (!el) return null;
+    const el = document.getElementById(screenId(key));
+    if (!el) throw new Error('planner ' + key + ': no screen to mount into');
     if (el.dataset.mounted) return el;
     await ensureLibs();
     const html = await (await fetch(href, {credentials: 'same-origin'})).text();
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const xdc = doc.querySelector('x-dc');
-    const logic = doc.querySelector('script[data-dc-script]');
-    if (!xdc || !logic) return null;
+    /* The two files a planner is made of, named on the page rather than
+       guessed at: the design, which every planner shares, and the festival's
+       own values. This used to lift the compiled element straight out of the
+       fetched document — and the day the component moved into a file of its
+       own that element stopped existing, so what a phone got on pressing a
+       festival was a blank screen under the dock. It is built here now, the
+       same way the planner's own page builds it. */
+    const code = doc.getElementById('fp-code');
+    const data = doc.getElementById('fp-data');
+    const props = doc.querySelector('meta[name="fp-props"]');
+    if (!xdc || !code || !data) {
+      throw new Error('planner ' + key + ': nothing to mount');
+    }
 
     /* A planner writes its scheme on :root. Two of them in one document and
        the second would repaint the first — and the list with it. Each one's
@@ -7248,11 +7327,24 @@ body.shell-busy .shell-page{pointer-events:none}
 
     el.dataset.planner = key;
     el.appendChild(document.importNode(xdc, true));
+    /* The design once, whichever planner asks for it first; then this
+       festival's own values, which the data file leaves on two globals. */
+    await loadScript(new URL(code.getAttribute('src'), href).href);
+    await loadScript(new URL(data.getAttribute('src'), href).href);
+    /* Kept under its own name, because `FP` is one global and a second planner
+       mounted into this document would take it from the first — which nobody
+       would see until they went back to a planner they had already opened and
+       found another festival's dates in it. Each one closes over its own. */
+    FPS[key] = window.__FP_DATA__;
     const s2 = document.createElement('script');
     s2.type = 'text/x-dc';
     s2.setAttribute('data-dc-script', '');
-    s2.setAttribute('data-props', logic.getAttribute('data-props') || '');
-    s2.textContent = logic.textContent;
+    s2.setAttribute('data-props', props ? props.getAttribute('content') : '');
+    /* One declaration in front of the component, so every `FP` inside it is
+       this festival's. The runtime compiles the whole thing as one function
+       body, so a `const` at the top of it shadows the global for all of it. */
+    s2.textContent = 'const FP = window.__FP_BY__[' + JSON.stringify(key) + '];\n'
+      + window.__FP_SRC__;
     el.appendChild(s2);
 
     /* The runtime names its root from the address, so the URL is
@@ -7313,7 +7405,7 @@ body.shell-busy .shell-page{pointer-events:none}
     screens[current].scroll = window.scrollY;
     if (forward) {
       dock.toggleAttribute('data-deep', true);
-      let el = document.getElementById('p' + key[0].toUpperCase() + key.slice(1));
+      let el = document.getElementById(screenId(key));
       screens[key] = screens[key] || {el, scroll: 0, title: document.title, url: href};
       screens[key].el = el;
       /* The address comes first. The runtime names its root from the path and
@@ -7327,6 +7419,12 @@ body.shell-busy .shell-page{pointer-events:none}
       }
       swapDestinations(() => plannerSet(el));
       crossfade(from, el, true);
+      /* A planner mounts once and is kept, so the second visit to the same
+         festival is a screen that has already decided what it is showing. The
+         address has changed under it — a link out of My plan asks for the
+         picks — and `pushState` fires nothing, so it is told. Harmless on a
+         first mount, which read the same address itself. */
+      dispatchEvent(new CustomEvent('fp:open', {detail: {key: key}}));
       document.body.classList.add('shell-deep');
       watch(el);
     } else {
@@ -7383,8 +7481,29 @@ body.shell-busy .shell-page{pointer-events:none}
     if (!href) return null;
     const u = new URL(href, location.href);
     if (!u.href.startsWith(BASE)) return null;
-    const m = /^(flow|kallio)\/$/.exec(u.href.slice(BASE.length).replace(/index\.html$/, ''));
-    return m ? {key: m[1], href: u.href} : null;
+    /* Every planner the site publishes, written by the build rather than
+       listed here — the two this shell was born with stayed in a regular
+       expression through five more being added, and the five it did not name
+       quietly fell through to a document navigation on a phone: the same page,
+       without the shell that is the whole reason the phone feels the way it
+       does. The path is matched without the fragment, because a link into
+       someone's picks carries one and it is the planner's to read. */
+    const rel = u.href.slice(BASE.length).replace(/index\.html$/, '').replace(/#.*$/, '');
+    const key = PLANNERS.find((p) => rel === p + '/');
+    if (!key) return null;
+    /* One planner at a time. The runtime names its root off the address —
+       every planner's path ends in a slash, so every one of them is called
+       `Root` — and it keeps one component under a name and one element at
+       `#dc-root`. A second planner mounted beside the first takes both: the
+       screen you opened before would be redrawn as the festival you opened
+       after, which is a worse answer than a page load. So the shell takes the
+       press for the planner it is already holding, and lets any other one be
+       the link it already is — which is what every width above 600px does with
+       all of them anyway. */
+    const busy = [...document.querySelectorAll('.shell-page[data-mounted]')]
+      .find((el) => el.id !== screenId(key));
+    if (busy) return null;
+    return {key: key, href: u.href};
   };
 
   /* Capture, and stop there. preventDefault is not enough on its own: the
@@ -7738,12 +7857,17 @@ body.shell-busy .shell-page{pointer-events:none}
       </div>`,
   };
 
-  /* Which of the three a URL is. The planners are the two directories that
-     carry one; everything else with a path segment is an article. */
+  /* Which of the three a URL is. A planner gets the shape of a planner and
+     everything else with a path segment is an article. The two the site
+     started with were written in here; five more arriving made the list wrong
+     rather than incomplete — a planner drawn as an article is a skeleton that
+     does not match what lands on it. Written by the build now, off the same
+     records the planners themselves come from. */
+  const PLANNER_DIRS = ["kallio","flow","juhlaviikot","blockfest","espoocine","lostinmusic","tamperejazz"];
   const shapeFor = (url) => {
     const rest = url.href.slice(BASE.length).replace(/index\.html$/, '');
     if (!rest) return 'home';
-    return /^(flow|kallio)\//.test(rest) ? 'planner' : 'page';
+    return PLANNER_DIRS.some((p) => rest.indexOf(p + '/') === 0) ? 'planner' : 'page';
   };
 
   /* ── 3. fetching ahead ──────────────────────────────

@@ -48,6 +48,11 @@ def shell_libs() -> list[str]:
         out.append(f"./assets/js/{hit[0].name}")
     return out
 
+def screen_id(key: str) -> str:
+    """The element a planner mounts into. The shell derives the same name."""
+    return "p" + key[:1].upper() + key[1:]
+
+
 def main():
     # Validated and normalised before anything is rendered — see schema.py.
     cfg = schema.load()
@@ -86,6 +91,10 @@ def main():
                    + [seo.festival_event(f) for f in planned]
         )),
         ("__CATCSS__", schema.category_css(cfg)),
+        # The namespace a planner writes its picks under. Stated once in
+        # schema.py, because a page that asks under the wrong key finds nothing
+        # and quietly stops offering to open a planner at your plan.
+        ("__PICKS_NS__", schema.PICKS_NS),
         # The two places a colour that is not the page's own belongs: a
         # festival's own drawn cover, and the highlight, which is one festival
         # at a time rather than a list. The shell stays monochrome — see below.
@@ -118,10 +127,18 @@ def main():
         # The app shell — the dock, the screens and the router that swaps
         # them without a document load. It names the four libraries a planner
         # needs, which are content-hashed, so it reads them off disk in the
-        # order the runtime wants rather than repeating the names here.
-        ("__SHELL__", (ROOT / "scripts" / "_shell.html").read_text().replace(
-            "__LIBS__", json.dumps(shell_libs(), separators=(",", ":")))),
-        ("__PAGEFX__", (ROOT / "scripts" / "_pagefx.html").read_text()),
+        # order the runtime wants rather than repeating the names here; and it
+        # names the planners, which are a folder someone drops in, so it reads
+        # those off the records for the same reason.
+        ("__SHELL__", (ROOT / "scripts" / "_shell.html").read_text()
+            .replace("__LIBS__", json.dumps(shell_libs(), separators=(",", ":")))
+            .replace("__PLANNERS__", json.dumps(schema.planner_dirs(), separators=(",", ":")))),
+        # One empty screen per planner, for the shell to mount into. Nothing is
+        # fetched until a reader asks for one.
+        ("__SHELL_PAGES__", "\n".join(
+            f'<section class="page shell-page" id="{screen_id(k)}" hidden></section>'
+            for k in schema.planner_dirs())),
+        ("__PAGEFX__", schema.pagefx()),
         ("__MWC__", mwc.script()),
         ("__CONTACT__", cfg["site"]["contact"]),
     ]:

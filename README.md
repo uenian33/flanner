@@ -415,13 +415,56 @@ the filter chips, and cards pick both up through `data-cat`.
 
 ## What the pages remember
 
-Three settings — theme, card view, place — held by the `Store` module in
+Settings — theme, card view, place, language — held by the `Store` module in
 `scripts/home.html`. No identifiers, no analytics, nothing that leaves the
 device. Each field declares its allowed values and its default, so a stale or
 hand-edited value fails the check and the default takes over. Keys are
 namespaced and versioned (`flanner1.theme`), written to both a first-party
 cookie and local storage because neither survives every situation alone, and the
 older `fp-*` keys are still read so existing devices keep their settings.
+
+Two lists, which are not the same list. `flanner1.plan` is the festivals you
+starred on the list page. `flanner1.picks.<festival-id>` is the acts you starred
+inside that festival's planner — written by the planner, read by the list page,
+and named in one place (`PICKS_NS` in `scripts/schema.py`) because the whole
+feature is the two agreeing.
+
+## Opened at your picks
+
+Pressing a festival in **My plan** opens its planner on the schedule with the
+picks filter already on, on a day you have picked something on. Elsewhere it
+opens the planner the ordinary way: the festivals list is a list of festivals,
+and arriving at one already filtered would hide the programme somebody came to
+read.
+
+| | |
+|---|---|
+| The picks are kept | They were not. The design holds starred acts in React state alone, so a reload lost the lot — on a page whose own About card promises they stay on this device, and under a list page offering to open a planner at a plan that would have been empty every time. What is stored is the day, the start and the name of each set, not the event id: those are positional (`e0`, `e1`), so inserting one act into a corrected running order renumbers every act after it and a stored `e42` comes back as a star on somebody else. Local storage only, guarded on every call — the other settings are written to a cookie too, but a weekend of picks is neither under 4KB nor anything to send up with every request. |
+| Written where they change | Not at each of the four things that can star an act. And against a reference the component keeps itself, not against `prevState`: the runtime calls `componentDidUpdate(prevProps)` with one argument, so the design's own `if (prevState && …)` beside it has never once run. |
+| A fragment, not a query | `#picks` is never sent to a server, so the worker's cache, the sitemap and the canonical URL all go on seeing one address per planner. The planner reads it at boot — one comparison against one constant, which is why the note beside the CSP could be corrected rather than withdrawn. |
+| And said out loud, because a fragment is not always news | On a phone the list mounts a planner into its own document and keeps it mounted, so the second visit to a festival never builds that component again: the address changes under a page that has already decided what it is showing, and `pushState` fires nothing. The shell dispatches an event; the same handler answers `hashchange`, which is what a fragment typed into the bar fires. |
+| Only where there is something to show | The link carries the fragment for a festival that has picks stored on this device, and not otherwise. A planner opened at an empty plan is a blank grid, which is a worse answer than the ordinary one. |
+| Decided when the list is narrowed | Not when the card is built. Narrowing to My plan hides cards rather than making them again, so a destination written at build time would be whichever list happened to be showing when the page loaded — which is how the first version of this silently never fired. |
+
+## One planner at a time, in the shell
+
+Two repairs the above needed, both of them older than it.
+
+The shell mounted a planner by lifting the compiled `<script data-dc-script>`
+out of the fetched document. That element stopped existing the day the
+component moved into a file of its own, so what a phone got on pressing a
+festival was a blank screen under the dock — on the live site, for both
+planners, for as long as the split has been deployed. The page names its two
+files now (`#fp-code`, `#fp-data`) and its settings (`<meta name="fp-props">`),
+and the shell builds the element the same way the planner's own page does.
+
+And it mounts one. The runtime names its root off the address — every planner's
+path ends in a slash, so every one of them is called `Root` — and it keeps one
+component under a name and one element at `#dc-root`. A second planner mounted
+beside the first takes both: the screen you opened before would be redrawn as
+the festival you opened after. So the shell takes the press for the planner it
+is already holding and lets any other one be the link it already is, which is
+what every width above 600px does with all of them anyway.
 
 Timetables are transcribed from each organiser's published schedule. Unofficial,
 not affiliated with any festival.

@@ -738,14 +738,186 @@ def patch_script(src: str, fest: Festival) -> str:
     src = sub_once(src, r"'Nothing starred for Saturday yet'",
                    "'Nothing starred for ' + %s + ' yet'" % day_short, "empty stars")
 
-    # The day the planner opens on: the one being held today, else the first.
+    src = patch_picks(src)
+
+    # The day the planner opens on. Normally the one being held today, else the
+    # first — but a planner opened at someone's picks opens on a day they have
+    # picked something on, or the filter would draw an empty grid over a plan
+    # that is not empty at all: `filtered()` is scoped to one day, so a Sunday
+    # pick is invisible from Friday.
     src = sub_once(src, r"day: 'sat',",
-                   "day: (function (D) { const t = new Date().toISOString().slice(0, 10);\n"
-                   "      return (D.find(d => d.date === t) || D[0]).id; })(FP.dayIds),",
+                   "day: (function (D, self) {\n"
+                   "      if (self.DEEP_PICKS) {\n"
+                   "        const on = new Set(self.EVENTS.filter(e => self.PICKS[e.id])\n"
+                   "          .map(e => e.d));\n"
+                   "        const d = D.find(x => on.has(x.id));\n"
+                   "        if (d) return d.id;\n"
+                   "      }\n"
+                   "      const t = new Date().toISOString().slice(0, 10);\n"
+                   "      return (D.find(d => d.date === t) || D[0]).id;\n"
+                   "    })(FP.dayIds, this),",
                    "opening day")
 
     return patch_nav(patch_card(patch_sheet(patch_rows(patch_cards(patch_grid(patch_viewport(
         patch_stage_colours(patch_weather(patch_map(src, fest), fest), fest))))))))
+
+
+def patch_picks(src: str) -> str:
+    """Keep what a reader starred, and let a link open the planner at it.
+
+    Two halves of one feature. The list page's My plan holds festivals; a
+    planner's stars hold acts, and the two never met — pressing a festival in
+    My plan opened its planner at the top, as if you had arrived from nowhere.
+    Now it opens at what you picked. That is only worth anything if the picks
+    are still there, and they were not: the design keeps them in React state
+    alone, so a reload lost the lot — on a page whose own About card has been
+    promising all along that your picks stay on this device.
+    """
+    # ---- what you picked, kept ----
+    src = sub_once(
+        src,
+        r"  state = \{\n",
+        "  /* ── the picks, on the device ────────────────────\n"
+        "     What is stored is not the event id. Those are positional — `e0`,\n"
+        "     `e1`, in the order the stages are read — so inserting one act into\n"
+        "     a corrected running order renumbers every act after it, and a\n"
+        "     stored `e42` would come back as a star on somebody else. The key\n"
+        "     is what a reader would use to name the set: its day, its start and\n"
+        "     its name. That is unique across every programme published here,\n"
+        "     and it survives everything around it being re-transcribed. An act\n"
+        "     whose set has since moved simply is not found, which is the right\n"
+        "     answer — the star was for a set at a time, and that set is gone.\n"
+        "\n"
+        "     Local storage only. The site's other settings are written to a\n"
+        "     cookie as well, because a cookie survives situations local storage\n"
+        "     does not; but a cookie is capped near 4KB and is sent up with\n"
+        "     every request, and a weekend of picks is neither small enough nor\n"
+        "     anybody's business but the reader's. Every call is guarded: in\n"
+        "     private mode `localStorage` throws on the way in, and a page that\n"
+        "     cannot remember must still work. */\n"
+        "  PICK_KEY = FP.pickKey;\n"
+        "  pickName(e) { return e.d + '|' + e.from + '|' + e.title; }\n"
+        "  readPicks() {\n"
+        "    try {\n"
+        "      const raw = localStorage.getItem(this.PICK_KEY);\n"
+        "      if (!raw) return {};\n"
+        "      const want = new Set(JSON.parse(raw));\n"
+        "      return Object.fromEntries(this.EVENTS\n"
+        "        .filter(e => want.has(this.pickName(e))).map(e => [e.id, true]));\n"
+        "    } catch (e) { return {}; }\n"
+        "  }\n"
+        "  savePicks(star) {\n"
+        "    try {\n"
+        "      const names = this.EVENTS.filter(e => star[e.id]).map(e => this.pickName(e));\n"
+        "      if (names.length) localStorage.setItem(this.PICK_KEY, JSON.stringify(names));\n"
+        "      else localStorage.removeItem(this.PICK_KEY);\n"
+        "    } catch (e) { /* no storage: the page still works, it just forgets */ }\n"
+        "  }\n"
+        "  PICKS = this.readPicks();\n"
+        "\n"
+        "  /* ── opened at your picks ────────────────────────\n"
+        "     A fragment rather than a query. It is never sent to the server, so\n"
+        "     the worker's cache, the sitemap and the canonical URL all go on\n"
+        "     seeing one address per planner; and the app shell pushes the link's\n"
+        "     own href before it boots a planner, so this is already true of the\n"
+        "     address bar whether the page was navigated to or mounted into the\n"
+        "     list document on a phone. Nothing is parsed out of it: it is one\n"
+        "     comparison against one constant, and what it decides is a boolean.\n"
+        "     The list page only writes it on a festival that has picks stored,\n"
+        "     so this cannot land anyone on an empty screen — and if it somehow\n"
+        "     did, the filter's own `Nothing starred yet` says so and offers the\n"
+        "     way back to the full programme. */\n"
+        "  DEEP_PICKS = location.hash === '#picks';\n"
+        "\n"
+        "  state = {\n",
+        "the pick store")
+
+    # The design seeded these two from a `mark` on its sample sets. Ours carry
+    # none — `mark` is always '' — so what seeds them now is the device. One
+    # object for both, because a star and `Add to plan` are one state: every
+    # `planned` in this file is read straight off `star`.
+    src = sub_once(
+        src,
+        r"    star: Object\.fromEntries\(this\.EVENTS\.filter\(e => e\.mark === 'star'"
+        r" \|\| e\.mark === 'both'\)\.map\(e => \[e\.id, true\]\)\),\n"
+        r"    plan: Object\.fromEntries\(this\.EVENTS\.filter\(e => e\.mark === 'plan'"
+        r" \|\| e\.mark === 'both'\)\.map\(e => \[e\.id, true\]\)\)\n",
+        "    star: this.PICKS, plan: this.PICKS\n",
+        "picks come off the device")
+
+    # Written in one place rather than at each of the four things that can star
+    # an act — a cell, a list row, the act card and Clear stars. A miss at any
+    # one of those is a star that is there until the next load.
+    #
+    # Against a reference this keeps itself, not against `prevState`: the
+    # runtime calls `this.logic.componentDidUpdate(prevProps)` with one
+    # argument, so the second is always undefined here. The design's own
+    # `if (prevState && …)` a few lines below is dead for that reason — which is
+    # why this cannot simply join it.
+    src = sub_once(
+        src,
+        r"  componentDidUpdate\(prevProps, prevState\) \{\n",
+        "  componentDidUpdate(prevProps, prevState) {\n"
+        "    if (this.SAVED !== this.state.star) {\n"
+        "      this.SAVED = this.state.star;\n"
+        "      this.savePicks(this.state.star);\n"
+        "    }\n",
+        "picks are written when they change")
+    # What was read at boot is what is already stored, so the first render does
+    # not write it straight back.
+    src = sub_once(
+        src,
+        r"  PICKS = this\.readPicks\(\);\n",
+        "  PICKS = this.readPicks();\n  SAVED = this.PICKS;\n",
+        "the picks start out saved")
+
+    # And the view it opens in. `S.view` null means the design's own default —
+    # Info on a phone, the programme on anything wider — so naming a view here
+    # is what overrides both.
+    src = sub_once(
+        src,
+        r"    view: null, prog: 'timetable', ",
+        "    view: this.DEEP_PICKS ? 'timetable' : null, prog: 'timetable', ",
+        "opened at the schedule")
+    src = sub_once(
+        src,
+        r"chromeHidden: false, onlyPicks: false, ",
+        "chromeHidden: false, onlyPicks: this.DEEP_PICKS, ",
+        "opened on the picks filter")
+
+    # Reading the address at boot answers for the first arrival and no other.
+    # On a phone the list mounts a planner into its own document and keeps it
+    # mounted, so the second visit to the same festival never builds this
+    # component again — the address changes underneath a page that has already
+    # decided what it is showing. The shell says so; the same handler answers a
+    # fragment typed into the bar, which fires `hashchange` and nothing else.
+    src = sub_once(
+        src,
+        r"    window\.addEventListener\('keydown', this\.onKeyEsc\);\n",
+        "    window.addEventListener('keydown', this.onKeyEsc);\n"
+        "    this.openPicks = () => {\n"
+        "      const on = new Set(this.EVENTS.filter(e => this.state.star[e.id])\n"
+        "        .map(e => e.d));\n"
+        "      const d = this.DAYS.find(x => on.has(x.id));\n"
+        "      this.setState(Object.assign(\n"
+        "        { view: 'timetable', onlyPicks: true, navOpen: false, sheet: null },\n"
+        "        d ? { day: d.id } : null));\n"
+        "    };\n"
+        "    this.onDeep = (e) => {\n"
+        "      if (e && e.detail && e.detail.key && e.detail.key !== FP.slug) return;\n"
+        "      if (location.hash === '#picks') this.openPicks();\n"
+        "    };\n"
+        "    window.addEventListener('hashchange', this.onDeep);\n"
+        "    window.addEventListener('fp:open', this.onDeep);\n",
+        "told when the address asks for the picks")
+    src = sub_once(
+        src,
+        r"    window\.removeEventListener\('keydown', this\.onKeyEsc\);\n",
+        "    window.removeEventListener('keydown', this.onKeyEsc);\n"
+        "    window.removeEventListener('hashchange', this.onDeep);\n"
+        "    window.removeEventListener('fp:open', this.onDeep);\n",
+        "and stops listening when it goes")
+    return src
 
 
 # ── the destination indicator ─────────────────────────
@@ -6810,6 +6982,11 @@ def build(fid: str) -> pathlib.Path:
 
     fest.D.update({
         "slug": fest.fid,
+        # Where this festival's picks live on the device. Named by `schema.py`
+        # so the list page, which asks whether a festival has any before
+        # offering to open a planner at them, cannot drift from the planner
+        # that writes them.
+        "pickKey": schema.picks_key(f["id"]),
         "festName": ("%s %s" % (f["name"], f.get("year") or "")).strip(),
         "festWhen": "%s · %s" % (f["dates"], f["city"]),
         "nameYear": "%s %s" % (f["name"], f["year"]),
@@ -6890,10 +7067,13 @@ def build(fid: str) -> pathlib.Path:
      forced by the design's runtime and both scoped to the planners.
 
      'unsafe-eval': the dc-runtime compiles the component from source at load,
-     so the class arrives as a string and is evaluated. Nothing on this page
-     takes input from anywhere — no query is read, no message is accepted, no
-     third-party script is loaded — so the string it evaluates is the one that
-     shipped with it.
+     so the class arrives as a string and is evaluated. What the page reads
+     from outside itself cannot reach that string: no message is accepted, no
+     third-party script is loaded, no query is parsed, and the two things it
+     does read from the address — whether the fragment is exactly '#picks', and
+     whether the referrer is this site — are each one comparison yielding a
+     boolean. Nothing off the URL is concatenated, evaluated or written to the
+     document, so the string that is evaluated is the one that shipped with it.
 
      The two tile hosts: the basemap travels with the page as an image, and
      these are asked for only if a probe finds a signal.
@@ -6954,6 +7134,11 @@ x-dc{{display:none}}
      them: one file for the whole site, which themes a planner from the
      accent on <html> above. -->
 <script src="{theme_js}"></script>
+<!-- The design's own settings, for the element built at the foot of this page.
+     Also here so the list page can build that element without executing this
+     one: a meta is something a parsed document answers, a line of JavaScript
+     is not. -->
+<meta name="fp-props" content="{props_attr}">
 </head>
 <body>
 <x-dc>
@@ -6963,9 +7148,16 @@ x-dc{{display:none}}
      the element the runtime reads the component out of. That element has to be
      inline — the runtime takes the component from a script's textContent, and
      an external script has none — so the page makes it here, at the end of the
-     body, which is before the runtime's own DOMContentLoaded boot. -->
-<script src="{data_js}"></script>
-<script src="{planner_js}"></script>
+     body, which is before the runtime's own DOMContentLoaded boot.
+
+     The two are named, because this page is also read by another one: on a
+     phone the list mounts a planner into its own document rather than
+     navigating to it, and to do that it has to find the same two files and
+     build the same element. It used to look for the element itself, which
+     stopped existing the day the component moved out of the page — and a
+     shell that cannot find it showed a reader an empty screen. -->
+<script id="fp-data" src="{data_js}"></script>
+<script id="fp-code" src="{planner_js}"></script>
 <script>
 (() => {{
   const s = document.createElement('script');
@@ -6980,7 +7172,7 @@ x-dc{{display:none}}
      did without: a navigation off one of them was a bare document load, and a
      planner is the page a reader spends the longest on and leaves from most.
      It brings the fade-through, the fetch-ahead and the skeleton with it. -->
-{(ROOT / "scripts" / "_pagefx.html").read_text()}
+{schema.pagefx()}
 </body>
 </html>
 """

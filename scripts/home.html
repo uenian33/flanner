@@ -3293,8 +3293,7 @@ __FOOTER__
      is positioned against the viewport. Inside the list's column it inherited
      a 1100px measure and 16-32px of padding on both sides, which is what made
      every card in it too narrow. -->
-<section class="page shell-page" id="pFlow" hidden></section>
-<section class="page shell-page" id="pKallio" hidden></section>
+__SHELL_PAGES__
 
 <script>
 const DATA = __DATA__;
@@ -3385,6 +3384,24 @@ const Store = (() => {
    the preferences: on the device, no identifiers, nothing sent anywhere. The
    set is filtered against the festivals this page actually knows, so a stale
    id neither counts nor gets written back. */
+/* ── what someone picked inside a planner ───────────────
+   This page's plan holds festivals; a planner's stars hold that festival's
+   acts, and they are two different lists on two different documents. This
+   reads the second one — only to ask whether it has anything in it, which is
+   what decides whether pressing a festival in My plan opens its planner at the
+   top or at what you picked. Offering the filtered view of an empty plan would
+   land a reader on a blank grid, which is a worse answer than the ordinary one.
+
+   The key is written by `schema.py` and used by both documents; the value is
+   the planner's, and nothing here looks inside it beyond its length. */
+const PICKS_NS = '__PICKS_NS__';
+const hasPicks = (id) => {
+  try {
+    const raw = localStorage.getItem(PICKS_NS + id);
+    return !!raw && JSON.parse(raw).length > 0;
+  } catch (e) { return false; }
+};
+
 const Plan = (() => {
   const known = new Set(DATA.festivals.map(f => f.id));
   const set = new Set(Store.get('plan').split(',').filter(id => known.has(id)));
@@ -4313,6 +4330,18 @@ const CAL = (() => {
 function calDay() { return CAL ? CAL.on() : null; }
 
 /* ── month groups ─────────────────────────────────────── */
+/* My plan is a fourth filter rather than a page of its own: the same list,
+   the same three controls over it, narrowed to what you starred. Written this
+   way the time filter, the kinds and the three shapes the list takes all keep
+   working inside it — a page of its own would have had to grow each of them
+   again, and they would have drifted.
+
+   Declared here rather than beside the other filters, which is where it reads
+   as belonging: the month sections are built once at the foot of this script,
+   which calls `card` before that point, and a `let` read before its
+   declaration throws rather than answering false. */
+let planOnly = false;
+
 const MONTH = ['January','February','March','April','May','June',
                'July','August','September','October','November','December'];
 const groups = {};
@@ -4426,11 +4455,12 @@ function card(f) {
      opens its own site in a new tab. The row stretches this link over itself,
      so a keyboard has the same target a pointer does. */
   const away = !f.planner;
-  const href = f.planner || link.href;
+  const dest = f.planner || null;
+  const href = dest || link.href;
   return `<article class="card theme-${esc(catOf(f).id)}${st.past ? ' past' : ''}"
              data-id="${esc(f.id)}" data-cat="${esc(catOf(f).id)}"
              data-cost="${f.free ? 'free' : 'paid'}"${
-               f.planner ? ` data-planner="${esc(f.planner)}"`
+               f.planner ? ` data-planner="${esc(dest)}"`
                          : ` data-away="${esc(link.href)}"`}>
     <div class="card__media">
       ${cardArt(f)}
@@ -4631,12 +4661,7 @@ const WHEN = [
    rather than a detail under it. Genres are still searchable; they are just
    not a filter. The chips carry the category id and show its label. */
 let when = 'any', cats = new Set(), draft = new Set(), q = '';
-/* My plan is a fourth filter rather than a page of its own: the same list,
-   the same three controls over it, narrowed to what you starred. Written
-   this way the time filter, the kinds and the three shapes the list takes
-   all keep working inside it — a page of its own would have had to grow
-   each of them again, and they would have drifted. */
-let planOnly = false;
+/* `planOnly` is declared above `card`, which reads it — see its note there. */
 /* Empty is everywhere, which is what the site is a list of until someone says
    otherwise. Not remembered between visits: a filter that silently hides two
    thirds of the page on arrival is a bug report waiting to happen. */
@@ -4745,6 +4770,32 @@ function matches(f) {
    drawn on a day and missing from the list below it. */
 const onCal = f => matches(f) && !status(f).past;
 
+/* Where a card goes, which is not the same question in both lists.
+
+   In My plan it goes to what you picked: the planner opens on its schedule
+   with the picks filter already on, which is the view this list is a list of.
+   In the festivals list it opens the planner the ordinary way — that list is a
+   list of festivals, and arriving at one already filtered would hide the
+   programme somebody came to read.
+
+   Only where the device has something stored for that festival, so the filter
+   always has something to show; a planner opened at an empty plan is a blank
+   grid, which is a worse answer than the ordinary one.
+
+   Set here rather than written into the card, because narrowing the list hides
+   cards rather than building them again — a destination decided at build time
+   would be whichever list happened to be showing when the page loaded. Both
+   the link and the attribute, because the words are a link and the rest of the
+   card is a press the page answers by assignment. */
+function planDest(el, f) {
+  if (!f.planner) return;
+  const dest = f.planner + (planOnly && hasPicks(f.id) ? '#picks' : '');
+  if (el.dataset.planner === dest) return;
+  el.dataset.planner = dest;
+  const a = el.querySelector('.card__link');
+  if (a) a.setAttribute('href', dest);
+}
+
 function apply() {
   let shown = 0;
   DATA.festivals.forEach(f => {
@@ -4764,6 +4815,7 @@ function apply() {
     }
     el.hidden = !ok;
     if (ok) shown++;
+    planDest(el, f);
   });
   document.querySelectorAll('.mgroup').forEach(g => {
     const n = g.querySelectorAll('.card:not([hidden])').length;
