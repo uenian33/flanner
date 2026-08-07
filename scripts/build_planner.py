@@ -334,6 +334,9 @@ def patch_script(src: str, fest: Festival) -> str:
         "     Anything over six hours is a day-long installation rather than\n"
         "     a set, and is not what closes anything. */\n"
         "  STARS = " + js(f.get("stars") or []) + ";\n"
+        "  FEST_NAME = " + js("%s %s" % (f["name"], f.get("year") or "")).strip() + ";\n"
+        "  FEST_WHEN = " + js("%s · %s" % (f["dates"], f["city"])) + ";\n"
+        "  FEST_SLUG = " + js(fest.fid) + ";\n"
         "  get LINEUP() {\n"
         "    if (this._lineup) return this._lineup;\n"
         "    const out = [], seen = new Set();\n"
@@ -1844,6 +1847,11 @@ def patch_sheet(src: str) -> str:
         "  }\n"
         "  leavePlanner() {\n"
         "    if (this.FROM_SITE && history.length > 1) history.back();\n"
+        "    /* A handler, not a link, so the page-transition layer has to be\n"
+        "       told: the click listener that arms the skeleton only sees\n"
+        "       anchors. Going back through history needs nothing — that is a\n"
+        "       navigation the browser already had the page for. */\n"
+        "    else if (window.__fxNav) window.__fxNav('../index.html');\n"
         "    else window.location.href = '../index.html';\n"
         "  }\n"
         "  goBack = () => {",
@@ -2249,6 +2257,30 @@ def patch_nav(src: str) -> str:
         "        }",
         "the plan button's sparks")
 
+    # ---- the plan, out of the app ----
+    # With the filter on, the page is showing one thing: what you starred.
+    # The pill that carries the temperature carries the way to send it
+    # instead — the same pill, in the same place, saying what it does now.
+    src = sub_once(
+        src,
+        r"      showWeatherBrief: this\.props\.showWeather !== false && !!S\.wx,",
+        "      showWeatherBrief: this.props.showWeather !== false"
+        " && (!!S.wx || S.onlyPicks),\n"
+        "      /* The forecast is a reading and the plan is a picture; the one\n"
+        "         control is whichever of them the page is about. */\n"
+        "      sharing: !!S.onlyPicks,",
+        "the pill turns to sharing")
+    src = sub_once(
+        src,
+        r"      wxTemp: S\.wx \? S\.wx\.temp : '',",
+        "      wxTemp: S.onlyPicks ? 'Share' : (S.wx ? S.wx.temp : ''),",
+        "the pill's word")
+    src = sub_once(
+        src,
+        r"      wxIcon: S\.wx \? S\.wx\.icon : '#wi-cloudy',",
+        "      wxIcon: S.onlyPicks ? '#i-share' : (S.wx ? S.wx.icon : '#wi-cloudy'),",
+        "the pill's glyph")
+
     # ---- one bar height, everywhere ----
     # The bar was 76 tall with its labels and 50 without, and the home page's
     # was 80: three heights for one component. M3's navigation bar is 80dp on
@@ -2472,6 +2504,17 @@ def patch_nav(src: str) -> str:
         "          })\n"
         "        ),",
         "the weather chip goes to the weather")
+
+    # And with the filter on it is the way to send the plan, not the way to
+    # the forecast: the same pill, saying what it does now.
+    src = sub_once(
+        src,
+        r"        weatherToggleLabel: 'Weather and festival info',\n"
+        r"        toggleWeather: \(\) => this\.setState\(\n",
+        "        weatherToggleLabel: S.onlyPicks\n"
+        "          ? 'Share your plan as a picture' : 'Weather and festival info',\n"
+        "        toggleWeather: () => S.onlyPicks ? this.sharePlan() : this.setState(\n",
+        "the pill's job")
 
     # The starred cell flies to the button that counts it. The two call sites
     # are the same line — the cell in the grid and the row in the list — so
@@ -3196,7 +3239,7 @@ def patch_weather(src: str, fest: Festival) -> str:
     stages = fest.stages
     lat = round(sum(s["lat"] for s in stages) / len(stages), 4)
     lon = round(sum(s["lng"] for s in stages) / len(stages), 4)
-    block = (WEATHER_JS + WEATHER_NOTE_JS).replace(
+    block = (WEATHER_JS + WEATHER_NOTE_JS + POSTER_JS).replace(
         "__WEATHER__", js({"lat": lat, "lon": lon, "tz": "Europe/Helsinki"}))
 
     # The component gains the weather methods, and asks for the forecast when it
@@ -3253,6 +3296,282 @@ def patch_weather(src: str, fest: Festival) -> str:
                    "weather values")
     return src
 
+
+POSTER_JS = r"""
+  /* ── the plan, as a picture ────────────────────────────
+     A starred plan is the one thing in here worth sending someone, and a
+     screenshot of a scrolling timetable is not it. This draws the plan on a
+     canvas — the schedule as a grid of stage columns, the programme as a list
+     of rows — and hands it to the share sheet, or saves it where there is no
+     sheet to hand it to.
+
+     Everything is read off the page's own custom properties, so a poster is
+     in the festival's hue and in the theme the reader has on, and everything
+     is drawn: no map tile, no photograph, nothing that could taint the canvas
+     and make toDataURL throw where it did not at my desk.
+
+     It is all synchronous. iOS spends the tap's activation on the first
+     await, and a share without activation is a NotAllowedError. */
+  POSTER = { w: 1080, h: 1350, s: 2, m: 48 };
+
+  posterInk() {
+    const cs = getComputedStyle(document.documentElement);
+    const tok = (n, f) => (cs.getPropertyValue(n).trim() || f);
+    return {
+      wash: tok('--wash', '#FFFFFF'), low: tok('--low', '#F8F7F3'),
+      card: tok('--card', '#F2F0EB'), on: tok('--on', '#191D13'),
+      onVar: tok('--on-var', '#494E42'), outline: tok('--outline', '#C7CBBA'),
+      line: tok('--line1', '#DEDDD3'), primary: tok('--primary', '#4C662B'),
+      sec: tok('--sec', '#DCE8C0'), onSec: tok('--on-sec', '#1F2D0A'),
+      stage: (i) => ({
+        bg: tok('--st' + (i % this.STAGES.length) + '-planbg', '#2E4B12'),
+        fg: tok('--st' + (i % this.STAGES.length) + '-planfg', '#EDF6DA'),
+        dot: tok('--st' + (i % this.STAGES.length) + '-dot', '#A9CE88')
+      })
+    };
+  }
+
+  /* What is in the plan, in the order it happens. */
+  planSets() {
+    const S = this.state;
+    return this.EVENTS.filter(e => S.star[e.id]).sort((a, b) => a.a - b.a || a.s - b.s);
+  }
+
+  posterFont(px, weight, tracking) {
+    this._pctx.font = (weight || 400) + ' ' + px + 'px "Inter", system-ui, sans-serif';
+    this._pctx.letterSpacing = (tracking || 0) + 'px';
+  }
+
+  /* Measured and cut by hand: clip() halves a glyph, which reads as a bug
+     rather than as a truncation. */
+  posterCut(text, max) {
+    const c = this._pctx;
+    if (c.measureText(text).width <= max) return text;
+    let s = text;
+    while (s.length > 1 && c.measureText(s + '…').width > max) s = s.slice(0, -1);
+    return s + '…';
+  }
+
+  posterMark(c, x, y, size, fill) {
+    const P = new Path2D('M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z');
+    c.save();
+    c.translate(x, y); c.scale(size / 96, size / 96); c.fillStyle = fill;
+    for (let k = 0; k < 6; k++) {
+      c.save(); c.translate(48, 48); c.rotate(k * Math.PI / 3); c.translate(-48, -48);
+      c.fill(P); c.restore();
+    }
+    c.restore();
+  }
+
+  /* The masthead both layouts share: the mark and what this is, a rule, then
+     the festival and when it runs. Returns the y the plan may start at. */
+  posterHead(c, t, n) {
+    const P = this.POSTER, R = P.w - P.m;
+    this.posterMark(c, P.m, P.m, 56, t.primary);
+    c.textBaseline = 'alphabetic'; c.textAlign = 'left';
+    c.fillStyle = t.on; this.posterFont(30, 700, -0.75);
+    c.fillText('Flanner', 122, 74);
+    c.fillStyle = t.onVar; this.posterFont(18, 700, 2.7);
+    c.fillText('YOUR FESTIVAL PLANNER', 122, 104);
+
+    if (n) {
+      const label = n + (n === 1 ? ' set' : ' sets');
+      this.posterFont(21, 500, 0.2);
+      const w = c.measureText(label).width + 42;
+      c.fillStyle = t.sec;
+      c.beginPath(); c.roundRect(R - w, 52, w, 48, 12); c.fill();
+      c.fillStyle = t.onSec; c.textAlign = 'center';
+      c.textBaseline = 'middle'; c.fillText(label, R - w / 2, 77);
+      c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+    }
+
+    c.fillStyle = t.outline; c.fillRect(P.m, 140, R - P.m, 2);
+
+    const name = this.FEST_NAME;
+    let size = 86;
+    for (const step of [86, 76, 68, 60]) {
+      size = step; this.posterFont(size, 700, -size * 0.03);
+      if (c.measureText(name).width <= R - P.m) break;
+    }
+    c.fillStyle = t.on;
+    c.fillText(this.posterCut(name, R - P.m), P.m, 240);
+    c.fillStyle = t.onVar; this.posterFont(24, 500, 0.22);
+    c.fillText(this.FEST_WHEN, P.m, 300);
+    return 336;
+  }
+
+  posterFoot(c, t) {
+    const P = this.POSTER, R = P.w - P.m;
+    c.fillStyle = t.outline; c.fillRect(P.m, 1244, R - P.m, 2);
+    c.fillStyle = t.onVar; this.posterFont(18, 400, 0.6);
+    c.textAlign = 'left';
+    c.fillText('Made with Flanner · uenian33.github.io/flanner', P.m, 1294);
+    c.textAlign = 'right';
+    c.fillText('Set times as published', R, 1294);
+    c.textAlign = 'left';
+  }
+
+  posterEmpty(c, t, top) {
+    const P = this.POSTER, R = P.w - P.m;
+    c.fillStyle = t.card;
+    c.beginPath(); c.roundRect(P.m, top, R - P.m, 240, 28); c.fill();
+    c.fillStyle = t.onVar; this.posterFont(24, 500, 0.2);
+    c.textAlign = 'center';
+    c.fillText('Nothing starred yet', P.w / 2, top + 132);
+    c.textAlign = 'left';
+  }
+
+  /* ── the programme, as rows ──────────────────────────── */
+  posterList(c, t, sets, top) {
+    const P = this.POSTER, R = P.w - P.m, W = R - P.m;
+    const rowH = 92, gap = 12;
+    const room = 1220 - top;
+    const fits = Math.max(1, Math.floor((room + gap) / (rowH + gap)));
+    const shown = sets.slice(0, fits - (sets.length > fits ? 1 : 0));
+    let y = top;
+    for (const ev of shown) {
+      const st = this.STAGES[ev.s], col = t.stage(ev.s);
+      c.fillStyle = t.card;
+      c.beginPath(); c.roundRect(P.m, y, W, rowH, 24); c.fill();
+      c.fillStyle = col.dot;
+      c.beginPath(); c.roundRect(P.m + 20, y + 22, 6, rowH - 44, 3); c.fill();
+      c.fillStyle = t.on; this.posterFont(26, 600, 0.1);
+      c.fillText(ev.from + ' – ' + ev.to, P.m + 42, y + 40);
+      this.posterFont(30, 700, -0.3);
+      c.fillText(this.posterCut(ev.title, W - 320), P.m + 42, y + 74);
+      c.fillStyle = t.onVar; this.posterFont(22, 500, 0.2);
+      c.textAlign = 'right';
+      c.fillText(this.posterCut(st.name, 260), R - 24, y + 74);
+      if (this.DAYS.length > 1) {
+        const d = this.DAYS.find(x => x.id === ev.d);
+        if (d) c.fillText(d.short, R - 24, y + 40);
+      }
+      c.textAlign = 'left';
+      y += rowH + gap;
+    }
+    if (sets.length > shown.length) {
+      c.fillStyle = t.onVar; this.posterFont(24, 500, 0.2);
+      c.fillText('and ' + (sets.length - shown.length) + ' more', P.m + 8, y + 34);
+    }
+  }
+
+  /* ── the schedule, as columns ─────────────────────────
+     One column for each stage the plan touches, the clock down the side, and
+     a block where a set is. It is the timetable, holding only what was
+     starred, which is what makes it a plan rather than a programme. */
+  posterGrid(c, t, all, top) {
+    const P = this.POSTER, R = P.w - P.m;
+    /* A grid is one day's shape — two days of sets in one set of columns is
+       two afternoons on top of each other — so it draws the day on screen and
+       names it. The list carries the whole plan. */
+    const day = this.DAY_WINDOW;
+    const sets = this.DAYS.length > 1 ? all.filter(e => e.d === day.id) : all;
+    if (!sets.length) { this.posterEmpty(c, t, top + 40); return; }
+    if (this.DAYS.length > 1) {
+      c.fillStyle = t.onVar; this.posterFont(22, 700, 2.4);
+      c.fillText(day.label.toUpperCase(), P.m + 92, top - 2);
+      top += 26;
+    }
+    const stages = [...new Set(sets.map(e => e.s))].sort((a, b) => a - b).slice(0, 6);
+    const lo = Math.floor(Math.min(...sets.map(e => e.a)) / 60) * 60;
+    const hi = Math.ceil(Math.max(...sets.map(e => e.b)) / 60) * 60;
+    const gutter = 92, colGap = 10;
+    const bottom = 1200;
+    const colW = (R - P.m - gutter - colGap * (stages.length - 1)) / stages.length;
+    const px = (bottom - top - 44) / Math.max(60, hi - lo);
+    const yAt = m => top + 44 + (m - lo) * px;
+
+    c.fillStyle = t.onVar; this.posterFont(20, 600, 0.4);
+    stages.forEach((s, i) => {
+      const x = P.m + gutter + i * (colW + colGap);
+      c.fillText(this.posterCut(this.STAGES[s].name, colW), x, top + 26);
+    });
+
+    this.posterFont(20, 500, 0.4);
+    for (let m = lo; m <= hi; m += 60) {
+      const y = yAt(m);
+      c.fillStyle = t.line; c.fillRect(P.m + gutter, y, R - P.m - gutter, 2);
+      c.fillStyle = t.onVar;
+      c.fillText(this.hm(m), P.m, y + 7);
+    }
+
+    for (const ev of sets) {
+      const i = stages.indexOf(ev.s);
+      if (i < 0) continue;
+      const col = t.stage(ev.s);
+      const x = P.m + gutter + i * (colW + colGap);
+      const y = yAt(ev.a), h = Math.max(52, (ev.b - ev.a) * px - 4);
+      c.fillStyle = col.bg;
+      c.beginPath(); c.roundRect(x, y + 2, colW, h, 16); c.fill();
+      c.fillStyle = col.fg;
+      this.posterFont(19, 600, 0.2); c.globalAlpha = .82;
+      c.fillText(ev.from, x + 14, y + 28);
+      c.globalAlpha = 1;
+      this.posterFont(22, 700, -0.2);
+      c.fillText(this.posterCut(ev.title, colW - 28), x + 14, y + 56);
+    }
+  }
+
+  /* The picture itself, drawn whole and returned as a PNG data URL. */
+  posterPNG(kind) {
+    const P = this.POSTER;
+    const cv = document.createElement('canvas');
+    cv.width = P.w * P.s; cv.height = P.h * P.s;
+    const c = cv.getContext('2d');
+    this._pctx = c;
+    c.scale(P.s, P.s);
+    c.textBaseline = 'alphabetic';
+    const t = this.posterInk();
+    c.fillStyle = t.wash; c.fillRect(0, 0, P.w, P.h);
+    const sets = this.planSets();
+    const shown = (kind === 'grid' && this.DAYS.length > 1)
+      ? sets.filter(e => e.d === this.DAY_WINDOW.id) : sets;
+    const top = this.posterHead(c, t, shown.length);
+    c.fillStyle = t.low;
+    c.beginPath(); c.roundRect(P.m, top, P.w - P.m * 2, 1220 - top, 48); c.fill();
+    if (!sets.length) this.posterEmpty(c, t, top + 40);
+    else if (kind === 'grid') this.posterGrid(c, t, sets, top + 28);
+    else this.posterList(c, t, sets, top + 28);
+    this.posterFoot(c, t);
+    return cv.toDataURL('image/png');
+  }
+
+  /* base64 by hand: connect-src does not allow data:, so fetching the URL
+     back to a blob — the usual idiom — is refused by the page's own policy. */
+  posterBlob(url) {
+    const b = atob(url.slice(url.indexOf(',') + 1));
+    const a = new Uint8Array(b.length);
+    for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i);
+    return new Blob([a], { type: 'image/png' });
+  }
+
+  sharePlan() {
+    const kind = (this.state.view === 'list') ? 'list' : 'grid';
+    let file;
+    try {
+      file = new File([this.posterBlob(this.posterPNG(kind))],
+        this.FEST_SLUG + '-plan.png', { type: 'image/png' });
+    } catch (e) { this.setState({ note: 'Could not draw the plan' }); return; }
+    const data = { files: [file], title: this.FEST_NAME, text: 'My plan' };
+    if (navigator.canShare && navigator.canShare(data) && !this._sharing) {
+      this._sharing = true;
+      navigator.share(data)
+        .catch(err => { if (err && err.name !== 'AbortError') this.posterSave(file); })
+        .finally(() => { this._sharing = false; });
+      return;
+    }
+    this.posterSave(file);
+  }
+
+  posterSave(file) {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url; a.download = file.name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    this.setState({ note: 'Plan saved as an image' });
+  }
+"""
 
 WEATHER_NOTE_JS = """
   /* One sentence about the day, and where the numbers came from. Said only
@@ -3955,6 +4274,10 @@ def patch_template(tpl: str, fest: Festival) -> str:
         ' stroke="currentColor"><path d="M20.6 12.4 12.4 20.6a2 2 0 0 1-2.8 0l-6.2-6.2A2'
         ' 2 0 0 1 2.8 13V4.8A1.8 1.8 0 0 1 4.6 3h8.2a2 2 0 0 1 1.4.6l6.4 6.4a2 2 0 0 1 0'
         ' 2.4Z"></path><circle cx="7.6" cy="7.6" r="1.4"></circle></symbol>\n'
+        '  <symbol id="i-share" sc-camel-view-box="0 0 48 48">'
+        '<path d="M24 32V8m0 0-8 8m8-8 8 8"></path>'
+        '<path d="M12 26v12a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V26"></path>'
+        '</symbol>\n'
         '  <symbol id="i-mic-line" sc-camel-view-box="0 0 24 24" fill="none"'
         ' stroke="currentColor" stroke-linecap="round"><rect x="9" y="2.8" width="6"'
         ' height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-3'
@@ -5400,10 +5723,16 @@ def build(fid: str) -> pathlib.Path:
     script = patch_script(art.js, fest)
     template = art.resolve(patch_template(art.template, fest))
 
-    # The two basemaps travel with the page, as the old planners' did.
+    # The two basemaps are named, not carried. Inlined they were 573 KB of
+    # base64 — more than half the page — sitting in front of the first paint
+    # for a view most readers never open, and when there IS a signal the probe
+    # in `initMap` throws both away for live tiles a moment later. As URLs they
+    # are fetched when the map is first shown, by which time the timetable has
+    # been on screen for a while; the worker keeps them for the times there is
+    # no signal, which is the case they were inlined for.
     script = ("  BASE_STREET = %s;\n  BASE_SATELLITE = %s;\n" % (
-        js(data_uri(ROOT / fest.images["street"])),
-        js(data_uri(ROOT / fest.images["satellite"]))
+        js("../" + fest.images["street"]),
+        js("../" + fest.images["satellite"])
     )).join(script.split("  STAGES = ", 1)[0:1] + ["  STAGES = " + script.split("  STAGES = ", 1)[1]])
 
     props = json.loads(art.props)
@@ -5446,7 +5775,7 @@ def build(fid: str) -> pathlib.Path:
 <!-- frame-src: the act card's player. Nothing is asked of either host until a
      reader presses play on an act — the card holds a still picture and a
      button until then, and the iframe is created by that press. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.basemaps.cartocdn.com https://server.arcgisonline.com; font-src data:; connect-src 'self' https://api.open-meteo.com; frame-src https://open.spotify.com https://www.youtube-nocookie.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'inline-speculation-rules' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.basemaps.cartocdn.com https://server.arcgisonline.com; font-src 'self'; connect-src 'self' https://api.open-meteo.com; frame-src https://open.spotify.com https://www.youtube-nocookie.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <!-- A planner is opened in a field, one-handed, and pinched by accident more
      often than on purpose: the timetable is a grid you drag in both
@@ -5461,6 +5790,9 @@ def build(fid: str) -> pathlib.Path:
      means by them itself. -->
 <meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
 <link rel="manifest" href="../manifest.webmanifest">
+<!-- Every glyph on the page is set in this file, and a @font-face src is only
+     discovered once the stylesheet in front of it has been parsed. -->
+<link rel="preload" href="../assets/font/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Flanner">
@@ -5501,6 +5833,11 @@ def build(fid: str) -> pathlib.Path:
 <script type="text/x-dc" data-dc-script="" data-props="{props_attr}">
 {script}
 </script>
+<!-- The same page-to-page layer the rest of the site runs, which the planners
+     did without: a navigation off one of them was a bare document load, and a
+     planner is the page a reader spends the longest on and leaves from most.
+     It brings the fade-through, the fetch-ahead and the skeleton with it. -->
+{(ROOT / "scripts" / "_pagefx.html").read_text()}
 </body>
 </html>
 """
