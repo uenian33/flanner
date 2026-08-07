@@ -1050,7 +1050,11 @@ SHEET_JS = """
        the component stops rendering — a planner that shows nothing at all.
        What a new card needs setting is set where the card is asked for, in
        openCard, which is an event handler and may. This is the DOM only. */
-    if (!el) { this.startedSheet = null; return; }
+    /* Which card has been played in is forgotten when there is no card, not
+       merely when the element goes: an element can leave and come back while
+       the same card is open, and a card already on screen must not rise a
+       second time. */
+    if (!el) { if (!this.state.sheet) this.startedSheet = null; return; }
     if (this.startedSheet === this.state.sheet) return;
     this.startedSheet = this.state.sheet;
     requestAnimationFrame(() => this.playSheetOpen());
@@ -2066,9 +2070,13 @@ def patch_sheet(src: str) -> str:
         "         left the animation to a lifecycle hook that did not run,\n"
         "         and with it went the gesture and the close button — all\n"
         "         three read this.sheetEl and all three found nothing. */\n"
-        "      sheetRef: (el) => {\n"
-        "        this.setSheetEl(el);\n"
-        "      },\n"
+        "      /* The setter itself, not a fresh arrow around it. React reads\n"
+        "         a ref by identity: a new function every render is a new ref\n"
+        "         every render, so it detached and reattached the card on each\n"
+        "         one — and every reattach played the card in again. Twice on\n"
+        "         opening, and on a phone, where a card's first second is\n"
+        "         several renders, as a shudder. */\n"
+        "      sheetRef: this.setSheetEl,\n"
         "      sheetBodyRef: (el) => { this.sheetBodyEl = el; },\n"
         "      sheetBodyStyle: tight ? { minHeight: 0 } : null,\n",
         "sheet refs")
@@ -2085,18 +2093,14 @@ def patch_sheet(src: str) -> str:
         "        /* The sheet stands on the bottom edge of the screen. */\n"
         "        placeContent: mob ? 'end stretch' : 'safe center',",
         "scrim placement")
-    return src
-
 
     # Every way into a card is the same way in: openCard sets what the card
     # needs and clears what the last one left, from an event handler, where
-    # touching state is allowed.
-    for _ in range(3):
-        try:
-            src = sub_once(src, r"this\.setState\(\{ sheet: ev\.id \}\)",
-                           "this.openCard(ev.id)", "a card is asked for")
-        except MissingAnchor:
-            break
+    # touching state is allowed. The cell, the row and the key that stands in
+    # for either all went straight to the state and so skipped both.
+    src = re.sub(r"this\.setState\(\{ sheet: ev\.id \}\)",
+                 "this.openCard(ev.id)", src)
+    return src
 
 def patch_nav(src: str) -> str:
     # One rail across the site. The festival list draws a 96px rail with a

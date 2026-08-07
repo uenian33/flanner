@@ -4162,7 +4162,11 @@ class Component extends DCLogic {
        the component stops rendering — a planner that shows nothing at all.
        What a new card needs setting is set where the card is asked for, in
        openCard, which is an event handler and may. This is the DOM only. */
-    if (!el) { this.startedSheet = null; return; }
+    /* Which card has been played in is forgotten when there is no card, not
+       merely when the element goes: an element can leave and come back while
+       the same card is open, and a card already on screen must not rise a
+       second time. */
+    if (!el) { if (!this.state.sheet) this.startedSheet = null; return; }
     if (this.startedSheet === this.state.sheet) return;
     this.startedSheet = this.state.sheet;
     requestAnimationFrame(() => this.playSheetOpen());
@@ -5352,8 +5356,8 @@ class Component extends DCLogic {
             },
             checkStyle: { position: 'absolute', bottom: (starGap + (starBox - 15) / 2) + 'px',
               insetInlineStart: starGap + 'px', width: '15px', height: '15px', fill: 'currentColor', opacity: .9 },
-            onOpen: () => this.setState({ sheet: ev.id }),
-            onKey: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState({ sheet: ev.id }); } },
+            onOpen: () => this.openCard(ev.id),
+            onKey: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.openCard(ev.id); } },
             onStar: (e) => {
           e.stopPropagation();
           this.starToggle(ev.id, e.currentTarget.getBoundingClientRect(),
@@ -5485,8 +5489,8 @@ class Component extends DCLogic {
         starred: String(starred),
         starLabel: (starred ? 'Unstar ' : 'Star ') + ev.title,
         starStyle: Object.assign(this.iconBtn(starred, c.bg, c.fg), { position: 'relative' }),
-        onOpen: () => this.setState({ sheet: ev.id }),
-        onKey: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState({ sheet: ev.id }); } },
+        onOpen: () => this.openCard(ev.id),
+        onKey: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.openCard(ev.id); } },
         onStar: (e) => {
           e.stopPropagation();
           this.starToggle(ev.id, e.currentTarget.getBoundingClientRect(),
@@ -6416,9 +6420,13 @@ class Component extends DCLogic {
          left the animation to a lifecycle hook that did not run,
          and with it went the gesture and the close button — all
          three read this.sheetEl and all three found nothing. */
-      sheetRef: (el) => {
-        this.setSheetEl(el);
-      },
+      /* The setter itself, not a fresh arrow around it. React reads
+         a ref by identity: a new function every render is a new ref
+         every render, so it detached and reattached the card on each
+         one — and every reattach played the card in again. Twice on
+         opening, and on a phone, where a card's first second is
+         several renders, as a shudder. */
+      sheetRef: this.setSheetEl,
       sheetBodyRef: (el) => { this.sheetBodyEl = el; },
       sheetBodyStyle: tight ? { minHeight: 0 } : null,
       /* On a phone the row rides at the foot of the scroll, over the
