@@ -4084,6 +4084,16 @@ def patch_template(tpl: str, fest: Festival) -> str:
     tpl = sub_once(tpl, r">Rain likely 18:00–20:00\. The yards are unsheltered\.<",
                    ">{{ wxNote }}<", "weather note")
 
+    # The forecast's own sentence sat 12 further in than everything else the
+    # page writes — its card pads 12 and the paragraph padded 12 again — so it
+    # did not line up with the About copy beside it. The card's padding is the
+    # inset; the paragraph keeps only the air under it.
+    tpl = sub_once(
+        tpl,
+        r'<p style="margin:0;padding:0 12px 14px;font-size:13px;',
+        '<p style="margin:0;padding:0 0 14px;font-size:13px;',
+        "weather note inset")
+
     # The chip above the timetable already says which mode this is; the
     # heading and the sentence under it said it twice more.
     tpl = sub_once(
