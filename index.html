@@ -2905,6 +2905,13 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
    answering one question then, and a carousel of festivals you have not
    starred is a second one asked over it. */
 body.plan-only .highlights{display:none}
+/* The bar names the plan from the moment you are in it, so the page does not
+   name it again — two "My Plans" on one screen, one above the other, is the
+   page repeating itself. Taken out of sight rather than out of the document:
+   it is still the section's heading, and the bar's copy is aria-hidden, so a
+   reader moving by headings finds exactly one. */
+body.plan-only .section-headline{position:absolute;width:1px;height:1px;
+  overflow:hidden;clip:rect(0 0 0 0);margin:0}
 /* ── add to home screen ─────────────────────────────────
    A band above the plan, not a dialog over it: the offer belongs beside the
    thing it is about and can be walked past.
@@ -2943,9 +2950,9 @@ body.plan-only .a2hs:not([hidden]){display:flex}
 .a2hs__steps li{margin:0 0 6px}
 .a2hssheet{max-width:min(92vw,340px)}
 @media(prefers-reduced-motion:reduce){.a2hs{transition:none}}
-/* And the line that closes the list is about what else there is to find,
-   which is not what this list is. */
-body.plan-only #endCap{display:none}
+/* The line that closes the list stays in the plan — it is the same invitation
+   said the other way round, and the air under it is what tells a short plan it
+   has ended rather than been cut off. Its words change; see apply(). */
 /* ── the favourite blast ───────────────────────────────
    The planner's own, keyframe for keyframe: two rings, a wave of streaks, a
    wave of sparks and a wave of stars, thrown out of the button that was
@@ -5723,6 +5730,9 @@ function apply() {
     ? (Plan.size() ? 'Nothing in your plan matches that filter.'
                    : 'Nothing in your plan yet — star a festival to put it here.')
     : 'No festivals match that filter.';
+  /* The same invitation, pointed at whichever list is showing. */
+  const cap = $('#endCap') && $('#endCap').querySelector('p');
+  if (cap) cap.textContent = planOnly ? 'Add more to your plans' : 'More to be discovered';
   $('#empty').hidden = shown > 0 || document.body.dataset.view === 'cal';
   $('#endCap').hidden = shown === 0;
   if (window.redrawCal) window.redrawCal();
