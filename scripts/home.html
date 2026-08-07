@@ -333,12 +333,12 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
    belong to other components on this page. */
 /* The rail reads this so its first destination starts on the same line as the
    section's first — the banner's own top padding, published as a variable. */
-:root{--hl-pad-top:64px}
-@media(min-width:840px){:root{--hl-pad-top:80px}}
-/* The air above the first section is the air the carousel keeps under its
-   own card, so the page opens on one rhythm rather than on a gap the
-   masthead already left. */
-@media(max-width:599px){:root{--hl-pad-top:20px}}
+/* The air above the first section is the air the carousel keeps under its own
+   card — 20px, the dots' own gap — so the page opens on one rhythm rather than
+   on a gap the masthead already left. It was that on a phone and 64 and 80
+   above it, which put the page's first words a third of a screen down on the
+   width it is read at on a laptop; one value now, at every width. */
+:root{--hl-pad-top:20px}
 
 .highlights{
   --primary: var(--accent);
