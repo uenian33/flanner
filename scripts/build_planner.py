@@ -2093,8 +2093,31 @@ def patch_nav(src: str) -> str:
         "      aboutOpen: String(!!S.aboutOpen),\n"
         "      aboutMoreLabel: S.aboutOpen ? 'Show less' : 'Read more',\n"
         "      aboutClipStyle: { maxBlockSize: S.aboutOpen\n"
-        "        ? ((S.aboutFull || 800) + 'px') : 'calc(3 * 1.55em)' },\n"
-        "      aboutClipRef: (el) => { this.aboutClipEl = el; },\n"
+        "        ? ((S.aboutFull || 800) + 'px') : 'calc(3 * 1.45em)' },\n"
+        "      /* Whether the introduction is longer than the three lines\n"
+        "         the card shows. It cannot be known before it is laid out,\n"
+        "         so it is measured on the frame after each render and only\n"
+        "         written back when the answer changes — which also catches a\n"
+        "         rotation, since the page re-renders on one. Until the first\n"
+        "         measurement the button is there: taking a control away is\n"
+        "         cheaper to the eye than putting one in. */\n"
+        "      aboutFolds: S.aboutFolds !== false,\n"
+        "      aboutClipRef: (el) => {\n"
+        "        this.aboutClipEl = el;\n"
+        "        if (!el) return;\n"
+        "        requestAnimationFrame(() => {\n"
+        "          const p = el.firstElementChild;\n"
+        "          if (!p) return;\n"
+        "          /* against three lines of its own leading, not against\n"
+        "             the box: the box is what opens, and measuring it\n"
+        "             during the 340ms it takes answers for a height it is\n"
+        "             halfway through leaving. */\n"
+        "          const lh = parseFloat(getComputedStyle(p).lineHeight) || 19;\n"
+        "          const folds = p.scrollHeight > lh * 3 + 2;\n"
+        "          if (folds !== (this.state.aboutFolds !== false))\n"
+        "            this.setState({ aboutFolds: folds });\n"
+        "        });\n"
+        "      },\n"
         "      toggleAbout: () => {\n"
         "        const el = this.aboutClipEl;\n"
         "        const p = el && el.firstElementChild;\n"
@@ -3702,11 +3725,13 @@ def patch_template(tpl: str, fest: Festival) -> str:
         ' ref="{{ aboutClipRef }}">\n'
         '            <p class="about__text">%(about)s</p>\n'
         '          </div>\n'
+        '          <sc-if value="{{ aboutFolds }}">\n'
         '          <button class="about__more" type="button"'
         ' aria-expanded="{{ aboutOpen }}" sc-camel-on-click="{{ toggleAbout }}">\n'
         '            <span>{{ aboutMoreLabel }}</span>'
         '<svg aria-hidden="true"><use href="#i-chev"></use></svg>\n'
         '          </button>\n'
+        '          </sc-if>\n'
         '          <ul class="about__facts">%(facts)s</ul>\n'
         '        </section>\n'
         '      </div>\n'
@@ -5095,10 +5120,10 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
   border-radius: 24px; background: var(--card);
 }
 .fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
-.fest .about__clip { overflow: hidden; max-block-size: calc(3 * 1.55em); transition: max-block-size 340ms var(--ease); }
-/* Body Small, the size the Lineup states a set time in: one size for the
-   page's supporting text, wherever it stands. */
-.fest .about__text { margin: 0; font-size: 12px; line-height: var(--body-lh); color: var(--on-var); text-wrap: pretty; }
+.fest .about__clip { overflow: hidden; max-block-size: calc(3 * 1.45em); transition: max-block-size 340ms var(--ease); }
+/* The size the forecast writes its own line in, so the two cards under
+   the festival read as one page rather than two. */
+.fest .about__text { margin: 0; font-size: 13px; line-height: 1.45; color: var(--on-var); text-wrap: pretty; }
 .fest .about__more {
   display: inline-flex; align-items: center; gap: 6px;
   margin: 8px 0 0 -12px; padding: 10px 14px 10px 12px; min-block-size: 44px;
@@ -5113,8 +5138,8 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
   display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 12px 0 0; padding: 10px 0 0;
   border-block-start: 1px solid var(--outline); list-style: none;
 }
-.fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--on-var); }
-.fest .about__facts svg { inline-size: 15px; block-size: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }"""
+.fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--on-var); }
+.fest .about__facts svg { inline-size: 16px; block-size: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }"""
 
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
