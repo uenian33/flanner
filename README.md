@@ -230,6 +230,16 @@ bottom of the scroller do re-blur every scrolled frame, and that is a real cost
 — but it is the M3 surface this bar is drawn on, and the gesture work above is
 the part that was measurable in whole frames.
 
+A pin and its row are the same stage, so pressing either opens the same panel —
+the address, and the two ways of leaving with it. The pin used to say only which
+stage it was, in a popup, and stop there; finding that stage again in the list
+and pressing it a second time was left to the reader. It opens rather than
+toggles, which is where it parts company with the row: a press on a pin also
+opens Leaflet's popup, every time, and a pin that closed the panel on the second
+press would be answering one press two ways. The row is brought into view as it
+opens, because on a phone it is usually below the map being pressed, and an
+expansion off the bottom of the screen is one nobody sees.
+
 ## Data
 
 | File | Holds |
