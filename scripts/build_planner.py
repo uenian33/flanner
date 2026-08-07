@@ -2826,17 +2826,20 @@ def theme_css(accent: str, design_css: str, *more: str) -> str:
         for name, fb in _re.findall(r"var\((--[a-z0-9-]+),\s*([^()]*?(?:\([^()]*\))?[^()]*?)\)", src):
             if name in dark and name not in light:
                 light[name] = fb.strip()
-    # The forecast had a colour of its own — a pink, picked against the green
-    # — and dynamic colour would put a role like that at tertiary, hue + 60.
-    # It goes to the festival's own hue instead: one hue for the whole page
-    # reads as one page, and a forecast 60 degrees off the festival it belongs
-    # to read as something borrowed from another app. It keeps its own tones,
-    # so it is still a surface of its own and not the About card again. The
-    # names stay `--pink-*`; every use site says so.
+    # Two families the design drew in colours of their own — the forecast's
+    # pink, and the amber a plan is starred in — go to the festival's hue as
+    # well. Dynamic colour would put roles like those at tertiary, sixty
+    # degrees off, but a page carrying its festival's colour plus two others
+    # is a page of three colours, and these two are not saying anything the
+    # festival's own hue cannot. They keep their own tones, so each is still a
+    # surface of its own rather than the About card again. The names stay
+    # `--pink-*` and `--heart-*`; every use site says so.
+    OTHERS = ("--pink", "--heart", "--on-heart", "--warm-plan", "--on-warm")
+
     def turn(d):
         out = []
         for k, v in d.items():
-            out.append("%s:%s" % (k, _turn(v, hue, force=k.startswith("--pink"))))
+            out.append("%s:%s" % (k, _turn(v, hue, force=k.startswith(OTHERS))))
         return ";".join(out)
     # The hero's tint is declared on the strand class rather than on the root,
     # so it is not in either block above; it is stated here at the same weight
@@ -4284,7 +4287,9 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
 .ac__overlay { position: relative; z-index: 1; display: grid; gap: 7px; padding: 0 20px 18px; }
 .ac__eyebrow {
   margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--hero-tint,#CDEDA3);
+  /* white rather than the strand's tint: the picture already carries the
+     festival's colour, and a third one over it was one too many */
+  text-transform: uppercase; color: var(--on-hero-dim,rgb(255 255 255 / .84));
 }
 .ac__title {
   margin: 0; padding-inline-end: 4px; color: var(--on-hero);
@@ -4861,7 +4866,9 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 }
 .fest .hero__eyebrow {
   margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--hero-tint,#CDEDA3);
+  /* white rather than the strand's tint: the picture already carries the
+     festival's colour, and a third one over it was one too many */
+  text-transform: uppercase; color: var(--on-hero-dim,rgb(255 255 255 / .84));
 }
 .fest .hero__title {
   margin: 0; padding-inline-end: 4px; color: var(--on-hero,#FFFFFF);
@@ -5089,7 +5096,9 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 }
 .fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
 .fest .about__clip { overflow: hidden; max-block-size: calc(3 * 1.55em); transition: max-block-size 340ms var(--ease); }
-.fest .about__text { margin: 0; font-size: var(--body-size); line-height: var(--body-lh); color: var(--on-var); text-wrap: pretty; }
+/* Body Small, the size the Lineup states a set time in: one size for the
+   page's supporting text, wherever it stands. */
+.fest .about__text { margin: 0; font-size: 12px; line-height: var(--body-lh); color: var(--on-var); text-wrap: pretty; }
 .fest .about__more {
   display: inline-flex; align-items: center; gap: 6px;
   margin: 8px 0 0 -12px; padding: 10px 14px 10px 12px; min-block-size: 44px;
@@ -5104,8 +5113,8 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
   display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 12px 0 0; padding: 10px 0 0;
   border-block-start: 1px solid var(--outline); list-style: none;
 }
-.fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: var(--body-sm-size); color: var(--on-var); }
-.fest .about__facts svg { inline-size: 17px; block-size: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }"""
+.fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--on-var); }
+.fest .about__facts svg { inline-size: 15px; block-size: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }"""
 
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}

@@ -999,7 +999,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .ac__overlay { position: relative; z-index: 1; display: grid; gap: 7px; padding: 0 20px 18px; }
 .ac__eyebrow {
   margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--hero-tint,#CDEDA3);
+  /* white rather than the strand's tint: the picture already carries the
+     festival's colour, and a third one over it was one too many */
+  text-transform: uppercase; color: var(--on-hero-dim,rgb(255 255 255 / .84));
 }
 .ac__title {
   margin: 0; padding-inline-end: 4px; color: var(--on-hero);
@@ -1342,8 +1344,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 
 /* #fff203's own hue — every tone the design chose, turned to it */
-:root:not([data-theme="dark"]){--wash:#FFFFFF;--low:#F8F7F3;--card:#F2F0EB;--card-a:#f4f2e8;--card-f:#F4F0F7;--hover:#eae8df;--on:#1e1c11;--on-var:#4f4c40;--outline:#cdc9b8;--primary:#666021;--sec:#ece4bb;--on-sec:#2d2a02;--plan:#494503;--on-plan:#f9f3d6;--sec-a:#e9e2c3;--on-sec-a:#2B1700;--plan-a:#6B4310;--on-plan-a:#FFEEDC;--sec-f:#E8DEF8;--on-sec-f:#1D192B;--plan-f:#4F378B;--on-plan-f:#EADDFF;--dot-m:#d0c479;--dot-a:#E5C193;--dot-f:#CFC1E8;--art-m-bg:#f4eccb;--art-m-1:#f1e497;--art-m-ink:#484403;--art-a-bg:#f4edd3;--art-a-1:#FFDDB3;--art-a-2:#855318;--art-a-ink:#4A2A02;--art-f-bg:#EFE6FA;--art-f-2:#6750A4;--art-f-ink:#341E73;--state6:rgba(30,28,17,.055);--state8:rgba(30,28,17,.08);--state10:rgba(30,28,17,.10);--scrim:rgba(25,23,11,.32);--state9:rgba(30,28,17,.09);--heart-cont:#FBE0C0;--on-heart-cont:#2B1700;--heart:#8F4C0A;--bar-edge:rgba(205,201,184,.6);--state5:rgba(30,28,17,.045);--line1:#dfddd3;--line2:#eeece4;--dim-on:#666354;--tag-edge:rgba(30,28,17,.22);--star-chip-on:rgba(255,255,255,.18);--star-chip:rgba(255,255,255,.6);--pink-row:#e9e4cf;--pink-on:#201c00;--pink-card:#f7f5eb;--pink-primary:#645d22;--bar:rgba(255,255,255,.94);--warm-plan:#6B4310;--on-warm-plan:#FFEEDC;--state7:rgba(30,28,17,.07);--pink-on-var:#4f4a22;--pink-track:#d8d0ac;--state-primary:rgba(102,96,33,.12);--state-sec:rgba(45,42,2,.08)}
-[data-theme="dark"]{--wash:#171509;--low:#1d1b0e;--card:#211f14;--card-a:#221A11;--card-f:#1C1A22;--hover:#2f2c1b;--on:#e6e3d4;--on-var:#ccc6af;--dim-on:#96927f;--outline:#4b4730;--line1:#34301c;--line2:#292615;--primary:#d4c87e;--sec:#4d480a;--on-sec:#f1e497;--plan:#f1e497;--on-plan:#2d2a02;--heart:#F0BC85;--heart-cont:#6B4310;--on-heart-cont:#FFEEDC;--warm-plan:#F0BC85;--on-warm-plan:#2B1700;--dot-m:#a1974f;--dot-a:#9A6C31;--dot-f:#8C7BB8;--sec-a:#4A2E08;--on-sec-a:#FFDDB3;--plan-a:#FFDDB3;--on-plan-a:#2B1700;--sec-f:#362A56;--on-sec-f:#EADDFF;--plan-f:#D6C4F5;--on-plan-f:#1D192B;--art-m-bg:#302d12;--art-m-1:#6b6426;--art-m-ink:#f1e497;--art-a-bg:#2E2113;--art-a-1:#6B4A20;--art-a-2:#E0B183;--art-a-ink:#FFDDB3;--art-f-bg:#221C2E;--art-f-2:#C6B2F0;--art-f-ink:#EADDFF;--pink-card:#1a1600;--pink-row:#2a2606;--pink-track:#38340b;--pink-primary:#d0c79a;--pink-on:#e9e3c7;--pink-on-var:#cac299;--state5:rgba(230,227,212,.06);--state6:rgba(230,227,212,.07);--state7:rgba(230,227,212,.08);--state8:rgba(230,227,212,.09);--state9:rgba(230,227,212,.11);--state10:rgba(230,227,212,.12);--tag-edge:rgba(230,227,212,.28);--state-sec:rgba(23,21,9,.10);--state-primary:rgba(212,200,126,.14);--bar:rgba(23,21,9,.92);--bar2:rgba(23,21,9,.9);--glass:rgba(23,21,9,.78);--star-chip:rgba(23,21,9,.4);--star-chip-on:rgba(23,21,9,.22);--scrim:rgba(0,0,0,.6);--bar-edge:rgba(75,71,48,.7)}
+:root:not([data-theme="dark"]){--wash:#FFFFFF;--low:#F8F7F3;--card:#F2F0EB;--card-a:#f4f2e8;--card-f:#F4F0F7;--hover:#eae8df;--on:#1e1c11;--on-var:#4f4c40;--outline:#cdc9b8;--primary:#666021;--sec:#ece4bb;--on-sec:#2d2a02;--plan:#494503;--on-plan:#f9f3d6;--sec-a:#e9e2c3;--on-sec-a:#2B1700;--plan-a:#6B4310;--on-plan-a:#FFEEDC;--sec-f:#E8DEF8;--on-sec-f:#1D192B;--plan-f:#4F378B;--on-plan-f:#EADDFF;--dot-m:#d0c479;--dot-a:#E5C193;--dot-f:#CFC1E8;--art-m-bg:#f4eccb;--art-m-1:#f1e497;--art-m-ink:#484403;--art-a-bg:#f4edd3;--art-a-1:#FFDDB3;--art-a-2:#855318;--art-a-ink:#4A2A02;--art-f-bg:#EFE6FA;--art-f-2:#6750A4;--art-f-ink:#341E73;--state6:rgba(30,28,17,.055);--state8:rgba(30,28,17,.08);--state10:rgba(30,28,17,.10);--scrim:rgba(25,23,11,.32);--state9:rgba(30,28,17,.09);--heart-cont:#ede5bf;--on-heart-cont:#201c00;--heart:#655f00;--bar-edge:rgba(205,201,184,.6);--state5:rgba(30,28,17,.045);--line1:#dfddd3;--line2:#eeece4;--dim-on:#666354;--tag-edge:rgba(30,28,17,.22);--star-chip-on:rgba(255,255,255,.18);--star-chip:rgba(255,255,255,.6);--pink-row:#e9e4cf;--pink-on:#201c00;--pink-card:#f7f5eb;--pink-primary:#645d22;--bar:rgba(255,255,255,.94);--warm-plan:#524d08;--on-warm-plan:#f6f1db;--state7:rgba(30,28,17,.07);--pink-on-var:#4f4a22;--pink-track:#d8d0ac;--state-primary:rgba(102,96,33,.12);--state-sec:rgba(45,42,2,.08)}
+[data-theme="dark"]{--wash:#171509;--low:#1d1b0e;--card:#211f14;--card-a:#221A11;--card-f:#1C1A22;--hover:#2f2c1b;--on:#e6e3d4;--on-var:#ccc6af;--dim-on:#96927f;--outline:#4b4730;--line1:#34301c;--line2:#292615;--primary:#d4c87e;--sec:#4d480a;--on-sec:#f1e497;--plan:#f1e497;--on-plan:#2d2a02;--heart:#d2c781;--heart-cont:#524d08;--on-heart-cont:#f6f1db;--warm-plan:#d2c781;--on-warm-plan:#201c00;--dot-m:#a1974f;--dot-a:#9A6C31;--dot-f:#8C7BB8;--sec-a:#4A2E08;--on-sec-a:#FFDDB3;--plan-a:#FFDDB3;--on-plan-a:#2B1700;--sec-f:#362A56;--on-sec-f:#EADDFF;--plan-f:#D6C4F5;--on-plan-f:#1D192B;--art-m-bg:#302d12;--art-m-1:#6b6426;--art-m-ink:#f1e497;--art-a-bg:#2E2113;--art-a-1:#6B4A20;--art-a-2:#E0B183;--art-a-ink:#FFDDB3;--art-f-bg:#221C2E;--art-f-2:#C6B2F0;--art-f-ink:#EADDFF;--pink-card:#1a1600;--pink-row:#2a2606;--pink-track:#38340b;--pink-primary:#d0c79a;--pink-on:#e9e3c7;--pink-on-var:#cac299;--state5:rgba(230,227,212,.06);--state6:rgba(230,227,212,.07);--state7:rgba(230,227,212,.08);--state8:rgba(230,227,212,.09);--state9:rgba(230,227,212,.11);--state10:rgba(230,227,212,.12);--tag-edge:rgba(230,227,212,.28);--state-sec:rgba(23,21,9,.10);--state-primary:rgba(212,200,126,.14);--bar:rgba(23,21,9,.92);--bar2:rgba(23,21,9,.9);--glass:rgba(23,21,9,.78);--star-chip:rgba(23,21,9,.4);--star-chip-on:rgba(23,21,9,.22);--scrim:rgba(0,0,0,.6);--bar-edge:rgba(75,71,48,.7)}
 .fest{--hero-tint:#f1e497}
 
 /* ---------- the festival, compact ---------- */
@@ -1397,7 +1399,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 .fest .hero__eyebrow {
   margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--hero-tint,#CDEDA3);
+  /* white rather than the strand's tint: the picture already carries the
+     festival's colour, and a third one over it was one too many */
+  text-transform: uppercase; color: var(--on-hero-dim,rgb(255 255 255 / .84));
 }
 .fest .hero__title {
   margin: 0; padding-inline-end: 4px; color: var(--on-hero,#FFFFFF);
@@ -1625,7 +1629,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 .fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
 .fest .about__clip { overflow: hidden; max-block-size: calc(3 * 1.55em); transition: max-block-size 340ms var(--ease); }
-.fest .about__text { margin: 0; font-size: var(--body-size); line-height: var(--body-lh); color: var(--on-var); text-wrap: pretty; }
+/* Body Small, the size the Lineup states a set time in: one size for the
+   page's supporting text, wherever it stands. */
+.fest .about__text { margin: 0; font-size: 12px; line-height: var(--body-lh); color: var(--on-var); text-wrap: pretty; }
 .fest .about__more {
   display: inline-flex; align-items: center; gap: 6px;
   margin: 8px 0 0 -12px; padding: 10px 14px 10px 12px; min-block-size: 44px;
@@ -1640,8 +1646,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 12px 0 0; padding: 10px 0 0;
   border-block-start: 1px solid var(--outline); list-style: none;
 }
-.fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: var(--body-sm-size); color: var(--on-var); }
-.fest .about__facts svg { inline-size: 17px; block-size: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--on-var); }
+.fest .about__facts svg { inline-size: 15px; block-size: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
 /* ---- modal bottom sheet, phone only ---- */
 :root{--sheet-gap:calc(56px + env(safe-area-inset-top,0px))}
 [data-fp-shell]{transform-origin:50% 0}
