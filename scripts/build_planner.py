@@ -2826,19 +2826,17 @@ def theme_css(accent: str, design_css: str, *more: str) -> str:
         for name, fb in _re.findall(r"var\((--[a-z0-9-]+),\s*([^()]*?(?:\([^()]*\))?[^()]*?)\)", src):
             if name in dark and name not in light:
                 light[name] = fb.strip()
-    # The forecast is the one thing on the page that is neither the festival
-    # nor an act, and the design gave it a colour of its own — a pink, chosen
-    # against a green. Under dynamic colour that role is tertiary, and M3
-    # derives tertiary from the source at hue + 60, so that is where the whole
-    # family goes: the same tones it was drawn in, at the hue the festival's
-    # own colour puts it. The names stay `--pink-*`; every use site says so.
-    tert = (hue + 60) % 360
-
+    # The forecast had a colour of its own — a pink, picked against the green
+    # — and dynamic colour would put a role like that at tertiary, hue + 60.
+    # It goes to the festival's own hue instead: one hue for the whole page
+    # reads as one page, and a forecast 60 degrees off the festival it belongs
+    # to read as something borrowed from another app. It keeps its own tones,
+    # so it is still a surface of its own and not the About card again. The
+    # names stay `--pink-*`; every use site says so.
     def turn(d):
         out = []
         for k, v in d.items():
-            pink = k.startswith("--pink")
-            out.append("%s:%s" % (k, _turn(v, tert if pink else hue, force=pink)))
+            out.append("%s:%s" % (k, _turn(v, hue, force=k.startswith("--pink"))))
         return ";".join(out)
     # The hero's tint is declared on the strand class rather than on the root,
     # so it is not in either block above; it is stated here at the same weight
@@ -3618,6 +3616,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
     compact = (
         '      <sc-if value="{{ phoneCard }}">\n'
         '      <div class="fest t-%(strand)s">\n'
+        '        <section class="fcard">\n'
         '        <div class="hero">\n'
         '%(heroArt)s'
         '          <div class="hero__overlay">\n'
@@ -3665,6 +3664,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '            <span>{{ festivalPlanLabel }}</span>\n'
         '          </button>\n'
         '        </div>\n'
+        '        </section>\n'
         '\n'
         '        <div class="sec-head">\n'
         '          <h2>Lineup</h2>\n'
@@ -4838,10 +4838,18 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
    every card and every row in the app already sits. So the two surfaces the
    design brings — the artwork and the About card — come out to meet the
    weather card under them rather than standing 4px in from it. */
+/* One surface holds what the festival is: its picture, what it plays and
+   what you can do about it. The card system's own proportions — a 12px inset
+   around a 20px picture inside a 28px corner — so it stands with the About
+   card under it rather than as three loose things. */
+.fest .fcard {
+  margin-inline: -4px; padding: 12px 12px 16px;
+  border-radius: 28px; background: var(--card);
+}
 .fest .hero {
   position: relative; display: grid; align-content: end;
-  aspect-ratio: 16 / 10; margin-inline: -4px;
-  border-radius: 24px; overflow: hidden; background: var(--art-bg);
+  aspect-ratio: 16 / 10;
+  border-radius: 20px; overflow: hidden; background: var(--art-bg);
 }
 /* The festival says what it is the way an act does: the card's own hero,
    rule for rule — the flat wash rather than a gradient, so the line keeps
@@ -4959,14 +4967,15 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 
 /* ---------- genre chips ---------- */
 .fest .genres {
-  display: flex; flex-wrap: nowrap; gap: 8px; margin: 14px -16px 0; padding: 0 16px;
+  display: flex; flex-wrap: nowrap; gap: 8px; margin: 12px -12px 0; padding: 0 12px;
   overflow-x: auto; scrollbar-width: none; list-style: none;
 }
 .fest .genres::-webkit-scrollbar { block-size: 0; }
 .fest .genres li {
   flex: none; display: inline-flex; align-items: center; block-size: 32px; padding: 0 14px;
   border: 1px solid var(--outline); border-radius: 8px;
-  font-size: 13.5px; font-weight: 500; color: var(--on-var); white-space: nowrap;
+  font-size: 12px; font-weight: 500; letter-spacing: .01em;
+  color: var(--on-var); white-space: nowrap;
 }
 /* What the festival is stands with what it plays, in the festival's own
    colour — the one chip in the row that is filled, so it reads as the
@@ -4982,12 +4991,14 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
    growing, on the emphasised spring so the give and take reads as one
    movement. Each says what it does; an icon alone made the two links a
    guess. */
-.fest .actions { display: flex; gap: 8px; margin-block-start: 16px; }
+.fest .actions { display: flex; gap: 8px; margin-block-start: 12px; }
 .fest .act, .fest .plan {
   flex: 1 1 0; min-inline-size: 0;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   block-size: 56px; padding: 0 8px; border: 0; border-radius: 18px;
-  background: var(--card); color: var(--on);
+  /* M3's tonal step: the card is the container and a control on it is the
+     surface above — the same colour on both read as one shape. */
+  background: var(--wash,#FFFFFF); color: var(--on);
   /* Label Medium: at 13 the longest of the three labels, "Add to plan",
      ran 72px into the 66 a third of the row leaves it and ellipsised. */
   font-size: 12px; font-weight: 600; font-family: inherit; letter-spacing: .01em;
@@ -5073,7 +5084,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 
 /* ---------- about ---------- */
 .fest .about {
-  margin-block-start: 18px; margin-inline: -4px; padding: 16px 16px 12px;
+  margin-block-start: 14px; margin-inline: -4px; padding: 16px 16px 12px;
   border-radius: 24px; background: var(--card);
 }
 .fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
