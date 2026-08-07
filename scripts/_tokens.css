@@ -389,10 +389,32 @@ html{font-optical-sizing:auto}
 :focus-visible{outline:3px solid var(--md-sys-color-primary);outline-offset:2px}
 
 /* "The size of state layers is 40dp while the interactive target size is
-   48dp." Anything clickable gets the target even when it draws smaller. */
+   48dp." Anything clickable gets the target even when it draws smaller.
+
+   The target, though — not the box. Growing the box to 48 is fine for a pill,
+   whose height is the only thing it says; it is wrong for anything round,
+   because a 40px circle in a 40x48 box is an ellipse. That is what every
+   circle on a touch screen had become: the calendar's month arrows, the ring
+   around today, the switcher's discs.
+
+   So a round control keeps its own size and carries the target as a
+   pseudo-element centred on it, which is what the carousel's dot has always
+   done. Give an element .rnd and it opts out; the elements below are the
+   ones this site draws round, named here so a new one is a line rather than a
+   bug someone finds on a phone. */
 button,a[href],[role=button],input,select{min-height:0}
 @media(pointer:coarse){
   button,[role=button]{min-height:48px}
+  .rnd,.calview .icon-button,.calview .day,.vseg button,.tbtn,
+  .mnav button,.dock .dest,.dock .back{min-height:0;position:relative}
+  .rnd::after,.calview .icon-button::after,.calview .day::after,
+  .vseg button::after,.tbtn::after{
+    content:"";position:absolute;inset-block-start:50%;inset-inline-start:50%;
+    translate:-50% -50%;min-inline-size:48px;min-block-size:48px;
+    inline-size:100%;block-size:100%;border-radius:inherit;
+    /* The target only. It never paints and never eats a press meant for
+       something under it, because it is the button's own child. */
+    pointer-events:auto;content-visibility:hidden}
 }
 
 /* ── prose runs to both edges, where there is room ────

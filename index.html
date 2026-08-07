@@ -560,10 +560,32 @@ html{font-optical-sizing:auto}
 :focus-visible{outline:3px solid var(--md-sys-color-primary);outline-offset:2px}
 
 /* "The size of state layers is 40dp while the interactive target size is
-   48dp." Anything clickable gets the target even when it draws smaller. */
+   48dp." Anything clickable gets the target even when it draws smaller.
+
+   The target, though — not the box. Growing the box to 48 is fine for a pill,
+   whose height is the only thing it says; it is wrong for anything round,
+   because a 40px circle in a 40x48 box is an ellipse. That is what every
+   circle on a touch screen had become: the calendar's month arrows, the ring
+   around today, the switcher's discs.
+
+   So a round control keeps its own size and carries the target as a
+   pseudo-element centred on it, which is what the carousel's dot has always
+   done. Give an element .rnd and it opts out; the elements below are the
+   ones this site draws round, named here so a new one is a line rather than a
+   bug someone finds on a phone. */
 button,a[href],[role=button],input,select{min-height:0}
 @media(pointer:coarse){
   button,[role=button]{min-height:48px}
+  .rnd,.calview .icon-button,.calview .day,.vseg button,.tbtn,
+  .mnav button,.dock .dest,.dock .back{min-height:0;position:relative}
+  .rnd::after,.calview .icon-button::after,.calview .day::after,
+  .vseg button::after,.tbtn::after{
+    content:"";position:absolute;inset-block-start:50%;inset-inline-start:50%;
+    translate:-50% -50%;min-inline-size:48px;min-block-size:48px;
+    inline-size:100%;block-size:100%;border-radius:inherit;
+    /* The target only. It never paints and never eats a press meant for
+       something under it, because it is the button's own child. */
+    pointer-events:auto;content-visibility:hidden}
 }
 
 /* ── prose runs to both edges, where there is room ────
@@ -1730,6 +1752,8 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .trig{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;
   border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);background:var(--md-sys-color-surface-container-lowest);
   font-size:var(--f-body);font-weight:var(--md-sys-typescale-emphasized-label-weight);transition:var(--md-sys-motion-spring-fast-effects);white-space:nowrap}
+/* The same 17 the switcher's glyphs are drawn at, so the row reads as one
+   set of controls rather than two sizes of icon side by side. */
 .trig svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
 .trig:hover{border-color:var(--md-sys-color-on-surface)}
 .trig[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
@@ -1811,9 +1835,19 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
    sitting on one of them saying otherwise. */
 .vseg[data-off] .vseg__pill{opacity:0}
 .vseg button svg.i{position:relative;z-index:1}
-/* The month control takes the same filled state as a chosen shape. */
-.trig[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
-.trig[aria-pressed=true] svg.i{color:var(--md-sys-color-surface)}
+/* Open, chosen or showing: one filled state for all three, ink behind and
+   paper on top, glyph included. Restated for the pinned toolbar, where the
+   variant rule that repaints these is a class deeper and was winning. */
+.trig[aria-pressed=true],.trig.is-set,
+.tools .drop > button[aria-expanded=true],
+.tools .drop > button[aria-pressed=true],
+.tools .drop > button.is-set{
+  background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);
+  border-color:var(--md-sys-color-on-surface)}
+.trig[aria-pressed=true] svg.i,.trig.is-set svg.i,
+.tools .drop > button[aria-expanded=true] svg.i,
+.tools .drop > button[aria-pressed=true] svg.i,
+.tools .drop > button.is-set svg.i{color:var(--md-sys-color-surface)}
 @media(min-width:600px){
   /* The bar wrapped, which put the switcher on a second row underneath. */
   .tools{flex-wrap:nowrap}
@@ -1952,7 +1986,15 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
    first year can reach it. */
 .cal-titlewrap { position: relative; display: inline-block; }
 .mpick {
+  /* One row height, shared with the script that reads the choice off the
+     scroll position. Change it here and both follow. */
+  --mp-row: 44px;
   position: absolute; z-index: 60; inset-inline-start: 0; inset-block-start: calc(100% + 6px);
+  /* Stated, not shrink-wrapped. An absolutely positioned box that sizes to
+     its content is still capped by its containing block, and the containing
+     block here is the title button — which is why September, October,
+     November and December were all arriving with their ends cut off. */
+  inline-size: 268px; max-inline-size: calc(100vw - 32px);
   display: grid; grid-template-columns: 1fr auto; gap: 4px;
   padding: 4px; border-radius: var(--md-sys-shape-corner-large);
   background: var(--md-sys-color-surface-container);
@@ -1962,22 +2004,25 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .mpick[hidden] { display: none; }
 @keyframes mpick-in { from { opacity: 0; transform: translateY(-6px) scale(.96) } }
 .mpick__band {
-  position: absolute; z-index: 0; inset-inline: 4px; inset-block-start: 84px;
-  block-size: 40px; border-radius: var(--md-sys-shape-corner-medium);
+  position: absolute; z-index: 0; inset-inline: 4px;
+  inset-block-start: calc(2 * var(--mp-row));
+  block-size: var(--mp-row); border-radius: var(--md-sys-shape-corner-medium);
   background: var(--md-sys-color-secondary-container); pointer-events: none;
 }
+/* Five rows showing, with two of them as padding at each end so the first
+   and the last can reach the middle. */
 .mpick__col {
   position: relative; z-index: 1;
-  margin: 0; padding: 80px 0; list-style: none;
-  block-size: 200px; overflow-y: auto; scroll-snap-type: y mandatory;
+  margin: 0; padding: calc(2 * var(--mp-row)) 0; list-style: none;
+  block-size: calc(5 * var(--mp-row)); overflow-y: auto; scroll-snap-type: y mandatory;
   scrollbar-width: none; overscroll-behavior: contain;
 }
 .mpick__col::-webkit-scrollbar { inline-size: 0 }
 .mpick__col li { scroll-snap-align: center; }
 .mpick__col button {
-  display: block; inline-size: 100%; block-size: 40px; padding: 0 16px;
+  display: block; inline-size: 100%; block-size: var(--mp-row); padding: 0 16px;
   border: 0; background: none; border-radius: var(--md-sys-shape-corner-medium);
-  font: inherit; font-size: 15px; font-weight: 500; white-space: nowrap;
+  font: inherit; font-size: 16px; font-weight: 500; white-space: nowrap;
   color: var(--md-sys-color-on-surface-variant); cursor: pointer; text-align: start;
   transition: color var(--md-sys-motion-spring-fast-effects),
               opacity var(--md-sys-motion-spring-fast-effects);
@@ -2404,21 +2449,25 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
     transition:left var(--md-sys-motion-spring-default-spatial),transform var(--md-sys-motion-spring-default-spatial)}
   .sbox.open svg.i{left:14px;transform:translate(0,-50%)}
   .sbox .clr{display:none}
-  /* Three equal thirds of the column. At this width the icon is the first
-     thing to go — a trigger whose label reads "Al…" has told you nothing,
-     while a label with no icon still has. */
-  .dropset{grid-area:filters;display:grid;gap:8px;
-    grid-template-columns:repeat(3,minmax(0,1fr))}
-  /* A third of a phone column has to hold an icon, a word and a chevron, and
-     the word is the part that must survive: every piece around it is trimmed
-     until "Upcoming" fits whole. */
-  .trig{width:100%;min-width:0;justify-content:center;gap:3px;padding:0 4px;
-    font-size:var(--md-sys-typescale-label-small-size)}
-  .trig svg.i{width:14px;height:14px}
+  /* The two triggers take the width their names need and the switcher takes
+     the end of the row. Three equal thirds was the right answer while each
+     trigger carried whatever had been chosen — a month, "3 kinds" — and had
+     to be given room for it. They say one word each now, so a third of the
+     column is more than Time needs and less than Type had. */
+  .dropset{grid-area:filters;display:flex;gap:8px;align-items:center}
+  .vseg{margin-inline-start:auto}
+  /* Sized to their names rather than to a share of the row. They used to
+     carry whatever had been chosen — "3 kinds", a month — so they were given
+     the width and an ellipsis to absorb it; now that each says one short word
+     the share was the thing cutting Type down to a T. */
+  .trig{width:auto;min-width:0;flex:0 0 auto;justify-content:center;gap:6px;padding:0 14px;
+    font-size:var(--md-sys-typescale-label-large-size)}
+  .trig > span{overflow:visible;text-overflow:clip}
+  .trig svg.i{width:17px;height:17px}
   .trig .cv{width:11px;height:11px}
   .trig > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .vseg{justify-self:stretch;width:100%}
-  .vseg button{flex:1 1 0;min-width:0;width:auto}
+  .vseg{justify-self:auto;width:auto}
+  .vseg button{flex:0 0 auto;min-width:0;width:44px}
   .vseg button{height:42px;padding:0 11px}
   .vseg button .lbl{display:none}
   .drop{position:static}
@@ -3565,7 +3614,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
          sheet, and the switcher beside it is down to the two shapes a list
          can take. The label still says which range is in force. -->
     <button class="trig st" id="whenTrig" aria-pressed="false" title="Calendar">
-      <svg class="i"><use href="#h-i-cal"/></svg><span id="whenLabel">All</span></button>
+      <svg class="i"><use href="#h-i-cal"/></svg><span id="whenLabel">Time</span></button>
     <div class="sheet" id="whenSheet" hidden role="dialog" aria-label="Filter by date">
       <h4>Filter by date</h4>
       <div class="opts" id="whenOpts" role="radiogroup"></div>
@@ -3573,7 +3622,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
   </div>
   <div class="drop">
     <button class="trig st" id="catTrig" aria-expanded="false" aria-controls="catSheet">
-      <svg class="i"><use href="#h-i-tune"/></svg><span id="catLabel">All</span>
+      <svg class="i"><use href="#h-i-tune"/></svg><span id="catLabel">Type</span>
       <svg class="i cv"><use href="#h-i-down"/></svg></button>
     <div class="sheet" id="catSheet" hidden role="dialog" aria-label="Filter by category">
       <h4>Filter by category</h4>
@@ -4415,8 +4464,10 @@ const CAL = (() => {
      the scroll position divided by the row height — no measuring of
      children, and it stays true if the type ever changes size, because the
      row height is the one number both the CSS and this share. */
-  const MPICK_ROW = 40;
   const pickEl = $('#monthPick');
+  /* Read off the stylesheet, so the row height lives in one place. */
+  const MPICK_ROW =
+    parseFloat(getComputedStyle(pickEl).getPropertyValue('--mp-row')) || 44;
   const monthCol = $('#mpMonths'), yearCol = $('#mpYears');
   const MONTHS = Array.from({length: 12}, (_, m) =>
     new Intl.DateTimeFormat('en-GB', {month: 'long', timeZone: 'UTC'})
@@ -4890,12 +4941,15 @@ function apply() {
   /* The trigger says what the filter is set to, not what it filters — the
      sheet it opens is already titled "Filter by date". */
   const w2 = WHEN.find(x => x.k === when);
-  $('#whenLabel').textContent = w2.trig || w2.label;
+  /* The trigger is named for what it filters, not for what it is filtering
+     to: the active chips under the bar carry the values, and a control whose
+     name changes to "3 kinds" is a control you have to read twice to find
+     again. Its filled state says a filter is on. */
+  $('#whenTrig').classList.toggle('is-set', when !== 'all');
   /* The filter state is held as category ids; everything shown to a reader is
      the label that belongs to the id. */
   const catLabel = id => (CAT_BY_ID.get(id) || {label: id}).label;
-  $('#catLabel').textContent =
-    cats.size === 0 ? 'All' : cats.size === 1 ? catLabel([...cats][0]) : `${cats.size} kinds`;
+  $('#catTrig').classList.toggle('is-set', cats.size > 0);
   $('#activeTags').innerHTML = [...cats].map(c =>
     `<span class="tag" data-cat="${esc(c)}">${esc(catLabel(c))}<button data-drop="${esc(c)}"
       aria-label="Remove ${esc(catLabel(c))}">
