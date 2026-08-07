@@ -3703,9 +3703,22 @@ class Component extends DCLogic {
     const openSheet = this.state.sheet || null;
     if (openSheet !== this.lastSheet) {
       this.lastSheet = openSheet;
-      const el = openSheet ? document.querySelector('[role="dialog"]') : null;
-      this.setSheetEl(el);
-      if (el) requestAnimationFrame(() => this.playSheetOpen());
+      /* The card is not always in the document by the time this
+         runs — on the path where the hook fires before the commit
+         is painted, the query finds nothing, nothing gets wired
+         and nothing plays. So it waits for the element rather
+         than assuming it: a handful of frames, then gives up. */
+      const wire = (tries) => {
+        const el = openSheet
+          ? document.querySelector('[role="dialog"]') : null;
+        if (openSheet && !el) {
+          if (tries > 0) requestAnimationFrame(() => wire(tries - 1));
+          return;
+        }
+        this.setSheetEl(el);
+        if (el) requestAnimationFrame(() => this.playSheetOpen());
+      };
+      wire(6);
       if (this.state.bioOpen || this.state.bioFits || this.state.embedReady) {
         this.setState({ bioOpen: false, bioFits: false, bioFull: 0,
           embedReady: false });
@@ -4133,6 +4146,19 @@ class Component extends DCLogic {
     this.sheetEl = el;
     this.sheetBodyEl = el ? el.querySelector('[style*="overflow-y: auto"], [style*="overflow-y:auto"]') : null;
     if (el) this.sheetDragOn();
+    /* Every path that produces a sheet arrives here — the ref when the card
+       mounts, the update hook when it finds one — so this is where a card is
+       started: played in, and handed a clean slate. Both used to hang off the
+       update hook's own guard, and on the path where that guard never fired
+       the card opened with no animation and with the last card's player
+       already marked loaded, so the wave that says it is loading never came. */
+    if (!el) return;
+    requestAnimationFrame(() => this.playSheetOpen());
+    const S = this.state;
+    if (S.embedReady || S.bioOpen || S.bioFits || S.playerOpen) {
+      this.setState({ embedReady: false, bioOpen: false, bioFits: false,
+        bioFull: 0, playerOpen: false });
+    }
   };
 
   /* The page behind steps back while a sheet is up — the class is on the body
@@ -4149,7 +4175,10 @@ class Component extends DCLogic {
      transform out of the cell that was pressed. */
   sheetIsBottom() { return this.mode() === 'bar'; }
   sheetScrimEl() {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     return el ? el.closest('[style*="z-index: 70"]') : null;
   }
 
@@ -4251,7 +4280,10 @@ class Component extends DCLogic {
   }
 
   playSheetOpen() {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     if (!el || !el.animate) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     /* The sheet rises from the edge it will be dragged back to, on M3's
@@ -4284,7 +4316,10 @@ class Component extends DCLogic {
   /* Closing walks the arc back: same path, same shape, mirrored in time and
      quicker, which is what M3 asks an exit to be. */
   dismissSheet(held) {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     const shut = () => {
       clearTimeout(this.closeT);
       this.sheetLeaving = false;
@@ -4557,7 +4592,10 @@ class Component extends DCLogic {
 
   /* ---- throw to dismiss ---- */
   sheetDragOn() {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     if (this.sheetIsBottom()) { this.sheetDragOnBottom(); return; }
     this.onSheetDown = (e) => {
       if (e.button != null && e.button !== 0) return;
@@ -4611,7 +4649,10 @@ class Component extends DCLogic {
   }
 
   sheetDragOff() {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     if (!el) return;
     el.removeEventListener('pointerdown', this.onSheetDown);
     el.removeEventListener('pointermove', this.onSheetMove);
@@ -6344,7 +6385,15 @@ class Component extends DCLogic {
       }, mob ? { width: '100%', height: 'auto', display: 'grid',
         alignContent: 'end',
         maxHeight: 'calc(100dvh - var(--sheet-gap))' } : null),
-      sheetRef: this.setSheetEl,
+      /* The ref is what the sheet hangs on: it attaches the drag,
+         and it is the moment the element exists, so it is also
+         where the sheet is played in. Handing the setter over bare
+         left the animation to a lifecycle hook that did not run,
+         and with it went the gesture and the close button — all
+         three read this.sheetEl and all three found nothing. */
+      sheetRef: (el) => {
+        this.setSheetEl(el);
+      },
       sheetBodyRef: (el) => { this.sheetBodyEl = el; },
       sheetBodyStyle: tight ? { minHeight: 0 } : null,
       /* On a phone the row rides at the foot of the scroll, over the

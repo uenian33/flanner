@@ -1039,6 +1039,19 @@ SHEET_JS = """
     this.sheetEl = el;
     this.sheetBodyEl = el ? el.querySelector('[style*="overflow-y: auto"], [style*="overflow-y:auto"]') : null;
     if (el) this.sheetDragOn();
+    /* Every path that produces a sheet arrives here — the ref when the card
+       mounts, the update hook when it finds one — so this is where a card is
+       started: played in, and handed a clean slate. Both used to hang off the
+       update hook's own guard, and on the path where that guard never fired
+       the card opened with no animation and with the last card's player
+       already marked loaded, so the wave that says it is loading never came. */
+    if (!el) return;
+    requestAnimationFrame(() => this.playSheetOpen());
+    const S = this.state;
+    if (S.embedReady || S.bioOpen || S.bioFits || S.playerOpen) {
+      this.setState({ embedReady: false, bioOpen: false, bioFits: false,
+        bioFull: 0, playerOpen: false });
+    }
   };
 
   /* The page behind steps back while a sheet is up — the class is on the body
@@ -1055,7 +1068,10 @@ SHEET_JS = """
      transform out of the cell that was pressed. */
   sheetIsBottom() { return this.mode() === 'bar'; }
   sheetScrimEl() {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     return el ? el.closest('[style*="z-index: 70"]') : null;
   }
 
@@ -1123,7 +1139,10 @@ SHEET_JS = """
   }
 
   playSheetOpen() {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     if (!el || !el.animate) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     /* The sheet rises from the edge it will be dragged back to, on M3's
@@ -1156,7 +1175,10 @@ SHEET_JS = """
   /* Closing walks the arc back: same path, same shape, mirrored in time and
      quicker, which is what M3 asks an exit to be. */
   dismissSheet(held) {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     const shut = () => {
       clearTimeout(this.closeT);
       this.sheetLeaving = false;
@@ -1429,7 +1451,10 @@ SHEET_JS = """
 
   /* ---- throw to dismiss ---- */
   sheetDragOn() {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     if (this.sheetIsBottom()) { this.sheetDragOnBottom(); return; }
     this.onSheetDown = (e) => {
       if (e.button != null && e.button !== 0) return;
@@ -1483,7 +1508,10 @@ SHEET_JS = """
   }
 
   sheetDragOff() {
-    const el = this.sheetEl;
+    /* One dialog on the page, and it announces itself: every one of
+       these is dead if nothing set the field, and a sheet that will
+       not play in, take a drag or close is what that looks like. */
+    const el = this.sheetEl || document.querySelector('[role="dialog"]');
     if (!el) return;
     el.removeEventListener('pointerdown', this.onSheetDown);
     el.removeEventListener('pointermove', this.onSheetMove);
@@ -1918,9 +1946,22 @@ def patch_sheet(src: str) -> str:
         "    const openSheet = this.state.sheet || null;\n"
         "    if (openSheet !== this.lastSheet) {\n"
         "      this.lastSheet = openSheet;\n"
-        "      const el = openSheet ? document.querySelector('[role=\"dialog\"]') : null;\n"
-        "      this.setSheetEl(el);\n"
-        "      if (el) requestAnimationFrame(() => this.playSheetOpen());\n"
+        "      /* The card is not always in the document by the time this\n"
+        "         runs — on the path where the hook fires before the commit\n"
+        "         is painted, the query finds nothing, nothing gets wired\n"
+        "         and nothing plays. So it waits for the element rather\n"
+        "         than assuming it: a handful of frames, then gives up. */\n"
+        "      const wire = (tries) => {\n"
+        "        const el = openSheet\n"
+        "          ? document.querySelector('[role=\"dialog\"]') : null;\n"
+        "        if (openSheet && !el) {\n"
+        "          if (tries > 0) requestAnimationFrame(() => wire(tries - 1));\n"
+        "          return;\n"
+        "        }\n"
+        "        this.setSheetEl(el);\n"
+        "        if (el) requestAnimationFrame(() => this.playSheetOpen());\n"
+        "      };\n"
+        "      wire(6);\n"
         "      if (this.state.bioOpen) this.setState({ bioOpen: false });\n"
         "      /* And with the short player, whatever the last card was left\n"
         "         showing. */\n"
@@ -1999,7 +2040,15 @@ def patch_sheet(src: str) -> str:
         "      }, mob ? { width: '100%', height: 'auto', display: 'grid',\n"
         "        alignContent: 'end',\n"
         "        maxHeight: 'calc(100dvh - var(--sheet-gap))' } : null),\n"
-        "      sheetRef: this.setSheetEl,\n"
+        "      /* The ref is what the sheet hangs on: it attaches the drag,\n"
+        "         and it is the moment the element exists, so it is also\n"
+        "         where the sheet is played in. Handing the setter over bare\n"
+        "         left the animation to a lifecycle hook that did not run,\n"
+        "         and with it went the gesture and the close button — all\n"
+        "         three read this.sheetEl and all three found nothing. */\n"
+        "      sheetRef: (el) => {\n"
+        "        this.setSheetEl(el);\n"
+        "      },\n"
         "      sheetBodyRef: (el) => { this.sheetBodyEl = el; },\n"
         "      sheetBodyStyle: tight ? { minHeight: 0 } : null,\n",
         "sheet refs")
