@@ -333,11 +333,13 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
    belong to other components on this page. */
 /* The rail reads this so its first destination starts on the same line as the
    section's first — the banner's own top padding, published as a variable. */
-/* The air above the first section is the air the carousel keeps under its own
-   card — 20px, the dots' own gap — so the page opens on one rhythm rather than
-   on a gap the masthead already left. It was that on a phone and 64 and 80
-   above it, which put the page's first words a third of a screen down on the
-   width it is read at on a laptop; one value now, at every width. */
+/* Almost none, at every width: the page opens on its first words. It was 20
+   on a phone and 64 and 80 above it, which put those words a third of a
+   screen down on the width it is read at on a laptop.
+   8 rather than 0 because the rail reads this too — at 0 the eyebrow's
+   ascenders and the rail's first pill both sit against the edge of the screen
+   with nothing under them. Measured at 390, 684 and 1280: nothing clipped,
+   and the section and the rail still start on the same line. */
 :root{--hl-pad-top:8px}
 
 .highlights{
