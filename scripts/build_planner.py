@@ -5045,7 +5045,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 .fest .act, .fest .plan {
   flex: 1 1 0; min-inline-size: 0;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  block-size: 56px; padding: 0 8px; border: 0; border-radius: 18px;
+  block-size: 48px; padding: 0 8px; border: 0; border-radius: 16px;
   /* M3's tonal step: the card is the container and a control on it is the
      surface above — the same colour on both read as one shape. */
   background: var(--wash,#FFFFFF); color: var(--on);
@@ -5065,7 +5065,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 
 /* filled tonal, shape-morphing on selection — the app's own plan button */
 .fest .plan[aria-pressed="true"] {
-  flex-grow: 1.5; border-radius: 28px;
+  flex-grow: 1.5; border-radius: 24px;
   background: var(--heart-cont,#FBE0C0); color: var(--on-heart-cont,#2B1700);
 }
 .fest .plan:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
@@ -5076,7 +5076,12 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
    The row bleeds past the page's margin so a cut item shows at the edge;
    that is the only affordance a scrolling row needs. Snap points align to
    the margin rather than to the screen edge. */
-.fest .sec-head { display: flex; align-items: baseline; gap: 12px; margin: 18px 0 10px; }
+/* The page has one content column: a card sits on the 12 every card in the
+   app sits on, and what is written — inside a card or beside it — starts
+   12 further in. So the Lineup's heading and the first face in its row line
+   up with About's heading and its copy. */
+.fest .sec-head { display: flex; align-items: baseline; gap: 12px; margin: 18px 0 10px;
+  padding-inline: 8px; }
 .fest .sec-head h2 { margin: 0; font-size: var(--title-size); font-weight: 650; letter-spacing: -.01em; }
 .fest .sec-head button {
   /* the -12px is the rule the About card's Read more already follows: a
@@ -5090,9 +5095,9 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 .fest .sec-head button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 .fest .lineup {
-  display: flex; gap: 14px; margin: 0 -16px; padding: 2px 16px 6px;
+  display: flex; gap: 14px; margin: 0 -16px; padding: 2px 16px 6px 24px;
   overflow-x: auto; overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity; scroll-padding-inline-start: 16px;
+  scroll-snap-type: x proximity; scroll-padding-inline-start: 24px;
   scrollbar-width: none; list-style: none;
 }
 .fest .lineup::-webkit-scrollbar { block-size: 0; }
@@ -5134,7 +5139,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 
 /* ---------- about ---------- */
 .fest .about {
-  margin-block-start: 14px; margin-inline: -4px; padding: 16px 16px 12px;
+  margin-block-start: 14px; margin-inline: -4px; padding: 14px 12px 12px;
   border-radius: 24px; background: var(--card);
 }
 .fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
