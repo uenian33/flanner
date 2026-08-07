@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build a planner page: the design from the artifact, the line-up from data.
 
-    python3 scripts/build_planner.py            # both planners
+    python3 scripts/build_planner.py            # every planner
     python3 scripts/build_planner.py kallio     # one
 
 `scripts/planner.py` unpacks the design; everything here is the festival's own
@@ -97,14 +97,40 @@ class Festival:
         self.images = images
 
     # -- days ------------------------------------------
+    # The grid is drawn against a window, and a festival that has published its
+    # dates and not its times still has to have one — it is what the empty day
+    # is ruled against. This is that window, and `hours_known` below is what
+    # keeps it from ever being shown to a reader as something the organiser
+    # said.
+    DEFAULT_WINDOW = (12 * 60, 23 * 60)
+
+    @property
+    def preview_note(self) -> str:
+        """What to say where a running order would be.
+
+        Taken from the record so it can name the organiser's own page, which is
+        where the times will appear first.
+        """
+        return (self.f.get("previewNote")
+                or "The organiser has not published set times yet. "
+                   "The line-up and the venues are here; the clock is not.")
+
+    @property
+    def hours_known(self) -> bool:
+        """Whether the organiser has published when the day starts and ends."""
+        if "days" in self.acts:
+            return all("start" in d and "end" in d for d in self.acts["days"])
+        return bool(self.acts["event"].get("hours"))
+
     @property
     def days(self) -> list[dict]:
         # `n` is the day of the month, which is what the day chips print beside
         # the weekday — "Sat 15" — in whichever language the drawer is set to.
         if "days" in self.acts:
+            lo, hi = self.DEFAULT_WINDOW
             return [{"id": d["id"], "label": d["label"], "short": d["short"],
                      "date": d["date"], "n": int(d["date"][8:10]),
-                     "start": d["start"], "end": d["end"]}
+                     "start": d.get("start", lo), "end": d.get("end", hi)}
                     for d in self.acts["days"]]
         # A one-day festival still has a day: the event record carries it, and
         # the window comes from the hours the organiser publishes.
@@ -142,7 +168,6 @@ class Festival:
         ]
 
     # -- stages ----------------------------------------
-    @property
     @property
     def preview(self) -> bool:
         """A festival whose venues are known and whose running order is not.
@@ -221,11 +246,16 @@ class Festival:
     @property
     def hours_line(self) -> str:
         ds = self.days
+        n_days = "%d %s" % (len(ds), "day" if len(ds) == 1 else "days")
+        # A festival that has published dates and no clock says the dates. The
+        # window the grid is ruled against is ours, not theirs, and printing it
+        # here would put a time under the title on the authority of a default.
+        if not self.hours_known:
+            return n_days
         lo, hi = min(d["start"] for d in ds), max(d["end"] for d in ds)
         hm = lambda m: "%02d:%02d" % (m // 60 % 24, m % 60)
         span = "%s–%s" % (hm(lo), hm(hi))
-        return ("%s daily · %d %s" % (span, len(ds), "day" if len(ds) == 1 else "days")
-                if len(ds) > 1 else span)
+        return "%s daily · %s" % (span, n_days) if len(ds) > 1 else span
 
     @property
     def facts(self) -> list[str]:
@@ -242,11 +272,18 @@ class Festival:
         the planner states what the organiser states and invents nothing."""
         f = self.f
         st = f["stats"]
+        # What can be said about the dates depends on what has been published:
+        # a counted programme, or the venues and the dates on their own.
+        when = ("%s. %d %s across %d stages." % (
+                    self.hours_line, st["acts"],
+                    "act" if st["acts"] == 1 else "acts", st["stages"])
+                if st.get("acts") else
+                "%s, across %d %s. %s" % (
+                    self.hours_line, len(self.stages),
+                    "venue" if len(self.stages) == 1 else "venues",
+                    self.preview_note))
         return [
-            {"eyebrow": "When", "title": f["dates"],
-             "body": "%s. %d %s across %d stages." % (
-                 self.hours_line, st["acts"],
-                 "act" if st["acts"] == 1 else "acts", st["stages"])},
+            {"eyebrow": "When", "title": f["dates"], "body": when.strip()},
             {"eyebrow": "Where", "title": f["city"],
              "body": f["description"]},
             {"eyebrow": "Tickets",
@@ -256,21 +293,38 @@ class Festival:
                       "Tickets and wristbands are the festival's own; this "
                       "planner sells nothing and links to their site.")},
             {"eyebrow": "This planner", "title": "Unofficial, and offline",
-             "body": "Transcribed from the organiser's published schedule and "
+             "body": ("Transcribed from the organiser's published schedule and "
+                      if st.get("acts") else
+                      "Built from what the organiser has published so far, and ") +
                      "not affiliated with the festival. Once it has loaded it "
                      "needs no signal, and your picks stay on this device."},
         ]
 
 
+# Every planner this builder makes. A festival is a folder under data/ and a
+# record in festivals.json, so all a new one contributes here is its id and,
+# where the two differ, the name its record goes by. The basemap and the two
+# map images are found from the id rather than written down a second time —
+# `scripts/basemaps.py` writes them under exactly these names.
+#
+# Kallio and Flow keep the image filenames their pages already named, from
+# before the site had more than two festivals to name things for.
+PLANNERS = {
+    "kallio": ("kbp", ""),
+    "flow": ("flow", "flow-"),
+    "blockfest": ("blockfest", "blockfest-"),
+    "lostinmusic": ("lostinmusic", "lostinmusic-"),
+    "juhlaviikot": ("juhlaviikot", "juhlaviikot-"),
+    "espoocine": ("espoocine", "espoocine-"),
+    "tamperejazz": ("tamperejazz", "tamperejazz-"),
+}
+
 FESTIVALS = {
-    "kallio": Festival("kallio", "kallio", "kbp", ROOT / "data" / "kallio",
-                       ROOT / "data" / "kallio" / "basemap.json",
-                       {"street": "assets/basemap-light.jpg",
-                        "satellite": "assets/satellite.jpg"}),
-    "flow": Festival("flow", "flow", "flow", ROOT / "data" / "flow",
-                     ROOT / "data" / "flow" / "basemap.json",
-                     {"street": "assets/flow-basemap-light.jpg",
-                      "satellite": "assets/flow-satellite.jpg"}),
+    fid: Festival(fid, fid, record, ROOT / "data" / fid,
+                  ROOT / "data" / fid / "basemap.json",
+                  {"street": f"assets/{stem}basemap-light.jpg",
+                   "satellite": f"assets/{stem}satellite.jpg"})
+    for fid, (record, stem) in PLANNERS.items()
 }
 
 
@@ -554,6 +608,33 @@ def patch_script(src: str, fest: Festival) -> str:
                    "day chip full label")
     src = sub_once(src, r"          label: \['Fri 14', 'Sat 15', 'Sun 16'\]\[i\], pressed: d\.pressed,",
                    "          label: d.full || d.label, pressed: d.pressed,", "phone day labels")
+    # ---- and what happens past four of them ----
+    # The phone day row is a segmented button group: every day an equal share
+    # of the width, with a puck sliding between them. Material scopes that
+    # control to two to five options and it means it — Helsinki Festival runs
+    # nineteen days, and nineteen equal shares of a phone is nineteen chips
+    # 13px wide with their labels printed on top of each other.
+    #
+    # Past four days it becomes what M3 offers instead: a horizontally
+    # scrollable chip set. Each chip takes the width of its own label, the row
+    # scrolls, and the selected day is filled rather than tracked by a puck —
+    # a puck cannot follow a row that scrolls under it.
+    src = sub_once(
+        src,
+        r"            position: 'relative', zIndex: 1, flex: '1 1 0', minWidth: 0,"
+        r" height: '40px', padding: '0 6px',\n"
+        r"            border: 0, borderRadius: '20px', background: 'transparent',\n",
+        "            position: 'relative', zIndex: 1,"
+        " flex: this.DAYS.length > 4 ? 'none' : '1 1 0',\n"
+        "            minWidth: 0, height: '40px',"
+        " padding: this.DAYS.length > 4 ? '0 14px' : '0 6px',\n"
+        "            border: 0, borderRadius: '20px',\n"
+        "            background: this.DAYS.length > 4 && d.pressed === 'true'\n"
+        "              ? 'var(--sec,#DCE8C0)' : 'transparent',\n",
+        "the phone day chips size to their labels past four days")
+    # The row they sit in has to scroll, and the puck has to go — it is placed
+    # as a percentage of a row that no longer stands still. Both live in
+    # `patch_nav`, which rewrites those two styles wholesale.
     src = sub_once(src, r"    const dayIdx = Math\.max\(0, \['fri', 'sat', 'sun'\]\.indexOf\(S\.day\)\);",
                    "    const dayIdx = Math.max(0, this.DAYS.findIndex(d => d.id === S.day));",
                    "phone day index")
@@ -629,8 +710,15 @@ def patch_script(src: str, fest: Festival) -> str:
     src = sub_once(src, r"'Flow Festival 2026 · Sat 15 August\\n'",
                    "(FP.nameYear + ' · ' + this.DAY_WINDOW.label + '\\n')",
                    "clipboard header")
+    # The act's own day, not the day the grid happens to be showing. The
+    # Lineup rail spans the whole festival, so a card opened from it is
+    # routinely for a day other than the selected one — Florence plays
+    # Saturday, and with the day chip on Friday this line said "FRI 14 AUG"
+    # over a Saturday set. `sev.d` is the set's day id; the selected day is
+    # only the right answer by coincidence.
     src = sub_once(src, r"' · Sat 15 August'",
-                   "' · ' + this.DAY_WINDOW.label", "sheet time line")
+                   "' · ' + ((this.DAYS.find(d => d.id === sev.d)"
+                   " || this.DAY_WINDOW).label)", "sheet time line")
     src = sub_once(src, r"' acts on Saturday</span>'",
                    "' acts on ' + this.DAY_WINDOW.short + '<\\/span>'", "map popup")
 
@@ -2758,7 +2846,9 @@ def patch_nav(src: str) -> str:
         "        daysGroupStyle: {\n"
         "          gridArea: 'days', position: 'relative', display: 'flex',\n"
         "          gap: '4px', minWidth: 0, padding: 0,\n"
-        "          background: 'none', border: 0, boxShadow: 'none'\n"
+        "          background: 'none', border: 0, boxShadow: 'none',\n"
+        "          overflowX: this.DAYS.length > 4 ? 'auto' : 'visible',\n"
+        "          scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch'\n"
         "        },",
         "the day group has no skin of its own")
     # The puck was measured off a group that carried 5px of padding on every
@@ -2772,7 +2862,7 @@ def patch_nav(src: str) -> str:
         r"          width: 'calc\(\(100% - ' \+ \(10 \+ \(this\.DAYS\.length - 1\) \* 4\)"
         r" \+ 'px\) / '\n"
         r"            \+ this\.DAYS\.length \+ '\)', height: '40px', borderRadius: '20px',",
-        "        daysPuckStyle: {\n"
+        "        daysPuckStyle: this.DAYS.length > 4 ? { display: 'none' } : {\n"
         "          position: 'absolute', top: 0, left: 0, zIndex: 0,"
         " pointerEvents: 'none',\n"
         "          width: 'calc((100% - ' + ((this.DAYS.length - 1) * 4) + 'px) / '\n"
@@ -3198,6 +3288,16 @@ def patch_nav(src: str) -> str:
         "          ? { display: 'grid', gap: '8px', justifyItems: 'center', width: '100%' }\n"
         "          : { display: 'flex', flex: '1 1 auto', minWidth: 0, height: '100%' }),",
         "nav indicator style")
+
+    # A badge counts something there is some of. The design showed this one
+    # unconditionally, so every planner opened with a "0" pinned to the star
+    # button — Material's badge is for a non-zero count, and a nought there
+    # reads as a control that has failed rather than one nobody has used yet.
+    src = sub_once(
+        src,
+        r"      showPicksBadge: true, starCount: starCount,",
+        "      showPicksBadge: starCount > 0, starCount: starCount,",
+        "the picks badge counts something")
     return src
 
 
@@ -4113,6 +4213,25 @@ def patch_map(src: str, fest: Festival) -> str:
     src = sub_once(src, r"\.setView\(\[[\d.]+, [\d.]+\], 16\)",
                    ".setView(FP.centre, 16)", "map centre")
 
+    # …and then framed on the festival rather than left at that zoom. Sixteen
+    # was the design's number for a festival that fits in one park, and it is
+    # what every planner opened at: Lost In Music is seven venues spread across
+    # a kilometre of Tampere, and the map opened showing one of them with the
+    # other six off the edge. The bounds are the stages' own, which is what the
+    # collapse gesture already re-frames to, so the map now opens where every
+    # drag afterwards puts it back.
+    #
+    # `maxZoom` is what a festival at a single address needs: fitting a
+    # degenerate box zooms to the layer's limit and lands the reader on a
+    # rooftop.
+    src = sub_once(
+        src,
+        r"    this\.stageBounds = L\.latLngBounds\(this\.STAGES\.map\(s => \[s\.lat, s\.lng\]\)\);\n",
+        "    this.stageBounds = L.latLngBounds(this.STAGES.map(s => [s.lat, s.lng]));\n"
+        "    map.fitBounds(this.stageBounds,"
+        " { padding: [30, 30], maxZoom: 17, animate: false });\n",
+        "the map opens framed on the stages")
+
     # ---- the pin ----
     # A 32px disc ringed in 2px of white and dropped on an 8px shadow, which is
     # how a map pin was drawn when the basemaps were still beige. The ring and
@@ -4801,12 +4920,21 @@ def patch_template(tpl: str, fest: Festival) -> str:
     # above has not already said: how many stages, how long, how many acts.
     span = fest.days
     hours = round(sum(d["end"] - d["start"] for d in span) / 60)
+    # Counted where the record counts it, and off the map otherwise — a
+    # festival that has published its venues and not its programme still knows
+    # how many venues it has, and "  stages" with the number missing is the one
+    # thing this line must never be.
+    n_stages = stats.get("stages") or len(fest.stages)
     facts = [
-        ("#i-pin-line", "%s stages" % stats.get("stages", "")),
-        ("#i-time", ("%d days" % days) if days > 1 else "%d hours" % hours),
-        ("#i-mic-line", "%s acts" % stats.get("acts", "")),
-        ("#i-tag", fest.facts[2]),
+        ("#i-pin-line", "%d stage%s" % (n_stages, "" if n_stages == 1 else "s")),
+        ("#i-time", ("%d days" % days) if days > 1 else
+                    ("%d hours" % hours) if fest.hours_known else "1 day"),
     ]
+    # How many acts, only where they have been counted. A blank here read as a
+    # festival with no line-up rather than as one whose line-up is not out.
+    if stats.get("acts"):
+        facts.append(("#i-mic-line", "%d acts" % stats["acts"]))
+    facts.append(("#i-tag", fest.facts[2]))
     # The hero is the festival's own photograph and its own mark where there
     # is one — the picture the home page's card already shows, and the logo
     # the organiser publishes. A scrim between them, because a logo drawn for
@@ -4948,7 +5076,11 @@ def patch_template(tpl: str, fest: Festival) -> str:
         "strandName": strand.title(),
         "heroArt": hero_art,
         "name": name,
-        "when": ("%s · %s" % (f["dates"], fest.hours_line.split(" · ")[0])).upper(),
+        # The dates, and the hours where the organiser has published any. Where
+        # they have not, `hours_line` is the day count — and "1–2 OCTOBER · 2
+        # DAYS" says the same thing twice, so the eyebrow is just the dates.
+        "when": (("%s · %s" % (f["dates"], fest.hours_line.split(" · ")[0]))
+                 if fest.hours_known else f["dates"]).upper(),
         "dates": f["dates"],
         # the hours alone: how many days it runs is a fact below, and a date
         # range with the count after it wraps this line in two.
@@ -4983,6 +5115,18 @@ def patch_template(tpl: str, fest: Festival) -> str:
         r'<button sc-camel-on-click="\{\{ togglePicks \}\}"',
         '<button data-fp-picks="" sc-camel-on-click="{{ togglePicks }}"',
         "the picks button")
+
+    # The design computes `showPicksBadge` and then never reads it, so the
+    # count was drawn unconditionally and every planner opened with a "0"
+    # pinned to the star. Material's badge is for a non-zero count; a nought
+    # there reads as a control that has failed rather than one nobody has used.
+    tpl = sub_once(
+        tpl,
+        r'        <span style="\{\{ picksBadgeStyle \}\}">\{\{ starCount \}\}</span>\n',
+        '        <sc-if value="{{ showPicksBadge }}">\n'
+        '        <span style="{{ picksBadgeStyle }}">{{ starCount }}</span>\n'
+        '        </sc-if>\n',
+        "the picks badge is gated on there being picks")
 
     # The glyphs the compact festival design uses that the planner's sprite
     # does not carry, copied from it unchanged — and one more drawn to match,
@@ -6674,12 +6818,7 @@ def build(fid: str) -> pathlib.Path:
         "stars": f.get("stars") or [],
         "bounds": fest.basemap["bounds"],
         "days": [dict(d, date=d.get("date", "")) for d in fest.days],
-        # What to say where a running order would be. Taken from the record so
-        # it can name the organiser's own page, which is where the times will
-        # appear first.
-        "previewNote": (f.get("previewNote")
-                        or "The organiser has not published set times yet. "
-                           "The line-up and the venues are here; the clock is not."),
+        "previewNote": fest.preview_note,
         "dayIds": [{"id": d["id"], "date": d.get("date", "")} for d in fest.days],
     })
     script = patch_script(art.js, fest)
@@ -6709,10 +6848,20 @@ def build(fid: str) -> pathlib.Path:
     # value itself rather than an escaped copy of it.
     props_json = json.dumps(json.dumps(props, ensure_ascii=False))
 
-    title = "%s %s timetable — set times, stages and a map" % (f["name"], f["year"])
-    desc = ("%s Set times for all %d acts on %d stages, filters by stage, type "
-            "and genre, a stage map, and your own plan. Works offline."
-            % (f["description"], f["stats"]["acts"], f["stats"]["stages"]))
+    # What the page can honestly claim. A planner whose festival has not
+    # published a running order must not be indexed as a timetable: someone
+    # searching for set times would arrive at a page that has none, which is
+    # worse for them than not finding it at all.
+    if fest.preview:
+        title = "%s %s — venues, dates and a map" % (f["name"], f["year"])
+        desc = ("%s The venues on a map, the dates, and the forecast. Set times are "
+                "not published yet — they appear here when the organiser publishes "
+                "them. Works offline." % f["description"])
+    else:
+        title = "%s %s timetable — set times, stages and a map" % (f["name"], f["year"])
+        desc = ("%s Set times for all %d acts on %d stages, filters by stage, type "
+                "and genre, a stage map, and your own plan. Works offline."
+                % (f["description"], f["stats"]["acts"], f["stats"]["stages"]))
     og = seo.head(
         f"{seo.BASE}/{f['planner']}",
         title,

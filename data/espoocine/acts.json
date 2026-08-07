@@ -1,0 +1,83 @@
+{
+ "event": {
+  "name": "Espoo Ciné 2026",
+  "city": "Espoo",
+  "site": "https://espoocine.fi/en/"
+ },
+ "days": [
+  {
+   "id": "d1",
+   "label": "Fri 21 Aug",
+   "short": "Fri",
+   "date": "2026-08-21"
+  },
+  {
+   "id": "d2",
+   "label": "Sat 22 Aug",
+   "short": "Sat",
+   "date": "2026-08-22"
+  },
+  {
+   "id": "d3",
+   "label": "Sun 23 Aug",
+   "short": "Sun",
+   "date": "2026-08-23"
+  },
+  {
+   "id": "d4",
+   "label": "Mon 24 Aug",
+   "short": "Mon",
+   "date": "2026-08-24"
+  },
+  {
+   "id": "d5",
+   "label": "Tue 25 Aug",
+   "short": "Tue",
+   "date": "2026-08-25"
+  },
+  {
+   "id": "d6",
+   "label": "Wed 26 Aug",
+   "short": "Wed",
+   "date": "2026-08-26"
+  },
+  {
+   "id": "d7",
+   "label": "Thu 27 Aug",
+   "short": "Thu",
+   "date": "2026-08-27"
+  },
+  {
+   "id": "d8",
+   "label": "Fri 28 Aug",
+   "short": "Fri",
+   "date": "2026-08-28"
+  },
+  {
+   "id": "d9",
+   "label": "Sat 29 Aug",
+   "short": "Sat",
+   "date": "2026-08-29"
+  },
+  {
+   "id": "d10",
+   "label": "Sun 30 Aug",
+   "short": "Sun",
+   "date": "2026-08-30"
+  }
+ ],
+ "stages": [
+  {
+   "id": "tapiola",
+   "num": 1,
+   "name": "Kino Tapiola",
+   "lat": 60.17884,
+   "lon": 24.81107,
+   "short": "Kino Tapiola",
+   "location": "Mäntyviita 2, Espoo",
+   "blurb": "The festival's main cinema. Screenings also run at other venues in Espoo and Helsinki.",
+   "color": "",
+   "acts": []
+  }
+ ]
+}

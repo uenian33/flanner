@@ -107,18 +107,26 @@ def main() -> None:
     by = {f["id"]: f for f in cfg["festivals"]}
 
     card("home.jpg", ROOT / "assets" / "home" / "flow-promo.jpg",
-         "HELSINKI", "FESTIVAL PLANNER",
+         "FINLAND", "FESTIVAL PLANNER",
          "Plannable timetables · stage maps · your own route", "#fff203", "#000000")
 
-    for fid, out in (("kbp", "kallio.jpg"), ("flow", "flow.jpg")):
-        f = by[fid]
-        card(out, ROOT / "assets" / "home" / f"{'kbp' if fid == 'kbp' else 'flow'}-promo.jpg",
+    # One card per planner, found from the records rather than listed here —
+    # the file has to be named the way the page's og:image names it, which is
+    # the planner's own directory.
+    for f in (x for x in cfg["festivals"] if x.get("planner")):
+        promo = ROOT / "assets" / "home" / (f.get("promo") or "")
+        # A festival that has published no poster of its own gets the plate and
+        # its accent, the same way its card on the home page draws its
+        # category's artwork instead of a photograph.
+        card(f"{f['planner'].strip('/')}.jpg", promo if f.get("promo") else None,
              f["dates"].upper(), f["name"].upper(),
-             f"{f['stats']['acts']} acts · {f['stats']['stages']} stages · {f['city']}",
+             (f"{f['stats']['acts']} acts · {f['stats']['stages']} stages · {f['city']}"
+              if f["stats"].get("acts") else
+              f"{f['type']} · {f['city']}"),
              f["accent"], f["ink"])
 
     card("info.jpg", None, "", "FLANNER",
-         "Unofficial festival planners for Helsinki", "#b6fc46", "#0a1400")
+         "Unofficial festival planners for Finland", "#b6fc46", "#0a1400")
 
 
 if __name__ == "__main__":

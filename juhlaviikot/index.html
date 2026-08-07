@@ -1,0 +1,3338 @@
+<!doctype html>
+<!-- The festival this page is, in the two facts the theme needs. The
+     scheme below is already written at this accent, so the first paint is
+     themed; these are what let the same engine re-derive it at runtime for
+     a festival the build never saw. -->
+<html lang="en" data-festival="juhlaviikot" data-accent="#ffc861" data-stages="1">
+<head>
+<meta charset="utf-8">
+<!-- Two departures from the policy the rest of the site runs under, both
+     forced by the design's runtime and both scoped to the planners.
+
+     'unsafe-eval': the dc-runtime compiles the component from source at load,
+     so the class arrives as a string and is evaluated. Nothing on this page
+     takes input from anywhere — no query is read, no message is accepted, no
+     third-party script is loaded — so the string it evaluates is the one that
+     shipped with it.
+
+     The two tile hosts: the basemap travels with the page as an image, and
+     these are asked for only if a probe finds a signal.
+
+     api.open-meteo.com: the forecast, asked for the festival's coordinates —
+     never the reader's, which this page does not ask for. -->
+<!-- frame-src: the act card's player. Nothing is asked of either host until a
+     reader presses play on an act — the card holds a still picture and a
+     button until then, and the iframe is created by that press. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'inline-speculation-rules' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.basemaps.cartocdn.com https://server.arcgisonline.com; font-src 'self'; connect-src 'self' https://api.open-meteo.com; frame-src https://open.spotify.com https://www.youtube-nocookie.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- A planner is opened in a field, one-handed, and pinched by accident more
+     often than on purpose: the timetable is a grid you drag in both
+     directions, and a two-finger drag on it zoomed the page instead. So the
+     page holds its scale, the way an app does. Browser zoom on a pointer
+     device is untouched, and so is the stage map, which does its own
+     pinching. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f5f5f5">
+<!-- A stage is called Main Stage and a set runs 21:00-22:00; iOS reads
+     both as things to link and paints them blue. The page says what it
+     means by them itself. -->
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+<link rel="manifest" href="../manifest.webmanifest">
+<!-- Every glyph on the page is set in this file, and a @font-face src is only
+     discovered once the stylesheet in front of it has been parsed. -->
+<link rel="preload" href="../assets/font/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Flanner">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Helsinki Festival 2026 — venues, dates and a map</title>
+<meta name="description" content="The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days. The venues on a map, the dates, and the forecast. Set times are not published yet — they appear here when the organiser publishes them. Works offline.">
+<link rel="canonical" href="https://uenian33.github.io/flanner/juhlaviikot/">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="geo.region" content="FI">
+<meta name="geo.placename" content="Finland">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Flanner">
+<meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="fi_FI">
+<meta property="og:url" content="https://uenian33.github.io/flanner/juhlaviikot/">
+<meta property="og:title" content="Helsinki Festival 2026 — venues, dates and a map">
+<meta property="og:description" content="The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days. The venues on a map, the dates, and the forecast. Set times are not published yet — they appear here when the organiser publishes them. Works offline.">
+<meta property="og:image" content="https://uenian33.github.io/flanner/assets/og/juhlaviikot.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Helsinki Festival 2026 — venues, dates and a map">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Helsinki Festival 2026 — venues, dates and a map">
+<meta name="twitter:description" content="The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days. The venues on a map, the dates, and the forecast. Set times are not published yet — they appear here when the organiser publishes them. Works offline.">
+<meta name="twitter:image" content="https://uenian33.github.io/flanner/assets/og/juhlaviikot.jpg">
+<script type="application/ld+json">[{"@context":"https://schema.org","@type":"Festival","name":"Helsinki Festival 2026","startDate":"2026-08-18","endDate":"2026-09-05","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Helsinki","address":{"@type":"PostalAddress","addressLocality":"Helsinki","addressCountry":"FI"}},"description":"The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.","sameAs":["https://helsinkifestival.fi/en/"],"organizer":{"@type":"Organization","name":"Helsinki Festival","url":"https://helsinkifestival.fi/en/"},"isAccessibleForFree":false,"offers":{"@type":"Offer","url":"https://helsinkifestival.fi/en/programme/","priceCurrency":"EUR","availability":"https://schema.org/InStock"},"url":"https://uenian33.github.io/flanner/juhlaviikot/","image":["https://uenian33.github.io/flanner/assets/og/juhlaviikot.jpg"]},{"@context":"https://schema.org","@type":"FAQPage","inLanguage":["en","fi"],"mainEntity":[{"@type":"Question","name":"When is Helsinki Festival 2026?","inLanguage":"en","acceptedAnswer":{"@type":"Answer","text":"Helsinki Festival 2026 runs 18 August – 5 September 2026 at Helsinki."}},{"@type":"Question","name":"Milloin Helsinki Festival 2026 järjestetään?","inLanguage":"fi","acceptedAnswer":{"@type":"Answer","text":"Helsinki Festival 2026 järjestetään 18. elokuuta – 5. syyskuuta 2026, paikkana Helsinki."}},{"@type":"Question","name":"Is the Helsinki Festival timetable out yet?","inLanguage":"en","acceptedAnswer":{"@type":"Answer","text":"Not yet. Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet. This page has the venues on a map and the dates; the grid appears here as soon as they are published."}},{"@type":"Question","name":"Onko Helsinki Festival 2026 aikataulu jo julkaistu?","inLanguage":"fi","acceptedAnswer":{"@type":"Answer","text":"Ei vielä. Järjestäjä ei ole julkaissut esiintymisaikoja. Tällä sivulla ovat esiintymispaikat kartalla ja päivämäärät — aikataulu ilmestyy tänne heti kun se julkaistaan."}},{"@type":"Question","name":"Where is Helsinki Festival 2026 held?","inLanguage":"en","acceptedAnswer":{"@type":"Answer","text":"At Helsinki. The planner puts every venue on a map that works offline, with walking directions from wherever you are standing."}},{"@type":"Question","name":"Toimiiko aikataulu ilman nettiyhteyttä?","inLanguage":"fi","acceptedAnswer":{"@type":"Answer","text":"Kyllä. Koko sivu tallentuu selaimeesi, joten aikataulu, kartta ja oma ohjelmasi toimivat myös silloin kun festivaalialueella ei ole kenttää."}}]},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Flanner","item":"https://uenian33.github.io/flanner/"},{"@type":"ListItem","position":2,"name":"Helsinki Festival 2026","item":"https://uenian33.github.io/flanner/juhlaviikot/"}]}]</script>
+<style>
+/* The runtime hides the raw template itself, but only once it has loaded and
+   run. Declaring the rule here puts it in force while the template is being
+   parsed, so a slow device never paints a frame of uncompiled bindings. */
+x-dc{display:none}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/font/inter-latin-ext.woff2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../assets/font/inter-latin.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url("7a2a8d48-6ea0-44b2-bab5-7936dbf61bc1");
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url("001161c6-c0e6-41e4-a6d5-be646c227a40");
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: url("7469b621-291a-46aa-888f-8f2bbdffea87");
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: var(--wash,#FFFFFF); color: var(--on,#191D13);
+         font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+         -webkit-font-smoothing: antialiased; }
+  a { color: var(--primary,#4C662B); }
+  a:hover { color: var(--plan,#2E4B12); }
+  @keyframes fp-slide { from { transform: translateX(-100%); } to { transform: none; } }
+  @keyframes fp-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fp-rise { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+  /* same rise, but for elements centred with translateX(-50%) */
+  @keyframes fp-sheet-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.97); }
+    to   { opacity: 1; transform: translateX(-50%); }
+  }
+  @keyframes fp-blast {
+    0%   { transform: scale(.25); opacity: .6; }
+    70%  { opacity: .12; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+  @keyframes fp-search-in {
+    from { width: 44px; opacity: 0; }
+    to   { width: 100%; opacity: 1; }
+  }
+  @keyframes fp-search-out {
+    from { width: 100%; opacity: 1; }
+    to   { width: 44px; opacity: 0; }
+  }
+  @keyframes fp-search-cover-in {
+    from { clip-path: inset(0 0 0 calc(100% - 52px) round 26px); opacity: .5; }
+    to   { clip-path: inset(0 0 0 0 round 0px); opacity: 1; }
+  }
+  @keyframes fp-search-cover-out {
+    from { clip-path: inset(0 0 0 0 round 0px); opacity: 1; }
+    to   { clip-path: inset(0 0 0 calc(100% - 52px) round 26px); opacity: 0; }
+  }
+  @keyframes fp-search-content-in {
+    0%   { transform: translateX(22px); opacity: 0; }
+    58%  { transform: translateX(-4px); opacity: 1; }
+    100% { transform: none; opacity: 1; }
+  }
+  @keyframes fp-search-content-out {
+    0%   { transform: none; opacity: 1; }
+    100% { transform: translateX(16px); opacity: 0; }
+  }
+  @keyframes fp-search-icon-in {
+    0%   { transform: scale(.7) rotate(-18deg); }
+    62%  { transform: scale(1.12) rotate(3deg); }
+    100% { transform: none; }
+  }
+  @keyframes fp-weather-in {
+    0%   { opacity: 0; transform: translateY(-12px) scale(.94); }
+    52%  { opacity: 1; }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes fp-weather-row {
+    0%   { opacity: 0; transform: translateY(10px) scale(.97); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes fp-fav-spin {
+    0%   { transform: rotate(0deg) scale(1); }
+    18%  { transform: rotate(48deg) scale(.74); }
+    52%  { transform: rotate(232deg) scale(1.2); }
+    76%  { transform: rotate(318deg) scale(.96); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  @keyframes fp-fav-ring {
+    0%   { transform: scale(.2); opacity: 0; border-width: 12px; }
+    10%  { opacity: .85; }
+    100% { transform: scale(2.9); opacity: 0; border-width: 1px; }
+  }
+  @keyframes fp-fav-spark {
+    0%   { transform: rotate(var(--a)) translateX(calc(var(--fs) * .1)) scale(.35); opacity: 0; }
+    12%  { opacity: 1; }
+    72%  { opacity: 1; }
+    100% { transform: rotate(var(--a)) translateX(calc(var(--fs) * var(--d))) scale(.12); opacity: 0; }
+  }
+  @keyframes fp-fav-star {
+    0%   { transform: rotate(var(--a)) translateX(calc(var(--fs) * .1)) scale(.2) rotate(0deg); opacity: 0; }
+    14%  { opacity: 1; }
+    70%  { opacity: 1; }
+    100% { transform: rotate(var(--a)) translateX(calc(var(--fs) * var(--d))) scale(1) rotate(300deg); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-fav-burst] { display: none !important; }
+  }
+  @keyframes fp-pop {
+    0%   { transform: rotate(-45deg) scale(1); }
+    35%  { transform: rotate(-45deg) scale(1.32); }
+    65%  { transform: rotate(-45deg) scale(.94); }
+    100% { transform: rotate(-45deg) scale(1); }
+  }
+  .leaflet-container { font-family: inherit; background: var(--low,#F8F7F3); }
+  .leaflet-control-attribution { font-size: 10.5px; }
+  .leaflet-bar a { color: var(--on,#191D13); }
+:root{color-scheme:light}
+  [data-theme="dark"]{color-scheme:dark;
+    --wash:#12160C;
+    --low:#171C11;
+    --card:#1B2016;
+    --card-a:#221A11;
+    --card-f:#1C1A22;
+    --hover:#262E1E;
+    --on:#E1E4D5;
+    --on-var:#C2C9B2;
+    --dim-on:#8D9482;
+    --outline:#3F4A34;
+    --line1:#2A331F;
+    --line2:#202818;
+    --primary:#B1D18A;
+    --sec:#354E16;
+    --on-sec:#CDEDA3;
+    --plan:#CDEDA3;
+    --on-plan:#1F2D0A;
+    --heart:#F0BC85;
+    --heart-cont:#6B4310;
+    --on-heart-cont:#FFEEDC;
+    --warm-plan:#F0BC85;
+    --on-warm-plan:#2B1700;
+    --dot-m:#7FA05C;
+    --dot-a:#9A6C31;
+    --dot-f:#8C7BB8;
+    --sec-a:#4A2E08;
+    --on-sec-a:#FFDDB3;
+    --plan-a:#FFDDB3;
+    --on-plan-a:#2B1700;
+    --sec-f:#362A56;
+    --on-sec-f:#EADDFF;
+    --plan-f:#D6C4F5;
+    --on-plan-f:#1D192B;
+    --art-m-bg:#223018;
+    --art-m-1:#4E6B32;
+    --art-m-ink:#CDEDA3;
+    --art-a-bg:#2E2113;
+    --art-a-1:#6B4A20;
+    --art-a-2:#E0B183;
+    --art-a-ink:#FFDDB3;
+    --art-f-bg:#221C2E;
+    --art-f-2:#C6B2F0;
+    --art-f-ink:#EADDFF;
+    --pink-card:#241019;
+    --pink-row:#3E1A29;
+    --pink-track:#52233A;
+    --pink-primary:#F0B7CE;
+    --pink-on:#FFD9E2;
+    --pink-on-var:#E7B3C6;
+    --state5:rgba(225,228,213,.06);
+    --state6:rgba(225,228,213,.07);
+    --state7:rgba(225,228,213,.08);
+    --state8:rgba(225,228,213,.09);
+    --state9:rgba(225,228,213,.11);
+    --state10:rgba(225,228,213,.12);
+    --tag-edge:rgba(225,228,213,.28);
+    --state-sec:rgba(18,22,12,.10);
+    --state-primary:rgba(177,209,138,.14);
+    --bar:rgba(18,22,12,.92);
+    --bar2:rgba(18,22,12,.9);
+    --glass:rgba(18,22,12,.78);
+    --star-chip:rgba(18,22,12,.4);
+    --star-chip-on:rgba(18,22,12,.22);
+    --scrim:rgba(0,0,0,.6);
+    --bar-edge:rgba(63,74,52,.7);
+  }
+  [data-hide-scrollbar]::-webkit-scrollbar { width: 0; height: 0; }
+  [data-hide-scrollbar] { -ms-overflow-style: none; }
+:root{--st0-bg:#f8dfbb;--st0-fg:#352502;--st0-dot:#e6be7c;--st0-planbg:#573e05;--st0-planfg:#ffeed8;--st0-artbg:#332816;--st0-art1:#745d36;--st0-art2:#e5c592;--st0-art3:#a99068;--st0-artink:#fcdba7;--st0-hero:#ffeed8;--st0-qbg:#f9ecdb;--st0-qtone:#e8d5b9;--st0-qink:#917850}
+[data-theme="dark"]{--st0-bg:#574421;--st0-fg:#f1d09d;--st0-dot:#af9261;--st0-planbg:#f1d09d;--st0-planfg:#352502;--st0-artbg:#332816;--st0-art1:#745d36;--st0-art2:#e5c592;--st0-art3:#a99068;--st0-artink:#fcdba7;--st0-hero:#fad8a5;--st0-qbg:#423827;--st0-qtone:#5c4e37;--st0-qink:#b59d7a}
+/* The exit the two cards leave by: fp-weather-in, which is how
+   they arrive, played backwards. */
+@keyframes fp-card-out{0%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-12px) scale(.94)}}
+/* Someone who has asked for less motion still gets the indicator
+   and the cards, they just do not get the journey. */
+@media (prefers-reduced-motion: reduce){[data-fp-nav-pill]{transition:none!important}[data-fp-card]{animation:none!important}}
+/* The card's colour names in the light theme. The design declares these
+   only under [data-theme="dark"] — everywhere else it writes them inline as
+   var(--x, #hex) fallbacks — so a stylesheet that uses them bare, as the
+   reference does, would find nothing and drop the declaration: borders and
+   rules disappeared. These are the reference's own light values, scoped so
+   the design's dark block still wins in the dark. */
+:root:not([data-theme="dark"]) {
+  --wash:#FFFFFF; --low:#F8F7F3; --card:#F2F0EB; --card-a:#F7F1E8; --card-f:#F4F0F7;
+  --hover:#EAE8DF; --on:#191D13; --on-var:#494E42; --outline:#C7CBBA;
+  --primary:#4C662B; --sec:#DCE8C0; --on-sec:#1F2D0A; --plan:#2E4B12; --on-plan:#EDF6DA;
+  --sec-a:#F2DFC3; --on-sec-a:#2B1700; --plan-a:#6B4310; --on-plan-a:#FFEEDC;
+  --sec-f:#E8DEF8; --on-sec-f:#1D192B; --plan-f:#4F378B; --on-plan-f:#EADDFF;
+  --dot-m:#A9CE88; --dot-a:#E5C193; --dot-f:#CFC1E8;
+  --art-m-bg:#E7F0CF; --art-m-1:#CDEDA3; --art-m-ink:#31490F;
+  --art-a-bg:#FBEBD3; --art-a-1:#FFDDB3; --art-a-2:#855318; --art-a-ink:#4A2A02;
+  --art-f-bg:#EFE6FA; --art-f-2:#6750A4; --art-f-ink:#341E73;
+  --state6:rgba(25,29,19,.055); --state8:rgba(25,29,19,.08); --state10:rgba(25,29,19,.10);
+  --scrim:rgba(20,24,14,.32);
+}
+
+/* the five tokens the card adds for itself */
+:root {
+  /* on-hero colours sit on the wash, which is dark in both themes */
+  --on-hero:#FFFFFF; --on-hero-dim:rgb(255 255 255 / .84);
+
+  --ease:cubic-bezier(.2,0,0,1);
+  --spring:400ms cubic-bezier(.34,1.36,.28,1);
+  --effects:200ms cubic-bezier(.34,.80,.34,1);
+  --elev-3:0 12px 48px rgba(20,24,14,.24);
+}
+[data-theme="dark"] { --elev-3:0 12px 48px rgba(0,0,0,.6); }
+
+/* Strand themes — one class recolours chip, artwork, plan button and
+   the accent. Nothing else in the card changes. */
+.t-music { --surf:var(--card); --chip:var(--sec); --on-chip:var(--on-sec); --accent:var(--primary);
+  --plan-bg:var(--sec); --plan-fg:var(--on-sec); --plan-on:var(--plan); --plan-on-fg:var(--on-plan);
+  --art-bg:var(--art-m-bg); --art-1:var(--art-m-1); --art-2:var(--primary); --art-3:var(--dot-m); --art-ink:var(--art-m-ink);
+  --hero-tint:#CDEDA3; }
+.t-art { --surf:var(--card-a); --chip:var(--sec-a); --on-chip:var(--on-sec-a); --accent:var(--art-a-2);
+  --plan-bg:var(--sec-a); --plan-fg:var(--on-sec-a); --plan-on:var(--plan-a); --plan-on-fg:var(--on-plan-a);
+  --art-bg:var(--art-a-bg); --art-1:var(--art-a-1); --art-2:var(--art-a-2); --art-3:var(--dot-a); --art-ink:var(--art-a-ink);
+  --hero-tint:#FFDDB3; }
+.t-film { --surf:var(--card-f); --chip:var(--sec-f); --on-chip:var(--on-sec-f); --accent:var(--art-f-2);
+  --plan-bg:var(--sec-f); --plan-fg:var(--on-sec-f); --plan-on:var(--plan-f); --plan-on-fg:var(--on-plan-f);
+  --art-bg:var(--art-f-bg); --art-1:var(--on-plan-f); --art-2:var(--art-f-2); --art-3:var(--dot-f); --art-ink:var(--art-f-ink);
+  --hero-tint:#EADDFF; }
+[data-theme="dark"] .t-art { --accent:var(--art-a-2); }
+[data-theme="dark"] .t-film { --accent:var(--art-f-2); }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ============================================================
+   2 · CARD
+   ============================================================ */
+.ac-host { container-type: inline-size; container-name: ac; }
+.ac {
+  display: grid;
+  padding: 12px 12px 16px;
+  border-radius: 28px;
+  background: var(--surf);
+  color: var(--on);
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 15px;
+  box-shadow: var(--elev-3);
+  -webkit-font-smoothing: antialiased;
+}
+.ac__body { padding: 0 8px; display: grid; min-inline-size: 0; }
+
+/* ---------- hero ---------- */
+/* Departure from the reference, which frames a photograph: 16/10 with a
+   218px floor. There is no photograph here — the artwork is drawn from the
+   act's own palette and reads at any height — so a picture's proportions
+   bought nothing but empty tint between the close button and the name. The
+   band is as tall as what stands in it: a row that keeps the close button
+   clear, then the name block, then the padding under it. A one-line name on
+   a phone comes to 159px where the frame gave 218. */
+.ac__hero {
+  position: relative; display: grid; align-content: end;
+  padding-block-start: 60px; min-block-size: 152px;
+  border-radius: 20px; overflow: hidden; background: var(--art-bg);
+}
+.ac__art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+
+/* A flat wash, not a gradient: an even tint darkens the whole picture
+   by a known amount, so the name keeps its contrast wherever the
+   image happens to be light. */
+.ac__scrim { position: absolute; inset: 0; background: rgb(0 0 0 / .46); }
+
+.ac__overlay { position: relative; z-index: 1; display: grid; gap: 7px; padding: 0 20px 18px; }
+.ac__eyebrow {
+  margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .1em;
+  /* white rather than the strand's tint: the picture already carries the
+     festival's colour, and a third one over it was one too many */
+  text-transform: uppercase; color: var(--on-hero-dim,rgb(255 255 255 / .84));
+}
+.ac__title {
+  margin: 0; padding-inline-end: 4px; color: var(--on-hero);
+  font-size: clamp(22px, 5.4cqi, 30px); font-weight: 700;
+  line-height: 1.08; letter-spacing: -.03em; text-wrap: balance;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+/* The reference cuts a notch into the corner of the hero and stands a chip in
+   it, and reserved this row's end for it. The chip named the stage, which the
+   row itself names and links to, so it is gone from the markup and the row
+   has its end back. */
+.ac__where {
+  display: flex; align-items: center; gap: 8px; margin: 1px 0 0;
+  padding-inline-end: 4px;
+  font-size: 13.5px; font-weight: 500; color: var(--on-hero-dim); min-inline-size: 0;
+}
+.ac__where span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ac__where svg { flex: none; inline-size: 17px; block-size: 17px; fill: currentColor; }
+
+.ac__tools { position: absolute; inset-block-start: 10px; inset-inline-end: 10px; z-index: 2; display: flex; gap: 8px; }
+.ac__tool {
+  display: grid; place-items: center; inline-size: 44px; block-size: 44px;
+  border: 0; border-radius: 50%; background: rgb(255 255 255 / .18);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  color: #FFFFFF; cursor: pointer; transition: background var(--effects), color var(--effects);
+}
+.ac__tool svg { inline-size: 21px; block-size: 21px; }
+.ac__tool:hover { background: rgb(255 255 255 / .30); }
+.ac__tool:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+.ac__tool[aria-pressed="true"] { background: var(--chip); color: var(--on-chip); }
+.ac__tool svg use[href="#i-close"] { fill: currentColor; }
+
+/* the planner's star: an outline flooded by a growing clip disc */
+.star__svg { overflow: visible; }
+.star__disc { transform: scale(0); transform-origin: 12px 12px; transition: transform .34s cubic-bezier(.34,1.3,.64,1); }
+/* The button that carries this star is .ac__fav-btn — the flood was written
+   for a .ac__tool that this card does not have, so a starred act kept an
+   outline star and the fill was clipped to nothing for good. It floods in the
+   colour the plan button is filled with, which is what being in the plan
+   looks like everywhere else on the card. */
+.ac__tool[aria-pressed="true"] .star__disc,
+.ac__fav-btn[aria-pressed="true"] .star__disc { transform: scale(1); }
+.star__outline { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; transition: opacity .2s ease; }
+.ac__tool[aria-pressed="true"] .star__outline,
+.ac__fav-btn[aria-pressed="true"] .star__outline { opacity: 0; transition-delay: .12s; }
+.star__fill { fill: currentColor; stroke: none; }
+.ac__fav-btn[aria-pressed="true"] .star__fill { fill: var(--plan-on); }
+
+/* notch + chip — the card system's signature */
+.ac__notch {
+  position: absolute; z-index: 1; inset-block-end: 0; inset-inline-end: 0;
+  padding: 6px 0 0 6px; background: var(--surf); border-start-start-radius: 22px;
+}
+.ac__notch i {
+  position: absolute; inline-size: 12px; block-size: 12px;
+  background: radial-gradient(circle at 0 0, #0000 11.5px, var(--surf) 12.5px);
+}
+.ac__notch i:first-child { inset-inline-end: 0; inset-block-end: 100%; }
+.ac__notch i:last-child { inset-inline-end: 100%; inset-block-end: 0; }
+.ac__chip {
+  display: block; padding: 9px 16px;
+  border-start-start-radius: 16px; border-end-end-radius: 20px;
+  background: var(--chip); color: var(--on-chip);
+  font-family: inherit; font-size: 12px; line-height: 1; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+}
+
+/* ============================================================
+   3 · LISTEN
+   A facade: no iframe exists, and nothing is requested from YouTube
+   or Spotify, until play is pressed.
+   ============================================================ */
+/* A relative tint, not a named surface: --card is the music card's own
+   background, so a fixed value made the well disappear on that strand. */
+.listen { margin-block-start: 16px; padding: 8px; border-radius: 28px; background: var(--state6); }
+.listen__row { display: flex; align-items: center; gap: 14px; }
+
+.listen__cover {
+  position: relative; flex: none; inline-size: 56px; block-size: 56px;
+  border-radius: 18px; overflow: hidden; background: var(--art-bg);
+}
+.listen__cover svg { display: block; inline-size: 100%; block-size: 100%; }
+
+.listen__meta { flex: 1 1 auto; min-inline-size: 0; display: grid; gap: 4px; }
+.listen__title {
+  margin: 0; font-size: 15px; font-weight: 650; letter-spacing: -.01em; line-height: 1.2;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.listen__src {
+  display: inline-flex; align-items: center; gap: 7px; margin: 0;
+  font-size: 12.5px; font-weight: 500; color: var(--on-var);
+}
+.listen__src svg { flex: none; inline-size: 15px; block-size: 15px; }
+.listen__none { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--on-var); }
+
+/* two sources: the label line becomes a connected button group —
+   filled segments, no strokes, selected one rounds to a pill */
+.srcs { display: inline-flex; gap: 3px; }
+.srcs__btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  block-size: 30px; padding: 0 11px; border: 0; border-radius: 6px;
+  background: var(--state6); color: var(--on-var);
+  font-family: inherit; font-size: 11.5px; line-height: 1; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--effects), color var(--effects), border-radius .35s cubic-bezier(.42,1.67,.21,.9);
+}
+.srcs__btn:first-child { border-start-start-radius: 15px; border-end-start-radius: 15px; }
+.srcs__btn:last-child { border-start-end-radius: 15px; border-end-end-radius: 15px; }
+.srcs__btn svg { flex: none; inline-size: 14px; block-size: 14px; }
+.srcs__btn:hover { background: var(--state8); }
+.srcs__btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.srcs__btn[aria-pressed="true"] { border-radius: 15px; background: var(--chip); color: var(--on-chip); }
+
+/* circle at rest, squircle when pressed — the shape morph the plan
+   button already uses elsewhere in the app */
+.listen__play {
+  flex: none; display: grid; place-items: center;
+  inline-size: 56px; block-size: 56px; border: 0; border-radius: 28px;
+  background: var(--plan-on); color: var(--plan-on-fg);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: border-radius .35s cubic-bezier(.42,1.67,.21,.9), background var(--effects);
+}
+.listen__play svg { inline-size: 26px; block-size: 26px; fill: currentColor; }
+.listen__play:hover { border-radius: 18px; }
+.listen__play:active { border-radius: 16px; }
+.listen__play:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.listen__embed { margin-block-start: 8px; border-radius: 20px; overflow: hidden; }
+.listen__embed[hidden] { display: none; }
+.listen__embed iframe { display: block; inline-size: 100%; border: 0; }
+.listen__embed--yt iframe { aspect-ratio: 16 / 9; block-size: auto; }
+.listen__embed--sp iframe { block-size: 152px; }
+
+.listen--empty { background: var(--state6); }
+.listen--empty .listen__cover { display: grid; place-items: center; background: var(--state6); }
+.listen--empty .listen__cover svg { inline-size: 24px; block-size: 24px; fill: var(--on-var); opacity: .7; }
+
+/* ============================================================
+   4 · BIOGRAPHY — three lines, then on request
+   ============================================================ */
+.bio { margin-block-start: 20px; }
+/* The introduction starts where the button under it starts: a text
+   button carries 12 of padding before its label and the paragraph
+   carried none, so the two stood a pad apart down the left. The clip
+   takes the 12; the button already has it. */
+.bio__clip { overflow: hidden; padding-inline-start: 12px; max-block-size: calc(3 * 1.55em); transition: max-block-size 340ms var(--ease); }
+.bio__text { margin: 0; font-size: 15px; line-height: 1.55; color: var(--on-var); }
+.bio__more {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-block-start: 8px; padding: 8px 14px 8px 12px; min-block-size: 40px;
+  border: 0; border-radius: 20px; background: none; color: var(--accent);
+  font-family: inherit; font-size: 14px; line-height: 1; font-weight: 700;
+  cursor: pointer; transition: background var(--effects);
+}
+.bio__more:hover { background: var(--state8); }
+.bio__more:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.bio__more svg { inline-size: 18px; block-size: 18px; fill: currentColor; transition: transform var(--spring); }
+.bio.is-open .bio__more svg { transform: rotate(180deg); }
+.bio__more[hidden] { display: none; }
+
+/* ---------- links ---------- */
+.links { display: flex; flex-wrap: wrap; gap: 8px; margin-block-start: 18px; padding: 0; list-style: none; }
+.links a {
+  display: grid; place-items: center; inline-size: 44px; block-size: 44px;
+  border-radius: 50%; background: var(--state6); color: var(--on-var);
+  text-decoration: none; transition: background var(--effects), color var(--effects);
+}
+.links svg { inline-size: 20px; block-size: 20px; }
+.links a:hover { background: var(--chip); color: var(--on-chip); }
+.links a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- tags ---------- */
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+.tags li {
+  display: inline-flex; align-items: center; block-size: 32px; padding: 0 16px;
+  border: 1px solid var(--outline); border-radius: 8px;
+  font-size: 14px; font-weight: 500; line-height: 20px; color: var(--on-var);
+}
+
+/* ---------- actions ---------- */
+.ac__rule { margin: 20px 0 0; block-size: 1px; border: 0; background: var(--outline); }
+.ac__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-block-start: 16px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  block-size: 44px; padding: 0 20px 0 16px; border-radius: 22px;
+  font-family: inherit; font-size: 14px; line-height: 1; font-weight: 500;
+  letter-spacing: .006em; cursor: pointer; border: 0;
+  transition: background var(--effects);
+}
+.btn svg { inline-size: 20px; block-size: 20px; fill: currentColor; }
+.btn--outlined { border: 1px solid var(--outline); background: transparent; color: var(--on); }
+.btn--outlined:hover { background: var(--state8); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* filled tonal, shape-morphing on selection like the festival card's */
+.btn--plan {
+  margin-inline-start: auto; border-radius: 12px;
+  background: var(--plan-bg); color: var(--plan-fg);
+  transition: background var(--effects), color var(--effects), border-radius .35s cubic-bezier(.42,1.67,.21,.9);
+}
+.btn--plan[aria-pressed="true"] { border-radius: 22px; background: var(--plan-on); color: var(--plan-on-fg); }
+
+/* ============================================================
+   5 · ADAPTIVE
+   ============================================================ */
+@container ac (min-width: 700px) {
+  /* 236px in the reference; the same reasoning as above, one step taller
+     than the phone's so the band still reads as a header over two columns. */
+  .ac__hero { block-size: auto; min-block-size: 176px; }
+  .ac__body { grid-template-columns: minmax(0,1fr) minmax(0,1fr); column-gap: 28px; padding: 0 10px; }
+  .ac__col { display: grid; align-content: start; }
+  .ac__col--a { grid-column: 1; }
+  .ac__col--b { grid-column: 2; }
+  .ac__rule, .ac__actions { grid-column: 1 / -1; }
+  .bio { margin-block-start: 16px; }
+  .tags { margin-block-start: 16px; }
+}
+/* below that the columns dissolve and everything runs in one flow */
+@container ac (max-width: 699px) {
+  .ac__col { display: contents; }
+  /* Departure from the reference, which lays the body out as a grid of auto
+     rows. On a phone the card is the whole screen, and auto rows in a grid
+     taller than its content share the slack out between them: every block
+     stood a little further from the last than it was written to, and the
+     spacing the design set — 12, 18, 20 — read as one loose column. The
+     blocks keep their own margins now, and the slack collects in one place,
+     above the divider, so the two actions sit at the foot of the card. */
+  .ac__body { display: flex; flex-direction: column; }
+  /* The 20px the design leaves above the divider becomes a transparent
+     border, so an auto margin can take the slack without ever closing that
+     gap up. The rule paints its content box alone and stays 1px. */
+  .ac__rule {
+    margin-block-start: auto; border-block-start: 20px solid transparent;
+    background-clip: content-box; box-sizing: content-box;
+  }
+}
+@container ac (max-width: 400px) {
+  .ac { padding: 10px 10px 14px; }
+  .ac__body { padding: 0 6px; }
+  .ac__overlay { padding: 0 16px 15px; gap: 6px; }
+  .ac__where { font-size: 13px; }
+  .listen__cover, .listen__play { inline-size: 50px; block-size: 50px; }
+  .btn--plan { flex-basis: 100%; margin-inline-start: 0; }
+  .btn--outlined { flex: 1 1 auto; }
+}
+/* ---- the stage label is the way to the map ----
+   It was a line of text; it is the only route to the stage now that the
+   Navigate button has gone, so it is a control and reads as one: the hero's
+   own translucent surface, the same one its two icon buttons use, with a
+   state layer and the arrow the button used to carry. */
+.ac__where {
+  /* The overlay is a grid, which stretches its rows: inline-flex alone left
+     the pill running the width of the hero with the name in one end of it. */
+  display: inline-flex; justify-self: start; align-items: center; gap: 8px;
+  margin: 3px 0 0; max-inline-size: 100%;
+  padding: 7px 12px 7px 10px; border: 0; border-radius: 20px;
+  background: rgb(255 255 255 / .16);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  color: var(--on-hero); font-family: inherit; font-size: 13.5px;
+  font-weight: 500; line-height: 1.2; text-align: start; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--effects);
+}
+.ac__where:hover { background: rgb(255 255 255 / .30); }
+.ac__where:active { background: rgb(255 255 255 / .38); }
+.ac__where:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+.ac__where-go { opacity: .8; }
+
+/* ---- the star, under the player and against its right edge ----
+   Off the artwork, so it takes the surface treatment the link buttons use
+   rather than the hero's glass. */
+/* One row: the act's own pages on the left, the star against the right edge
+   of the player above it. */
+.ac__row { display: flex; align-items: center; gap: 8px; margin-block-start: 12px; }
+/* The list's own bottom margin would push the star 8px below the links it
+   sits beside. */
+.ac__row .links { flex: 1 1 auto; margin: 0; }
+.ac__fav-btn { margin-inline-start: auto; }
+.ac__fav-btn {
+  display: grid; place-items: center; inline-size: 44px; block-size: 44px;
+  border: 0; border-radius: 50%; background: var(--state6);
+  color: var(--on-var); cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--effects), color var(--effects);
+}
+.ac__fav-btn svg { inline-size: 22px; block-size: 22px; }
+.ac__fav-btn:hover { background: var(--state8); }
+.ac__fav-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ac__fav-btn[aria-pressed="true"] { background: var(--chip); color: var(--on-chip); }
+
+/* ---- the player's loading indicator ----
+   M3's wavy linear indicator: a 4dp active line on a dim track, the wave
+   travelling one wavelength a second while an indeterminate window sweeps
+   across it. Drawn rather than imported — one SVG path, the card's accent,
+   and it stops dead for anyone who has asked for less motion. */
+.wave {
+  position: absolute; inset-inline: 24px; inset-block-start: 50%;
+  translate: 0 -50%; block-size: 24px; pointer-events: none;
+}
+.wave__svg { display: block; inline-size: 100%; block-size: 100%; overflow: visible; }
+.wave__track {
+  fill: none; stroke: var(--state10); stroke-width: 4; stroke-linecap: round;
+}
+.wave__line {
+  fill: none; stroke: var(--accent); stroke-width: 4;
+  stroke-linecap: round; stroke-linejoin: round;
+  animation: wave-travel 1s linear infinite, wave-sweep 2s cubic-bezier(.2,0,0,1) infinite;
+}
+@keyframes wave-travel { to { transform: translateX(24px); } }
+@keyframes wave-sweep {
+  0%   { clip-path: inset(0 100% 0 0); }
+  45%  { clip-path: inset(0 0 0 0); }
+  55%  { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 0 0 100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wave__line { animation: none; }
+}
+
+/* On a phone everything runs in one column, and the reference's 18-20px
+   between blocks reads as a gap when the player above it is 352px tall. */
+@container ac (max-width: 699px) {
+  /* The same gap above the row as below it: the player, the row, the text. */
+  .ac__row { margin-block-start: 12px; }
+  .bio { margin-block-start: 12px; }
+  .tags { margin-block-start: 12px; }
+}
+
+/* The corner chip names the stage the act is on, so it is a name and reads
+   like one: sentence case, medium weight, a size down from the reference's
+   all-caps label. */
+.ac__chip { font-size: 11.5px; font-weight: 500; letter-spacing: .01em;
+  text-transform: none; padding: 8px 14px; }
+
+/* The player is Spotify's own card, shown at the height Spotify draws it —
+   the reference's 152px is the compact bar, which clips an artist's track
+   list mid-row. Nothing of ours stands over it: no cover, no name, no play
+   button, since the embed carries all three. */
+/* A flex column, so the whitespace between the template's tags cannot leave
+   a stray 4px line box under the player and make the gap above the row
+   larger than the one below it. */
+.listen { display: flex; flex-direction: column; padding: 0; background: none; }
+.listen__embed { position: relative; margin-block-start: 0; }
+.listen__embed--sp iframe { block-size: 352px; }
+.listen:has(.listen__none) { padding: 8px; background: var(--state6,rgba(25,29,19,.055)); }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Scoped to the card. The reference is a page of nothing but cards, so it
+     writes this at the root; here that would stop every animation on the
+     planner, including ones the design decides for itself. */
+  .ac, .ac *, .ac *::before, .ac *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+
+/* #ffc861's own hue — every tone the design chose, turned to it */
+:root:not([data-theme="dark"]){--wash:#FFFFFF;--low:#F8F7F3;--card:#F2F0EB;--card-a:#f8f1e8;--card-f:#F4F0F7;--hover:#ede7df;--on:#211b11;--on-var:#534b40;--outline:#d3c8b8;--primary:#765a21;--sec:#f9e0bb;--on-sec:#362602;--plan:#583f05;--on-plan:#fff0dc;--sec-a:#f3dfc3;--on-sec-a:#2B1700;--plan-a:#6B4310;--on-plan-a:#FFEEDC;--sec-f:#E8DEF8;--on-sec-f:#1D192B;--plan-f:#4F378B;--on-plan-f:#EADDFF;--dot-m:#e5bd7a;--dot-a:#E5C193;--dot-f:#CFC1E8;--art-m-bg:#fee9cb;--art-m-1:#ffdeaa;--art-m-ink:#573e05;--art-a-bg:#fcebd3;--art-a-1:#FFDDB3;--art-a-2:#855318;--art-a-ink:#4A2A02;--art-f-bg:#EFE6FA;--art-f-2:#6750A4;--art-f-ink:#341E73;--state6:rgba(33,27,17,.055);--state8:rgba(33,27,17,.08);--state10:rgba(33,27,17,.10);--scrim:rgba(28,22,12,.32);--state9:rgba(33,27,17,.09);--heart-cont:#f8e1bf;--on-heart-cont:#251a00;--heart:#7a5800;--bar-edge:rgba(211,200,184,.6);--state5:rgba(33,27,17,.045);--line1:#e2dcd3;--line2:#f0ebe4;--dim-on:#6b6154;--tag-edge:rgba(33,27,17,.22);--star-chip-on:rgba(255,255,255,.18);--star-chip:rgba(255,255,255,.6);--pink-row:#efe2d0;--pink-on:#251a00;--pink-card:#fbf4eb;--pink-primary:#735823;--bar:rgba(255,255,255,.94);--warm-plan:#62470a;--on-warm-plan:#fdefdb;--state7:rgba(33,27,17,.07);--pink-on-var:#5a4622;--pink-track:#e3cdac;--state-primary:rgba(118,90,33,.12);--state-sec:rgba(54,38,2,.08)}
+[data-theme="dark"]{--wash:#1a1409;--low:#20190e;--card:#241e14;--card-a:#221A11;--card-f:#1C1A22;--hover:#342a1b;--on:#ebe1d4;--on-var:#d3c4af;--dim-on:#9c907f;--outline:#524530;--line1:#3a2e1c;--line2:#2d2415;--primary:#e9c17e;--sec:#5c430c;--on-sec:#ffdeaa;--plan:#ffdeaa;--on-plan:#362602;--heart:#e6c082;--heart-cont:#62470a;--on-heart-cont:#fdefdb;--warm-plan:#e6c082;--on-warm-plan:#251a00;--dot-m:#b59050;--dot-a:#9A6C31;--dot-f:#8C7BB8;--sec-a:#4A2E08;--on-sec-a:#FFDDB3;--plan-a:#FFDDB3;--on-plan-a:#2B1700;--sec-f:#362A56;--on-sec-f:#EADDFF;--plan-f:#D6C4F5;--on-plan-f:#1D192B;--art-m-bg:#372a13;--art-m-1:#7b5e27;--art-m-ink:#ffdeaa;--art-a-bg:#2E2113;--art-a-1:#6B4A20;--art-a-2:#E0B183;--art-a-ink:#FFDDB3;--art-f-bg:#221C2E;--art-f-2:#C6B2F0;--art-f-ink:#EADDFF;--pink-card:#1f1500;--pink-row:#322406;--pink-track:#42300c;--pink-primary:#dec39a;--pink-on:#f2e0c7;--pink-on-var:#d6be99;--state5:rgba(235,225,212,.06);--state6:rgba(235,225,212,.07);--state7:rgba(235,225,212,.08);--state8:rgba(235,225,212,.09);--state9:rgba(235,225,212,.11);--state10:rgba(235,225,212,.12);--tag-edge:rgba(235,225,212,.28);--state-sec:rgba(26,20,9,.10);--state-primary:rgba(233,193,126,.14);--bar:rgba(26,20,9,.92);--bar2:rgba(26,20,9,.9);--glass:rgba(26,20,9,.78);--star-chip:rgba(26,20,9,.4);--star-chip-on:rgba(26,20,9,.22);--scrim:rgba(0,0,0,.6);--bar-edge:rgba(82,69,48,.7)}
+.fest{--hero-tint:#ffdeaa;--hero-duo:#765a21}
+
+/* iOS wraps what its detectors find in an anchor of its own. Where it
+   does, the anchor takes the colour of the text it replaced — the blue
+   and the underline are the OS's opinion, not the page's. */
+a[x-apple-data-detectors] {
+  color: inherit !important; -webkit-text-fill-color: inherit !important;
+  text-decoration: none !important; pointer-events: none;
+}
+
+/* ---------- the festival, compact ---------- */
+/* The design's own type scale, which it declares on the root and this page
+   cannot: the planner's root already carries a scale of its own. The colour
+   roles it declares there are the planner's roles under the planner's names,
+   so they are simply used; the artwork's five come from the strand class the
+   card system already puts on the element. The measures are the design's:
+   16dp margins, and the room the floating bar stands in. */
+.fest{
+  /* a step down the M3 scale from the design's 32, which was drawn for a
+     three-word name and set a festival's full name across two lines */
+  --headline-size:28px; --headline-lh:1.08;
+  --title-size:17px;
+  --body-size:15px;   --body-lh:1.55;
+  --body-sm-size:14px;
+  --label-size:14px;  --label-sm-size:11.5px;
+  font-size:var(--body-size); line-height:var(--body-lh);
+  /* the design's 16dp margin, over the 12 the view already keeps; the room
+     the bar stands in is kept by the scroller above this. */
+  padding: 8px 4px 0;
+}
+
+/* ---------- hero ---------- */
+/* This page runs on two edges, and they are the planner's own: text and the
+   controls that stand in the text stay on the 16dp margin, with the bar's
+   title and the programme's headings; a surface sits 4px outside it, where
+   every card and every row in the app already sits. So the two surfaces the
+   design brings — the artwork and the About card — come out to meet the
+   weather card under them rather than standing 4px in from it. */
+/* One surface holds what the festival is: its picture, what it plays and
+   what you can do about it. The card system's own proportions — a 12px inset
+   around a 20px picture inside a 28px corner — so it stands with the About
+   card under it rather than as three loose things. */
+.fest .fcard {
+  margin-inline: -4px; padding: 12px 12px 16px;
+  border-radius: 28px; background: var(--card);
+}
+.fest .hero {
+  position: relative; display: grid; align-content: end;
+  aspect-ratio: 16 / 10; isolation: isolate;
+  border-radius: 20px; overflow: hidden; background: var(--art-bg);
+}
+/* The festival says what it is the way an act does: the card's own hero,
+   rule for rule — the flat wash rather than a gradient, so the line keeps
+   its contrast wherever the picture happens to be light; the date over the
+   name in the strand's tint; and the place as the pill that goes to the
+   map. Which is why nothing under the picture repeats them. */
+.fest .hero__overlay {
+  /* The three lines are three different things — when it runs, what it is,
+     where it is — so they stand a step apart rather than as one block. */
+  position: relative; z-index: 1; display: grid; gap: 11px; padding: 0 16px 18px;
+}
+.fest .hero__eyebrow {
+  margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .1em;
+  /* white rather than the strand's tint: the picture already carries the
+     festival's colour, and a third one over it was one too many */
+  text-transform: uppercase; color: var(--on-hero-dim,rgb(255 255 255 / .84));
+}
+.fest .hero__title {
+  margin: 0; padding-inline-end: 4px; color: var(--on-hero,#FFFFFF);
+  font-size: 26px; font-weight: 700; line-height: 1.08; letter-spacing: -.03em;
+  text-wrap: balance;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.fest .hero__where {
+  display: inline-flex; justify-self: start; align-items: center; gap: 8px;
+  margin: 1px 0 0; max-inline-size: 100%;
+  padding: 7px 12px 7px 10px; border: 0; border-radius: 20px;
+  background: rgb(255 255 255 / .16);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  color: var(--on-hero,#FFFFFF); font-family: inherit; font-size: 13px;
+  font-weight: 500; line-height: 1.2; text-align: start; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--effects);
+}
+.fest .hero__where:hover { background: rgb(255 255 255 / .30); }
+.fest .hero__where:active { background: rgb(255 255 255 / .38); }
+.fest .hero__where:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+.fest .hero__where span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fest .hero__where svg { flex: none; inline-size: 17px; block-size: 17px; fill: currentColor; }
+.fest .hero__where-go { opacity: .8; }
+.fest .hero__art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+/* A photograph arrives in whatever colours the festival's photographer found,
+   and a poster arrives in whatever colours it was printed in — neither is the
+   app's. So the picture is taken to luminance and the festival's own hue is
+   blended back over it: `color` takes hue and chroma from the layer above and
+   lightness from the picture below, which is a duotone in the colour the rest
+   of the page is drawn in. The picture keeps its shapes and gives up its
+   palette. The two layers isolate, so nothing under the hero blends with them. */
+.fest .hero__photo {
+  position: absolute; inset: 0; inline-size: 100%; block-size: 100%;
+  object-fit: cover; display: block;
+  filter: grayscale(1) contrast(1.05);
+}
+.fest .hero__duo {
+  position: absolute; inset: 0; pointer-events: none;
+  background: var(--hero-duo,#4C662B); mix-blend-mode: color;
+}
+/* Only where the mark stands: the picture keeps its own light everywhere
+   else, and a scrim over all of it would read as a dimmed photograph
+   rather than as a surface something is written on. */
+.fest .hero__scrim {
+  position: absolute; inset: 0; pointer-events: none; background: rgb(0 0 0 / .52);
+}
+/* the card system's notch, cutting into the page rather than a card */
+.fest .notch {
+  position: absolute; inset-block-end: 0; inset-inline-end: 0;
+  padding: 6px 0 0 6px; background: var(--wash,#FFFFFF); border-start-start-radius: 22px;
+}
+.fest .notch i {
+  position: absolute; inline-size: 12px; block-size: 12px;
+  background: radial-gradient(circle at 0 0,#0000 11.5px,var(--wash,#FFFFFF) 12.5px);
+}
+.fest .notch i:first-child { inset-inline-end: 0; inset-block-end: 100%; }
+.fest .notch i:last-child { inset-inline-end: 100%; inset-block-end: 0; }
+.fest .notch span {
+  display: block; padding: 9px 16px;
+  border-start-start-radius: 16px; border-end-end-radius: 20px;
+  background: var(--sec); color: var(--on-sec);
+  font-size: var(--label-sm-size); font-weight: 700; line-height: 1;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+
+/* ---------- status row (M3 assist chips, 32dp) ---------- */
+.fest .status { display: flex; flex-wrap: wrap; gap: 8px; margin-block-start: 14px; }
+.fest .chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  block-size: 32px; padding: 0 14px 0 10px;
+  border: 1px solid var(--outline); border-radius: 8px;
+  background: transparent; color: var(--on-var);
+  font-size: 13.5px; font-weight: 500; line-height: 1; font-family: inherit;
+  cursor: pointer; transition: background var(--effects);
+}
+.fest .chip:hover { background: var(--state8); }
+.fest .chip svg { flex: none; inline-size: 18px; block-size: 18px; fill: currentColor; }
+.fest .chip--live { border-color: transparent; background: var(--sec); color: var(--on-sec); font-weight: 600; }
+.fest .chip--live b {
+  inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--primary);
+  animation: fp-fest-pulse 2s var(--ease) infinite;
+}
+@keyframes fp-fest-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.78); } }
+
+/* ---------- headline + meta ---------- */
+.fest .title {
+  margin: 12px 0 0;
+  font-size: var(--headline-size); font-weight: 700; line-height: var(--headline-lh);
+  letter-spacing: -.03em; text-wrap: balance;
+}
+/* The name is the bar's, not this page's — it says it at the top of every
+   view — so the facts under the picture are what this block is, and they are
+   set at the size the Lineup sets an act's name in. One size for the two
+   things on the page that name something, and the page is shorter for it. */
+.fest .meta { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.fest .meta li { display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 1.35; }
+.fest .meta svg {
+  flex: none; inline-size: 18px; block-size: 18px;
+  fill: none; stroke: var(--on-var); stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.fest .meta em { font-style: normal; color: var(--on-var); }
+/* the address is the one meta row that does something */
+/* 12px, not the design's 10: the row that is a button carries the same
+   glyph as the two that are not, and its label belongs in their column. */
+.fest .meta button {
+  display: inline-flex; align-items: center; gap: 12px;
+  margin: -6px -10px; padding: 6px 10px; border: 0; border-radius: 10px;
+  background: none; color: inherit; font: inherit; text-align: start; cursor: pointer;
+  transition: background var(--effects);
+}
+.fest .meta button:hover { background: var(--state8); }
+.fest .meta button svg { stroke: var(--primary); }
+
+/* ---------- genre chips ---------- */
+.fest .genres {
+  display: flex; flex-wrap: nowrap; gap: 8px; margin: 12px -12px 0; padding: 0 12px;
+  overflow-x: auto; scrollbar-width: none; list-style: none;
+}
+.fest .genres::-webkit-scrollbar { block-size: 0; }
+.fest .genres li {
+  flex: none; display: inline-flex; align-items: center; block-size: 32px; padding: 0 14px;
+  border: 1px solid var(--outline); border-radius: 8px;
+  font-size: 12px; font-weight: 500; letter-spacing: .01em;
+  color: var(--on-var); white-space: nowrap;
+}
+/* What the festival is stands with what it plays, in the festival's own
+   colour — the one chip in the row that is filled, so it reads as the
+   heading of the list rather than another entry in it. */
+.fest .genres li.strand {
+  border-color: transparent; background: var(--sec); color: var(--on-sec); font-weight: 600;
+  letter-spacing: .02em;
+}
+
+/* ---------- actions ---------- */
+/* M3's button group: three that share the row equally, and the one that is
+   on takes room from the other two — the same idea as a selected segment
+   growing, on the emphasised spring so the give and take reads as one
+   movement. Each says what it does; an icon alone made the two links a
+   guess. */
+.fest .actions { display: flex; gap: 8px; margin-block-start: 12px; }
+.fest .act, .fest .plan {
+  flex: 1 1 0; min-inline-size: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  block-size: 48px; padding: 0 8px; border: 0; border-radius: 16px;
+  /* M3's tonal step: the card is the container and a control on it is the
+     surface above — the same colour on both read as one shape. */
+  background: var(--wash,#FFFFFF); color: var(--on);
+  /* Label Medium: at 13 the longest of the three labels, "Add to plan",
+     ran 72px into the 66 a third of the row leaves it and ellipsised. */
+  font-size: 12px; font-weight: 600; font-family: inherit; letter-spacing: .01em;
+  cursor: pointer; text-decoration: none;
+  transition: background var(--effects), color var(--effects),
+    border-radius var(--spring), flex-grow var(--spring);
+}
+.fest .act span, .fest .plan span {
+  min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.fest .act svg { flex: none; inline-size: 18px; block-size: 18px; }
+.fest .act:hover { background: var(--hover,#EAE8DF); border-radius: 28px; }
+.fest .act:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* filled tonal, shape-morphing on selection — the app's own plan button */
+.fest .plan[aria-pressed="true"] {
+  flex-grow: 1.5; border-radius: 24px;
+  background: var(--heart-cont,#FBE0C0); color: var(--on-heart-cont,#2B1700);
+}
+.fest .plan:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.fest .plan svg { flex: none; inline-size: 18px; block-size: 18px; overflow: visible; color: var(--heart,#8F4C0A); }
+.fest .plan[aria-pressed="true"] svg { color: currentColor; }
+
+/* ---------- the lineup, a row you scroll ----------
+   The row bleeds past the page's margin so a cut item shows at the edge;
+   that is the only affordance a scrolling row needs. Snap points align to
+   the margin rather than to the screen edge. */
+/* The page has one content column: a card sits on the 12 every card in the
+   app sits on, and what is written — inside a card or beside it — starts
+   12 further in. So the Lineup's heading and the first face in its row line
+   up with About's heading and its copy. */
+.fest .sec-head { display: flex; align-items: baseline; gap: 12px; margin: 18px 0 10px;
+  padding-inline: 20px; }
+.fest .sec-head h2 { margin: 0; font-size: var(--title-size); font-weight: 650; letter-spacing: -.01em; }
+.fest .sec-head button {
+  /* the -12px is the rule the About card's Read more already follows: a
+     text button's label sits on the margin and its padding hangs off it */
+  margin-inline: auto -12px; padding: 8px 12px; min-block-size: 40px;
+  border: 0; border-radius: 20px; background: none; color: var(--primary);
+  font-size: 13.5px; font-weight: 650; font-family: inherit; cursor: pointer;
+  transition: background var(--effects);
+}
+.fest .sec-head button:hover { background: var(--state8); }
+.fest .sec-head button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.fest .lineup {
+  display: flex; gap: 14px; margin: 0 -16px; padding: 2px 16px 6px 36px;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity; scroll-padding-inline-start: 36px;
+  scrollbar-width: none; list-style: none;
+}
+.fest .lineup::-webkit-scrollbar { block-size: 0; }
+.fest .lineup li { flex: none; inline-size: 84px; scroll-snap-align: start; }
+.fest .who {
+  display: grid; justify-items: center; gap: 8px; inline-size: 100%;
+  padding: 0; border: 0; background: none; color: inherit;
+  font-family: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.fest .who:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; border-radius: 12px; }
+.fest .avatar {
+  position: relative; inline-size: 72px; block-size: 72px; border-radius: 50%;
+  display: grid; place-items: center; overflow: visible;
+  transition: transform var(--spring);
+}
+.fest .who:active .avatar { transform: scale(.93); }
+/* clipped rather than hidden: the tick has to stand outside the circle */
+.fest .who__art { inline-size: 100%; block-size: 100%; clip-path: circle(50%); }
+.fest .avatar--on { box-shadow: 0 0 0 3px var(--wash,#FFFFFF), 0 0 0 5px var(--accent); }
+.fest .avatar b {
+  position: absolute; inset-block-end: -1px; inset-inline-end: -1px;
+  display: grid; place-items: center; inline-size: 22px; block-size: 22px;
+  border-radius: 50%; border: 2px solid var(--wash,#FFFFFF);
+  background: var(--accent); color: var(--wash,#FFFFFF);
+}
+.fest .avatar b svg { inline-size: 13px; block-size: 13px; fill: currentColor; }
+.fest .who__name {
+  font-size: 13px; font-weight: 600; line-height: 1.25; text-align: center;
+  min-block-size: 2.5em;               /* two lines kept, so the times line up */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+/* The time is what a lineup is scanned for, so it is set in tabular
+   figures and every row of them lines up. */
+.fest .who__role {
+  margin-block-start: -2px; inline-size: 100%;
+  font-size: 12px; font-weight: 550; line-height: 1.3; color: var(--on-var,#494E42);
+  font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap;
+}
+
+/* ---------- about ---------- */
+.fest .about {
+  /* 24 inside a card that sits on 12, which puts every word in it on the
+     36 the forecast card writes on — its card pads 12 and each block in
+     it pads 12 again. Surfaces stay at 24: the picture above, the chips,
+     the actions, the forecast's own hourly rows. */
+  margin-block-start: 14px; margin-inline: -4px; padding: 14px 24px 12px;
+  border-radius: 24px; background: var(--card);
+}
+.fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
+/* Three lines, and three whole ones. The height is three of the paragraph's
+   line boxes — but `em` resolves against the box's own font-size, and the box
+   inherited the card's 15px while the paragraph is set at 13, so the window
+   was 65.25px over an 18.85px line: three lines and 46% of a fourth, sliced
+   through the middle of its letters. The size is restated here so `1.45em` is
+   the line it is counting. What decides whether there is a Read more at all
+   already measures the paragraph's own leading; this is the box catching up
+   with it. */
+.fest .about__clip { overflow: hidden; font-size: 13px; max-block-size: calc(3 * 1.45em); transition: max-block-size 340ms var(--ease); }
+/* The size the forecast writes its own line in, so the two cards under
+   the festival read as one page rather than two. */
+.fest .about__text { margin: 0; font-size: 13px; line-height: 1.45; color: var(--on-var); text-wrap: pretty; }
+.fest .about__more {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 8px 0 0 -12px; padding: 10px 14px 10px 12px; min-block-size: 44px;
+  border: 0; border-radius: 22px; background: none; color: var(--primary);
+  font: 700 14px/1 inherit; cursor: pointer; transition: background var(--effects);
+}
+.fest .about__more:hover { background: var(--state8); }
+.fest .about__more:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.fest .about__more svg { inline-size: 18px; block-size: 18px; fill: currentColor; transition: transform var(--spring); }
+.fest .about.is-open .about__more svg { transform: rotate(180deg); }
+.fest .about__facts {
+  display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 12px 0 0; padding: 10px 0 0;
+  border-block-start: 1px solid var(--outline); list-style: none;
+}
+.fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--on-var); }
+.fest .about__facts svg { inline-size: 16px; block-size: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+/* ---- modal bottom sheet, phone only ---- */
+:root{--sheet-gap:calc(56px + env(safe-area-inset-top,0px))}
+[data-fp-shell]{transform-origin:50% 0}
+@media (max-width:639.98px){
+  [data-fp-shell]{
+    transition:transform .44s cubic-bezier(.2,0,0,1),border-radius .44s cubic-bezier(.2,0,0,1)}
+  body.fp-sheet [data-fp-shell]{
+    transform:scale(.94) translateY(8px);border-radius:28px;overflow:clip}
+  /* Reading an act is the only thing happening: the page under the
+     sheet does not move, and there is no scroll of its own behind the
+     sheet for a gesture to fall through to. */
+  body.fp-sheet{overflow:hidden;overscroll-behavior:none}
+  /* M3's drag handle: 32×4, on the surface it sits on at 40%. The hero is
+     dark under both themes, so it is drawn in white over it.
+
+     It is the sheet's own top edge, not the picture's. It used to sit inside
+     the hero, and the hero is part of the scroll — so the moment a card was
+     scrolled far enough to be worth scrolling, the handle went off the top
+     with it and took the only place a dismiss could start. The rest of the
+     sheet is `touch-action: pan-y`, which hands a vertical drag to the
+     scroller before a pointermove ever reaches us, so a scrolled card could
+     not be swiped away at all. Sticky at the top of the scroller, it is where
+     M3 says it is: always on the sheet's leading edge, always the affordance
+     for the gesture.
+
+     It floats: 28 tall for a comfortable target, pulled back out of the flow
+     by the same 28 so the picture still runs to the sheet's top edge and the
+     card looks as it did. */
+  .ac__grip{
+    position:sticky;inset-block-start:0;z-index:4;
+    display:grid;place-items:center;
+    block-size:28px;margin-block-end:-28px;touch-action:none}
+  .ac__grab{
+    position:relative;z-index:1;inline-size:32px;block-size:4px;
+    border-radius:2px;background:rgb(255 255 255 / .4);pointer-events:none;
+    transition:background var(--md-sys-motion-spring-fast-effects,150ms ease)}
+  /* No veil under the handle. A 44px strip of the card's paper used to fade
+     in behind it once the card had been scrolled, so that a white handle over
+     white paper still read — but it also faded out the top of whatever was
+     passing under it, and what passes under it first is the act's own name.
+     A band of the picture dissolving into nothing at the top of the card is
+     the thing that looked broken. The handle keeps the other half of that
+     idea and takes the ink of what it is over. */
+  .ac.is-scrolled .ac__grab{background:color-mix(in srgb,var(--on,#191D13) 38%,transparent)}
+  /* The picture is a grip too, so a drag that starts on it moves the sheet
+     rather than passing it to the scroll: without this the browser starts
+     scrolling on the first pixel and the drag never gets its chance. */
+  .ac__hero{touch-action:none}
+  .ac__hero{padding-block-start:64px}
+}
+/* Above the phone the card is a dialog in the middle of the screen, not a
+   sheet standing on the bottom edge, and there is nothing to drag it towards. */
+@media (min-width:640px){ .ac__grip{display:none} }
+@media (prefers-reduced-motion:reduce){
+  [data-fp-shell]{transition:none}
+}
+
+/* ---- the player opens, phone only ----
+   Spotify draws two cards from the same URL: a 152px bar with the act, its
+   Follow and its play button, and a 352px one with the first three tracks
+   under it. The tall one is most of a phone screen before the introduction
+   has started, so the card opens with the bar and the reader asks for the
+   rest. The ask is M3's own expand: the chevron that says which way it goes,
+   turning as it goes, and the height on the emphasised curve — a change of
+   size is a spatial change, so it takes the spatial duration, while the
+   chevron is a change of state and takes the shorter one. */
+.embed__more{display:none}
+@media (max-width:639.98px){
+  .listen__embed--sp,.listen__embed--sp iframe{
+    block-size:152px;transition:block-size .5s cubic-bezier(.2,0,0,1)}
+  .listen__embed--sp.is-open,.listen__embed--sp.is-open iframe{block-size:352px}
+  /* A surface of its own, the width of the player and shallow-cornered
+     against its 20: a control under the card rather than a glyph floating
+     below it. */
+  .embed__more{
+    display:flex;align-items:center;justify-content:center;
+    inline-size:100%;min-block-size:32px;margin-block-start:6px;
+    padding:0;border:0;border-radius:12px;
+    background:var(--state6,rgba(25,29,19,.055));
+    color:var(--on-var,#494E42);cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .2s cubic-bezier(.2,0,0,1)}
+  .embed__more:hover{background:var(--state8,rgba(25,29,19,.08))}
+  .embed__more:active{background:var(--state9,rgba(25,29,19,.09))}
+  .embed__more:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .embed__more svg{
+    inline-size:18px;block-size:18px;fill:currentColor;
+    transition:transform .3s cubic-bezier(.2,0,0,1)}
+  .embed__more[aria-expanded="true"] svg{transform:rotate(180deg)}
+}
+@media (prefers-reduced-motion:reduce){
+  .listen__embed--sp,.listen__embed--sp iframe,.embed__more svg{transition:none}
+}
+
+/* ---- the map's own furniture ----
+   Leaflet ships the controls of 2011: white squares with a 1px border and a
+   4px corner, a popup with a hairline and a drop shadow, an attribution strip
+   in 11px grey. The map underneath is the festival's; these are the page's,
+   so they are drawn as the page draws its own — surface-container under M3's
+   level-1 elevation, the shape scale for the corners, and the type scale for
+   the words. */
+.leaflet-container{font-family:inherit}
+
+/* ---------- the map, before there is a map ----------
+   The basemap used to arrive inside the page, so this view was never empty.
+   It is a file now, fetched the first time the reader opens the map, and
+   between the press and the first tile there was nothing to look at.
+
+   So the surface waits in the same placeholder tone and the same 1.6s sweep
+   the page-transition skeleton uses, and it stops on its own: `:has()` makes
+   the rule hold only while no layer has painted, so the moment the still
+   image or the first live tile lands the shimmer is no longer matched. No
+   listener to attach to Leaflet, and nothing left animating under a map. */
+.leaflet-container{background:var(--hover,#EAE8DF);position:relative}
+.leaflet-container:not(:has(.leaflet-image-layer,.leaflet-tile-loaded))::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgb(255 255 255 / .5) 52%,transparent);
+  animation:fx-sweep 1.6s cubic-bezier(.4,0,.2,1) infinite}
+[data-theme=dark] .leaflet-container:not(:has(.leaflet-image-layer,.leaflet-tile-loaded))::after{
+  background:linear-gradient(90deg,transparent,rgb(255 255 255 / .06) 52%,transparent)}
+@media (prefers-reduced-motion:reduce){
+  .leaflet-container::after{animation:none;background:none}}
+.leaflet-bar,.leaflet-touch .leaflet-bar{
+  border:0;border-radius:16px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(20,24,14,.24),0 1px 3px 1px rgba(20,24,14,.12)}
+.leaflet-bar a,.leaflet-touch .leaflet-bar a{
+  inline-size:40px;block-size:40px;line-height:40px;
+  border:0;border-block-end:1px solid var(--outline-variant,rgba(25,29,19,.10));
+  background:var(--card,#F2F0EB);color:var(--on-var,#494E42);
+  font-family:inherit;font-size:20px;font-weight:500;
+  transition:background .2s cubic-bezier(.2,0,0,1)}
+.leaflet-bar a:last-child,.leaflet-touch .leaflet-bar a:last-child{border-block-end:0}
+.leaflet-bar a:hover,.leaflet-touch .leaflet-bar a:hover{
+  background:var(--state8,rgba(25,29,19,.08))}
+.leaflet-bar a.leaflet-disabled{background:var(--card,#F2F0EB);opacity:.38}
+.leaflet-control-zoom{margin:12px}
+.leaflet-popup-content-wrapper{
+  border-radius:16px;background:var(--card,#F2F0EB);color:var(--on,#191D13);
+  box-shadow:0 1px 2px rgba(20,24,14,.24),0 2px 6px 2px rgba(20,24,14,.12)}
+.leaflet-popup-content{margin:12px 16px;font-family:inherit}
+.leaflet-popup-tip{background:var(--card,#F2F0EB);box-shadow:none}
+.leaflet-container a.leaflet-popup-close-button{
+  inline-size:36px;block-size:36px;padding:0;line-height:36px;
+  color:var(--on-var,#494E42);font-size:18px}
+.leaflet-control-attribution{
+  padding:2px 8px;border-start-start-radius:12px;
+  background:color-mix(in srgb,var(--card,#F2F0EB) 82%,transparent);
+  color:var(--on-var,#494E42);
+  font-family:inherit;font-size:11px;line-height:16px;letter-spacing:.5px}
+.leaflet-control-attribution a{color:var(--primary,#4C662B)}
+
+/* ---- the pin answers when its stage is pressed ----
+   Two beats to the round and three rounds, the way a heart does it, over
+   three rings that leave the pin half a second apart. The pin keeps its
+   rotation through the beat — it is a teardrop turned 45° — and both are the
+   stage's own colour. */
+@keyframes fp-beat{
+  0%{transform:rotate(-45deg) scale(1)}
+  12%{transform:rotate(-45deg) scale(1.24)}
+  24%{transform:rotate(-45deg) scale(1)}
+  36%{transform:rotate(-45deg) scale(1.14)}
+  52%{transform:rotate(-45deg) scale(1)}
+  100%{transform:rotate(-45deg) scale(1)}
+}
+@keyframes fp-ripple{
+  0%{transform:scale(.42);opacity:.6}
+  70%{opacity:.14}
+  100%{transform:scale(2.9);opacity:0}
+}
+/* ---- the sound level in the Live chip ----
+   Three bars, a second to the cycle, a third of a cycle apart, on the
+   standard curve in and out. It says one thing — this is on now — and says it
+   quietly enough to be read past. */
+@keyframes fp-live{
+  0%,100%{transform:scaleY(.35)}
+  50%{transform:scaleY(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  [style*="fp-live"]{animation:none!important;transform:scaleY(.7)}
+}
+
+/* A pin is the colour of the cells in its column. */
+[data-fp-pin]{
+  background:var(--pin,var(--sec,#DCE8C0));color:var(--pin-on,var(--on-sec,#1F2D0A));
+  transition:background .3s cubic-bezier(.2,0,0,1),color .3s cubic-bezier(.2,0,0,1)}
+@media (prefers-reduced-motion:reduce){
+  /* The map still travels to the stage; it just does not beat about it. */
+  [style*="fp-beat"],[style*="fp-ripple"]{animation:none!important}
+}
+
+/* ---- the measure ----
+   M3 puts a readable line at 40–60 characters. Nothing in the planner is
+   justified: every measure here is a card's width, and justification needs a
+   line long enough to absorb the stretch — under about 55 characters the
+   spaces open so far to reach the right edge that the paragraph reads as full
+   of holes. The written pages, which hold a 66ch column, are where the site
+   justifies. What the planner takes from the same rule is the ceiling, for
+   the two paragraphs it has outside the card. */
+[data-fp-shell] p{max-inline-size:66ch}
+/* The introduction was set at 15/1.55, between the type scale's two body
+   sizes. At Body Medium it is the size every other piece of supporting text
+   in the card is. */
+.bio__text{font-size:14px;line-height:20px;letter-spacing:.25px}
+/* ---------- the bar carries across the navigation ----------
+   The other half of the pairing in `_nav.css`, which names the home page's bar
+   `navbar`. A view transition only morphs an element into another when both
+   documents name it: named on one side alone the browser has an element
+   leaving and nothing arriving, and animates it out — which is worse than the
+   plain cross-fade it replaces. So the planner names the same two parts.
+
+   `navbar` is the bar itself. Its right edge sits where the home page's does,
+   so the morph shows the left edge travelling in by the width of the button
+   beside it, rather than the whole capsule sliding. `navback` is that button,
+   which exists on a planner and not on the list, and so has nothing to morph
+   from; it is named anyway to be animated on its own terms — see the arrival
+   in `_pagefx.html` — instead of being faded in with the page behind it.
+
+   Below 600 only, and for the same reason `_nav.css` stops there: above it the
+   home page's element is a rail down the side and this is still a capsule at
+   the foot, and naming both would ask the browser to fly a column into a pill
+   and present it as continuity.
+
+   The selectors are the design's own, and all of them are
+   festival-independent: one nav labelled Main, and one button back to the
+   list — which names itself for what it does, so a reader who arrived from
+   the list sees `Go back` and one who arrived cold sees the mark and the
+   site's name. Both labels, or the transition would name the button in the
+   one case where there is nothing behind it to go back to.
+
+   The dash is written as itself rather than as a CSS escape: an escape eats
+   the space that terminates it, so `4 all` looks for `Flanner —all
+   festivals` and nothing on the page is called that. The document is UTF-8
+   and so is this file. */
+@media (max-width: 599.98px) {
+  #dc-root nav[data-hide-scrollbar][aria-label="Main"] { view-transition-name: navbar; }
+  #dc-root button[aria-label="Go back"],
+  #dc-root button[aria-label="Flanner — all festivals"] { view-transition-name: navback; }
+}
+/* No double-tap zoom, and no rubber-banding past the page. */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+/* The bounce again, for the scrollers inside the page. The timetable, the
+   list, the map pane and every sheet declare overscroll-behavior:contain,
+   which keeps a scroll from chaining out into the page but leaves each of
+   them free to rubber-band at its own ends — the page reads as loose when
+   reaching the end of the grid makes it wobble. They are all reached by the
+   one attribute they have in common, since each states it inline and an
+   inline declaration is the last word without this. */
+body{overscroll-behavior:none}
+[style*="overscroll-behavior"]{overscroll-behavior:none!important}
+</style>
+<script>/* the page holds its scale on a touch screen */
+(function () {
+  if (!window.matchMedia || !matchMedia('(pointer: coarse)').matches) return;
+  /* Leaflet does its own two-finger zoom, on the one element that should
+     have one. */
+  var onMap = function (e) {
+    var t = e.target;
+    return !!(t && t.closest && t.closest('.leaflet-container'));
+  };
+  var stop = function (e) {
+    if (onMap(e)) return;
+    if (e.cancelable) e.preventDefault();
+  };
+  /* Safari's own pinch events, which is what it listens to instead of the
+     viewport tag. */
+  document.addEventListener('gesturestart', stop, { passive: false });
+  document.addEventListener('gesturechange', stop, { passive: false });
+  document.addEventListener('gestureend', stop, { passive: false });
+  /* Everywhere else: a touch that has become two fingers is a pinch. */
+  document.addEventListener('touchmove', function (e) {
+    if (e.touches && e.touches.length > 1) stop(e);
+  }, { passive: false });
+})();
+</script>
+<!-- React, ReactDOM, Leaflet and the runtime, as the four files both planners
+     share rather than 351 KB inlined into each of them. Classic tags, in load
+     order: the runtime needs React in the document before it compiles. -->
+<script src="../assets/js/react-d949f1c368.js"></script>
+<script src="../assets/js/react-dom-35f4f974f4.js"></script>
+<script src="../assets/js/leaflet-db49d009c8.js"></script>
+<script src="../assets/js/dc-runtime-8fe7df7440.js"></script>
+<!-- The colour engine and the design's own tones with the hue taken out of
+     them: one file for the whole site, which themes a planner from the
+     accent on <html> above. -->
+<script src="../assets/js/theme-cd8b355c10.js"></script>
+</head>
+<body>
+<x-dc>
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <symbol id="i-logo" sc-camel-view-box="0 0 96 96">
+    <g fill="currentColor">
+      <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z"></path>
+      <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(60 48 48)"></path>
+      <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(120 48 48)"></path>
+      <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(180 48 48)"></path>
+      <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(240 48 48)"></path>
+      <path d="M48 40L38.63 24.76A11 11 0 1 1 57.37 24.76Z" transform="rotate(300 48 48)"></path>
+    </g>
+  </symbol>
+  <symbol id="i-cal" sc-camel-view-box="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h2a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h2V2zM5 9v10h14V9H5z"></path></symbol>
+  <symbol id="i-list" sc-camel-view-box="0 0 24 24"><path d="M4 6h2.4v2H4zm4.4 0H20v2H8.4zM4 11h2.4v2H4zm4.4 0H20v2H8.4zM4 16h2.4v2H4zm4.4 0H20v2H8.4z"></path></symbol>
+  <symbol id="i-pin" sc-camel-view-box="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"></path></symbol>
+  <symbol id="i-star" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 4.2l2.32 5.03 5.48.56-4.1 3.66 1.16 5.37L12 16.05l-4.86 2.77 1.16-5.37-4.1-3.66 5.48-.56z"></path></symbol>
+  <symbol id="i-heart-geo" sc-camel-view-box="0 0 24 24"><path d="M12 20.7l-1.32-1.2C6.06 15.3 3 12.5 3 9.06 3 6.26 5.2 4.06 8 4.06c1.58 0 3.1.74 4 1.9.9-1.16 2.42-1.9 4-1.9 2.8 0 5 2.2 5 5 0 3.44-3.06 6.24-7.68 10.46L12 20.7z"></path></symbol>
+  <symbol id="i-back" sc-camel-view-box="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20z"></path></symbol>
+  <symbol id="i-star-geo" sc-camel-view-box="0 0 24 24"><path d="M12 4.2l2.32 5.03 5.48.56-4.1 3.66 1.16 5.37L12 16.05l-4.86 2.77 1.16-5.37-4.1-3.66 5.48-.56z"></path></symbol>
+  <symbol id="i-star-fill" sc-camel-view-box="0 0 24 24"><path d="M12 3.6l2.5 5.4 5.9.6-4.4 3.94 1.25 5.8L12 16.3l-5.25 3.04L8 13.54 3.6 9.6l5.9-.6z"></path></symbol>
+  <symbol id="i-info" sc-camel-view-box="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 5h2v2h-2zm0 4h2v6h-2z"></path></symbol>
+  <symbol id="i-menu" sc-camel-view-box="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></symbol>
+  <symbol id="i-menu-open" sc-camel-view-box="0 0 24 24"><path d="M3 6h18v2H3zm0 5h11v2H3zm0 5h18v2H3zm18-4.5L17.5 12 21 8.5z"></path></symbol>
+  <symbol id="i-more" sc-camel-view-box="0 0 24 24"><circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle></symbol>
+  <symbol id="i-pin-line" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11Z"></path><circle cx="12" cy="10" r="2.6"></circle></symbol>
+  <symbol id="i-tag" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.6 12.4 12.4 20.6a2 2 0 0 1-2.8 0l-6.2-6.2A2 2 0 0 1 2.8 13V4.8A1.8 1.8 0 0 1 4.6 3h8.2a2 2 0 0 1 1.4.6l6.4 6.4a2 2 0 0 1 0 2.4Z"></path><circle cx="7.6" cy="7.6" r="1.4"></circle></symbol>
+  <symbol id="i-share" sc-camel-view-box="0 0 48 48"><path d="M24 32V8m0 0-8 8m8-8 8 8"></path><path d="M12 26v12a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V26"></path></symbol>
+  <symbol id="i-mic-line" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><rect x="9" y="2.8" width="6" height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-3 0h6"></path></symbol>
+  <symbol id="i-chev" sc-camel-view-box="0 0 24 24"><path d="M12 15.6 5.4 9l1.7-1.7 4.9 4.9 4.9-4.9L18.6 9z"></path></symbol>
+  <symbol id="i-youtube" sc-camel-view-box="0 0 24 24"><path d="M21.2 8.2a3 3 0 0 0-2.1-2.1C17.3 5.6 12 5.6 12 5.6s-5.3 0-7.1.5A3 3 0 0 0 2.8 8.2C2.4 10 2.4 12 2.4 12s0 2 .4 3.8a3 3 0 0 0 2.1 2.1c1.8.5 7.1.5 7.1.5s5.3 0 7.1-.5a3 3 0 0 0 2.1-2.1c.4-1.8.4-3.8.4-3.8s0-2-.4-3.8zM10.2 15.3V8.7L15.7 12z"></path></symbol>
+  <symbol id="i-spotify" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+    <circle cx="12" cy="12" r="9.1"></circle>
+    <path d="M7.3 9.1c3-.85 6.3-.5 9 .95"></path>
+    <path d="M7.9 12.3c2.5-.65 5.2-.35 7.5.8"></path>
+    <path d="M8.6 15.3c2-.5 4.1-.25 5.9.65"></path>
+  </symbol>
+  <symbol id="i-soundcloud" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3.6 14.6v-3.4M6.7 16.1V9.7M9.8 16.1V7.3"></path>
+    <path d="M12.9 16.1h5.3a2.9 2.9 0 0 0 0-5.8c-.4 0-.75.07-1.1.2a4.3 4.3 0 0 0-4.2-3.6z"></path>
+  </symbol>
+  <symbol id="i-instagram" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+    <rect x="3.6" y="3.6" width="16.8" height="16.8" rx="5.2"></rect>
+    <circle cx="12" cy="12" r="4.1"></circle>
+    <circle cx="16.9" cy="7.1" r="1.15" fill="currentColor" stroke="none"></circle>
+  </symbol>
+  <symbol id="i-search" sc-camel-view-box="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3a6.5 6.5 0 1 0-.7.7l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"></path></symbol>
+  <symbol id="i-play" sc-camel-view-box="0 0 24 24"><path d="M8 5.2v13.6L19 12z"></path></symbol><symbol id="i-stop" sc-camel-view-box="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="2.5"></rect></symbol><symbol id="i-play-circle" sc-camel-view-box="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 5.4 7 4.6-7 4.6z"></path></symbol>
+  <symbol id="i-mylocation" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+    <circle cx="12" cy="12" r="3.2"></circle><circle cx="12" cy="12" r="7.4"></circle>
+    <path d="M12 1.4v3.2M12 19.4v3.2M1.4 12h3.2M19.4 12h3.2"></path>
+  </symbol>
+  <symbol id="i-globe" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+    <circle cx="12" cy="12" r="8.6"></circle><path d="M3.4 12h17.2"></path>
+    <path d="M12 3.4c2.4 2.4 3.6 5.3 3.6 8.6S14.4 18.2 12 20.6c-2.4-2.4-3.6-5.3-3.6-8.6S9.6 5.8 12 3.4z"></path>
+  </symbol>
+  <symbol id="i-moon" sc-camel-view-box="0 0 24 24"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.7 8.7 0 1 0 10.8 10.8z"></path></symbol>
+  <symbol id="i-sun" sc-camel-view-box="0 0 24 24"><circle cx="12" cy="12" r="4.4"></circle><path d="M11 1.6h2v3.2h-2zm0 17.6h2v3.2h-2zM1.6 11h3.2v2H1.6zm17.6 0h3.2v2h-3.2zM4.3 5.7 5.7 4.3 8 6.6 6.6 8zM16 17.4l1.4-1.4 2.3 2.3-1.4 1.4zM17.4 8 16 6.6l2.3-2.3 1.4 1.4zM6.6 16 8 17.4l-2.3 2.3-1.4-1.4z"></path></symbol>
+  <symbol id="i-gear" sc-camel-view-box="0 0 24 24"><path d="M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5zm7.4 3.5c0-.5 0-.9-.1-1.3l2-1.5-2-3.4-2.3 1a7.4 7.4 0 0 0-2.3-1.3L14.4 3H9.6l-.3 2.5c-.8.3-1.6.7-2.3 1.3l-2.3-1-2 3.4 2 1.5a8 8 0 0 0 0 2.6l-2 1.5 2 3.4 2.3-1c.7.6 1.5 1 2.3 1.3l.3 2.5h4.8l.3-2.5c.8-.3 1.6-.7 2.3-1.3l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.3z"></path></symbol>
+  <symbol id="i-now" sc-camel-view-box="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 5h-2v6l5 3 1-1.7-4-2.3V7z"></path></symbol>
+  <symbol id="i-filter" sc-camel-view-box="0 0 24 24"><path d="M3 5h18v2.2l-7 6.6V21l-4-2.2v-5l-7-6.6z"></path></symbol>
+  <symbol id="i-check" sc-camel-view-box="0 0 24 24"><path d="M9.6 16.2 4.8 11.4l1.4-1.4 3.4 3.4 8-8L19 6.8z"></path></symbol>
+  <symbol id="i-plus" sc-camel-view-box="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"></path></symbol>
+  <symbol id="i-close" sc-camel-view-box="0 0 24 24"><path d="m6.4 5 12.6 12.6-1.4 1.4L5 6.4z"></path><path d="M19 6.4 6.4 19 5 17.6 17.6 5z"></path></symbol>
+  <symbol id="i-time" sc-camel-view-box="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 5h-2v6l5 3 1-1.7-4-2.3V7z"></path></symbol>
+  <symbol id="i-ticket" sc-camel-view-box="0 0 24 24"><path d="M4 6h16a1 1 0 0 1 1 1v3a2 2 0 0 0 0 4v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3a2 2 0 0 0 0-4V7a1 1 0 0 1 1-1zm5 3v6h2V9H9z"></path></symbol>
+  <symbol id="i-ext" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17 13.6v4.6a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V8.8A1.8 1.8 0 0 1 5.8 7h4.6"></path>
+    <path d="M13.6 4.5H19.5V10.4"></path><path d="M19.5 4.5 11.2 12.8"></path>
+  </symbol>
+  <symbol id="i-copy" sc-camel-view-box="0 0 24 24"><path d="M9 2h9a2 2 0 0 1 2 2v11h-2V4H9zM5 6h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm0 2v12h9V8z"></path></symbol>
+  <symbol id="i-near" sc-camel-view-box="0 0 24 24"><path d="M20.9 3.1 3.7 9.9a.95.95 0 0 0 .07 1.79l6.6 2.14 2.14 6.6a.95.95 0 0 0 1.79.07z"></path></symbol>
+  <symbol id="i-w-sun" sc-camel-view-box="0 0 24 24"><circle cx="12" cy="12" r="4.6"></circle><path d="M11 2.2h2v3h-2zm0 16.6h2v3h-2zM2.2 11h3v2h-3zm16.6 0h3v2h-3zM4.75 6.16 6.16 4.75l2.12 2.12L6.87 8.28zm10.97 10.97 1.41-1.41 2.12 2.12-1.41 1.41zM17.13 8.28l-1.41-1.41 2.12-2.12 1.41 1.41zM6.87 15.72l1.41 1.41-2.12 2.12-1.41-1.41z"></path></symbol>
+  <symbol id="i-w-cloud" sc-camel-view-box="0 0 24 24"><path d="M7.3 18.4h9.3a4.35 4.35 0 0 0 .5-8.66 6.4 6.4 0 0 0-11.55 1.9A3.65 3.65 0 0 0 7.3 18.4z"></path></symbol>
+  <symbol id="i-w-partly" sc-camel-view-box="0 0 24 24"><path d="M8.5 2.4h1.6v2.5H8.5zM2.4 8.5h2.5v1.6H2.4zm1.5-4.1L5 3.3l1.8 1.8-1.1 1.1zm7.1 1.8-1.1-1.1L11.7 3.3l1.1 1.1z"></path><circle cx="9.3" cy="9.3" r="3"></circle><path d="M10 20.2h7.9a3.75 3.75 0 0 0 .45-7.47 5.6 5.6 0 0 0-10.05 1.7A3.2 3.2 0 0 0 10 20.2z"></path></symbol>
+  <symbol id="i-w-rain" sc-camel-view-box="0 0 24 24"><path d="M7.3 15.1h9.3a4.35 4.35 0 0 0 .5-8.66A6.4 6.4 0 0 0 5.55 8.34 3.65 3.65 0 0 0 7.3 15.1z"></path><rect x="7.9" y="17.3" width="1.8" height="3.9" rx=".9"></rect><rect x="11.1" y="17.3" width="1.8" height="3.9" rx=".9"></rect><rect x="14.3" y="17.3" width="1.8" height="3.9" rx=".9"></rect></symbol>
+  <symbol id="wi-clear-night" sc-camel-view-box="0 0 48 48"><path d="M35.28,26.26 A11.50,11.50 0 1 1 21.74,12.72 A9.66,9.66 0 1 0 35.28,26.26 Z"></path></symbol>
+  <symbol id="wi-partly-night" sc-camel-view-box="0 0 48 48"><path d="M40.88,13.68 A6.00,6.00 0 1 1 33.82,6.62 A5.04,5.04 0 1 0 40.88,13.68 Z"></path><circle cx="18" cy="29" r="8.5"></circle><circle cx="28" cy="32" r="6"></circle></symbol>
+  <symbol id="wi-clear" sc-camel-view-box="0 0 48 48"><circle cx="24" cy="24" r="8"></circle><path d="M24 6v4M24 38v4M6 24h4M38 24h4M11.3 11.3l2.9 2.9M33.8 33.8l2.9 2.9M36.7 11.3l-2.9 2.9M14.2 33.8l-2.9 2.9"></path></symbol><symbol id="wi-partly" sc-camel-view-box="0 0 48 48"><circle cx="30" cy="17" r="6"></circle><path d="M30 5v3M30 26v3M18 17h3M39 17h3M22.2 9.2l2.1 2.1M35.7 22.7l2.1 2.1"></path><circle cx="19" cy="30" r="9"></circle><circle cx="30" cy="33.5" r="6.5"></circle></symbol><symbol id="wi-cloudy" sc-camel-view-box="0 0 48 48"><circle cx="20" cy="27" r="9"></circle><circle cx="31" cy="30.5" r="6.5"></circle></symbol>
+  <symbol id="wi-overcast" sc-camel-view-box="0 0 48 48"><circle cx="17" cy="27.5" r="8"></circle><circle cx="27.5" cy="30.5" r="6.5"></circle><circle cx="32.5" cy="23" r="5.5"></circle></symbol>
+  <symbol id="wi-rain" sc-camel-view-box="0 0 48 48"><circle cx="19.5" cy="22" r="8.5"></circle><circle cx="30" cy="25.5" r="6"></circle><path d="M18.00,34.00 L15.84,39.58"></path><path d="M25.00,34.00 L22.84,39.58"></path><path d="M32.00,34.00 L29.84,39.58"></path></symbol>
+  <symbol id="wi-showers" sc-camel-view-box="0 0 48 48"><circle cx="19.5" cy="22" r="8.5"></circle><circle cx="30" cy="25.5" r="6"></circle><path d="M18.00,33.00 L14.04,43.23"></path><path d="M25.00,33.00 L21.04,43.23"></path><path d="M32.00,33.00 L28.04,43.23"></path></symbol>
+  <symbol id="i-art" sc-camel-view-box="0 0 400 250">
+    <rect width="400" height="250" fill="var(--art-bg)"></rect>
+    <circle cx="335" cy="42" r="118" fill="var(--art-1)"></circle>
+    <path d="M0 250V128a122 122 0 0 1 122 122z" fill="var(--art-3)"></path>
+    <circle cx="335" cy="42" r="152" fill="none" stroke="var(--art-2)" stroke-width="6" opacity=".28"></circle>
+    <circle cx="52" cy="52" r="18" fill="var(--art-2)" opacity=".45"></circle>
+  </symbol>
+  <symbol id="i-motif-art" sc-camel-view-box="0 0 400 250">
+    <path d="M108 178c30-88 100 22 140-72" fill="none" stroke="var(--art-ink)" stroke-width="24" stroke-linecap="round"></path>
+    <circle cx="272" cy="172" r="15" fill="var(--art-ink)" opacity=".55"></circle>
+  </symbol>
+  <symbol id="i-motif-film" sc-camel-view-box="0 0 400 250">
+    <rect x="100" y="85" width="180" height="90" rx="14" fill="var(--art-ink)"></rect>
+    <g fill="var(--art-1)">
+      <rect x="122" y="93" width="16" height="12" rx="3"></rect>
+      <rect x="152" y="93" width="16" height="12" rx="3"></rect>
+      <rect x="182" y="93" width="16" height="12" rx="3"></rect>
+      <rect x="212" y="93" width="16" height="12" rx="3"></rect>
+      <rect x="242" y="93" width="16" height="12" rx="3"></rect>
+      <rect x="122" y="145" width="16" height="12" rx="3"></rect>
+      <rect x="152" y="145" width="16" height="12" rx="3"></rect>
+      <rect x="182" y="145" width="16" height="12" rx="3"></rect>
+      <rect x="212" y="145" width="16" height="12" rx="3"></rect>
+      <rect x="242" y="145" width="16" height="12" rx="3"></rect>
+      <path d="M180 114l32 16-32 16z"></path>
+    </g>
+  </symbol>
+  <symbol id="i-motif-music" sc-camel-view-box="0 0 400 250">
+    <g fill="var(--art-ink)">
+      <rect x="110" y="100" width="22" height="60" rx="11"></rect>
+      <rect x="142" y="78" width="22" height="104" rx="11"></rect>
+      <rect x="174" y="110" width="22" height="40" rx="11"></rect>
+      <rect x="206" y="88" width="22" height="84" rx="11"></rect>
+      <rect x="238" y="102" width="22" height="56" rx="11"></rect>
+    </g>
+  </symbol>
+</svg>
+
+<sc-if value="{{ navOpen }}">
+  <button sc-camel-on-click="{{ closeNav }}" aria-label="Close navigation" style="position:fixed;inset:0;z-index:55;border:0;background:var(--scrim,rgba(20,24,14,.32));animation:fp-fade .2s cubic-bezier(.2,0,0,1)"></button>
+</sc-if>
+
+<nav style="{{ navStyle }}" aria-label="Main" data-hide-scrollbar="">
+  <sc-if value="{{ showBrand }}" hint-placeholder-val="{{ true }}">
+    <div style="{{ brandRowStyle }}">
+      <a href="../index.html" aria-label="Flanner — all festivals" style="display:flex;align-items:center;gap:12px;min-width:0;color:inherit;text-decoration:none;border-radius:20px">
+        <svg sc-camel-view-box="0 0 96 96" aria-hidden="true" style="flex:none;width:34px;height:34px;color:var(--primary,#4C662B)"><use href="#i-logo"></use></svg>
+        <sc-if value="{{ isDrawer }}">
+          <span style="font-size:19px;font-weight:700;letter-spacing:-.025em;white-space:nowrap">Flanner</span>
+        </sc-if>
+      </a>
+      <sc-if value="{{ isDrawer }}">
+        <button sc-camel-on-click="{{ collapseNav }}" aria-label="Collapse navigation" title="Collapse" style="margin-inline-start:auto;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:22px;background:none;color:var(--on-var,#494E42);cursor:pointer" style-hover="background:var(--state7,rgba(25,29,19,.07))">
+          <svg aria-hidden="true" style="width:20px;height:20px;fill:currentColor"><use href="#i-menu-open"></use></svg>
+        </button>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <div style="{{ navScrollStyle }}" ref="{{ navListRef }}">
+    <span data-fp-nav-pill="" aria-hidden="true" style="{{ navPillStyle }}"></span>
+    <sc-for list="{{ dests }}" as="d" hint-placeholder-count="4">
+      <button sc-camel-on-click="{{ d.onClick }}" aria-current="{{ d.current }}" style="{{ d.style }}">
+        <span style="{{ d.indStyle }}">
+          <svg aria-hidden="true" style="width:24px;height:24px;fill:currentColor"><use href="{{ d.icon }}"></use></svg>
+        </span>
+        <span style="{{ d.labelStyle }}">{{ d.label }}</span>
+        <sc-if value="{{ d.hasBadge }}"><span style="{{ d.badgeStyle }}">{{ d.badge }}</span></sc-if>
+      </button>
+    </sc-for>
+
+  </div>
+
+  <div style="{{ navFootStyle }}">
+    <sc-if value="{{ isDrawer }}"><hr style="height:1px;border:0;background:var(--outline,#C7CBBA);margin:8px 16px 6px"></sc-if>
+
+    <sc-for list="{{ selectors }}" as="sel" hint-placeholder-count="2">
+      <div style="{{ sel.wrapStyle }}">
+        <button sc-camel-on-click="{{ sel.onToggle }}" aria-expanded="{{ sel.expanded }}" aria-label="{{ sel.aria }}" title="{{ sel.aria }}" style="{{ sel.style }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+          <svg aria-hidden="true" style="{{ sel.iconStyle }}"><use href="{{ sel.icon }}"></use></svg>
+          <sc-if value="{{ sel.showLabel }}" hint-placeholder-val="{{ true }}">
+            <span style="white-space:nowrap">{{ sel.label }}</span>
+            <span style="{{ sel.valueStyle }}">{{ sel.value }}</span>
+            <svg aria-hidden="true" style="{{ sel.chevStyle }}"><use href="#i-chev"></use></svg>
+          </sc-if>
+        </button>
+        <sc-if value="{{ sel.open }}">
+          <div role="group" aria-label="{{ sel.aria }}" style="{{ sel.listStyle }}">
+            <sc-for list="{{ sel.items }}" as="o" hint-placeholder-count="3">
+              <button sc-camel-on-click="{{ o.onClick }}" aria-pressed="{{ o.pressed }}" style="{{ o.style }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+                <span style="{{ o.markStyle }}">
+                  <sc-if value="{{ o.on }}">
+                    <svg aria-hidden="true" style="width:18px;height:18px;fill:currentColor"><use href="#i-check"></use></svg>
+                  </sc-if>
+                </span>
+                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.label }}</span>
+                <span style="{{ o.subStyle }}">{{ o.sub }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+    <sc-for list="{{ utils }}" as="u" hint-placeholder-count="2">
+      <button sc-camel-on-click="{{ u.onClick }}" aria-label="{{ u.label }}" title="{{ u.label }}" style="{{ u.style }}">
+        <sc-if value="{{ u.isTheme }}">
+          <svg sc-camel-view-box="0 0 24 24" aria-hidden="true" style="{{ u.iconStyle }}">
+            <mask id="fp-theme-bite" sc-camel-mask-units="userSpaceOnUse" x="0" y="0" width="24" height="24">
+              <rect x="0" y="0" width="24" height="24" fill="#fff"></rect>
+              <circle cx="12" cy="12" r="8" fill="#000" style="{{ themeBiteStyle }}"></circle>
+            </mask>
+            <g style="{{ themeRaysStyle }}">
+              <line x1="12" y1="3.4" x2="12" y2="1"></line>
+              <line x1="18.08" y1="5.92" x2="19.78" y2="4.22"></line>
+              <line x1="20.6" y1="12" x2="23" y2="12"></line>
+              <line x1="18.08" y1="18.08" x2="19.78" y2="19.78"></line>
+              <line x1="12" y1="20.6" x2="12" y2="23"></line>
+              <line x1="5.92" y1="18.08" x2="4.22" y2="19.78"></line>
+              <line x1="3.4" y1="12" x2="1" y2="12"></line>
+              <line x1="5.92" y1="5.92" x2="4.22" y2="4.22"></line>
+            </g>
+            <circle cx="12" cy="12" mask="url(#fp-theme-bite)" style="{{ themeDiscStyle }}"></circle>
+          </svg>
+        </sc-if>
+        <sc-if value="{{ u.isPlain }}" hint-placeholder-val="{{ true }}">
+          <svg aria-hidden="true" style="{{ u.iconStyle }}"><use href="{{ u.icon }}"></use></svg>
+        </sc-if>
+        <sc-if value="{{ u.showLabel }}"><span style="{{ u.labelStyle }}">{{ u.label }}</span></sc-if>
+      </button>
+    </sc-for>
+  </div>
+</nav>
+
+<sc-if value="{{ showBack }}">
+  <button sc-camel-on-click="{{ goBack }}" aria-label="{{ backLabel }}" title="{{ backLabel }}" style="{{ backBtnStyle }}" style-hover="box-shadow:0 10px 32px rgba(20,24,14,.16),inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+    <svg aria-hidden="true" style="{{ backIconStyle }}"><use href="{{ backIcon }}"></use></svg>
+  </button>
+</sc-if>
+
+<div data-fp-shell="" style="{{ shellStyle }}">
+
+  <header ref="{{ headerRef }}" style="{{ headerStyle }}">
+    <div style="{{ headerInnerStyle }}">
+      <h1 style="{{ titleStyle }}"><span style="{{ titleHomeStyle }}">Flanner</span><span style="{{ titleFestStyle }}">Helsinki Festival 2026</span><span style="{{ titlePicksStyle }}"><span style="color:var(--plan,#2E4B12)">Your </span>Helsinki Festival 2026</span></h1>
+      <sc-if value="{{ showHeroFold }}">
+      <button sc-camel-on-click="{{ toggleHero }}" aria-expanded="{{ heroOpen }}" aria-controls="fp-hero" aria-label="{{ heroToggleLabel }}" title="{{ heroToggleLabel }}" style="{{ heroToggleStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+        <svg aria-hidden="true" style="{{ heroChevStyle }}"><use href="#i-chev"></use></svg>
+      </button>
+      </sc-if>
+      <sc-if value="{{ showWeatherBrief }}" hint-placeholder-val="{{ true }}">
+        <button sc-camel-on-click="{{ toggleWeather }}" aria-pressed="{{ weatherOpen }}" aria-controls="fp-weather" aria-label="{{ weatherToggleLabel }}" title="{{ weatherToggleLabel }}" style="{{ weatherBriefStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))" style-active="border-radius:10px;box-shadow:inset 0 0 0 999px var(--state10,rgba(25,29,19,.10))">
+          <svg aria-hidden="true" sc-camel-view-box="0 0 48 48" style="flex:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><use href="{{ wxIcon }}"></use></svg>
+          <span style="font-size:15px;font-weight:600;letter-spacing:-.01em">{{ wxTemp }}</span>
+          <sc-if value="{{ showWeatherWord }}"><span style="font-size:14px;font-weight:500;letter-spacing:.006em;white-space:nowrap">{{ wxWord }}</span></sc-if>
+        </button>
+      </sc-if>
+
+      <sc-if value="{{ showHeaderSearchBtn }}">
+        <button sc-camel-on-click="{{ openSearch }}" aria-label="{{ searchLabel }}" title="{{ searchLabel }}" style="{{ headerSearchBtnStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+          <svg aria-hidden="true" style="{{ ctrlIconStyle }}"><use href="#i-search"></use></svg>
+          <sc-if value="{{ hasQuery }}"><span style="{{ searchDotStyle }}"></span></sc-if>
+        </button>
+      </sc-if>
+      <sc-if value="{{ showHeaderSearchBar }}">
+        <div style="{{ headerSearchBarStyle }}">
+          <svg aria-hidden="true" style="{{ searchBarIconStyle }}"><use href="#i-search"></use></svg>
+          <span style="{{ searchContentStyle }}">
+            <input type="search" value="{{ query }}" sc-camel-on-change="{{ onQuery }}" sc-camel-on-key-down="{{ onSearchKey }}" ref="{{ searchRef }}" placeholder="Search acts, stages, genres" aria-label="Search the programme" style="{{ searchInputStyle }}">
+            <button sc-camel-on-click="{{ closeSearch }}" aria-label="Close search" title="Close search" style="{{ searchCloseStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+              <svg aria-hidden="true" style="width:18px;height:18px;fill:currentColor"><use href="#i-close"></use></svg>
+            </button>
+          </span>
+        </div>
+      </sc-if>
+    </div>
+  </header>
+
+  <section id="fp-hero" style="{{ heroRowStyle }}">
+
+    <sc-if value="{{ showHeroCard }}" hint-placeholder-val="{{ true }}">
+    <article data-fp-card="" style="{{ heroCardStyle }}" ref="{{ heroCardRef }}">
+      <sc-if value="{{ phoneCard }}">
+      <div class="fest t-culture">
+        <section class="fcard" ref="{{ festCardRef }}">
+        <div class="hero">
+          <svg class="hero__art" sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img" aria-label="Culture strand artwork">
+            <use href="#i-art"></use><use href="#i-motif-culture"></use>
+          </svg>
+          <div class="hero__overlay">
+            <p class="hero__eyebrow">18 AUGUST – 5 SEPTEMBER 2026</p>
+            <h1 class="hero__title">Helsinki Festival 2026</h1>
+            <button class="hero__where" type="button" sc-camel-on-click="{{ openMap }}">
+              <svg aria-hidden="true"><use href="#i-pin"></use></svg>
+              <span>Helsinki · Arts festival</span>
+              <svg class="hero__where-go" aria-hidden="true"><use href="#i-near"></use></svg>
+            </button>
+          </div>
+        </div>
+
+        <sc-if value="{{ festLive }}">
+        <div class="status">
+          <span class="chip chip--live"><b aria-hidden="true"></b>Live now</span>
+        </div>
+        </sc-if>
+
+        <ul class="genres"><li class="strand">Culture</li><li>Opera</li><li>Classical</li><li>Theatre</li></ul>
+
+        <div class="actions">
+          <a class="act" href="https://helsinkifestival.fi/en/" target="_blank" rel="noopener noreferrer" aria-label="Official site" title="Official site">
+            <svg aria-hidden="true"><use href="#i-ext"></use></svg><span>Official</span>
+          </a>
+        <a class="act" href="https://helsinkifestival.fi/en/programme/" target="_blank" rel="noopener noreferrer" aria-label="Tickets" title="Tickets">
+          <svg aria-hidden="true" style="fill:currentColor"><use href="#i-ticket"></use></svg><span>Tickets</span>
+        </a>
+          <button class="plan" type="button" sc-camel-on-click="{{ toggleFestivalPlan }}" aria-pressed="{{ festivalPlanned }}">
+            <svg sc-camel-view-box="0 0 24 24" aria-hidden="true" style="{{ heartSvgStyle }}">
+              <defs><clipPath id="{{ heartClipId2 }}" sc-camel-clip-path-units="userSpaceOnUse">
+                <circle cx="12" cy="12" r="19" style="{{ heartDiscStyle }}"></circle>
+              </clipPath></defs>
+              <use href="#i-heart-geo" style="{{ heartOutlineStyle }}"></use>
+              <g clip-path="{{ heartClipUrl2 }}"><use href="#i-heart-geo" style="fill:currentColor;stroke:none"></use></g>
+            </svg>
+            <span>{{ festivalPlanLabel }}</span>
+          </button>
+        </div>
+        </section>
+
+        <sc-if value="{{ hasLineup }}">
+        <div class="sec-head">
+          <h2>Lineup</h2>
+          <button type="button" sc-camel-on-click="{{ seeAll }}">See all {{ lineupTotal }}</button>
+        </div>
+        <ul class="lineup" aria-label="Lineup">
+          <sc-for list="{{ lineup }}" as="a" hint-placeholder-count="6">
+            <li>
+              <button class="who" type="button" sc-camel-on-click="{{ a.onOpen }}" aria-label="{{ a.aria }}">
+                <span class="{{ a.avatarClass }}" style="{{ a.avatarStyle }}">
+                  <svg class="who__art" sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" aria-hidden="true" style="{{ a.artStyle }}">
+                    <use href="#i-art"></use><use href="{{ a.motif }}"></use>
+                  </svg>
+                  <sc-if value="{{ a.planned }}"><b aria-hidden="true"><svg sc-camel-view-box="0 0 24 24"><use href="#i-star-fill"></use></svg></b></sc-if>
+                </span>
+                <span class="who__name">{{ a.name }}</span>
+                <span class="who__role">{{ a.when }}</span>
+              </button>
+            </li>
+          </sc-for>
+        </ul>
+        </sc-if>
+
+        <section class="{{ aboutClass }}">
+          <h2>About</h2>
+          <div class="about__clip" style="{{ aboutClipStyle }}" ref="{{ aboutClipRef }}">
+            <p class="about__text">The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.</p>
+          </div>
+          <sc-if value="{{ aboutFolds }}">
+          <button class="about__more" type="button" aria-expanded="{{ aboutOpen }}" sc-camel-on-click="{{ toggleAbout }}">
+            <span>{{ aboutMoreLabel }}</span><svg aria-hidden="true"><use href="#i-chev"></use></svg>
+          </button>
+          </sc-if>
+          <ul class="about__facts"><li><svg aria-hidden="true"><use href="#i-pin-line"></use></svg>1 stage</li><li><svg aria-hidden="true"><use href="#i-time"></use></svg>19 days</li><li><svg aria-hidden="true"><use href="#i-tag"></use></svg>Ticketed by the festival</li></ul>
+        </section>
+      </div>
+      </sc-if>
+      <sc-if value="{{ deskCard }}">
+      <div style="{{ heroBodyStyle }}">
+        <p style="margin:0 0 14px;font-size:22px;font-weight:600;line-height:28px;letter-spacing:-.01em;color:var(--primary,#4C662B)">18 August – 5 September 2026</p>
+        <p style="margin:0;font-size:15px;line-height:1.55;color:var(--on-var,#494E42);max-width:44ch;text-wrap:pretty">The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.</p>
+        <ul style="margin:20px 0 0;padding:0;list-style:none;display:grid;gap:12px">
+          <li style="display:flex;align-items:center;gap:12px;font-size:14.5px;line-height:1.3">
+            <svg aria-hidden="true" style="flex:none;width:20px;height:20px;fill:var(--on-var,#494E42)"><use href="#i-time"></use></svg>19 days</li>
+          <li style="display:flex;align-items:center;gap:12px;font-size:14.5px;line-height:1.3">
+            <svg aria-hidden="true" style="flex:none;width:20px;height:20px;fill:var(--on-var,#494E42)"><use href="#i-ticket"></use></svg>Ticketed by the festival</li>
+          <li style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:2px">
+            <button sc-camel-on-click="{{ openMap }}" aria-label="Helsinki — show the site map" style="{{ addressChipStyle }}" style-hover="box-shadow:0 1px 3px 1px rgba(20,24,14,.15),0 1px 2px rgba(20,24,14,.30),inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))" style-active="box-shadow:inset 0 0 0 999px var(--state10,rgba(25,29,19,.10))">
+              <svg aria-hidden="true" style="flex:none;width:18px;height:18px;fill:var(--primary,#4C662B)"><use href="#i-pin"></use></svg>
+              <span style="white-space:nowrap">Helsinki</span>
+            </button>
+            <span style="font-size:14.5px;line-height:1.3;color:var(--on-var,#494E42)">· Arts festival</span>
+          </li>
+        </ul>
+        <ul style="margin:20px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px">
+          <li style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid var(--outline,#C7CBBA);border-radius:8px;font-size:13px;font-weight:500">Opera</li>
+          <li style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid var(--outline,#C7CBBA);border-radius:8px;font-size:13px;font-weight:500">Classical</li>
+          <li style="display:inline-flex;align-items:center;height:32px;padding:0 12px;border:1px solid var(--outline,#C7CBBA);border-radius:8px;font-size:13px;font-weight:500">Theatre</li>
+        </ul>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin-top:auto;padding-top:22px">
+          <a href="https://helsinkifestival.fi/en/" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:1 1 0;min-width:0;height:44px;padding:0 16px;border-radius:12px;background:var(--wash,#FFFFFF);color:var(--on,#191D13);font-size:14px;font-weight:500;letter-spacing:.006em;text-decoration:none;white-space:nowrap" style-hover="background:var(--hover,#EAE8DF)">
+            <svg aria-hidden="true" style="flex:none;width:20px;height:20px"><use href="#i-ext"></use></svg>Official site
+          </a>
+          <a href="https://helsinkifestival.fi/en/programme/" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:1 1 0;min-width:0;height:44px;padding:0 16px;border-radius:12px;background:var(--wash,#FFFFFF);color:var(--on,#191D13);font-size:14px;font-weight:500;letter-spacing:.006em;text-decoration:none;white-space:nowrap" style-hover="background:var(--hover,#EAE8DF)">
+            <svg aria-hidden="true" style="flex:none;width:20px;height:20px;fill:currentColor"><use href="#i-ticket"></use></svg>Tickets
+          </a>
+          <button sc-camel-on-click="{{ toggleFestivalPlan }}" aria-pressed="{{ festivalPlanned }}" style="{{ festivalPlanStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+            <svg sc-camel-view-box="0 0 24 24" aria-hidden="true" style="{{ heartSvgStyle }}">
+              <defs>
+                <clipPath id="{{ heartClipId }}" sc-camel-clip-path-units="userSpaceOnUse">
+                  <circle cx="12" cy="12" r="19" style="{{ heartDiscStyle }}"></circle>
+                </clipPath>
+              </defs>
+              <use href="#i-heart-geo" style="{{ heartOutlineStyle }}"></use>
+              <g clip-path="{{ heartClipUrl }}"><use href="#i-heart-geo" style="fill:currentColor;stroke:none"></use></g>
+            </svg>
+            <span>{{ festivalPlanLabel }}</span>
+          </button>
+        </div>
+      </div>
+      <sc-if value="{{ showHeroArt }}" hint-placeholder-val="{{ true }}">
+      <div style="{{ heroMediaStyle }}">
+        <svg sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img" aria-label="Music festival artwork" style="display:block;width:100%;height:100%;--art-bg:var(--art-m-bg,#E7F0CF);--art-1:var(--art-m-1,#CDEDA3);--art-2:var(--primary,#4C662B);--art-3:var(--dot-m,#A9CE88);--art-ink:var(--art-m-ink,#31490F)">
+          <use href="#i-art"></use><use href="#i-motif-music"></use>
+        </svg>
+        <div style="position:absolute;bottom:0;right:0;padding:6px 0 0 6px;background:var(--card,#F2F0EB);border-start-start-radius:22px">
+          <span style="position:absolute;right:0;bottom:100%;width:12px;height:12px;background:radial-gradient(circle at 0 0,#0000 11.5px,var(--card,#F2F0EB) 12.5px)"></span>
+          <span style="position:absolute;right:100%;bottom:0;width:12px;height:12px;background:radial-gradient(circle at 0 0,#0000 11.5px,var(--card,#F2F0EB) 12.5px)"></span>
+          <span style="display:block;padding:9px 16px;border-start-start-radius:16px;border-end-end-radius:20px;background:var(--sec,#DCE8C0);color:var(--on-sec,#1F2D0A);font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase">Music</span>
+        </div>
+      </div>
+      </sc-if>
+      </sc-if>
+    </article>
+    </sc-if>
+
+    <sc-if value="{{ showWeather }}">
+      <aside id="fp-weather" data-fp-card="" style="{{ weatherCardStyle }}">
+        <div style="display:flex;align-items:center;gap:14px;padding:14px 12px 6px">
+          <svg aria-hidden="true" sc-camel-view-box="0 0 48 48" style="flex:none;width:46px;height:46px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;color:var(--pink-primary,#8E4460)"><use href="{{ wxIcon }}"></use></svg>
+          <span style="display:flex;align-items:baseline;gap:10px;min-width:0">
+            <span style="font-size:44px;font-weight:450;letter-spacing:-.03em;line-height:1;color:var(--pink-on,#3E001D)">{{ wxTemp }}</span>
+            <span style="font-size:15px;font-weight:500;color:var(--pink-primary,#8E4460)">{{ wxWord }}</span>
+          </span>
+        </div>
+        <p style="margin:0;padding:0 12px 14px;font-size:13px;line-height:1.45;color:var(--pink-on-var,#6B3A50);text-wrap:pretty">{{ wxNote }}</p>
+        <ul style="margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:6px">
+          <sc-for list="{{ forecast }}" as="f" hint-placeholder-count="5">
+            <li style="{{ f.rowStyle }}">
+              <svg aria-hidden="true" sc-camel-view-box="0 0 48 48" style="flex:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;color:var(--pink-primary,#8E4460)"><use href="{{ f.icon }}"></use></svg>
+              <span style="flex:none;width:38px;font-size:13px;font-weight:600;color:var(--pink-on,#3E001D)">{{ f.time }}</span>
+              <span style="flex:1;height:6px;border-radius:999px;background:var(--pink-track,#F0C4D8);position:relative;overflow:hidden">
+                <span style="{{ f.barStyle }}"></span>
+              </span>
+              <span style="flex:none;font-size:13px;font-weight:600;color:var(--pink-on,#3E001D)">{{ f.temp }}</span>
+            </li>
+          </sc-for>
+        </ul>
+        <p style="margin:12px 0 2px;padding-inline:12px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--pink-primary,#8E4460)">{{ weatherPlace }}</p>
+      </aside>
+    </sc-if>
+  </section>
+
+  <sc-if value="{{ showControls }}" hint-placeholder-val="{{ true }}">
+  <div style="{{ controlsStickyStyle }}" ref="{{ controlsRef }}">
+  <div style="{{ controlsBarStyle }}">
+    <div role="group" aria-label="Festival day" data-hide-scrollbar="" style="{{ daysGroupStyle }}">
+      <span aria-hidden="true" style="{{ daysPuckStyle }}"></span>
+      <sc-for list="{{ days }}" as="d" hint-placeholder-count="3">
+        <button sc-camel-on-click="{{ d.onClick }}" aria-pressed="{{ d.pressed }}" style="{{ d.style }}">{{ d.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="{{ actionsGroupStyle }}">
+      <button data-fp-picks="" sc-camel-on-click="{{ togglePicks }}" aria-pressed="{{ onlyPicks }}" aria-label="{{ picksLabel }}" title="{{ picksLabel }}" style="{{ picksBtnStyle }}">
+        <svg aria-hidden="true" style="{{ ctrlIconStyle }}"><use href="{{ picksIcon }}"></use></svg>
+        <sc-if value="{{ showPicksBadge }}">
+        <span style="{{ picksBadgeStyle }}">{{ starCount }}</span>
+        </sc-if>
+      </button>
+      <button sc-camel-on-click="{{ toggleFilters }}" aria-pressed="{{ filtersOpen }}" aria-label="Filter the programme" title="Filter" style="{{ filterBtnStyle }}">
+        <svg aria-hidden="true" style="{{ ctrlIconStyle }}"><use href="#i-filter"></use></svg>
+        <sc-if value="{{ hasFilters }}"><span style="position:absolute;top:-2px;right:-2px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--plan,#2E4B12);color:var(--on-plan,#EDF6DA);font-size:11px;font-weight:700;display:grid;place-items:center">{{ filterCount }}</span></sc-if>
+      </button>
+    </div>
+
+    <div role="group" aria-label="Programme view" style="{{ switcherStyle }}">
+      <span aria-hidden="true" style="{{ switcherPuckStyle }}"></span>
+      <sc-for list="{{ viewTabs }}" as="t" hint-placeholder-count="3">
+        <button sc-camel-on-click="{{ t.onClick }}" aria-pressed="{{ t.pressed }}" aria-label="{{ t.aria }}" title="{{ t.label }}" style="{{ t.style }}">
+          <svg aria-hidden="true" style="{{ tabIconStyle }}"><use href="{{ t.icon }}"></use></svg>
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="{{ searchSlotStyle }}">
+      <sc-if value="{{ searchOpen }}">
+        <div style="{{ searchBarStyle }}">
+          <svg aria-hidden="true" style="{{ searchBarIconStyle }}"><use href="#i-search"></use></svg>
+          <span style="{{ searchContentStyle }}">
+            <input type="search" value="{{ query }}" sc-camel-on-change="{{ onQuery }}" sc-camel-on-key-down="{{ onSearchKey }}" ref="{{ searchRef }}" placeholder="Search acts, stages, genres" aria-label="Search the programme" style="{{ searchInputStyle }}">
+            <button sc-camel-on-click="{{ closeSearch }}" aria-label="Close search" title="Close search" style="{{ searchCloseStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+              <svg aria-hidden="true" style="width:18px;height:18px;fill:currentColor"><use href="#i-close"></use></svg>
+            </button>
+          </span>
+        </div>
+      </sc-if>
+      <sc-if value="{{ searchShut }}" hint-placeholder-val="{{ true }}">
+        <button sc-camel-on-click="{{ openSearch }}" aria-label="{{ searchLabel }}" title="{{ searchLabel }}" style="{{ searchBtnStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+          <svg aria-hidden="true" style="{{ ctrlIconStyle }}"><use href="#i-search"></use></svg>
+          <sc-if value="{{ hasQuery }}"><span style="{{ searchDotStyle }}"></span></sc-if>
+        </button>
+      </sc-if>
+    </div>
+  </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ filterScrim }}">
+    <button sc-camel-on-click="{{ toggleFilters }}" aria-label="Close filters" style="position:fixed;inset:0;z-index:44;border:0;background:rgba(20,24,14,.32);animation:fp-fade .18s cubic-bezier(.2,0,0,1)"></button>
+  </sc-if>
+
+  <sc-if value="{{ filtersOpen }}">
+    <section style="{{ filterPanelStyle }}" ref="{{ filterPanelRef }}" data-hide-scrollbar="">
+      <div style="display:flex;justify-content:flex-end;margin-block-end:-8px;padding-block-start:6px"><button sc-camel-on-click="{{ clearAll }}" style="display:inline-flex;align-items:center;height:40px;padding:0 14px;border:0;border-radius:20px;background:none;color:var(--primary,#4C662B);font-family:inherit;font-size:13.5px;font-weight:550;cursor:pointer" style-hover="background:var(--state-primary,rgba(76,102,43,.12))">Clear all</button></div>
+      <sc-for list="{{ facetGroups }}" as="g" hint-placeholder-count="3">
+        <div style="padding-block:16px 4px">
+          <p style="margin:0 0 12px;font-size:14px;font-weight:500;line-height:20px;letter-spacing:.006em;color:var(--on-var,#494E42)">{{ g.label }}</p>
+          <div role="group" aria-label="{{ g.label }}" style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ g.items }}" as="f" hint-placeholder-count="8">
+              <button sc-camel-on-click="{{ f.onClick }}" aria-pressed="{{ f.pressed }}" style="{{ f.style }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))" style-active="box-shadow:inset 0 0 0 999px var(--state10,rgba(25,29,19,.10))">
+                <sc-if value="{{ f.showCheck }}">
+                  <svg aria-hidden="true" style="flex:none;width:18px;height:18px;fill:currentColor"><use href="#i-check"></use></svg>
+                </sc-if>
+                <sc-if value="{{ f.showDot }}"><i style="{{ f.dotStyle }}"></i></sc-if>
+                <span style="white-space:nowrap">{{ f.label }}</span>
+                <span style="{{ f.countStyle }}">{{ f.count }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </section>
+  </sc-if>
+
+  <div id="fp-views" style="{{ viewRowStyle }}" ref="{{ splitRowRef }}">
+  <sc-if value="{{ showDayEmpty }}">
+    <section style="{{ emptySectionStyle }}">
+      <svg aria-hidden="true" style="width:36px;height:36px;fill:var(--dot-m,#A9CE88)"><use href="#i-cal"></use></svg>
+      <h3 style="margin:14px 0 0;font-size:20px;font-weight:650;letter-spacing:-.02em">{{ emptyDayTitle }}</h3>
+      <p style="margin:8px auto 0;max-width:44ch;font-size:14.5px;line-height:1.5;color:var(--on-var,#494E42);text-wrap:pretty">{{ emptyDayBody }}</p>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ showNoMatch }}">
+    <section style="{{ emptySectionStyle }}">
+      <svg aria-hidden="true" style="width:36px;height:36px;fill:var(--dot-m,#A9CE88)"><use href="{{ noMatchIcon }}"></use></svg>
+      <h3 style="margin:14px 0 0;font-size:20px;font-weight:650;letter-spacing:-.02em">{{ noMatchTitle }}</h3>
+      <p style="margin:8px auto 0;max-width:44ch;font-size:14.5px;line-height:1.5;color:var(--on-var,#494E42);text-wrap:pretty">{{ noMatchBody }}</p>
+      <button sc-camel-on-click="{{ noMatchAction }}" style="margin-top:22px;display:inline-flex;align-items:center;height:40px;padding:0 24px;border:0;border-radius:20px;background:var(--sec,#DCE8C0);color:var(--on-sec,#1F2D0A);font-family:inherit;font-size:14px;font-weight:500;letter-spacing:.006em;cursor:pointer" style-hover="box-shadow:inset 0 0 0 999px var(--state-sec,rgba(31,45,10,.08))">{{ noMatchActionLabel }}</button>
+    </section>
+  </sc-if>
+  <sc-if value="{{ showTimetable }}" hint-placeholder-val="{{ true }}">
+    <div style="{{ tablePaneStyle }}">
+    <sc-if value="{{ showRowsChip }}">
+      <div style="display:grid;gap:10px;justify-items:start">
+        <span style="display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 14px 0 10px;border-radius:8px;background:var(--sec,#DCE8C0);color:var(--on-sec,#1F2D0A);font-size:14px;font-weight:500;line-height:20px;letter-spacing:.006em">
+          <svg aria-hidden="true" style="flex:none;width:18px;height:18px;fill:currentColor"><use href="#i-star-fill"></use></svg>{{ rowsChip }}
+        </span>
+        
+      </div>
+    </sc-if>
+    <section style="{{ scrollerStyle }}" ref="{{ scrollerRef }}" sc-camel-on-scroll="{{ onScrollerScroll }}" sc-camel-tab-index="0" data-hide-scrollbar="" role="region" aria-label="Stage schedule, scrolls in both directions">
+      <div style="{{ gridStyle }}">
+        <div style="{{ cornerStyle }}"></div>
+        <sc-for list="{{ heads }}" as="h" hint-placeholder-count="5">
+          <div sc-camel-on-click="{{ h.onPin }}" sc-camel-on-key-down="{{ h.onKey }}" role="button" sc-camel-tab-index="0" aria-label="{{ h.pinLabel }}" title="{{ h.pinLabel }}" style="{{ h.style }}" style-hover="box-shadow:inset 0 0 0 999px var(--state6,rgba(25,29,19,.06))" style-active="box-shadow:inset 0 0 0 999px var(--state10,rgba(25,29,19,.10))">
+            <sc-if value="{{ h.showNum }}" hint-placeholder-val="{{ true }}"><span style="{{ h.numStyle }}">{{ h.n }}</span></sc-if>
+            <span style="{{ h.nameStyle }}">{{ h.name }}</span>
+            <sc-if value="{{ h.showArrow }}" hint-placeholder-val="{{ true }}">
+              <svg aria-hidden="true" style="margin-inline-start:auto;flex:none;width:16px;height:16px;fill:var(--on-var,#494E42)"><use href="#i-near"></use></svg>
+            </sc-if>
+          </div>
+        </sc-for>
+        <div style="{{ gutterStyle }}">
+          <sc-for list="{{ ticks }}" as="t" hint-placeholder-count="14">
+            <div style="{{ t.style }}">{{ t.label }}</div>
+          </sc-for>
+          <div style="{{ nowPillStyle }}">{{ nowLabel }}</div>
+        </div>
+        <sc-for list="{{ columns }}" as="col" hint-placeholder-count="5">
+          <div style="{{ col.style }}">
+            <sc-for list="{{ col.events }}" as="ev" hint-placeholder-count="5">
+              <div style="{{ ev.boxStyle }}">
+                <div sc-camel-on-click="{{ ev.onOpen }}" sc-camel-on-key-down="{{ ev.onKey }}" role="button" sc-camel-tab-index="0" aria-label="{{ ev.aria }}" style="{{ ev.style }}">
+                  <sc-if value="{{ ev.showTime }}"><span style="{{ ev.timeStyle }}">{{ ev.range }}</span></sc-if>
+                  <span style="{{ ev.titleStyle }}">{{ ev.title }}</span>
+                  <sc-if value="{{ ev.showTags }}">
+                    <span style="display:flex;flex-wrap:wrap;gap:4px;margin-top:auto">
+                      <sc-for list="{{ ev.tags }}" as="tag" hint-placeholder-count="2">
+                        <span style="{{ tag.style }}">{{ tag.label }}</span>
+                      </sc-for>
+                    </span>
+                  </sc-if>
+                  <sc-if value="{{ ev.showStar }}">
+                    <button sc-camel-on-click="{{ ev.onStar }}" aria-pressed="{{ ev.starred }}" aria-label="{{ ev.starLabel }}" title="{{ ev.starLabel }}" style="{{ ev.starStyle }}">
+                      <svg aria-hidden="true" style="width:15px;height:15px;fill:currentColor"><use href="{{ ev.starIcon }}"></use></svg>
+                    </button>
+                  </sc-if>
+                  <sc-if value="{{ ev.planned }}">
+                    <svg aria-hidden="true" style="{{ ev.checkStyle }}"><use href="#i-check"></use></svg>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+            <div style="{{ col.nowStyle }}"></div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showRows }}">
+    <section style="{{ rowsSectionStyle }}" data-hide-scrollbar="">
+      <sc-if value="{{ showRowsHeading }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;gap:10px;margin-bottom:16px;justify-items:start">
+        <sc-if value="{{ showRowsChip }}">
+          <span style="display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 14px 0 10px;border-radius:8px;background:var(--sec,#DCE8C0);color:var(--on-sec,#1F2D0A);font-size:14px;font-weight:500;line-height:20px;letter-spacing:.006em">
+            <svg aria-hidden="true" style="flex:none;width:18px;height:18px;fill:currentColor"><use href="#i-star-fill"></use></svg>{{ rowsChip }}
+          </span>
+        </sc-if>
+        <h2 style="margin:0;font-size:22px;font-weight:600;line-height:28px;letter-spacing:-.014em">{{ rowsHeading }}</h2>
+        <p style="margin:0;font-size:14px;line-height:20px;letter-spacing:.016em;color:var(--on-var,#494E42)">{{ rowsSub }}</p>
+      </div>
+      </sc-if>
+      <sc-if value="{{ rowsEmpty }}">
+        <div style="padding:56px 32px;border:1px solid var(--outline,#C7CBBA);border-radius:28px;background:var(--low,#F8F7F3);text-align:center">
+          <svg aria-hidden="true" style="width:34px;height:34px;fill:var(--dot-m,#A9CE88)"><use href="#i-star"></use></svg>
+          <h3 style="margin:14px 0 0;font-size:19px;font-weight:650;letter-spacing:-.02em">Nothing here yet</h3>
+          <p style="margin:8px auto 0;max-width:42ch;font-size:14.5px;line-height:1.5;color:var(--on-var,#494E42);text-wrap:pretty">Star an act to shortlist it, or add it to your plan from the timetable.</p>
+        </div>
+      </sc-if>
+      <sc-for list="{{ listGroups }}" as="g" hint-placeholder-count="4">
+        <div style="margin-bottom:22px">
+          <div style="{{ g.headStyle }}">
+            <span style="{{ g.timeStyle }}">{{ g.time }}</span>
+            <span style="{{ g.countStyle }}">{{ g.count }}</span>
+          </div>
+          <ul style="margin:0;padding:0;list-style:none;display:grid;gap:8px">
+            <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="4">
+              <li>
+                <div sc-camel-on-click="{{ r.onOpen }}" sc-camel-on-key-down="{{ r.onKey }}" role="button" sc-camel-tab-index="0" aria-label="{{ r.aria }}" style="{{ r.style }}" style-hover="box-shadow:inset 0 0 0 999px var(--state5,rgba(25,29,19,.05))" style-active="box-shadow:inset 0 0 0 999px var(--state9,rgba(25,29,19,.09))">
+                  <div style="{{ r.mediaStyle }}">
+                    <svg sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" aria-hidden="true" style="{{ r.artStyle }}">
+                      <use href="#i-art"></use><use href="{{ r.motif }}"></use>
+                    </svg>
+                    <sc-if value="{{ r.showChip }}" hint-placeholder-val="{{ true }}">
+                      <div style="{{ r.notchStyle }}">
+                        <span style="{{ r.filletTop }}"></span>
+                        <span style="{{ r.filletSide }}"></span>
+                        <span style="{{ r.chipStyle }}">{{ r.chipLabel }}</span>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="{{ r.rowTextStyle }}">
+                    <span style="{{ r.rowTitleStyle }}">{{ r.title }}</span>
+                    <span style="{{ r.rowWhenStyle }}">{{ r.when }}</span>
+                    <sc-if value="{{ r.live }}">
+                      <span style="{{ r.liveStyle }}">
+                        <i style="{{ r.liveBarStyle }}"></i><i style="{{ r.liveBar2Style }}"></i><i style="{{ r.liveBar3Style }}"></i>
+                        <span>Live</span>
+                      </span>
+                    </sc-if>
+                    <span style="{{ r.rowMetaStyle }}">
+                      <i style="{{ r.dotStyle }}"></i>
+                      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.meta }}</span>
+                    </span>
+                  </div>
+                  <div style="flex:none;position:relative;z-index:1;display:flex;align-items:center;gap:10px">
+                    <sc-if value="{{ r.showNav }}" hint-placeholder-val="{{ true }}">
+                      <button sc-camel-on-click="{{ r.onNav }}" aria-label="{{ r.navLabel }}" title="{{ r.navLabel }}" style="{{ r.navStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+                        <svg aria-hidden="true" style="width:20px;height:20px;fill:currentColor"><use href="#i-near"></use></svg>
+                      </button>
+                    </sc-if>
+                    <button sc-camel-on-click="{{ r.onStar }}" aria-pressed="{{ r.starred }}" aria-label="{{ r.starLabel }}" title="{{ r.starLabel }}" style="{{ r.starStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+                      <svg sc-camel-view-box="0 0 24 24" aria-hidden="true" style="{{ r.starSvgStyle }}">
+                        <defs>
+                          <clipPath id="{{ r.clipId }}" sc-camel-clip-path-units="userSpaceOnUse">
+                            <circle cx="12" cy="12" r="19" style="{{ r.discStyle }}"></circle>
+                          </clipPath>
+                        </defs>
+                        <use href="#i-star-geo" style="{{ r.starOutlineStyle }}"></use>
+                        <g clip-path="{{ r.clipUrl }}"><use href="#i-star-geo" style="fill:currentColor;stroke:none"></use></g>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-for>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ showSplitHandle }}">
+    <div role="separator" aria-orientation="vertical" aria-label="Resize the programme and the map" aria-valuenow="{{ splitPct }}" aria-valuemin="34" aria-valuemax="76" sc-camel-tab-index="0" sc-camel-on-pointer-down="{{ onSplitDown }}" sc-camel-on-key-down="{{ onSplitKey }}" sc-camel-on-double-click="{{ onSplitReset }}" title="Drag to resize · double-click to reset" style="{{ splitHandleStyle }}" style-hover="background:var(--state5,rgba(25,29,19,.05))">
+      <span style="{{ splitGrabStyle }}"></span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showMap }}">
+    <section style="{{ mapSectionStyle }}">
+      <div style="{{ mapPaneStyle }}">
+        <div ref="{{ mapRef }}" style="{{ mapBoxStyle }}"></div>
+        <div role="group" aria-label="Base map" style="{{ mapToggleStyle }}">
+          <sc-for list="{{ baseTabs }}" as="b" hint-placeholder-count="2">
+            <button sc-camel-on-click="{{ b.onClick }}" aria-pressed="{{ b.pressed }}" style="{{ b.style }}">{{ b.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ showMapCaption }}" hint-placeholder-val="{{ true }}">
+        <p style="margin:12px 4px 0;font-size:13px;line-height:1.5;color:var(--on-var,#494E42);max-width:70ch;text-wrap:pretty">1 stages across Helsinki. Pins sit on the organiser's own map marks — tap one to see what is on.</p>
+        </sc-if>
+      </div>
+      <aside style="{{ stageAsideStyle }}" ref="{{ stageAsideRef }}" data-hide-scrollbar="">
+        <sc-for list="{{ stageCards }}" as="s" hint-placeholder-count="5">
+          <div style="{{ s.wrapStyle }}">
+          <button sc-camel-on-click="{{ s.onClick }}" style="{{ s.style }}">
+            <span style="{{ s.numStyle }}">{{ s.n }}</span>
+            <span style="min-width:0;display:grid;gap:4px;text-align:start">
+              <span style="{{ s.nameStyle }}">{{ s.name }}</span>
+              <sc-if value="{{ s.showNote }}" hint-placeholder-val="{{ true }}">
+                <span style="{{ s.noteStyle }}">{{ s.note }}</span>
+              </sc-if>
+              <sc-if value="{{ s.showCount }}" hint-placeholder-val="{{ true }}">
+                <span style="{{ s.countStyle }}">{{ s.count }}</span>
+              </sc-if>
+            </span>
+            <sc-if value="{{ s.showGo }}">
+              <svg aria-hidden="true" style="{{ s.goStyle }}"><use href="#i-near"></use></svg>
+            </sc-if>
+          </button>
+          <div style="{{ s.panelStyle }}">
+            <div style="{{ s.panelInnerStyle }}">
+              <sc-if value="{{ s.hasAddr }}" hint-placeholder-val="{{ true }}">
+                <p style="{{ s.whereStyle }}">
+                  <svg aria-hidden="true" style="flex:none;width:18px;height:18px;fill:currentColor;margin-top:1px"><use href="#i-pin"></use></svg>
+                  <span>{{ s.where }}</span>
+                </p>
+              </sc-if>
+              <sc-if value="{{ s.panelNote }}">
+                <p style="{{ s.noteStyle2 }}">{{ s.panelNote }}</p>
+              </sc-if>
+              <div style="{{ s.actionsStyle }}">
+                <button sc-camel-on-click="{{ s.onOpenMap }}" style="{{ s.openMapStyle }}">
+                  <svg aria-hidden="true" style="width:18px;height:18px;fill:currentColor"><use href="#i-pin"></use></svg>Open map
+                </button>
+                <button sc-camel-on-click="{{ s.onWalk }}" style="{{ s.walkStyle }}">
+                  <svg aria-hidden="true" style="width:18px;height:18px;fill:currentColor"><use href="#i-near"></use></svg>Walk there
+                </button>
+              </div>
+            </div>
+          </div>
+          </div>
+        </sc-for>
+      </aside>
+    </section>
+  </sc-if>
+  </div>
+
+  <p aria-live="polite" style="position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap">{{ note }}</p>
+</div>
+
+<sc-if value="{{ burstOpen }}">
+  <span data-fav-burst="" aria-hidden="true" style="{{ burstLayerStyle }}">
+    <sc-for list="{{ burstParts }}" as="p" hint-placeholder-count="0">
+      <i style="{{ p.style }}"></i>
+    </sc-for>
+  </span>
+</sc-if>
+
+<sc-if value="{{ overlapOpen }}">
+  <div style="position:fixed;inset:0;z-index:68;display:grid;justify-items:center;place-content:safe center;padding:24px;overflow-y:auto;background:var(--scrim,rgba(20,24,14,.32));animation:fp-fade .18s cubic-bezier(.2,0,0,1)">
+    <button sc-camel-on-click="{{ closeOverlap }}" aria-label="Close" style="position:absolute;inset:0;border:0;background:none;cursor:default"></button>
+    <div role="dialog" aria-modal="true" aria-label="{{ overlap.title }}" style="{{ overlapCardStyle }}">
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:4px 4px 14px">
+        <span style="min-width:0;display:grid;gap:4px">
+          <span style="font-size:20px;font-weight:650;letter-spacing:-.018em;line-height:1.2">{{ overlap.title }}</span>
+          <span style="font-size:13.5px;line-height:1.4;color:var(--on-var,#494E42)">{{ overlap.sub }}</span>
+        </span>
+        <button sc-camel-on-click="{{ closeOverlap }}" aria-label="Close" title="Close" style="{{ overlapCloseStyle }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+          <svg aria-hidden="true" style="width:18px;height:18px;fill:currentColor"><use href="#i-close"></use></svg>
+        </button>
+      </div>
+      <ul style="margin:0;padding:0;list-style:none;display:grid;gap:6px">
+        <sc-for list="{{ overlap.rows }}" as="o" hint-placeholder-count="3">
+          <li>
+            <button sc-camel-on-click="{{ o.onOpen }}" style="{{ o.style }}" style-hover="box-shadow:inset 0 0 0 999px var(--state8,rgba(25,29,19,.08))">
+              <span style="flex:none;display:grid;gap:2px;width:52px;text-align:start">
+                <span style="font-size:13px;font-weight:650">{{ o.from }}</span>
+                <span style="font-size:12.5px;font-weight:500;opacity:.7">{{ o.to }}</span>
+              </span>
+              <span style="flex:1;min-width:0;display:grid;gap:3px;text-align:start">
+                <span style="font-size:15px;font-weight:600;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ o.title }}</span>
+                <span style="font-size:12.5px;font-weight:500;opacity:.75">{{ o.meta }}</span>
+              </span>
+              <svg aria-hidden="true" style="{{ o.chevStyle }}"><use href="#i-chev"></use></svg>
+            </button>
+          </li>
+        </sc-for>
+      </ul>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ sheetOpen }}">
+  <div data-hide-scrollbar="" style="{{ sheetScrimStyle }}">
+    <button sc-camel-on-click="{{ closeSheet }}" aria-label="Close" style="position:absolute;inset:0;border:0;background:none;cursor:default"></button>
+    <div class="ac-host" style="{{ sheetHostStyle }}">
+    <article class="{{ sheet.cardClass }}" role="dialog" aria-modal="true" aria-label="{{ sheet.title }}" style="{{ sheetStyle }}" ref="{{ sheetRef }}">
+      <div class="ac__grip" aria-hidden="true"><div class="ac__grab"></div></div>
+      <div class="ac__hero">
+        <svg class="ac__art" sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img" aria-label="{{ sheet.artLabel }}">
+          <use href="#i-art"></use><use class="motif" href="{{ sheet.motif }}"></use>
+        </svg>
+        <div class="ac__scrim" aria-hidden="true"></div>
+        <div class="ac__tools">
+          <button class="ac__tool" type="button" sc-camel-on-click="{{ closeSheet }}" aria-label="Close">
+            <svg sc-camel-view-box="0 0 24 24" aria-hidden="true" style="fill:currentColor"><use href="#i-close"></use></svg>
+          </button>
+        </div>
+        <div class="ac__overlay">
+          <p class="ac__eyebrow">{{ sheet.timeLine }}</p>
+          <h2 class="ac__title">{{ sheet.title }}</h2>
+          <button class="ac__where" type="button" sc-camel-on-click="{{ sheet.onNav }}" aria-label="{{ sheet.navLabel }}">
+            <svg sc-camel-view-box="0 0 24 24" aria-hidden="true"><use href="#i-pin"></use></svg>
+            <span>{{ sheet.stageLine }}</span>
+            <svg class="ac__where-go" sc-camel-view-box="0 0 24 24" aria-hidden="true"><use href="#i-near"></use></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="ac__body" style="{{ sheetBodyStyle }}" ref="{{ sheetBodyRef }}">
+        <div class="ac__col ac__col--a">
+          <section class="{{ sheet.listenClass }}" aria-label="Listen">
+            <sc-if value="{{ sheet.hasSources }}" hint-placeholder-val="{{ true }}">
+              <div class="{{ sheet.embedClass }}">
+                <iframe src="{{ sheet.embedSrc }}" title="{{ sheet.embedTitle }}" loading="lazy" allow="autoplay; encrypted-media; clipboard-write; picture-in-picture" allowfullscreen sc-camel-referrer-policy="strict-origin-when-cross-origin" sc-camel-on-load="{{ sheet.onEmbedLoad }}"></iframe>
+                <sc-if value="{{ sheet.embedLoading }}" hint-placeholder-val="{{ true }}">
+                  <div class="wave" role="progressbar" aria-label="Loading the player">
+                    <svg class="wave__svg" sc-camel-view-box="0 0 96 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true">
+                      <path class="wave__track" d="M0 12h96"></path>
+                      <path class="wave__line" d="M-48 12q6-7 12 0t12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0 12 0"></path>
+                    </svg>
+                  </div>
+                </sc-if>
+              </div>
+              <sc-if value="{{ sheet.showPlayerToggle }}">
+                <button class="embed__more" type="button" sc-camel-on-click="{{ sheet.onPlayerToggle }}" aria-expanded="{{ sheet.playerOpen }}" aria-label="{{ sheet.playerLabel }}" title="{{ sheet.playerLabel }}">
+                  <svg sc-camel-view-box="0 0 24 24" aria-hidden="true"><use href="#i-chev"></use></svg>
+                </button>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{ sheet.noSources }}">
+              <div class="listen__row">
+                <span class="listen__cover" aria-hidden="true">
+                  <svg sc-camel-view-box="0 0 24 24"><use href="#i-play-circle"></use></svg>
+                </span>
+                <div class="listen__meta">
+                  <p class="listen__title">{{ sheet.title }}</p>
+                  <p class="listen__none">No preview in the programme data yet.</p>
+                </div>
+              </div>
+            </sc-if>
+          </section>
+          <div class="ac__row">
+          <ul class="links">
+            <sc-for list="{{ sheet.links }}" as="l" hint-placeholder-count="4">
+              <li><a href="{{ l.href }}" target="_blank" rel="noopener noreferrer" aria-label="{{ l.label }}" title="{{ l.label }}">
+                <svg sc-camel-view-box="0 0 24 24" style="{{ l.iconStyle }}"><use href="{{ l.icon }}"></use></svg></a></li>
+            </sc-for>
+          </ul>
+          <button class="ac__fav-btn" type="button" sc-camel-on-click="{{ sheet.onStar }}" aria-pressed="{{ sheet.starred }}" aria-label="{{ sheet.starLabel }}">
+            <svg class="star__svg" sc-camel-view-box="0 0 24 24" aria-hidden="true">
+              <defs><clipPath class="star__clip" id="{{ sheet.clipId }}" sc-camel-clip-path-units="userSpaceOnUse">
+                <circle class="star__disc" cx="12" cy="12" r="19"></circle></clipPath></defs>
+              <use class="star__outline" href="#i-star-geo"></use>
+              <g class="star__clipped" clip-path="{{ sheet.clipUrl }}"><use class="star__fill" href="#i-star-geo"></use></g>
+            </svg>
+          </button>
+          </div>
+        </div>
+
+        <div class="ac__col ac__col--b">
+          <div class="{{ sheet.bioClass }}">
+            <div class="bio__clip" style="{{ sheet.bioClipStyle }}" ref="{{ sheet.bioRef }}"><p class="bio__text">{{ sheet.intro }}</p></div>
+            <sc-if value="{{ sheet.showBioToggle }}" hint-placeholder-val="{{ true }}">
+              <button class="bio__more" type="button" sc-camel-on-click="{{ sheet.toggleBio }}" aria-expanded="{{ sheet.bioExpanded }}">
+                <span>{{ sheet.bioToggleLabel }}</span>
+                <svg sc-camel-view-box="0 0 24 24" aria-hidden="true"><use href="#i-chev"></use></svg>
+              </button>
+            </sc-if>
+          </div>
+          <ul class="tags">
+            <sc-for list="{{ sheet.tags }}" as="t" hint-placeholder-count="3">
+              <li>{{ t }}</li>
+            </sc-for>
+          </ul>
+        </div>
+
+        <hr class="ac__rule">
+        <div class="ac__actions" style="{{ sheetActionsStyle }}">
+          <button class="btn btn--plan" type="button" sc-camel-on-click="{{ sheet.onPlan }}" aria-pressed="{{ sheet.planned }}">
+            <svg sc-camel-view-box="0 0 24 24" aria-hidden="true"><use href="{{ sheet.planIcon }}"></use></svg><span>{{ sheet.planLabel }}</span>
+          </button>
+        </div>
+      </div>
+    </article>
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<!-- The festival's own values, then the design that has none of them, then
+     the element the runtime reads the component out of. That element has to be
+     inline — the runtime takes the component from a script's textContent, and
+     an external script has none — so the page makes it here, at the end of the
+     body, which is before the runtime's own DOMContentLoaded boot. -->
+<script src="../data/juhlaviikot/planner.js"></script>
+<script src="../assets/js/planner-f1ea716cb3.js"></script>
+<script>
+(() => {
+  const s = document.createElement('script');
+  s.type = 'text/x-dc';
+  s.setAttribute('data-dc-script', '');
+  s.setAttribute('data-props', "{\"navMode\": {\"editor\": \"enum\", \"options\": [\"auto\", \"drawer\", \"rail\", \"bar\"], \"default\": \"auto\", \"tsType\": \"string\", \"section\": \"Adaptive shell\"}, \"density\": {\"editor\": \"enum\", \"options\": [\"compact\", \"default\", \"roomy\"], \"default\": \"default\", \"tsType\": \"string\", \"section\": \"Adaptive shell\"}, \"startView\": {\"editor\": \"enum\", \"options\": [\"timetable\", \"list\", \"map\", \"plan\", \"info\"], \"default\": \"timetable\", \"tsType\": \"string\", \"section\": \"Adaptive shell\"}, \"showWeather\": {\"editor\": \"boolean\", \"default\": true, \"tsType\": \"boolean\", \"section\": \"Adaptive shell\"}}");
+  s.textContent = window.__FP_SRC__;
+  document.body.appendChild(s);
+})();
+</script>
+<!-- The same page-to-page layer the rest of the site runs, which the planners
+     did without: a navigation off one of them was a bare document load, and a
+     planner is the page a reader spends the longest on and leaves from most.
+     It brings the fade-through, the fetch-ahead and the skeleton with it. -->
+<style>
+/* ── moving between pages ──────────────────────────────
+   Every page here is one document, so a navigation is a document load and the
+   browser does the work. What this file adds is the three things the browser
+   cannot infer: that the two documents are the same app and should cross-fade
+   rather than cut; that a link the reader is about to press is worth fetching
+   before they press it; and that a wait long enough to notice should be
+   explained with the shape of the page they asked for.
+
+   What it no longer does is get in the way. The version before this one held
+   every navigation back by 190ms so its own fade could finish — a fade that
+   existed to cover a gap the browser does not actually leave. The rule now is
+   that nothing may delay the navigation: the departure is the browser's, and
+   the only frames this file owns are the arrival and the wait. */
+
+/* ── 1. the transition ────────────────────────────────
+   M3's fade-through, which is the pattern for "destinations that do not have a
+   spatial relationship" — the four cells of a bottom bar are exactly that. The
+   outgoing page leaves on the accelerate curve over 90ms; the incoming one
+   arrives on the decelerate curve over 210ms and settles up from 92%. They
+   overlap, which is the part that matters: the new page has already begun
+   before the old one is gone, so there is no frame with nothing on it. */
+@view-transition { navigation: auto }
+
+::view-transition-old(root) {
+  animation: fx-leave 90ms cubic-bezier(.3, 0, 1, 1) both;
+}
+::view-transition-new(root) {
+  animation: fx-arrive 210ms cubic-bezier(0, 0, 0, 1) 30ms both;
+}
+@keyframes fx-leave  { to   { opacity: 0 } }
+@keyframes fx-arrive { from { opacity: 0; transform: scale(.92) } }
+
+/* ── 1b. the bar carries across ───────────────────────
+   The bottom bar is on both sides of a navigation between the list and a
+   planner, and it is the same component in both, so it is named — and a named
+   element is captured on its own rather than inside the page's snapshot. Two
+   things follow. It stays on top and lit while the page behind it fades,
+   which is what the reader is holding on to; and the browser morphs the one
+   bar into the other instead of replacing it. That is M3's container
+   transform: the element persists and grows or shrinks between the two
+   states, rather than one being swapped for another.
+
+   The bar's right edge is in the same place on both pages — that is what the
+   width arithmetic in _nav.css is for — so what the morph shows is the left
+   edge travelling in by the width of the back button, and the cells settling
+   into their new columns as it goes. The box moves on the spatial spring,
+   which overshoots; the two sets of icons cross-fade over it on the effects
+   curve, which does not, so the icons change without wobbling.
+
+   The two snapshots keep the browser's own sizing — each is scaled to the
+   group's width with its proportions held, so a row of cells is never
+   stretched into a different shape while the capsule around it is still
+   moving. Only the timing is ours. */
+::view-transition-group(navbar) {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(.38, 1.21, .22, 1.00);
+}
+::view-transition-old(navbar),
+::view-transition-new(navbar) {
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(.34, .80, .34, 1.00);
+}
+
+/* The back button is on one side of the navigation only, so there is nothing
+   to morph it from and nothing the browser would do with it but fade it in.
+   It arrives as a bubble instead: up from a quarter of its size, on the same
+   spatial spring the bar's box is travelling on, so the two moves read as one
+   gesture — the bar draws back and the button surfaces in the room it left.
+   Leaving, it goes the way it came. */
+::view-transition-new(navback) {
+  animation: nav-pop-in 460ms cubic-bezier(.38, 1.21, .22, 1.00) both;
+  transform-origin: 50% 50%;
+}
+::view-transition-old(navback) {
+  animation: nav-pop-out 160ms cubic-bezier(.3, 0, 1, 1) both;
+  transform-origin: 50% 50%;
+}
+@keyframes nav-pop-in  { from { transform: scale(.25); opacity: 0 } }
+@keyframes nav-pop-out { to   { transform: scale(.25); opacity: 0 } }
+
+/* Where cross-document transitions are not implemented, the arrival is still
+   ours. It has to be CSS and not script: a class added by a tag at the end of
+   the body is added after the first frame has been painted, which turns a fade
+   in into a flash followed by a fade in. A rule is in force before the body
+   exists, so the page is transparent from its first frame and comes up on the
+   same decelerate curve as above.
+
+   Opacity only, and no transform — both the home page and the planners hang
+   fixed chrome off the body, and a transformed ancestor makes a fixed child
+   position against it instead of against the viewport. */
+@supports not (view-transition-name: none) {
+  body { animation: fx-settle 210ms cubic-bezier(0, 0, 0, 1) both }
+  @keyframes fx-settle { from { opacity: 0 } }
+}
+
+/* ── 2. the wait ──────────────────────────────────────
+   Shown only if the page asked for has not arrived in 110ms, which is about
+   where a delay stops reading as the press and starts reading as a wait. Most
+   navigations here never reach it: the destination has usually been fetched
+   already, and a prerendered one swaps in the same frame.
+
+   It is the layout of the page being loaded, not a spinner. A spinner says
+   "something is happening"; the shape says "the thing you asked for is
+   happening", and it puts the header, the rail and the bar where they are
+   about to be, so the arrival lands on top of its own outline rather than
+   replacing an unrelated picture. */
+.fx {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  overflow: hidden;
+  padding: calc(20px + env(safe-area-inset-top)) 16px 0;
+  background: var(--md-sys-color-surface, var(--low, #F8F7F3));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms cubic-bezier(0, 0, 0, 1);
+}
+.fx.on { opacity: 1; pointer-events: auto }
+
+/* The placeholder tone is one step up from the surface it sits on — M3's
+   surface-container-highest, which is the same tone the pressed state of a
+   card lands on. The planners do not carry the md-sys names (they run their
+   own festival-rotated scheme) so each one falls back to that scheme's
+   equivalent, and then to the literal, exactly as the rest of the planner
+   CSS does. */
+.fx {
+  --sk: var(--md-sys-color-surface-container-highest, var(--hover, #EAE8DF));
+  --sk-lift: rgb(255 255 255 / .58);
+}
+[data-theme=dark] .fx { --sk-lift: rgb(255 255 255 / .06) }
+
+/* The column is cut off above the bar and faded into it, rather than being
+   given a shape short enough to clear it. A fixed shape only clears the bar at
+   the height it was drawn for: one row too many and the last one collides with
+   the bar on a small phone, one too few and a tall one ends halfway up an empty
+   screen. Cutting where the bar begins is right at both. */
+.fx__sk {
+  max-width: 640px;
+  margin-inline: auto;
+  max-block-size: calc(100dvh - 128px - env(safe-area-inset-bottom));
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent);
+}
+
+.fx i {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: var(--sk);
+  border-radius: 8px;
+}
+.fx i[hidden] { display: none }
+/* One sweep, one property. The band is a pseudo-element moved with a
+   transform rather than a gradient whose position is animated, so the whole
+   skeleton is composited and nothing repaints per frame. Every block shares
+   the timing, so the light crosses the page as one pass rather than each
+   block flickering on its own clock. */
+.fx i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--sk-lift) 52%, transparent);
+  animation: fx-sweep 1.6s cubic-bezier(.4, 0, .2, 1) infinite;
+}
+@keyframes fx-sweep { to { transform: translateX(100%) } }
+
+/* the parts */
+.fx__row  { display: flex; align-items: center; gap: 12px }
+.fx__rail { display: flex; gap: 12px; overflow: hidden; margin-inline: -16px; padding-inline: 16px }
+.fx__card { padding: 12px 12px 16px; border-radius: 28px;
+            background: var(--md-sys-color-surface-container-low, var(--card, #F2F0EB)) }
+.fx__hero { aspect-ratio: 16 / 10; border-radius: 20px }
+.fx__chips, .fx__acts { display: flex; gap: 8px; margin-block-start: 12px }
+.fx__chips i { block-size: 32px; border-radius: 8px }
+.fx__acts i  { flex: 1 1 0; block-size: 48px; border-radius: 16px }
+.fx__av      { display: flex; gap: 16px; overflow: hidden }
+.fx__av span { flex: none; display: grid; gap: 8px; justify-items: center }
+.fx__av i:first-child { inline-size: 56px; block-size: 56px; border-radius: 50% }
+.fx__av i + i { inline-size: 48px; block-size: 10px; border-radius: 5px }
+
+/* The bar is the one piece of chrome that is on both sides of the navigation,
+   so the skeleton draws it where the real one already is: same width, same
+   64px, same extra-large corner, same 16px of air beneath it.
+
+   The ring is the stand-in for what the real bar has and a flat block does
+   not. That bar floats: it is glass over the page with a shadow under it, and
+   the list runs on beneath it. Without something to part them, a placeholder
+   row that happens to end at the same height merges into the bar and the two
+   read as one odd shape. A band of the page's own surface separates them at
+   any viewport height, which is what the shadow does on the real thing. */
+.fx i.fx__bar {
+  /* Selector, not just `.fx__bar`: the block rule above is `.fx i`, and an
+     element-plus-class selector outranks a class on its own. */
+  position: absolute;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  inline-size: min(94vw, 430px);
+  block-size: 64px;
+  border-radius: 28px;
+  box-shadow: 0 0 0 10px var(--md-sys-color-surface, var(--low, #F8F7F3));
+}
+
+@media (min-width: 600px) { .fx__bar { display: none } }
+
+/* Someone who has asked for less motion gets the shape, and the shape holds
+   still. The transition between documents goes back to the browser's cut,
+   which is what "no animation" means for a navigation. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important }
+  body { animation: none }
+  .fx { transition: none }
+  .fx i::after { animation: none; background: none }
+}
+</style>
+
+<div class="fx" id="fx" aria-hidden="true">
+  <div class="fx__sk" id="fxSk"></div>
+  <!-- Outside the column on purpose: the column is masked, and a mask
+       applies to everything under it, absolutely positioned or not. -->
+  <i class="fx__bar" id="fxBar" hidden></i>
+</div>
+<div id="fxSay" role="status" aria-live="polite"
+     style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap"></div>
+
+<script>
+(() => {
+  const fx = document.getElementById('fx');
+  const sk = document.getElementById('fxSk');
+  const bar = document.getElementById('fxBar');
+  const say = document.getElementById('fxSay');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ── where the site is ──────────────────────────────
+     The manifest is the one link on every page that points at the site root,
+     so it is what tells a page at any depth what "ours" means. */
+  const man = document.querySelector('link[rel=manifest]');
+  const BASE = man
+    ? new URL(man.getAttribute('href'), location.href).href.replace(/manifest\.webmanifest$/, '')
+    : new URL('./', location.href).href;
+
+  const ours = (url) => url.href.startsWith(BASE);
+
+  /* Coming back through the bfcache restores a page mid-exit: it kept the
+     skeleton it was showing when it left. */
+  addEventListener('pageshow', () => {
+    fx.classList.remove('on');
+    say.textContent = '';
+  });
+
+  /* ── 2. the shapes ──────────────────────────────────
+     Three, because the site has three kinds of page. Each is the real page's
+     geometry — the card's 28px corner, the hero's 16/10, the 48px actions, the
+     56px line-up avatars — so what arrives lands on its own outline. */
+  const b = (style) => `<i style="${style}"></i>`;
+  const lines = (widths, gap = 12) => widths
+    .map(w => b(`block-size:14px;inline-size:${w};margin-block-start:${gap}px;border-radius:7px`))
+    .join('');
+
+  const SHAPES = {
+    home: () => `
+      ${b('block-size:34px;inline-size:44%;border-radius:12px')}
+      ${b('block-size:14px;inline-size:66%;margin-block-start:14px;border-radius:7px')}
+      ${b('block-size:22px;inline-size:32%;margin:26px 0 14px;border-radius:11px')}
+      <div class="fx__rail">
+        ${b('flex:none;inline-size:78%;aspect-ratio:16/10;border-radius:28px')}
+        ${b('flex:none;inline-size:78%;aspect-ratio:16/10;border-radius:28px')}
+      </div>
+      ${b('block-size:22px;inline-size:38%;margin:26px 0 14px;border-radius:11px')}
+      ${b('block-size:96px;border-radius:28px')}
+      ${b('block-size:96px;margin-block-start:12px;border-radius:28px')}`,
+
+    planner: () => `
+      <div class="fx__row">
+        ${b('inline-size:40px;block-size:40px;border-radius:50%')}
+        ${b('inline-size:46%;block-size:18px;border-radius:9px')}
+      </div>
+      <div class="fx__card" style="margin-block-start:16px">
+        <i class="fx__hero"></i>
+        <div class="fx__chips">
+          ${b('inline-size:64px')}${b('inline-size:52px')}${b('inline-size:58px')}${b('inline-size:46px')}
+        </div>
+        <div class="fx__acts">${b('')}${b('')}${b('')}</div>
+      </div>
+      ${b('block-size:20px;inline-size:30%;margin:24px 0 14px;border-radius:10px')}
+      <div class="fx__av">
+        ${'<span><i></i><i></i></span>'.repeat(5)}
+      </div>
+      ${b('block-size:72px;margin-block-start:22px;border-radius:16px')}
+      ${b('block-size:72px;margin-block-start:8px;border-radius:16px')}
+      ${b('block-size:72px;margin-block-start:8px;border-radius:16px')}`,
+
+    page: () => `
+      ${b('block-size:14px;inline-size:26%;border-radius:7px')}
+      ${b('block-size:30px;inline-size:76%;margin-block-start:18px;border-radius:12px')}
+      ${b('block-size:30px;inline-size:52%;margin-block-start:10px;border-radius:12px')}
+      <div style="margin-block-start:20px">
+        ${lines(['100%', '96%', '88%', '100%', '72%'])}
+      </div>
+      <div style="margin-block-start:28px">
+        ${lines(['100%', '92%', '80%'])}
+      </div>`,
+  };
+
+  /* Which of the three a URL is. The planners are the two directories that
+     carry one; everything else with a path segment is an article. */
+  const shapeFor = (url) => {
+    const rest = url.href.slice(BASE.length).replace(/index\.html$/, '');
+    if (!rest) return 'home';
+    return /^(flow|kallio)\//.test(rest) ? 'planner' : 'page';
+  };
+
+  /* ── 3. fetching ahead ──────────────────────────────
+     Two mechanisms for the same intent, because no engine has both. Where
+     speculation rules are understood the browser prerenders the destination on
+     hover and the navigation costs a frame. Everywhere else the page is
+     fetched into the worker's cache, which removes the network from the
+     navigation even though the parse remains.
+
+     Neither runs when the reader has asked the browser to save data, and
+     neither runs on a connection that would make the speculative fetch compete
+     with the page they are actually reading. */
+  const conn = navigator.connection || {};
+  const thrifty = conn.saveData === true ||
+    /(^|-)2g$/.test(conn.effectiveType || '');
+
+  if (!thrifty && HTMLScriptElement.supports &&
+      HTMLScriptElement.supports('speculationrules')) {
+    const s = document.createElement('script');
+    s.type = 'speculationrules';
+    s.textContent = JSON.stringify({
+      prerender: [{
+        where: {href_matches: new URL(BASE).pathname + '*'},
+        /* "moderate" is hover on a pointer and the press itself on a touch
+           screen — intent, rather than every link on the page. A planner is
+           300KB and runs its own runtime; prerendering all of them because
+           they are linked would cost more than it saves. */
+        eagerness: 'moderate',
+      }],
+    });
+    document.head.appendChild(s);
+  }
+
+  const warmed = new Set();
+  const warm = (url) => {
+    if (thrifty || warmed.has(url) || url === location.href) return;
+    warmed.add(url);
+    fetch(url, {credentials: 'same-origin'}).catch(() => {});
+  };
+
+  const linkAt = (e) => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return null;
+    if (a.getAttribute('href').startsWith('#') || a.protocol === 'mailto:') return null;
+    const u = new URL(a.href, location.href);
+    return ours(u) && u.href !== location.href ? u : null;
+  };
+
+  for (const ev of ['pointerenter', 'touchstart']) {
+    document.addEventListener(ev, (e) => {
+      const u = linkAt(e);
+      if (u) warm(u.href);
+    }, {capture: true, passive: true});
+  }
+
+  /* Going back to the list is the one move every page shares, and it is the
+     cheapest page on the site. It is warmed once the current page has settled
+     and the browser has nothing better to do. */
+  addEventListener('load', () => {
+    const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1200));
+    /* A page being prerendered has not been asked for yet; it does not get to
+       speculate on top of a speculation. */
+    const later = () => idle(() => warm(BASE), {timeout: 4000});
+    if (document.prerendering) {
+      document.addEventListener('prerenderingchange', later, {once: true});
+    } else {
+      later();
+    }
+  });
+
+  /* ── 4. the wait ────────────────────────────────────
+     The navigation is never held back — no preventDefault, no timer in front
+     of it. This only arms a timer behind it: if the document is still here
+     110ms after the press, the reader is waiting, and they are shown what for.
+     If it arrived first, the page is gone and the timer with it. */
+  let armed = null;
+
+  const waiting = (url) => {
+    clearTimeout(armed);
+    armed = setTimeout(() => {
+      const shape = shapeFor(new URL(url, location.href));
+      sk.innerHTML = SHAPES[shape]();
+      /* The bar stands outside the masked column, so it is shown rather than
+         written into the shape — the two pages that carry one get it, the
+         written pages do not. */
+      bar.hidden = shape === 'page';
+      fx.classList.add('on');
+      say.textContent = 'Loading';
+    }, 110);
+  };
+
+  addEventListener('pagehide', () => clearTimeout(armed));
+
+  document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const u = linkAt(e);
+    if (u) waiting(u.href);
+  });
+
+  /* The planners' home button is a handler, not a link, so it says so. */
+  window.__fxNav = (url) => { waiting(url); location.href = url; };
+})();
+</script>
+
+</body>
+</html>

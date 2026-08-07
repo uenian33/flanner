@@ -77,9 +77,9 @@ def main():
         ("__BASE__", seo.BASE),
         ("__OG__", seo.head(
             f"{seo.BASE}/",
-            "Flanner — Helsinki festival timetables & aikataulut you can plan with",
-            "Free stage grids, set times and maps for Flow Festival and Kallio Block Party "
-            "2026 — aikataulut, esiintyjät ja lavakartat. One page per festival, "
+            "Flanner — Finnish festival timetables & aikataulut you can plan with",
+            "Free stage grids, set times and maps for festivals in Helsinki, Tampere and "
+            "Espoo — aikataulut, esiintyjät ja lavakartat. One page per festival, "
             "works offline once loaded.",
             f"{seo.BASE}/assets/og/home.jpg",
             jsonld=seo.site_jsonld(planned)

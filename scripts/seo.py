@@ -41,8 +41,8 @@ def head(url: str, title: str, desc: str, image: str,
         # advertises Finnish as an alternate locale even though it is written in
         # English. No hreflang: there is no separate Finnish URL to point at, and
         # a self-referential hreflang would be a lie about a translation.
-        '<meta name="geo.region" content="FI-18">',
-        '<meta name="geo.placename" content="Helsinki">',
+        '<meta name="geo.region" content="FI">',
+        '<meta name="geo.placename" content="Finland">',
         f'<meta property="og:type" content="{kind}">',
         f'<meta property="og:site_name" content="{SITE}">',
         f'<meta property="og:locale" content="en_GB">',
@@ -71,10 +71,22 @@ def head(url: str, title: str, desc: str, image: str,
 
 
 def festival_event(f: dict) -> dict:
-    """A festival as schema.org/MusicEvent, so it can surface as a rich result."""
-    return {
+    """A festival as schema.org/Festival, so it can surface as a rich result.
+
+    Everything here is read off the record. It used to be written for the two
+    festivals the site had — the town was the string "Helsinki", the type was
+    always MusicFestival, and the image was picked by testing the id against
+    one of the two — which is wrong the first time a festival is a film
+    festival in Espoo.
+    """
+    # `city` is written the way a reader wants it — "Ratinanniemi, Tampere" —
+    # so the town is the last part of it and the venue is what comes before.
+    town = f["city"].split(",")[-1].strip()
+    ev = {
         "@context": "https://schema.org",
-        "@type": "MusicFestival",
+        "@type": ("MusicFestival" if f["category"].lower() == "music"
+                  else "ScreeningEvent" if f["category"].lower() == "film"
+                  else "Festival"),
         "name": f"{f['name']} {f['year']}",
         "startDate": f["start"],
         "endDate": f["end"],
@@ -84,13 +96,10 @@ def festival_event(f: dict) -> dict:
             "@type": "Place",
             "name": f["city"],
             "address": {"@type": "PostalAddress",
-                        "addressLocality": "Helsinki", "addressCountry": "FI"},
+                        "addressLocality": town, "addressCountry": "FI"},
         },
-        "image": [f"{BASE}/assets/og/{'kallio' if f['id'] == 'kbp' else 'flow'}.jpg"],
         "description": f["description"],
-        "url": f"{BASE}/{f['planner']}",
         "sameAs": [f["official"]],
-        "performer": [{"@type": "MusicGroup", "name": n} for n in f["stars"]],
         "organizer": {"@type": "Organization", "name": f["name"], "url": f["official"]},
         "isAccessibleForFree": bool(f["free"]),
         "offers": {
@@ -101,6 +110,17 @@ def festival_event(f: dict) -> dict:
             **({"price": "0"} if f["free"] else {}),
         },
     }
+    # A festival we have built a planner for has a page of its own and a social
+    # card cut for it; one we only list has neither, and claiming either would
+    # point a search engine at a URL that 404s.
+    if f.get("planner"):
+        slug = f["planner"].strip("/")
+        ev["url"] = f"{BASE}/{f['planner']}"
+        ev["image"] = [f"{BASE}/assets/og/{slug}.jpg"]
+    # Named acts, where the organiser has announced any.
+    if f.get("stars"):
+        ev["performer"] = [{"@type": "MusicGroup", "name": n} for n in f["stars"]]
+    return ev
 
 
 def site_jsonld(festivals: list[dict]) -> list:
@@ -111,7 +131,7 @@ def site_jsonld(festivals: list[dict]) -> list:
             "name": SITE,
             "alternateName": "Flanner — Festival Planner",
             "url": f"{BASE}/",
-            "description": "Plannable timetables for Helsinki festivals — "
+            "description": "Plannable timetables for Finnish festivals — "
                            "aikataulut, esiintyjät ja lavakartat.",
             "inLanguage": ["en", "fi"],
             "potentialAction": {
@@ -124,7 +144,7 @@ def site_jsonld(festivals: list[dict]) -> list:
         {
             "@context": "https://schema.org",
             "@type": "ItemList",
-            "name": "Helsinki festival planners",
+            "name": "Finnish festival planners",
             "itemListElement": [
                 {"@type": "ListItem", "position": i + 1,
                  "url": f"{BASE}/{f['planner']}",
@@ -197,19 +217,47 @@ def _fi_dates(f: dict) -> str:
 def _qa(f: dict) -> list[tuple[str, str, str]]:
     """(lang, question, answer) — what people actually type before a festival.
 
-    Half of these are in Finnish. The audience is in Helsinki and searches for
+    Half of these are in Finnish. The audience is in Finland and searches for
     'aikataulu' and 'esiintyjät' at least as often as for 'timetable', and a
     page written only in English never surfaces for those queries at all.
     """
     n = f"{f['name']} {f['year']}"
-    st, days = f["stats"], f["stats"]["days"]
-    stars4 = ", ".join(f["stars"][:4])
     fi_dates = _fi_dates(f)
-    return [
+    when = [
         ("en", f"When is {n}?",
          f"{n} runs {f['dates']} at {f['city']}."),
         ("fi", f"Milloin {n} järjestetään?",
          f"{n} järjestetään {fi_dates}, paikkana {f['city']}."),
+    ]
+    offline = [
+        ("fi", "Toimiiko aikataulu ilman nettiyhteyttä?",
+         "Kyllä. Koko sivu tallentuu selaimeesi, joten aikataulu, kartta ja oma ohjelmasi "
+         "toimivat myös silloin kun festivaalialueella ei ole kenttää."),
+    ]
+    # A planner whose festival has not published a running order counts no acts
+    # and names no headliners, so the questions about them cannot be answered
+    # here — and answering them anyway would put a number in a rich result that
+    # nothing on the page supports. It gets asked what it can answer instead:
+    # the dates, the place, and when the times are coming.
+    # `stats` always exists — the loader puts the day count in it — so what
+    # separates the two is whether anything has been counted into it.
+    if not f["stats"].get("acts"):
+        return when + [
+            ("en", f"Is the {f['name']} timetable out yet?",
+             f"Not yet. {f.get('previewNote') or 'The organiser has not published set times.'} "
+             "This page has the venues on a map and the dates; the grid appears here as soon "
+             "as they are published."),
+            ("fi", f"Onko {n} aikataulu jo julkaistu?",
+             "Ei vielä. Järjestäjä ei ole julkaissut esiintymisaikoja. Tällä sivulla ovat "
+             "esiintymispaikat kartalla ja päivämäärät — aikataulu ilmestyy tänne heti kun "
+             "se julkaistaan."),
+            ("en", f"Where is {n} held?",
+             f"At {f['city']}. The planner puts every venue on a map that works offline, "
+             "with walking directions from wherever you are standing."),
+        ] + offline
+    st, days = f["stats"], f["stats"]["days"]
+    stars4 = ", ".join(f["stars"][:4])
+    return when + [
         ("en", f"What time do {f['name']} set times start?",
          f"Flanner lists every set time for all {st['stages']} stages — "
          f"{st['acts']} acts across {days} day{'s' if days > 1 else ''}. "
@@ -226,10 +274,7 @@ def _qa(f: dict) -> list[tuple[str, str, str]]:
         ("en", f"Is there a {f['name']} timetable I can plan with?",
          "Yes — Flanner turns the official schedule into a grid you can filter by genre, "
          "search by artist, and save your own route from. It works offline once loaded."),
-        ("fi", "Toimiiko aikataulu ilman nettiyhteyttä?",
-         "Kyllä. Koko sivu tallentuu selaimeesi, joten aikataulu, kartta ja oma ohjelmasi "
-         "toimivat myös silloin kun festivaalialueella ei ole kenttää."),
-    ]
+    ] + offline
 
 
 def faq(f: dict) -> dict:
@@ -265,11 +310,11 @@ def _site_qa(festivals: list[dict]) -> list[tuple[str, str, str]]:
     fi_names = " ja ".join(f"{f['name']} {f['year']}" for f in festivals)
     return [
         ("en", "What is Flanner?",
-         "Flanner turns a Helsinki festival's official timetable into a grid you can plan "
+         "Flanner turns a festival's official timetable into a grid you can plan "
          "against: filter by genre, search for an artist, see where two sets clash, and "
          "save your own route. It is free, has no accounts and runs no analytics."),
         ("fi", "Mikä Flanner on?",
-         "Flanner muuttaa helsinkiläisfestivaalien viralliset aikataulut muotoon, jota voi "
+         "Flanner muuttaa suomalaisfestivaalien viralliset aikataulut muotoon, jota voi "
          "oikeasti suunnitella: suodata genren mukaan, hae artistia nimellä, näe milloin kaksi "
          "keikkaa menevät päällekkäin ja kokoa oma ohjelmasi. Ilmainen, ei tunnuksia."),
         ("en", "Which festivals are covered?",

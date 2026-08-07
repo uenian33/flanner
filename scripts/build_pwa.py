@@ -20,6 +20,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+import schema
 import seo
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -36,6 +37,14 @@ ICONS = ROOT / "assets" / "icons"
 SHELL = ["./", "./manifest.webmanifest",
          "./assets/icons/icon-192.png", "./assets/icons/icon-512.png",
          "./assets/font/inter-latin.woff2", "./assets/font/robotoflex-latin.woff2"]
+
+# Every page the site publishes. The planners come from the records rather than
+# from a list kept here: a festival is a folder someone drops in, and a list
+# that had to be edited alongside it would leave the new planner out of the
+# cache stamp and out of "save for offline" — which nobody would notice until
+# they opened it in a field with no signal.
+PLANNERS = [f"./{f['planner']}" for f in schema.load()["festivals"] if f.get("planner")]
+PAGES = ["./"] + PLANNERS + ["./about/", "./faq/", "./terms/", "./privacy/"]
 
 
 PLATE = "#2E4B12"      # the "In your plan" chip green
@@ -104,9 +113,9 @@ def main() -> None:
 
     manifest = {
         "id": "/flanner/",
-        "name": "Flanner — Helsinki festival planner",
+        "name": "Flanner — Finnish festival planner",
         "short_name": "Flanner",
-        "description": "Plannable timetables for Helsinki festivals. Works offline.",
+        "description": "Plannable timetables for Finnish festivals. Works offline.",
         "start_url": "./",
         "scope": "./",
         "display": "standalone",
@@ -126,9 +135,14 @@ def main() -> None:
             {"src": "assets/icons/icon-maskable-512.png", "sizes": "512x512",
              "type": "image/png", "purpose": "maskable"},
         ],
+        # Long-pressing the installed icon offers a few planners. Android shows
+        # four at most, so these are the next four festivals to happen rather
+        # than all of them — a shortcut to a festival that is over is a dead
+        # entry in a menu with four slots.
         "shortcuts": [
-            {"name": "Flow Festival", "url": "flow/"},
-            {"name": "Kallio Block Party", "url": "kallio/"},
+            {"name": f["name"], "url": f["planner"]}
+            for f in sorted((x for x in schema.load()["festivals"] if x.get("planner")),
+                            key=lambda x: x["start"])[:4]
         ],
     }
     (ROOT / "manifest.webmanifest").write_text(
@@ -141,10 +155,8 @@ def main() -> None:
     # basemap that changed under a cache name that did not would be served from
     # the old store until something else forced a new one.
     stamp = hashlib.sha256()
-    for page in ("index.html", "kallio/index.html", "flow/index.html",
-                 "about/index.html", "faq/index.html",
-                 "terms/index.html", "privacy/index.html"):
-        f = ROOT / page
+    for page in PAGES:
+        f = ROOT / page.lstrip("./") / "index.html" if page != "./" else ROOT / "index.html"
         if f.exists():
             stamp.update(f.read_bytes())
     for base in ("assets", "data"):
@@ -159,7 +171,7 @@ def main() -> None:
     # a festival is a folder someone drops in — a hand-kept list would be one
     # planner behind the moment either changed, and the reader would find out
     # in a field.
-    pages = ["./", "./kallio/", "./flow/", "./about/", "./faq/", "./terms/", "./privacy/"]
+    pages = PAGES
     assets = sorted(
         "./" + f.relative_to(ROOT).as_posix()
         for base in ("assets/js", "assets/font", "assets/home", "assets/icons")
@@ -168,12 +180,14 @@ def main() -> None:
         "./" + f.relative_to(ROOT).as_posix()
         for f in ROOT.joinpath("data").rglob("planner.js"))
     # The basemaps a planner names, read off the planners rather than repeated.
+    # They are named in the festival's data now rather than in its page — which
+    # is where this used to look, so between the data split and this line every
+    # basemap was quietly missing from "save for offline": the one file the
+    # feature exists for, gone from the one list that fetches it.
     import re as _re
     maps = set()
-    for page in ("kallio/index.html", "flow/index.html"):
-        f = ROOT / page
-        if f.exists():
-            maps |= {"./" + m for m in _re.findall(r"assets/[\w.-]+\.jpg", f.read_text())}
+    for f in sorted(ROOT.joinpath("data").rglob("planner.js")):
+        maps |= {"./" + m for m in _re.findall(r"assets/[\w.-]+\.jpg", f.read_text())}
     offline = {"pages": pages, "assets": assets + sorted(maps)}
     (ROOT / "assets" / "offline.json").write_text(
         json.dumps(offline, indent=1) + "\n")

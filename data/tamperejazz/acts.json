@@ -1,0 +1,71 @@
+{
+ "event": {
+  "name": "Tampere Jazz Happening 2026",
+  "city": "Tampere",
+  "site": "https://www.tamperejazz.fi/en/"
+ },
+ "days": [
+  {
+   "id": "d1",
+   "label": "Thu 29 Oct",
+   "short": "Thu",
+   "date": "2026-10-29"
+  },
+  {
+   "id": "d2",
+   "label": "Fri 30 Oct",
+   "short": "Fri",
+   "date": "2026-10-30"
+  },
+  {
+   "id": "d3",
+   "label": "Sat 31 Oct",
+   "short": "Sat",
+   "date": "2026-10-31"
+  },
+  {
+   "id": "d4",
+   "label": "Sun 1 Nov",
+   "short": "Sun",
+   "date": "2026-11-01"
+  }
+ ],
+ "stages": [
+  {
+   "id": "pakkahuone",
+   "num": 1,
+   "name": "Pakkahuone",
+   "lat": 61.49831,
+   "lon": 23.77666,
+   "short": "Pakkahuone",
+   "location": "Tullikamarin aukio 2, Tampere",
+   "blurb": "The festival's main hall, in the refurbished Tullikamari.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "klubi",
+   "num": 2,
+   "name": "Klubi",
+   "lat": 61.49831,
+   "lon": 23.77666,
+   "short": "Klubi",
+   "location": "Tullikamarin aukio 2, Tampere",
+   "blurb": "The second room at Tullikamari.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "telakka",
+   "num": 3,
+   "name": "Telakka",
+   "lat": 61.49805,
+   "lon": 23.77796,
+   "short": "Telakka",
+   "location": "Tullikamarin aukio 3, Tampere",
+   "blurb": "The club stage across the square.",
+   "color": "",
+   "acts": []
+  }
+ ]
+}

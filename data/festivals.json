@@ -162,7 +162,9 @@
    "tickets": "https://www.blockfest.fi/en/tickets/",
    "free": false,
    "highlight": false,
-   "category": "music"
+   "category": "music",
+   "planner": "blockfest/",
+   "previewNote": "Blockfest has published its line-up and the names of its three stages, not its running order. Set times appear on blockfest.fi closer to the weekend."
   },
   {
    "id": "juhlaviikot",
@@ -185,7 +187,9 @@
    "tickets": "https://helsinkifestival.fi/en/programme/",
    "free": false,
    "highlight": false,
-   "category": "culture"
+   "category": "culture",
+   "planner": "juhlaviikot/",
+   "previewNote": "Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet."
   },
   {
    "id": "espoocine",
@@ -207,7 +211,9 @@
    "tickets": "https://espoocine.fi/en/shop/tickets/",
    "free": false,
    "highlight": false,
-   "category": "film"
+   "category": "film",
+   "planner": "espoocine/",
+   "previewNote": "Espoo Ciné publishes screening times per film rather than as a grid. The programme is on espoocine.fi; none of it is transcribed here yet."
   },
   {
    "id": "lostinmusic",
@@ -232,7 +238,9 @@
    "tickets": "https://lostinmusic.fi/fi/liput/",
    "free": false,
    "highlight": false,
-   "category": "music"
+   "category": "music",
+   "planner": "lostinmusic/",
+   "previewNote": "Lost In Music has published which artists play which venue, but not when — the festival says the detailed timetable comes closer to the event."
   },
   {
    "id": "tamperejazz",
@@ -256,7 +264,9 @@
    "tickets": "https://www.tamperejazz.fi/en/tickets/",
    "free": false,
    "highlight": false,
-   "category": "music"
+   "category": "music",
+   "planner": "tamperejazz/",
+   "previewNote": "Tampere Jazz Happening publishes its running order closer to the weekend. The venues are here; the clock is not."
   }
  ]
 }

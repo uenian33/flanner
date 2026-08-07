@@ -1,0 +1,107 @@
+{
+ "event": {
+  "name": "Lost In Music 2026",
+  "city": "Tampere",
+  "site": "https://lostinmusic.fi/fi/"
+ },
+ "days": [
+  {
+   "id": "d1",
+   "label": "Thu 1 Oct",
+   "short": "Thu",
+   "date": "2026-10-01"
+  },
+  {
+   "id": "d2",
+   "label": "Fri 2 Oct",
+   "short": "Fri",
+   "date": "2026-10-02"
+  }
+ ],
+ "stages": [
+  {
+   "id": "tavara",
+   "num": 1,
+   "name": "Tavara-asema",
+   "lat": 61.49985,
+   "lon": 23.77529,
+   "short": "Tavara-asema",
+   "location": "Ratapihankatu 33, Tampere",
+   "blurb": "Thu: Raama, Ella Herold, Vet Pillows, Tuure Boelius · Fri: Emmi Lorentzen, Isaac Sene, Aaro630, Jami Faltin. Set times are not published yet.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "telakka",
+   "num": 2,
+   "name": "Telakka",
+   "lat": 61.49805,
+   "lon": 23.77796,
+   "short": "Telakka",
+   "location": "Tullikamarin aukio 3, Tampere",
+   "blurb": "Thu: fibi, Efka Crush, Hopeasiivet · Fri: AB, keiju, F. Set times are not published yet.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "glivelab",
+   "num": 3,
+   "name": "G Livelab",
+   "lat": 61.49938,
+   "lon": 23.76227,
+   "short": "G Livelab",
+   "location": "Puutarhakatu 1, Tampere",
+   "blurb": "Thu: Myrtsi, Ullalintulampi, Kukkatalo · Fri: Helmi Antila, Oiro Pena, Hot Heros. Set times are not published yet.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "olympia",
+   "num": 4,
+   "name": "Olympia",
+   "lat": 61.50149,
+   "lon": 23.76795,
+   "short": "Olympia",
+   "location": "Satakunnankatu 10, Tampere",
+   "blurb": "Thu: LASTOUT, Rioghan, King Satan. Set times are not published yet.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "maanal",
+   "num": 5,
+   "name": "Maanalainen",
+   "lat": 61.49872,
+   "lon": 23.77569,
+   "short": "Maanalainen",
+   "location": "Itsenäisyydenkatu 2, Tampere",
+   "blurb": "Fri: Vauxdeville, Us. Set times are not published yet.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "paapan",
+   "num": 6,
+   "name": "Paapan Kapakka",
+   "lat": 61.49772,
+   "lon": 23.7661,
+   "short": "Paapan Kapakka",
+   "location": "Koskikatu 9, Tampere",
+   "blurb": "Thu: Marita Närhi, Hulda Huima, Ani Harmi, Padelclub · Fri: Onni Rajaniemi, Nina Kaitaranta, Ricky Kotka, Tero-Petri & Korvaamattomat. Set times are not published yet.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "oconn",
+   "num": 7,
+   "name": "O'Connell's",
+   "lat": 61.49653,
+   "lon": 23.77217,
+   "short": "O'Connell's",
+   "location": "Rautatienkatu 24, Tampere",
+   "blurb": "Thu: Jutta Rahmel, Tyson Blu, Saarisalo · Fri: Aizhan Sultan, Nicholas Francett, Leija Lautamaja. Set times are not published yet.",
+   "color": "",
+   "acts": []
+  }
+ ]
+}

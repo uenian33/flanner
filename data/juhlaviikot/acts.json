@@ -1,0 +1,137 @@
+{
+ "event": {
+  "name": "Helsinki Festival 2026",
+  "city": "Helsinki",
+  "site": "https://helsinkifestival.fi/en/"
+ },
+ "days": [
+  {
+   "id": "d1",
+   "label": "Tue 18 Aug",
+   "short": "Tue",
+   "date": "2026-08-18"
+  },
+  {
+   "id": "d2",
+   "label": "Wed 19 Aug",
+   "short": "Wed",
+   "date": "2026-08-19"
+  },
+  {
+   "id": "d3",
+   "label": "Thu 20 Aug",
+   "short": "Thu",
+   "date": "2026-08-20"
+  },
+  {
+   "id": "d4",
+   "label": "Fri 21 Aug",
+   "short": "Fri",
+   "date": "2026-08-21"
+  },
+  {
+   "id": "d5",
+   "label": "Sat 22 Aug",
+   "short": "Sat",
+   "date": "2026-08-22"
+  },
+  {
+   "id": "d6",
+   "label": "Sun 23 Aug",
+   "short": "Sun",
+   "date": "2026-08-23"
+  },
+  {
+   "id": "d7",
+   "label": "Mon 24 Aug",
+   "short": "Mon",
+   "date": "2026-08-24"
+  },
+  {
+   "id": "d8",
+   "label": "Tue 25 Aug",
+   "short": "Tue",
+   "date": "2026-08-25"
+  },
+  {
+   "id": "d9",
+   "label": "Wed 26 Aug",
+   "short": "Wed",
+   "date": "2026-08-26"
+  },
+  {
+   "id": "d10",
+   "label": "Thu 27 Aug",
+   "short": "Thu",
+   "date": "2026-08-27"
+  },
+  {
+   "id": "d11",
+   "label": "Fri 28 Aug",
+   "short": "Fri",
+   "date": "2026-08-28"
+  },
+  {
+   "id": "d12",
+   "label": "Sat 29 Aug",
+   "short": "Sat",
+   "date": "2026-08-29"
+  },
+  {
+   "id": "d13",
+   "label": "Sun 30 Aug",
+   "short": "Sun",
+   "date": "2026-08-30"
+  },
+  {
+   "id": "d14",
+   "label": "Mon 31 Aug",
+   "short": "Mon",
+   "date": "2026-08-31"
+  },
+  {
+   "id": "d15",
+   "label": "Tue 1 Sep",
+   "short": "Tue",
+   "date": "2026-09-01"
+  },
+  {
+   "id": "d16",
+   "label": "Wed 2 Sep",
+   "short": "Wed",
+   "date": "2026-09-02"
+  },
+  {
+   "id": "d17",
+   "label": "Thu 3 Sep",
+   "short": "Thu",
+   "date": "2026-09-03"
+  },
+  {
+   "id": "d18",
+   "label": "Fri 4 Sep",
+   "short": "Fri",
+   "date": "2026-09-04"
+  },
+  {
+   "id": "d19",
+   "label": "Sat 5 Sep",
+   "short": "Sat",
+   "date": "2026-09-05"
+  }
+ ],
+ "stages": [
+  {
+   "id": "huvila",
+   "num": 1,
+   "name": "Huvila",
+   "lat": 60.18051,
+   "lon": 24.94286,
+   "short": "Huvila",
+   "location": "Eläintarhantie 8, Helsinki",
+   "blurb": "The festival's own tent by Tokoinlahti bay, up every year since 1995. The rest of the festival plays venues across the city.",
+   "color": "",
+   "acts": []
+  }
+ ]
+}

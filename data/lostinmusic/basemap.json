@@ -1,0 +1,17 @@
+{
+ "z": 17,
+ "tile": 256,
+ "originX": 18991435.684977777,
+ "originY": 9457221.382183794,
+ "wLogical": 2423.3756444454193,
+ "hLogical": 1953.3071216791868,
+ "wPixels": 1500,
+ "hPixels": 1209,
+ "bounds": {
+  "s": 61.494,
+  "w": 23.756,
+  "n": 61.504,
+  "e": 23.782
+ },
+ "attribution": "(c) OpenStreetMap contributors (c) CARTO"
+}

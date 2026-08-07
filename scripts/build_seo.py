@@ -20,10 +20,15 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import schema
 import seo
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ["", "kallio/", "flow/", "about/", "faq/", "terms/", "privacy/"]
+# The planners come from the records, so a festival added to data/ is in the
+# sitemap and in the IndexNow push without this file being touched — a page no
+# sitemap names is a page that waits to be found by accident.
+PAGES = ([""] + [f["planner"] for f in schema.load()["festivals"] if f.get("planner")]
+         + ["about/", "faq/", "terms/", "privacy/"])
 
 
 def lastmod(path: str) -> str:
@@ -35,7 +40,7 @@ def lastmod(path: str) -> str:
 
 
 def submit() -> None:
-    """One request, all six URLs. IndexNow accepts a batch and answers 200/202."""
+    """One request, every URL. IndexNow accepts a batch and answers 200/202."""
     body = json.dumps({
         "host": "uenian33.github.io",
         "key": seo.INDEXNOW_KEY,

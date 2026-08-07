@@ -1,0 +1,59 @@
+{
+ "event": {
+  "name": "Blockfest 2026",
+  "city": "Ratinanniemi, Tampere",
+  "site": "https://www.blockfest.fi/en/"
+ },
+ "days": [
+  {
+   "id": "d1",
+   "label": "Fri 21 Aug",
+   "short": "Fri",
+   "date": "2026-08-21"
+  },
+  {
+   "id": "d2",
+   "label": "Sat 22 Aug",
+   "short": "Sat",
+   "date": "2026-08-22"
+  }
+ ],
+ "stages": [
+  {
+   "id": "stadion",
+   "num": 1,
+   "name": "Stadion Stage",
+   "lat": 61.49338,
+   "lon": 23.763422,
+   "short": "Stadion Stage",
+   "location": "Ratinan rantatie 1, Tampere",
+   "blurb": "In the Ratina stadium bowl. The stage names are the festival's own; which act plays which stage is not published yet.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "park",
+   "num": 2,
+   "name": "Park Stage",
+   "lat": 61.492539,
+   "lon": 23.760018,
+   "short": "Park Stage",
+   "location": "Ratinanniemi event park, Tampere",
+   "blurb": "In the event park beside the stadium. Its exact position on the site plan is not published yet.",
+   "color": "",
+   "acts": []
+  },
+  {
+   "id": "street",
+   "num": 3,
+   "name": "Street Stage",
+   "lat": 61.492539,
+   "lon": 23.760018,
+   "short": "Street Stage",
+   "location": "Ratinanniemi event park, Tampere",
+   "blurb": "The third of the three stages the festival names. Its exact position on the site plan is not published yet.",
+   "color": "",
+   "acts": []
+  }
+ ]
+}

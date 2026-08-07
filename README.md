@@ -1,6 +1,6 @@
 # Flanner
 
-Plannable timetables for Helsinki festivals — **<https://uenian33.github.io/flanner/>**
+Plannable timetables for Finnish festivals — **<https://uenian33.github.io/flanner/>**
 
 Each page carries its own markup, styles and data; the type, the libraries and
 the pictures are files the whole site shares. It keeps working with no signal —
@@ -12,14 +12,26 @@ home screen, where it opens without browser chrome.
 | `/` | Festival list, highlights, search and filters |
 | `/kallio/` | Kallio Block Party 2026 — 98 acts, 9 stages |
 | `/flow/` | Flow Festival 2026 — 156 sets, 10 stages, 3 days |
+| `/juhlaviikot/` | Helsinki Festival 2026 — 19 days, the Huvila tent |
+| `/blockfest/` | Blockfest 2026 — Ratinanniemi, Tampere, 3 stages |
+| `/espoocine/` | Espoo Ciné 2026 — 10 days, Kino Tapiola |
+| `/lostinmusic/` | Lost In Music 2026 — 7 venues across Tampere |
+| `/tamperejazz/` | Tampere Jazz Happening 2026 — Tullikamari, 3 rooms |
 | `/about/` `/terms/` `/privacy/` | About, terms, EU data policy |
+
+The last five are **preview planners**: the organiser has published the dates
+and the venues but not a running order, so the page carries the map, the
+forecast and the facts, and says plainly in place of the grid that the times
+are not out. A planner becomes a full one by gaining acts in its
+`data/<id>/acts.json` — nothing else has to change. See *A planner without a
+timetable* below.
 
 ## Building
 
 Everything under `scripts/` generates the pages; never edit the built HTML.
 
 ```bash
-python3 scripts/build_planner.py   # kallio/index.html, flow/index.html
+python3 scripts/build_planner.py   # one <id>/index.html per planner
 python3 scripts/build_home.py      # index.html
 python3 scripts/build_info.py   # about, terms, privacy
 python3 scripts/build_og.py     # social cards
@@ -30,7 +42,7 @@ python3 scripts/build_seo.py    # robots.txt, sitemap.xml, IndexNow key — run 
 `python3 tools/theme_parity.py` checks the browser's colour engine against the
 build's, tone for tone and token for token. Run it after touching either.
 
-`build_seo.py --submit` additionally pushes the six URLs to IndexNow (Bing,
+`build_seo.py --submit` additionally pushes every URL to IndexNow (Bing,
 Yandex, Seznam, Naver). Google has no equivalent ping and picks changes up by
 crawling, or immediately if the URL is submitted in Search Console. To verify
 ownership there, paste the token into `GOOGLE_VERIFY` in `scripts/seo.py` and
@@ -325,13 +337,60 @@ press would be answering one press two ways. The row is brought into view as it
 opens, because on a phone it is usually below the map being pressed, and an
 expansion off the bottom of the screen is one nobody sees.
 
+## A planner without a timetable
+
+A festival publishes its dates first, its venues next and its running order
+last — often weeks apart, and sometimes not at all before the gates open. Five
+of the seven planners here are in that state, so the page had to be able to
+exist without the thing it is named for.
+
+A planner is a preview when no stage in its `acts.json` has any acts. Nothing
+declares it; it is read off the data, so a festival stops being a preview the
+moment its running order is transcribed and nothing else has to be changed.
+
+| | |
+|---|---|
+| The grid says why | Where the timetable would be, one card: `The running order is not out yet`, and under it the festival's own `previewNote` — which names the organiser's page, because that is where the times will appear first. Each of the five says something different and true: Blockfest has published three stage names and no artist-to-stage mapping, Lost In Music has published which artist plays which venue but no clock, Helsinki Festival has several hundred events nobody has transcribed. |
+| Every stage is on the map | A planner with a running order drops a stage nobody is playing on, because it is noise beside nine that have sets. A preview drops nothing — the venues are the whole of what it knows. Lost In Music's seven bars across Tampere and Espoo Ciné's one cinema go on the map the same way Flow's ten stages do, with the same addresses, the same walking directions and the same offline basemap. |
+| Nothing is invented to fill a gap | The window a grid is ruled against has to be a number, so a preview gets one — and it is never printed. `hours_known` is false where the organiser has published no hours, and then the hero's eyebrow is the dates alone rather than the dates and a default, the facts line says how many days rather than how many hours, and the `When` card says what is known instead of counting acts that have not been announced. The same rule decides what the page claims about itself: its title offers venues and a map, not set times, and its FAQ answers `Is the timetable out yet?` rather than `What time do sets start?` — a page indexed as a timetable that has none is worse for the reader than one that is not found. |
+| The counts come off the map | `7 stages` is counted from the stages when the record has not counted it, and the acts fact is dropped rather than printed empty: a blank beside a microphone reads as a festival with no line-up rather than as one whose line-up is not out. |
+
+Three things the five broke that the two never had:
+
+| | |
+|---|---|
+| The map opened at a fixed zoom | `setView(centre, 16)` was the design's number for a festival that fits in one park, and both of ours do. Lost In Music is seven venues over a kilometre of Tampere, and the map opened showing one of them. It fits the stages' own bounds now — which is what the collapse gesture already re-framed to, so the map opens where every drag afterwards puts it back — capped at zoom 17, because fitting a festival at a single address to a zero-size box lands the reader on a rooftop. |
+| The day row was a segmented control | Equal shares of the width with a puck sliding between them, which is Material's control for two to five options. Helsinki Festival runs nineteen days: nineteen chips 13px wide with their labels printed over each other. Past four days it becomes what M3 offers instead — a scrollable chip set, each chip the width of its own label, the selected one filled rather than tracked by a puck, since a puck cannot follow a row that scrolls under it. |
+| The site said Helsinki | Four of the nine festivals are in Tampere and Espoo now, so every sentence claiming the site holds Helsinki festivals became false — the title, the description, the highlight's eyebrow, the footer, the manifest, the JSON-LD and the `geo.region`, which named Uusimaa. What stays Helsinki is what is in Helsinki: where the project is run from, and each festival's own city. |
+
 ## Data
 
 | File | Holds |
 |---|---|
 | `data/festivals.json` | one record per festival, plus the site's own details |
 | `data/categories.json` | the category list: id, labels (en/fi), colour, ink |
-| `data/acts.json`, `basemap.json`, `artwork.json` | per-planner timetable, map and artwork |
+| `data/<id>/acts.json`, `basemap.json`, `artwork.json` | per-planner timetable, map and artwork |
+| `data/<id>/planner.js` | generated: that festival's half of the shared component |
+
+### Adding a festival
+
+Four things, and nothing else:
+
+1. `data/<id>/acts.json` — the event, its days, and its stages with `lat`/`lon`.
+   Acts are optional; a stage with none makes a preview planner.
+2. A bounding box in `AREAS` in `scripts/basemaps.py`, then
+   `python3 scripts/basemaps.py <id>` — which writes both map images and
+   `data/<id>/basemap.json`, the Web Mercator origin the pins are placed
+   against. It replaced `tiles.py`, `satellite.py` and `flow_maps.py`, which
+   were the same script three times with one festival's bounding box and output
+   paths written into each.
+3. `planner: "<id>/"` on its record in `data/festivals.json`, plus a
+   `previewNote` if it has no running order yet.
+4. `<id>` in `PLANNERS` in `scripts/build_planner.py`.
+
+The sitemap, the IndexNow push, the service worker's cache stamp, the offline
+download list, the installed app's shortcuts and the social card are all read
+off the records now, so none of them has to be told.
 
 `scripts/schema.py` is the contract for those first two, and every builder loads
 them through it (`schema.load()`, `schema.festival(id)`) rather than parsing the

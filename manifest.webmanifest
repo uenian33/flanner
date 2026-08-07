@@ -1,8 +1,8 @@
 {
   "id": "/flanner/",
-  "name": "Flanner — Helsinki festival planner",
+  "name": "Flanner — Finnish festival planner",
   "short_name": "Flanner",
-  "description": "Plannable timetables for Helsinki festivals. Works offline.",
+  "description": "Plannable timetables for Finnish festivals. Works offline.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -36,12 +36,20 @@
   ],
   "shortcuts": [
     {
+      "name": "Kallio Block Party",
+      "url": "kallio/"
+    },
+    {
       "name": "Flow Festival",
       "url": "flow/"
     },
     {
-      "name": "Kallio Block Party",
-      "url": "kallio/"
+      "name": "Helsinki Festival",
+      "url": "juhlaviikot/"
+    },
+    {
+      "name": "Blockfest",
+      "url": "blockfest/"
     }
   ]
 }
