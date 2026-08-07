@@ -1140,6 +1140,56 @@ __NAV_CSS__
   transition: background .18s var(--ease);
 }
 .cal-title:hover { background: var(--wash); }
+.cal-title[aria-expanded="true"] svg { transform: rotate(180deg); }
+.cal-title svg { transition: transform var(--md-sys-motion-spring-fast-spatial); }
+
+/* ---- the month picker ----
+   A menu surface hung under the title: two columns you scroll, with the
+   choice read off whichever row is in the middle. M3 has no wheel of its
+   own, so this is its menu — surface-container on the large corner at
+   elevation 2 — with the list behaving the way a wheel does: scroll snap
+   on every row, a band drawn behind the middle one to say where the
+   answer is read, and two rows of padding at each end so January and the
+   first year can reach it. */
+.cal-titlewrap { position: relative; display: inline-block; }
+.mpick {
+  position: absolute; z-index: 60; inset-inline-start: 0; inset-block-start: calc(100% + 6px);
+  display: grid; grid-template-columns: 1fr auto; gap: 4px;
+  padding: 4px; border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-surface-container);
+  box-shadow: var(--md-sys-elevation-2);
+  animation: mpick-in var(--md-sys-motion-spring-fast-spatial);
+}
+.mpick[hidden] { display: none; }
+@keyframes mpick-in { from { opacity: 0; transform: translateY(-6px) scale(.96) } }
+.mpick__band {
+  position: absolute; z-index: 0; inset-inline: 4px; inset-block-start: 84px;
+  block-size: 40px; border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-sys-color-secondary-container); pointer-events: none;
+}
+.mpick__col {
+  position: relative; z-index: 1;
+  margin: 0; padding: 80px 0; list-style: none;
+  block-size: 200px; overflow-y: auto; scroll-snap-type: y mandatory;
+  scrollbar-width: none; overscroll-behavior: contain;
+}
+.mpick__col::-webkit-scrollbar { inline-size: 0 }
+.mpick__col li { scroll-snap-align: center; }
+.mpick__col button {
+  display: block; inline-size: 100%; block-size: 40px; padding: 0 16px;
+  border: 0; background: none; border-radius: var(--md-sys-shape-corner-medium);
+  font: inherit; font-size: 15px; font-weight: 500; white-space: nowrap;
+  color: var(--md-sys-color-on-surface-variant); cursor: pointer; text-align: start;
+  transition: color var(--md-sys-motion-spring-fast-effects),
+              opacity var(--md-sys-motion-spring-fast-effects);
+  opacity: .55;
+}
+#mpYears button { text-align: end; font-variant-numeric: tabular-nums; }
+.mpick__col button[aria-selected="true"] {
+  color: var(--md-sys-color-on-secondary-container);
+  font-weight: var(--md-sys-typescale-emphasized-label-weight); opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) { .mpick { animation: none } }
 .cal-title svg { inline-size: 22px; block-size: 22px; fill: var(--on-surface-var); }
 /* The three controls are one thing, so they wrap as one: a month's name at
    heading size and all three of them do not share a narrow screen, and the
@@ -2695,10 +2745,21 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <div class="active" id="activeTags"></div>
 <section class="calview" id="calView" hidden aria-label="Festival calendar">
   <div class="cal-header">
-    <button type="button" class="cal-title" id="monthBtn" aria-label="Change month">
-      <span id="monthLabel">&nbsp;</span>
-      <svg aria-hidden="true"><use href="#h-i-cal-down"/></svg>
-    </button>
+    <!-- The month opens a picker rather than folding the grid: folding is what
+         the control at the foot of the calendar does, and a title with a
+         chevron under it promises a choice, not a fold. -->
+    <div class="cal-titlewrap">
+      <button type="button" class="cal-title" id="monthBtn" aria-haspopup="dialog"
+              aria-expanded="false" aria-controls="monthPick" aria-label="Choose a month">
+        <span id="monthLabel">&nbsp;</span>
+        <svg aria-hidden="true"><use href="#h-i-cal-down"/></svg>
+      </button>
+      <div class="mpick" id="monthPick" hidden role="dialog" aria-label="Choose a month and year">
+        <div class="mpick__band" aria-hidden="true"></div>
+        <ul class="mpick__col" id="mpMonths" role="listbox" aria-label="Month" tabindex="0"></ul>
+        <ul class="mpick__col" id="mpYears" role="listbox" aria-label="Year" tabindex="0"></ul>
+      </div>
+    </div>
     <div class="cal-header__nav">
       <button type="button" class="text-button" id="todayBtn">Today</button>
       <button type="button" class="icon-button" id="prevBtn" aria-label="Previous month">
@@ -3206,6 +3267,7 @@ const CAL = (() => {
     const all    = events();
 
     const when = new Date(first);
+    if (!pickEl.hidden) { markCol(monthCol, view.month); markCol(yearCol, YEARS.indexOf(view.year)); }
     labelEl.textContent = (narrowCal.matches ? fmtMonthShort : fmtMonth).format(when);
     labelEl.title = fmtMonth.format(when);
     weeksEl.textContent = '';
@@ -3390,7 +3452,83 @@ const CAL = (() => {
     syncViewToSelected();
     pick(null);
   });
-  $('#monthBtn').addEventListener('click', () => setFold(collapsed ? false : true));
+  /* ---- the month picker ----
+     Two columns, and the answer is whichever row is in the middle of each.
+     A row is 40 tall and the list is padded by two of them, so the index is
+     the scroll position divided by the row height — no measuring of
+     children, and it stays true if the type ever changes size, because the
+     row height is the one number both the CSS and this share. */
+  const MPICK_ROW = 40;
+  const pickEl = $('#monthPick');
+  const monthCol = $('#mpMonths'), yearCol = $('#mpYears');
+  const MONTHS = Array.from({length: 12}, (_, m) =>
+    new Intl.DateTimeFormat('en-GB', {month: 'long', timeZone: 'UTC'})
+      .format(new Date(Date.UTC(2026, m, 1))));
+  /* The years the data actually covers, one either side, and never fewer
+     than three — a column with one row in it is not a choice. */
+  const YEARS = (() => {
+    const ys = DATA.festivals.map(f => +f.start.slice(0, 4))
+      .concat(DATA.festivals.map(f => +f.end.slice(0, 4)))
+      .concat([TODAY_YEAR()]);
+    let lo = Math.min(...ys) - 1, hi = Math.max(...ys) + 1;
+    while (hi - lo < 2) hi++;
+    return Array.from({length: hi - lo + 1}, (_, i) => lo + i);
+  })();
+  function TODAY_YEAR() { return new Date().getUTCFullYear(); }
+
+  const fillCol = (el, items, onPick) => {
+    el.innerHTML = items.map((label, i) =>
+      `<li><button type="button" role="option" data-i="${i}" aria-selected="false">${esc(String(label))}</button></li>`
+    ).join('');
+    el.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      el.scrollTo({top: +b.dataset.i * MPICK_ROW, behavior: 'smooth'});
+      onPick(+b.dataset.i);
+    }));
+  };
+  const markCol = (el, i) => el.querySelectorAll('button').forEach(b =>
+    b.setAttribute('aria-selected', String(+b.dataset.i === i)));
+
+  fillCol(monthCol, MONTHS, (i) => { view.month = i; draw(); });
+  fillCol(yearCol, YEARS, (i) => { view.year = YEARS[i]; draw(); });
+
+  /* Scrolling is the other way in. `scrollend` where it exists, and a short
+     rest elsewhere, so the month does not change once per frame while the
+     column is still moving. */
+  const settle = (el, run) => {
+    if ('onscrollend' in window) { el.addEventListener('scrollend', run); return; }
+    let t = null;
+    el.addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(run, 90); });
+  };
+  settle(monthCol, () => {
+    const i = Math.max(0, Math.min(11, Math.round(monthCol.scrollTop / MPICK_ROW)));
+    if (i !== view.month) { view.month = i; draw(); } else markCol(monthCol, i);
+  });
+  settle(yearCol, () => {
+    const i = Math.max(0, Math.min(YEARS.length - 1, Math.round(yearCol.scrollTop / MPICK_ROW)));
+    if (YEARS[i] !== view.year) { view.year = YEARS[i]; draw(); } else markCol(yearCol, i);
+  });
+
+  function openPick(on) {
+    pickEl.hidden = !on;
+    $('#monthBtn').setAttribute('aria-expanded', String(on));
+    if (!on) return;
+    /* Opened on what is showing, with no travel: the columns are put where
+       the answer already is rather than animated to it. */
+    monthCol.scrollTop = view.month * MPICK_ROW;
+    const yi = Math.max(0, YEARS.indexOf(view.year));
+    yearCol.scrollTop = yi * MPICK_ROW;
+    markCol(monthCol, view.month);
+    markCol(yearCol, yi);
+  }
+  $('#monthBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openPick(pickEl.hidden);
+  });
+  pickEl.addEventListener('click', (e) => e.stopPropagation());
+  document.addEventListener('click', () => openPick(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !pickEl.hidden) { openPick(false); $('#monthBtn').focus(); }
+  });
   $('#dayFilterClear').addEventListener('click', () => pick(null));
 
   /* The legend used to name each category beside its own colour. The grid
