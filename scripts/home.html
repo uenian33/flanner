@@ -175,29 +175,29 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 /* The spacer sits after this in the markup, so it needs its own auto margin
    to reach the end of the bar. */
 .hslot{margin-left:auto}
-.locwrap{position:relative;flex:none}
-.loc{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;
+.langwrap{position:relative;flex:none}
+.lang{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 12px;
   border-radius:var(--md-sys-shape-corner-full);font-size:var(--f-label);letter-spacing:.15em;text-transform:uppercase;
   color:var(--md-sys-color-on-surface-variant);white-space:nowrap;transition:var(--md-sys-motion-spring-fast-effects)}
-.loc:hover{background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
-.loc[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
-.loc svg{width:14px;height:14px}
+.lang:hover{background:var(--md-sys-color-surface-container-high);color:var(--md-sys-color-on-surface)}
+.lang[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
+.lang svg{width:14px;height:14px}
 /* Riding the pinned bar it stands next to 50px pills, so it takes their
    height and their outline rather than reading as a smaller stray control. */
-.tools .loc{min-height:50px;padding:0 18px;border:1px solid var(--md-sys-color-outline)}
-.tools .loc:hover{border-color:var(--md-sys-color-on-surface)}
-.tools .loc[aria-expanded=true]{border-color:var(--md-sys-color-on-surface)}
-.loc .cv{width:12px;height:12px;opacity:.7;transition:transform var(--md-sys-motion-spring-fast-spatial)}
-.loc[aria-expanded=true] .cv{transform:rotate(180deg)}
+.tools .lang{min-height:50px;padding:0 18px;border:1px solid var(--md-sys-color-outline)}
+.tools .lang:hover{border-color:var(--md-sys-color-on-surface)}
+.tools .lang[aria-expanded=true]{border-color:var(--md-sys-color-on-surface)}
+.lang .cv{width:12px;height:12px;opacity:.7;transition:transform var(--md-sys-motion-spring-fast-spatial)}
+.lang[aria-expanded=true] .cv{transform:rotate(180deg)}
 /* The trigger sits at the right edge, so the panel hangs from that edge. On a
    phone the general .sheet rule takes over and spans the column instead. */
-.locsheet{right:0;left:auto;max-width:min(92vw,320px)}
-.locsheet .opts{flex-direction:column;align-items:stretch}
-.locsheet .opt{width:100%}
+.langsheet{right:0;left:auto;max-width:min(92vw,320px)}
+.langsheet .opts{flex-direction:column;align-items:stretch}
+.langsheet .opt{width:100%}
 .opt.find{display:flex;align-items:center;gap:9px;width:100%;margin-top:10px;
   border-style:dashed;justify-content:center}
 .opt.find svg{width:15px;height:15px}
-.locnote{margin:12px 0 0;font-size:var(--md-sys-typescale-label-small-size);line-height:13.6px;color:var(--md-sys-color-on-surface-variant)}
+.langnote{margin:12px 0 0;font-size:var(--md-sys-typescale-label-small-size);line-height:13.6px;color:var(--md-sys-color-on-surface-variant)}
 .top .sp{flex:1}
 .tbtn{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
   display:grid;place-items:center;font-size:var(--md-sys-typescale-label-medium-size);transition:var(--md-sys-motion-spring-fast-effects)}
@@ -849,7 +849,7 @@ __SETTINGS_CSS__
      while you browse; the search joins it once there is a list to search. */
   .hslot{position:relative;flex:none;margin-left:auto;justify-self:end;
     display:flex;align-items:center;justify-content:flex-end;min-height:44px}
-  .hslot .loc{margin:0}
+  .hslot .lang{margin:0}
   .hslot .sbox{width:0;margin-left:0;opacity:0;transform:scale(.86);
     pointer-events:none;
     transition:width var(--md-sys-motion-spring-default-spatial),
@@ -885,7 +885,7 @@ __SETTINGS_CSS__
   .mark{min-width:0}
   .top:has(#hslot .sbox.open) .hslot{flex:1 1 auto}
   .top:has(#hslot .sbox.open) .wm{display:none}
-  .top:has(#hslot .sbox.open) .locwrap{display:none}
+  .top:has(#hslot .sbox.open) .langwrap{display:none}
   body.at-cards .hslot .sbox.open{width:100%;margin-left:0}
 
   /* With the field in the masthead the toolbar is just the three controls.
@@ -1818,10 +1818,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   .drop{position:static}
   .trig{width:100%;justify-content:center}
   .sheet{left:0;right:0;width:auto;max-width:none}
-  /* .locwrap stays position:relative for the pointer-device anchoring, so the
+  /* .langwrap stays position:relative for the pointer-device anchoring, so the
      generic left:0/right:0 would span the trigger rather than the column. The
      place sheet gets an explicit width hanging off the right edge instead. */
-  .locsheet{left:auto;right:0;width:min(84vw,300px);max-width:none}
+  .langsheet{left:auto;right:0;width:min(84vw,300px);max-width:none}
 }
 .active{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
   margin:0 0 clamp(16px,2vw,22px)}
@@ -1932,6 +1932,37 @@ __ARTCSS__
    answering one question then, and a carousel of festivals you have not
    starred is a second one asked over it. */
 body.plan-only .highlights{display:none}
+/* ── add to home screen ─────────────────────────────────
+   A tonal band above the plan, not a dialog over it: the offer belongs beside
+   the thing it is about and can be walked past. Secondary-container is M3's
+   step for a piece of the page asking for attention without taking the page's
+   one filled colour, which the plan's own stars are already wearing. */
+.a2hs{display:none;inline-size:100%;align-items:center;gap:14px;
+  margin:0 0 clamp(14px,2vw,20px);padding:14px 16px;
+  border:0;border-radius:20px;text-align:start;cursor:pointer;
+  background:var(--md-sys-color-secondary-container);
+  color:var(--md-sys-color-on-secondary-container);
+  font-family:inherit;transition:filter .18s cubic-bezier(.2,0,0,1)}
+body.plan-only .a2hs:not([hidden]){display:flex}
+.a2hs:hover{filter:brightness(.97)}
+.a2hs:active{filter:brightness(.94)}
+.a2hs:focus-visible{outline:3px solid var(--md-sys-color-on-secondary-container);
+  outline-offset:2px}
+.a2hs__ico{flex:none;display:grid;place-items:center;
+  inline-size:40px;block-size:40px;border-radius:var(--md-sys-shape-corner-full);
+  background:var(--md-sys-color-on-secondary-container);
+  color:var(--md-sys-color-secondary-container)}
+.a2hs__ico svg{inline-size:22px;block-size:22px}
+.a2hs__txt{flex:1 1 auto;min-inline-size:0;display:flex;flex-direction:column;gap:2px}
+.a2hs__txt b{font-size:14px;font-weight:650;letter-spacing:-.01em}
+.a2hs__txt i{font-style:normal;font-size:12.5px;line-height:1.35;opacity:.86}
+.a2hs__go{flex:none;opacity:.7}
+.a2hs__go svg{inline-size:20px;block-size:20px;fill:currentColor}
+.a2hs__steps{margin:0 0 12px;padding-inline-start:20px;
+  font-size:13.5px;line-height:1.5;color:var(--md-sys-color-on-surface)}
+.a2hs__steps li{margin:0 0 6px}
+.a2hssheet{max-width:min(92vw,340px)}
+@media(prefers-reduced-motion:reduce){.a2hs{transition:none}}
 /* And the line that closes the list is about what else there is to find,
    which is not what this list is. */
 body.plan-only #endCap{display:none}
@@ -2589,7 +2620,7 @@ __FOOTER_CSS__
   .hslot{position:fixed;left:0;z-index:61;margin:0;width:var(--railw)}
   /* The trigger is at the left edge now, so the panel opens from that edge
      rather than hanging off the right. */
-  .locsheet{left:0;right:auto;bottom:calc(100% + 10px);top:auto;
+  .langsheet{left:0;right:auto;bottom:calc(100% + 10px);top:auto;
     transform-origin:bottom left}
 }
 
@@ -2677,7 +2708,7 @@ __FOOTER_CSS__
   /* No hairline: the planners' rail carries these as plain glyphs with a
      state layer, and a ring here was the last thing telling the two rails
      apart. The target stays 48dp. */
-  .mnav .railfoot > *,.hslot .loc{inline-size:48px;block-size:48px;min-height:0;
+  .mnav .railfoot > *,.hslot .lang{inline-size:48px;block-size:48px;min-height:0;
     padding:0;border-radius:50%;border:0;
     background:transparent;color:var(--md-sys-color-on-surface-variant);
     /* place-content, not only place-items: the shared rail sets
@@ -2686,23 +2717,23 @@ __FOOTER_CSS__
        how the item inside that row is aligned. */
     display:grid;place-content:center;place-items:center;position:relative;
     transition:background 200ms cubic-bezier(0.2, 0, 0, 1)}
-  .mnav .railfoot > *:hover,.hslot .loc:hover{
+  .mnav .railfoot > *:hover,.hslot .lang:hover{
     background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent);
     color:var(--md-sys-color-on-surface)}
-  .mnav .railfoot svg,.hslot .loc svg.i{width:22px;height:22px;
+  .mnav .railfoot svg,.hslot .lang svg.i{width:22px;height:22px;
     margin:0;place-self:center;padding:0;border:0;border-radius:0}
-  .mnav .railfoot > *:focus-visible,.hslot .loc:focus-visible{
+  .mnav .railfoot > *:focus-visible,.hslot .lang:focus-visible{
     outline:3px solid var(--md-sys-color-primary);outline-offset:2px}
 
   .hslot{width:var(--railw);bottom:20px;display:grid;place-items:center}
-  .loc{width:auto;gap:0;text-transform:none}
-  .loc[aria-expanded=true]{background:var(--md-sys-color-secondary-container);
+  .lang{width:auto;gap:0;text-transform:none}
+  .lang[aria-expanded=true]{background:var(--md-sys-color-secondary-container);
     border-color:transparent;color:var(--md-sys-color-on-secondary-container)}
   /* Kept in the accessibility tree — it is the button's name — but off the
      rail, where the reference has no text under its utility circles. */
-  .loc #locLabel{position:absolute;width:1px;height:1px;overflow:hidden;
+  .lang #langLabel{position:absolute;width:1px;height:1px;overflow:hidden;
     clip:rect(0 0 0 0);white-space:nowrap}
-  .loc .cv{display:none}
+  .lang .cv{display:none}
 }
 /* The wrapper is a rail-only grouping: on the phone bar the buttons must stay
    direct grid items. */
@@ -2932,16 +2963,15 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
          heading in the outline twice. -->
     <p class="mtitle" id="mtitle" aria-hidden="true">All Festivals</p>
     <div class="hslot" id="hslot">
-    <div class="drop locwrap">
-      <button class="loc" id="locTrig" aria-expanded="false" aria-controls="locSheet">
-        <svg class="i"><use href="#h-i-pin"/></svg><span id="locLabel">Finland</span>
+    <div class="drop langwrap">
+      <button class="lang" id="langTrig" aria-expanded="false" aria-controls="langSheet">
+        <svg class="i"><use href="#h-i-globe"/></svg><span id="langLabel">English</span>
         <svg class="i cv"><use href="#h-i-down"/></svg></button>
-      <div class="sheet locsheet" id="locSheet" hidden role="dialog" aria-label="Choose a place">
-        <h4>Where are you?</h4>
-        <div class="opts" id="locOpts" role="radiogroup"></div>
-        <button class="opt find" id="locFind">
-          <svg class="i"><use href="#h-i-pin"/></svg>Use my location</button>
-        <p class="locnote" id="locNote">Your coordinates stay in this browser. Nothing is sent anywhere.</p>
+      <div class="sheet langsheet" id="langSheet" hidden role="dialog" aria-label="Choose a language">
+        <h4>Language</h4>
+        <div class="opts" id="langOpts" role="radiogroup"></div>
+        <p class="langnote" id="langNote">Sets the document's language and the category
+          names. The rest of the site is written in English so far.</p>
       </div>
     </div>
     </div>
@@ -3091,6 +3121,22 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
   <p class="sr" id="a11ySummary" aria-live="polite"></p>
 </section>
 
+<!-- Keeping a plan is the one thing this site asks of a browser, and a tab is
+     the wrong place to keep it — so the offer sits with the plan, above it.
+     Hidden until there is something to offer; the script decides that, and
+     also what pressing it can actually do. -->
+<button class="a2hs" id="a2hs" type="button" hidden>
+  <span class="a2hs__ico"><svg class="i" aria-hidden="true"><use href="#h-i-star-sq"/></svg></span>
+  <span class="a2hs__txt"><b>Add this app to your home screen</b>
+    <i id="a2hsSub">so your plans are here next time</i></span>
+  <span class="a2hs__go"><svg class="i" aria-hidden="true"><use href="#h-i-next"/></svg></span>
+</button>
+<div class="sheet a2hssheet" id="a2hsSheet" hidden role="dialog" aria-label="Add to home screen">
+  <h4>Add Flanner to your home screen</h4>
+  <ol class="a2hs__steps" id="a2hsSteps"></ol>
+  <button class="opt st" id="a2hsNo">Not now</button>
+</div>
+
 <section class="months" id="months"></section>
 <p class="empty" id="empty" hidden>No festivals match that filter.</p>
 
@@ -3212,7 +3258,12 @@ const Store = (() => {
   const FIELDS = {
     theme: {values: ['light', 'dark'], def: 'light', legacy: 'fp-theme'},
     view:  {values: ['cal', 'tile', 'full'], def: null, legacy: 'fp-view'},
-    place: {values: null, def: 'fi', legacy: 'fp-place'},  /* checked against PLACES */
+    /* The site's language. Kept here rather than on the page so a planner
+       opened from this one can read the same answer. */
+    lang:  {values: ['en', 'fi', 'sv'], def: 'en'},
+    /* Whether the add-to-home-screen offer has been answered — taken or
+       waved off. Either way it is not asked again. */
+    a2hs:  {values: ['0', '1'], def: '0'},
     /* The festivals someone has put in their plan, as a comma-separated list
        of ids. Ids the current data does not know are dropped on read, so a
        renamed or retired festival cannot linger in the list. */
@@ -4362,64 +4413,54 @@ function scrollToTools() {
   }
 })();
 
-/* ── place ─────────────────────────────────────────────
-   Finland by default, because that is everything the site covers. The browser
-   only asks for coordinates when someone presses the button, and the answer is
-   used once, here, to pick the nearest place on this list — it is never stored
-   and never leaves the page. */
-const PLACES = [
-  {k: 'fi',  label: 'Finland',  lat: 62.6, lon: 25.7},
-  {k: 'hel', label: 'Helsinki', lat: 60.17, lon: 24.94},
+/* ── language ──────────────────────────────────────────
+   The three the site offers, which are the three a planner's own picker
+   offers — one set for the whole site rather than one per page. The choice is
+   kept on the device and put on the document, so anything that reads the
+   document's language gets it: the browser's own translate offer, a screen
+   reader picking a voice, and the pages themselves once they have strings.
+
+   What it changes today is the document's language and the category names,
+   which are the one pair of labels the data carries in two languages. The
+   rest of the page is written in English and stays that way until there are
+   strings for it — the sheet says so, rather than leaving a reader to find
+   out by picking one and watching nothing happen. */
+const LANGS = [
+  {k: 'en', label: 'English', sub: 'EN'},
+  {k: 'fi', label: 'Suomi',   sub: 'FI'},
+  {k: 'sv', label: 'Svenska', sub: 'SV'},
 ];
-let place = Store.get('place', PLACES.map(p => p.k));
+let lang = Store.get('lang', LANGS.map(l => l.k));
 
-const kmBetween = (a, b) => {
-  const R = 6371, rad = d => d * Math.PI / 180;
-  const dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
-  const h = Math.sin(dLat / 2) ** 2 +
-            Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
-  return 2 * R * Math.asin(Math.sqrt(h));
-};
-
-function paintPlace() {
-  $('#locLabel').textContent = (PLACES.find(p => p.k === place) || PLACES[0]).label;
-  $('#locOpts').querySelectorAll('.opt').forEach(o =>
-    o.setAttribute('aria-checked', o.dataset.k === place));
+function paintLang() {
+  const cur = LANGS.find(l => l.k === lang) || LANGS[0];
+  document.documentElement.lang = cur.k;
+  $('#langLabel').textContent = cur.label;
+  const val = document.querySelector('#railLang .navval');
+  if (val) val.textContent = cur.sub;
+  $('#langOpts').querySelectorAll('.opt').forEach(o =>
+    o.setAttribute('aria-checked', o.dataset.k === lang));
+  /* The one thing on this page the data says twice. */
+  document.querySelectorAll('.card__cat').forEach(el => {
+    const card = el.closest('[data-cat]');
+    const c = card && CAT_BY_ID.get(card.dataset.cat);
+    if (c) el.textContent = (lang === 'fi' ? c.labelFi : c.label) + ' \u00b7 ';
+  });
 }
-$('#locOpts').innerHTML = PLACES.map(p =>
-  `<button class="opt st" role="radio" data-k="${p.k}" aria-checked="false">${p.label}</button>`).join('');
-$('#locOpts').querySelectorAll('.opt').forEach(o => o.onclick = () => {
-  place = Store.set('place', o.dataset.k);
-  paintPlace();
+$('#langOpts').innerHTML = LANGS.map(l =>
+  `<button class="opt st" role="radio" data-k="${l.k}" aria-checked="false">${l.label}</button>`).join('');
+$('#langOpts').querySelectorAll('.opt').forEach(o => o.onclick = () => {
+  lang = Store.set('lang', o.dataset.k);
+  paintLang();
   openSheet(null);
 });
-$('#locFind').onclick = () => {
-  const note = $('#locNote');
-  if (!navigator.geolocation) {
-    note.textContent = 'This browser cannot report a location.';
-    return;
-  }
-  note.textContent = 'Asking your browser…';
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      const here = {lat: pos.coords.latitude, lon: pos.coords.longitude};
-      const near = PLACES.slice().sort((a, b) => kmBetween(here, a) - kmBetween(here, b))[0];
-      const away = Math.round(kmBetween(here, PLACES.find(p => p.k === 'hel')));
-      place = Store.set('place', away < 120 ? 'hel' : 'fi');
-      paintPlace();
-      note.textContent = away < 120
-        ? `You are about ${away} km from Helsinki — showing what is on there.`
-        : `Nearest covered place is Helsinki, about ${away} km away. Only Finnish festivals so far.`;
-    },
-    err => {
-      note.textContent = err.code === err.PERMISSION_DENIED
-        ? 'Location denied. Pick a place from the list instead.'
-        : 'Could not read a location. Pick a place from the list instead.';
-    },
-    {timeout: 8000, maximumAge: 600000}
-  );
-};
-paintPlace();
+/* One picker, reachable from both places it is drawn. */
+if ($('#railLang')) {
+  $('#railLang').removeAttribute('aria-disabled');
+  $('#railLang').title = 'Language';
+  $('#railLang').onclick = () => $('#langTrig').click();
+}
+paintLang();
 
 /* ── search, date scope and categories ─────────────────
    Search and date apply as you touch them; categories commit on Apply, so
@@ -4569,7 +4610,8 @@ function apply() {
 /* #whenSheet stays in the markup and keeps its options wired — the calendar
    sets the same filter — but nothing opens it any more: its trigger shows the
    calendar instead. */
-const sheets = [['#catTrig', '#catSheet'], ['#locTrig', '#locSheet']];
+const sheets = [['#catTrig', '#catSheet'], ['#langTrig', '#langSheet'],
+                ['#a2hs', '#a2hsSheet']];
 function openSheet(which) {
   sheets.forEach(([t, sh]) => {
     const on = sh === which;
@@ -4588,6 +4630,82 @@ sheets.forEach(([t, sh]) => $(t).onclick = e => {
 });
 document.querySelectorAll('.sheet').forEach(el => el.onclick = e => e.stopPropagation());
 document.addEventListener('click', () => openSheet(null));
+
+/* ── add to home screen ────────────────────────────────
+   A plan lives on the device, so the page that keeps one should offer to be on
+   the device too. There is no one way to ask.
+
+   Chromium fires `beforeinstallprompt`, which can be held and replayed from a
+   press — that is the only path where this button installs anything. Every
+   browser on iOS is WebKit whatever its name, and Firefox on Android has no
+   such event either: there the reader has to use their own menu, so the button
+   explains instead, with the steps their browser actually needs rather than a
+   line about "your browser menu". Nothing is offered where nothing can be
+   done — inside an already installed window, or once it has been waved off.
+
+   Planted after the wiring above, which gives every trigger it knows about an
+   onclick of its own — this button among them, since its sheet is in that list
+   so a press elsewhere closes it. Written before, this handler would be the
+   one overwritten. */
+(() => {
+  const bar = $('#a2hs'), sheet = $('#a2hsSheet'), steps = $('#a2hsSteps');
+  if (!bar) return;
+  let deferred = null;
+
+  const installed = () =>
+    matchMedia('(display-mode: standalone)').matches ||
+    matchMedia('(display-mode: window-controls-overlay)').matches ||
+    navigator.standalone === true;
+
+  const how = () => {
+    const ua = navigator.userAgent;
+    const ios = /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (ios) return ['Open the Share menu \u2014 the square with an arrow out of it.',
+                     'Choose \u201cAdd to Home Screen\u201d.', 'Press Add.'];
+    if (/Firefox|FxiOS/.test(ua)) return ['Open the browser menu.',
+                                          'Choose \u201cInstall\u201d or \u201cAdd to Home screen\u201d.'];
+    return ['Open the browser menu.',
+            'Choose \u201cAdd to Home screen\u201d or \u201cInstall app\u201d.'];
+  };
+
+  const show = () => {
+    bar.hidden = installed() || Store.get('a2hs') === '1';
+    $('#a2hsSub').textContent = deferred
+      ? 'so your plans are here next time'
+      : 'so your plans are here next time \u2014 takes two taps';
+  };
+
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; show(); });
+  addEventListener('appinstalled', () => { deferred = null; Store.set('a2hs', '1'); show(); });
+
+  bar.onclick = async (e) => {
+    /* The page closes any open sheet on a bubbling click, and every trigger it
+       knows about stops the event for that reason. This one has to as well, or
+       the sheet it opens is shut by the same press. */
+    e.stopPropagation();
+    if (deferred) {
+      const p = deferred;
+      deferred = null;
+      p.prompt();
+      /* Declined counts as answered: the browser will not replay the event,
+         and asking again every visit is what makes these hated. */
+      try { await p.userChoice; } catch (err) {}
+      Store.set('a2hs', '1');
+      show();
+      return;
+    }
+    steps.innerHTML = how().map(t => '<li>' + esc(t) + '</li>').join('');
+    openSheet('#a2hsSheet');
+  };
+  $('#a2hsNo').onclick = (e) => {
+    e.stopPropagation();
+    Store.set('a2hs', '1');
+    openSheet(null);
+    show();
+  };
+  show();
+})();
 
 $('#whenOpts').querySelectorAll('.opt').forEach(o => o.onclick = () => {
   when = o.dataset.k;
@@ -4785,7 +4903,7 @@ document.addEventListener('keydown', e => {
      pointer device — the same element, moved, rather than two of them. */
   const phone = matchMedia('(max-width:599px)');
   const slot = $('#hslot'), bar = $('#tools'), field = document.querySelector('.sbox');
-  const loc = document.querySelector('.locwrap');
+  const loc = document.querySelector('.langwrap');
   window.placeControls = () => place();
   const place = () => {
     const host = phone.matches ? slot : bar;
