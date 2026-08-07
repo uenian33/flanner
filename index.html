@@ -4410,7 +4410,10 @@ document.addEventListener('change', e => {
   if (box.checked) {
     const btn = box.parentElement && box.parentElement.querySelector('label');
     if (btn) favBurst(btn.getBoundingClientRect(), btn);
-    flyToPlan(box.closest('.card,.banner-card'));
+    /* The list's cards only. The highlight is one card filling most of the
+       screen, and a copy of it flying is the page itself leaving rather than
+       a festival being put away — it reads as the view changing. */
+    flyToPlan(box.closest('.card'));
   }
   syncPlanBadge(box.checked);
 });
@@ -4463,13 +4466,13 @@ function burstParts(pal) {
    what connects a star turning dark to a number going up somewhere else on
    the screen — without it the two are separate events the eye cannot follow.
 
-   What travels depends on the shape it leaves. A tile and the highlight go
-   whole: they are cards, and a card is the thing being put away. A row in the
-   list is the width of the screen, and a thing that wide drawn through a 54px
-   cell is a curtain closing rather than a festival being put somewhere — so a
-   row is copied at its own width and shown through a window that ends where
-   its star begins. Copied, not laid out again: a clone has the row's own
-   layout by construction, every glyph on the pixel it was on. */
+   What travels depends on the shape it leaves. A tile goes whole: it is a
+   card, and a card is the thing being put away. A row in the list is the
+   width of the screen, and a thing that wide drawn through a 54px cell is a
+   curtain closing rather than a festival being put somewhere — so a row is
+   copied at its own width and shown through a window that ends where its star
+   begins. Copied, not laid out again: a clone has the row's own layout by
+   construction, every glyph on the pixel it was on. */
 function bez(x1, y1, x2, y2) {
   const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
   const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
