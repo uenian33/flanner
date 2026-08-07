@@ -1688,6 +1688,26 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
       box-shadow:0 1px 4px color-mix(in srgb,var(--md-sys-color-scrim) 40%,transparent)}
 }
 
+/* ── how many are in your plan ──────────────────────────
+   M3's badge on the destination that keeps them: a small filled disc with the
+   count in it, on the icon's top-right. It rides in the indicator's own grid
+   cell and is pushed out to the corner from there, so it stays on the icon
+   whatever size the indicator is — a 54x30 pill on a phone, a wider one on
+   the rail. Error is the badge's role in the colour system and it is the one
+   colour the monochrome scheme keeps, semantic colours being exempt from the
+   variant by construction — so the page gets its count without getting a hue
+   that belongs to no festival on it. */
+.mnav .ind,.dock .dest__ico{position:relative}
+.mnav .planbadge,.dock .planbadge{
+  grid-area:1 / 1; justify-self:center; align-self:center;
+  transform:translate(13px,-11px);
+  min-inline-size:18px; block-size:18px; padding:0 5px;
+  border-radius:var(--md-sys-shape-corner-full);
+  background:var(--md-sys-color-error); color:var(--md-sys-color-on-error);
+  font-size:11px; font-weight:700; line-height:1;
+  display:grid; place-items:center; pointer-events:none;
+  box-shadow:0 0 0 2px var(--md-sys-color-surface-container);
+}
 
 /* ── the bar opens the rail ────────────────────────────
    The planners put the rail's own contents one tap from the bottom bar, and
@@ -4385,11 +4405,14 @@ document.addEventListener('change', e => {
   /* The calendar paints a festival in the plan solid, so it redraws too. */
   if (window.redrawCal) window.redrawCal();
   /* And starring throws the blast, out of the control that was pressed and in
-     that festival's own colours — the tokens its card is already drawn in. */
+     that festival's own colours — the tokens its card is already drawn in —
+     and sends the card itself to the cell that keeps your plan. */
   if (box.checked) {
     const btn = box.parentElement && box.parentElement.querySelector('label');
     if (btn) favBurst(btn.getBoundingClientRect(), btn);
+    flyToPlan(box.closest('.card,.banner-card'));
   }
+  syncPlanBadge(box.checked);
 });
 
 /* ── the blast ─────────────────────────────────────────
@@ -4431,6 +4454,187 @@ function burstParts(pal) {
   wave(10, {dist: [.75, 1.15], size: [.04, .065], delay: 70, dur: 580, offset: 14});
   wave(6, {dist: [.95, 1.45], size: [.10, .16], delay: 130, dur: 760, offset: 28, kind: 'star'});
   return parts;
+}
+
+/* ── what you starred goes where it is kept ─────────────
+   The planners' own throw, ported: a copy of the card leaves the page on the
+   card system's arc, stretches along the line of travel, necks down across it
+   and is drawn through My plan, which answers with a beat of its own. That is
+   what connects a star turning dark to a number going up somewhere else on
+   the screen — without it the two are separate events the eye cannot follow.
+
+   What travels depends on the shape it leaves. A tile and the highlight go
+   whole: they are cards, and a card is the thing being put away. A row in the
+   list is the width of the screen, and a thing that wide drawn through a 54px
+   cell is a curtain closing rather than a festival being put somewhere — so a
+   row is copied at its own width and shown through a window that ends where
+   its star begins. Copied, not laid out again: a clone has the row's own
+   layout by construction, every glyph on the pixel it was on. */
+function bez(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const fx = (t) => ((ax * t + bx) * t + cx) * t;
+  const fy = (t) => ((ay * t + by) * t + cy) * t;
+  return (x) => {
+    let lo = 0, hi = 1, t = x;
+    for (let i = 0; i < 22; i++) { t = (lo + hi) / 2; if (fx(t) < x) lo = t; else hi = t; }
+    return fy(t);
+  };
+}
+
+function planGhost(host) {
+  const rb = host.getBoundingClientRect();
+  if (!rb.width) return null;
+  const wrap = document.createElement('div');
+  wrap.setAttribute('aria-hidden', 'true');
+  /* A row is cut at its star; anything else goes whole. */
+  const row = host.closest('.grid.list') ? host.querySelector('.plan-toggle') : null;
+  const rr = row ? row.getBoundingClientRect() : null;
+  const cut = rr && rr.width ? Math.max(96, rr.left - rb.left - 6) : rb.width;
+  wrap.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
+    + 'left:' + rb.left.toFixed(1) + 'px;top:' + rb.top.toFixed(1) + 'px;'
+    + 'width:' + cut.toFixed(1) + 'px;height:' + rb.height.toFixed(1) + 'px;'
+    + 'border-radius:' + getComputedStyle(host).borderRadius + ';overflow:hidden;'
+    + 'transform-origin:50% 50%;will-change:transform,opacity;'
+    + 'box-shadow:0 8px 24px rgba(20,24,14,.18)';
+  const copy = host.cloneNode(true);
+  copy.removeAttribute('id');
+  copy.setAttribute('aria-hidden', 'true');
+  copy.style.position = 'absolute';
+  copy.style.margin = '0';
+  copy.style.left = '0';
+  copy.style.top = '0';
+  copy.style.width = rb.width.toFixed(1) + 'px';
+  copy.style.height = rb.height.toFixed(1) + 'px';
+  /* Nothing in a copy is reachable, and an input in it would answer to the
+     same id as the one still on the page. */
+  copy.querySelectorAll('input,button,a,label').forEach(n => {
+    n.removeAttribute('id'); n.removeAttribute('for');
+    n.setAttribute('tabindex', '-1');
+  });
+  wrap.appendChild(copy);
+  document.body.appendChild(wrap);
+  return wrap;
+}
+
+/* Which element on screen is My plan. Below the rail's width the visible bar
+   is the app shell's dock and the page's own button is a hidden proxy it
+   relays to — so the copy has to be thrown at what the reader can see. The
+   dock keys its cells; the rail is the page's own. */
+function planCell() {
+  /* Whichever of the two is on screen. Both exist at every width — the dock
+     is the phone's bar and the rail is the wide page's column, and each hides
+     the other — so it is the one with a box that the count belongs on and the
+     one a copy should be thrown at. */
+  const dock = document.querySelector('.dock .dest[data-dest="plan"]');
+  if (dock && dock.getBoundingClientRect().width) return dock;
+  const rail = document.querySelector('#nPlan');
+  if (rail && rail.getBoundingClientRect().width) return rail;
+  return dock || rail;
+}
+function planMark(cell) {
+  return cell && (cell.querySelector('.dest__ico') || cell.querySelector('.ind') || cell);
+}
+
+function flyToPlan(host) {
+  if (!host || !host.animate) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cell = planCell();
+  const target = planMark(cell);
+  if (!target) return;
+  const ghost = planGhost(host);
+  if (!ghost) return;
+  const from = ghost.getBoundingClientRect(), to = target.getBoundingClientRect();
+  if (!from.width || !to.width) { ghost.remove(); return; }
+  const dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+  const dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+  /* The corner the arc turns through, above the line: the copy lifts out of
+     the page first, the way something picked up leaves where it was picked
+     up from, and comes down into the cell at the end. */
+  const dist = Math.hypot(dx, dy);
+  const lift = Math.max(80, Math.min(220, dist * .45));
+  const cx = dx * .58, cy = -lift;
+  const move = bez(.2, 0, 0, 1), shrink = bez(.3, 0, .8, .15), neck = bez(.2, 0, 0, 1);
+  /* Two scales either side of the travel angle, so one works along the line
+     to the cell and the other across it: along, the copy is pulled long and
+     then collapses; across, it necks the whole way, which is what reads as
+     being drawn through rather than parked in front. */
+  const ang = Math.atan2(dy, dx) * 180 / Math.PI;
+  const short = Math.min(from.width, from.height);
+  const endAlong = Math.max(.05, (to.width * .8) / Math.max(from.width, 1));
+  const endAcross = Math.max(.05, (to.height * .8) / Math.max(short, 1));
+  const r0 = parseFloat(getComputedStyle(ghost).borderTopLeftRadius) || 0, r1 = short / 2;
+  const N = 26, frames = [];
+  for (let i = 0; i <= N; i++) {
+    const t = i / N, p = move(t), q = 1 - p;
+    const x = 2 * q * p * cx + p * p * dx;
+    const y = 2 * q * p * cy + p * p * dy;
+    const pull = t < .34 ? 1 + .22 * neck(t / .34)
+      : 1.22 + (endAlong - 1.22) * shrink((t - .34) / .66);
+    const across = 1 + (endAcross - 1) * neck(t);
+    const m = neck(Math.min(1, t / .5));
+    frames.push({
+      offset: t, easing: 'linear',
+      opacity: t < .72 ? 1 : Math.max(0, 1 - (t - .72) / .28),
+      borderRadius: (r0 + (r1 - r0) * m).toFixed(1) + 'px',
+      transform: 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) '
+        + 'rotate(' + ang.toFixed(2) + 'deg) '
+        + 'scale(' + pull.toFixed(4) + ',' + across.toFixed(4) + ') '
+        + 'rotate(' + (-ang).toFixed(2) + 'deg)'
+    });
+  }
+  ghost.animate(frames, {duration: 500, fill: 'forwards'});
+  setTimeout(() => ghost.remove(), 560);
+  /* And the cell takes it in — out a little and back, on the emphasised
+     curve, so the arrival is a beat rather than a step. */
+  const mark = target.querySelector('svg') || target;
+  if (mark.animate) {
+    mark.animate([
+      {transform: 'scale(1)'},
+      {transform: 'scale(1.28)', offset: .45},
+      {transform: 'scale(1)'}
+    ], {duration: 340, easing: 'cubic-bezier(.2,0,0,1)', delay: 380});
+  }
+}
+
+/* How many festivals are in the plan, on the cell that keeps them. Drawn only
+   when there are any: a badge reading 0 is a badge saying nothing. */
+function syncPlanBadge(pop) {
+  const cell = planCell();
+  if (!cell) return;
+  const mark = planMark(cell);
+  /* Every count on the page is cleared first, so the one that stays is on
+     whichever cell is showing now. The dock arrives after this page's own
+     script and rebuilds itself on every navigation, and the rail takes over
+     from it at width — so the cell this belongs to changes under it. */
+  const stray = [...document.querySelectorAll('.planbadge')]
+    .filter(el => el.parentNode !== mark);
+  stray.forEach(el => el.remove());
+  let dot = mark.querySelector('.planbadge');
+  const n = Plan.size();
+  if (!n) { if (dot) dot.remove(); return; }
+  if (!dot) {
+    dot = document.createElement('span');
+    dot.className = 'planbadge';
+    dot.setAttribute('aria-hidden', 'true');
+    mark.appendChild(dot);
+  }
+  /* Written only when it changes. The dock's own row is watched for the
+     repaint that would take this badge with it, and setting textContent
+     replaces a text node — which is a childList change on that row, which
+     wakes the watcher, which writes it again. Idempotent, so the steady
+     state makes no mutation and there is nothing to wake. */
+  const was = dot.textContent;
+  const now = String(n);
+  if (was !== now) dot.textContent = now;
+  /* The number arrives with the copy rather than before it. */
+  if (pop && dot.animate && was !== now) {
+    dot.animate([
+      {transform: 'scale(.4)', opacity: 0},
+      {transform: 'scale(1.18)', opacity: 1, offset: .55},
+      {transform: 'scale(1)', opacity: 1}
+    ], {duration: 320, easing: 'cubic-bezier(.2,0,0,1)', delay: 420});
+  }
 }
 
 function favBurst(rect, host) {
@@ -5504,6 +5708,28 @@ document.addEventListener('keydown', e => {
      so it says that rather than silently doing nothing. */
   const planBtn = $('#nPlan');
   if (planBtn) planBtn.onclick = e => e.preventDefault();
+  /* What is already in the plan, on the cell, from the first paint — the count
+     is kept on the device, so a reader who comes back finds it there. */
+  syncPlanBadge(false);
+  /* The dock is painted by the app shell, which runs after this, and it
+     rebuilds its row on every navigation — each time throwing the count away
+     with the cell it was on. So the count waits for the row to exist, then
+     follows it: put back as soon as it changes, rather than on a timer. */
+  (function waitForDock(tries) {
+    const row = document.querySelector('.dock .dests');
+    if (!row) {
+      if (tries > 0) setTimeout(() => waitForDock(tries - 1), 60);
+      return;
+    }
+    syncPlanBadge(false);
+    if ('MutationObserver' in window) {
+      new MutationObserver(() => syncPlanBadge(false))
+        .observe(row, {childList: true, subtree: true});
+    }
+  })(40);
+  /* Crossing the width that swaps the bar for the rail moves the cell the
+     count is on, and neither element is rebuilt when it happens. */
+  addEventListener('resize', () => syncPlanBadge(false), {passive: true});
 
   /* Whichever section owns the middle of the screen is the one you are on. */
   if ('IntersectionObserver' in window) {
@@ -6174,7 +6400,8 @@ body.shell-busy .shell-page{pointer-events:none}
     items: [
       {html: ICONS.home, label: 'Home', run: relay('nTop')},
       {html: ICONS.fest, label: 'Festivals', run: relay('nFest')},
-      {html: ICONS.plan, label: 'My plan', run: relay('nPlan'), disabled: true},
+      /* Keyed, so a page can find this cell to hang a count on it. */
+      {html: ICONS.plan, label: 'My plan', key: 'plan', run: relay('nPlan'), disabled: true},
       {html: ICONS.more, label: 'More', run: relay('nMore')},
     ],
   });
@@ -6195,7 +6422,8 @@ body.shell-busy .shell-page{pointer-events:none}
       '<li style="--i:' + i + '"><button class="dest' + (i === set.current ? ' is-current' : '') +
       '" type="button" style="--i:' + i + '"' +
       (i === set.current ? ' aria-current="page"' : '') +
-      (d.disabled ? ' aria-disabled="true"' : '') + '>' +
+      (d.disabled ? ' aria-disabled="true"' : '') +
+      (d.key ? ' data-dest="' + d.key + '"' : '') + '>' +
       '<span class="dest__ico">' + d.html + '</span>' +
       '<span class="dest__lab">' + d.label + '</span></button></li>').join('');
     [...dests.querySelectorAll('.dest')].forEach((b, i) => {

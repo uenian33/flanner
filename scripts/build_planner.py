@@ -3963,6 +3963,64 @@ def patch_map(src: str, fest: Festival) -> str:
         "        }\n      };\n    });",
         "stage row opens")
 
+    # ---- a pin and its row are the same stage ----
+    # Pressing the row opens the panel under it — the address, and the two
+    # ways of leaving with it. Pressing the pin for the same stage said only
+    # which stage it was, in a popup, and stopped there: the reader had then
+    # to find that stage again in the list below and press it a second time.
+    # The pin opens the panel too.
+    #
+    # It opens rather than toggles, which is where it parts company with the
+    # row. A press on the pin also opens Leaflet's popup, every time; a pin
+    # that closed the panel on the second press would be answering one press
+    # two ways. And the panel is brought into view, because on a phone the row
+    # it belongs to is usually below the map the reader is pressing — an
+    # expansion off the bottom of the screen is an expansion nobody sees.
+    src = sub_once(
+        src,
+        r"      this\.markers\[i\] = mk;",
+        "      mk.on('click', () => this.openStageCard(i));\n"
+        "      this.markers[i] = mk;",
+        "a pin opens its stage")
+
+    src = sub_once(
+        src,
+        r"  focusStage\(i\) \{",
+        "  /* The row for a stage, in whichever of the two layouts is on screen.\n"
+        "     The phone keeps a ref to the list because it attaches the collapse\n"
+        "     gesture to it; the split view attaches nothing and so has none, and\n"
+        "     asks the section the map is in for its list instead. The rows are\n"
+        "     generated one per stage, in order, so the stage's index is the\n"
+        "     child's index. */\n"
+        "  stageCardEl(i) {\n"
+        "    let wrap = this.stageAside;\n"
+        "    if (!wrap && this.mapEl && this.mapEl.closest) {\n"
+        "      const sec = this.mapEl.closest('section');\n"
+        "      wrap = sec ? sec.querySelector('aside[data-hide-scrollbar]') : null;\n"
+        "    }\n"
+        "    return wrap ? wrap.children[i] : null;\n"
+        "  }\n"
+        "\n"
+        "  openStageCard(i) {\n"
+        "    if (this.state.stageOpen === i) { this.revealStageCard(i); return; }\n"
+        "    this.setState({ stageOpen: i }, () => this.revealStageCard(i));\n"
+        "  }\n"
+        "\n"
+        "  /* After the panel has opened, so the row is measured at the height it\n"
+        "     ends up rather than the one it started at. `nearest` moves the list\n"
+        "     by as little as it takes, which leaves a row that is already on\n"
+        "     screen where the reader last saw it. */\n"
+        "  revealStageCard(i) {\n"
+        "    const el = this.stageCardEl(i);\n"
+        "    if (!el || !el.scrollIntoView) return;\n"
+        "    const calm = window.matchMedia\n"
+        "      && matchMedia('(prefers-reduced-motion: reduce)').matches;\n"
+        "    el.scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' });\n"
+        "  }\n"
+        "\n"
+        "  focusStage(i) {",
+        "reveal the stage a pin belongs to")
+
     # The two ways of leaving with an address. A phone's own map app is what
     # opens either one: Apple's on an Apple device, and everywhere else the
     # geo: scheme, which is the one Android hands to whichever map app the

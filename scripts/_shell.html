@@ -287,7 +287,8 @@ body.shell-busy .shell-page{pointer-events:none}
     items: [
       {html: ICONS.home, label: 'Home', run: relay('nTop')},
       {html: ICONS.fest, label: 'Festivals', run: relay('nFest')},
-      {html: ICONS.plan, label: 'My plan', run: relay('nPlan'), disabled: true},
+      /* Keyed, so a page can find this cell to hang a count on it. */
+      {html: ICONS.plan, label: 'My plan', key: 'plan', run: relay('nPlan'), disabled: true},
       {html: ICONS.more, label: 'More', run: relay('nMore')},
     ],
   });
@@ -308,7 +309,8 @@ body.shell-busy .shell-page{pointer-events:none}
       '<li style="--i:' + i + '"><button class="dest' + (i === set.current ? ' is-current' : '') +
       '" type="button" style="--i:' + i + '"' +
       (i === set.current ? ' aria-current="page"' : '') +
-      (d.disabled ? ' aria-disabled="true"' : '') + '>' +
+      (d.disabled ? ' aria-disabled="true"' : '') +
+      (d.key ? ' data-dest="' + d.key + '"' : '') + '>' +
       '<span class="dest__ico">' + d.html + '</span>' +
       '<span class="dest__lab">' + d.label + '</span></button></li>').join('');
     [...dests.querySelectorAll('.dest')].forEach((b, i) => {
