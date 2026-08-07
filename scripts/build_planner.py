@@ -747,8 +747,36 @@ def patch_viewport(src: str) -> str:
         "      w: Math.round(document.documentElement.clientWidth || window.innerWidth || 0),\n"
         "      vh: Math.round(document.documentElement.clientHeight || window.innerHeight || 0)\n"
         "    });\n"
+        "    /* Four sources watch the viewport and a phone fires all of them\n"
+        "       for one event, because scrolling is one of the ways a viewport\n"
+        "       changes there: the address bar slides away and the layout\n"
+        "       viewport grows by its height, mid-scroll. Each arrival cost a\n"
+        "       setState, a header measure, a Leaflet resize and a nav-pill\n"
+        "       measure — the last of which reads layout back — so a scroll\n"
+        "       that moved the browser's own chrome paid for several of those\n"
+        "       in the same frame it was trying to move the page in.\n"
+        "\n"
+        "       So a size is answered once, by whichever of them says it first,\n"
+        "       and the rest are dropped. The comparison is against the last\n"
+        "       size acted on rather than against state, which is a commit\n"
+        "       behind and would let the second source through.\n"
+        "\n"
+        "       Deliberately not deferred to a frame: coalescing several events\n"
+        "       into one is worth having, but a resize that arrives a frame\n"
+        "       late is a layout that is wrong for a frame, and in a tab that\n"
+        "       is not on screen — where no frames are served and timers are\n"
+        "       throttled to the minute — it is a layout that stays wrong. The\n"
+        "       duplicates are what cost; answering the first one immediately\n"
+        "       costs nothing. */\n"
         "    this.onResize = () => {\n"
-        "      this.setState(this.viewport());",
+        "      const v = this.viewport();\n"
+        "      const seen = this.lastViewport;\n"
+        "      if (seen && v.w === seen.w && v.vh === seen.vh) return;\n"
+        "      this.lastViewport = v;\n"
+        "      this.doResize(v);\n"
+        "    };\n"
+        "    this.doResize = (v) => {\n"
+        "      this.setState(v);",
         "viewport measure")
 
     src = sub_once(
@@ -4163,6 +4191,156 @@ def patch_map(src: str, fest: Festival) -> str:
     probe.src = 'https://a.basemaps.cartocdn.com/light_all/0/0/0.png';""" % (
             js(bounds), js(attr)),
         "map layers")
+
+    # ---- the map view's first 73px ----
+    # The phone map view spends the opening stretch of every drag collapsing
+    # the map rather than scrolling the list — "the map keeps its width, loses
+    # height down to a floor". The effect is right; the way it was driven cost
+    # a frame every time.
+    #
+    # Each touchmove in that band called setState. The planner is one React
+    # component with no memo boundary anywhere between the root and the leaves,
+    # so a state change reconciles all 539 nodes to write four attributes:
+    # measured at a median 10.6ms per event on a desktop core, 5.5 to 23.4 at
+    # the edges, against a 16.7ms frame. A mid-range phone is four to six times
+    # slower single-threaded, which puts every event of that drag past its
+    # frame and often past two. It does not read as a freeze; it reads as the
+    # map landing in four or five steps instead of following the thumb, and
+    # that is the first thing a reader's finger does on this view.
+    #
+    # The height is a number on one node, so it is written to that node. React
+    # is told once, when the finger lifts. The Leaflet call that follows a
+    # resize is coalesced into a frame, and the re-framing of the pins — which
+    # fights the reader if it runs while they are still moving — waits for the
+    # same moment.
+    src = sub_once(
+        src,
+        r"  setMapScroll\(v\) \{\n"
+        r"    this\.setState\(\{ mapScroll: v \}, \(\) => \{\n"
+        r"      this\.mapDo\(m => \{\n"
+        r"        m\.invalidateSize\(\);\n"
+        r"        if \(!this\.userFocused && this\.stageBounds\) m\.fitBounds\(this\.stageBounds, \{ padding: \[30, 30\], animate: false \}\);\n"
+        r"      \}\);\n"
+        r"    \}\);\n"
+        r"  \}",
+        """  setMapScroll(v) {
+    this.mapScrollNow = v;
+    const h = this.mapHeights();
+    /* mapEl is the box mapBoxStyle sizes, so this is the same declaration
+       the next render would have made — it just arrives without one. */
+    if (this.mapEl) this.mapEl.style.height = Math.max(h.min, h.max - v) + 'px';
+    if (this.mapRaf) return;
+    this.mapRaf = requestAnimationFrame(() => {
+      this.mapRaf = 0;
+      /* Leaflet only needs to know the box changed. pan:false so a resize
+         mid-drag cannot also move the map under the finger. */
+      this.mapDo(m => m.invalidateSize({ pan: false }));
+    });
+  }
+
+  /* What the gesture leaves behind, once it is over: React learns the value
+     the drag arrived at — which is also what flips the list to overflow-y
+     auto for every drag after this one — and the pins are re-framed around
+     the height the map ended on. */
+  commitMapScroll() {
+    clearTimeout(this.mapCommitT);
+    const v = this.mapScrollNow;
+    if (v == null || v === this.state.mapScroll) return;
+    this.setState({ mapScroll: v }, () => {
+      this.mapDo(m => {
+        m.invalidateSize();
+        if (!this.userFocused && this.stageBounds) m.fitBounds(this.stageBounds, { padding: [30, 30], animate: false });
+      });
+    });
+  }""",
+        "map collapse off the render path")
+
+    # The band is read from the field the drag is writing, not from state,
+    # which is now a gesture behind it.
+    src = sub_once(
+        src,
+        r"    const cur = Math\.max\(0, Math\.min\(range, this\.state\.mapScroll\)\);",
+        "    const cur = Math.max(0, Math.min(range,\n"
+        "      this.mapScrollNow == null ? this.state.mapScroll : this.mapScrollNow));",
+        "collapse reads the live value")
+
+    # ---- and the drag that died at the floor ----
+    # The design says a drag is spent on the map "until it reaches its floor;
+    # only then does the list itself start to move". It never did. The first
+    # touchmove of the drag calls preventDefault, and a browser that has been
+    # told no at the start of a gesture will not begin scrolling later in that
+    # same gesture — so the map collapsed, the list stayed where it was, and
+    # the reader had to lift a finger and swipe again to move it. Two swipes
+    # to do what the design describes as one is most of what "not smooth"
+    # means here.
+    #
+    # So the rest of that drag is handed to the list by hand. Only that drag:
+    # by the time the finger lifts the committed state has made the list a
+    # real scroller, and every drag after it is the browser's own, with its
+    # own momentum.
+    src = sub_once(
+        src,
+        r"  onStageWheel = \(e\) => \{ this\.collapseBy\(e\.deltaY, e\); \};\n"
+        r"  onStageTouchStart = \(e\) => \{ this\.touchY = e\.touches\[0\]\.clientY; \};\n"
+        r"  onStageTouchMove = \(e\) => \{\n"
+        r"    const y = e\.touches\[0\]\.clientY, delta = this\.touchY - y;\n"
+        r"    this\.touchY = y;\n"
+        r"    this\.collapseBy\(delta, e\);\n"
+        r"  \};",
+        """  onStageWheel = (e) => {
+    if (!this.collapseBy(e.deltaY, e)) return;
+    this.ateGesture = true;
+    clearTimeout(this.mapCommitT);
+    this.mapCommitT = setTimeout(() => this.commitMapScroll(), 140);
+  };
+  onStageTouchStart = (e) => { this.touchY = e.touches[0].clientY; this.ateGesture = false; };
+  onStageTouchMove = (e) => {
+    const y = e.touches[0].clientY, delta = this.touchY - y;
+    this.touchY = y;
+    if (this.collapseBy(delta, e)) { this.ateGesture = true; return; }
+    const el = this.stageAside;
+    if (!el) return;
+    /* Two reasons the browser will not move this list, and between them they
+       cover every drag that is not already native. It is a clipped box while
+       the map has room to open — overflow-y is hidden until the committed
+       mapScroll reaches the floor — and even once it is a real scroller it
+       will not start scrolling inside a gesture whose first move was
+       cancelled by the collapse. In both cases the list is moved by the
+       distance the finger travelled; scrollTop is settable either way.
+
+       Anything else is a plain drag on a real scroller, and is left alone:
+       returning without preventDefault is what lets the browser scroll it on
+       the compositor, with its own momentum. */
+    if (this.state.mapScroll >= this.mapRange() && !this.ateGesture) return;
+    const from = el.scrollTop;
+    el.scrollTop = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, from + delta));
+    if (el.scrollTop !== from && e.cancelable) e.preventDefault();
+  };
+  onStageTouchEnd = () => { this.commitMapScroll(); };""",
+        "the drag continues into the list")
+
+    # The end of the drag is where the one render happens, so it has to be
+    # listened for. Cancel counts as an end — a gesture taken over by the
+    # system still leaves the map at a height React has not been told about.
+    src = sub_once(
+        src,
+        r"      el\.addEventListener\('touchmove', this\.onStageTouchMove, \{ passive: false \}\);\n"
+        r"    \}\n"
+        r"  \};",
+        "      el.addEventListener('touchmove', this.onStageTouchMove, { passive: false });\n"
+        "      el.addEventListener('touchend', this.onStageTouchEnd, { passive: true });\n"
+        "      el.addEventListener('touchcancel', this.onStageTouchEnd, { passive: true });\n"
+        "    }\n"
+        "  };",
+        "commit when the finger lifts")
+
+    src = sub_once(
+        src,
+        r"      this\.stageAside\.removeEventListener\('touchmove', this\.onStageTouchMove\);",
+        "      this.stageAside.removeEventListener('touchmove', this.onStageTouchMove);\n"
+        "      this.stageAside.removeEventListener('touchend', this.onStageTouchEnd);\n"
+        "      this.stageAside.removeEventListener('touchcancel', this.onStageTouchEnd);",
+        "and stop listening with the rest")
     return src
 
 

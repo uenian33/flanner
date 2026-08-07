@@ -3412,8 +3412,36 @@ class Component extends DCLogic {
       w: Math.round(document.documentElement.clientWidth || window.innerWidth || 0),
       vh: Math.round(document.documentElement.clientHeight || window.innerHeight || 0)
     });
+    /* Four sources watch the viewport and a phone fires all of them
+       for one event, because scrolling is one of the ways a viewport
+       changes there: the address bar slides away and the layout
+       viewport grows by its height, mid-scroll. Each arrival cost a
+       setState, a header measure, a Leaflet resize and a nav-pill
+       measure — the last of which reads layout back — so a scroll
+       that moved the browser's own chrome paid for several of those
+       in the same frame it was trying to move the page in.
+
+       So a size is answered once, by whichever of them says it first,
+       and the rest are dropped. The comparison is against the last
+       size acted on rather than against state, which is a commit
+       behind and would let the second source through.
+
+       Deliberately not deferred to a frame: coalescing several events
+       into one is worth having, but a resize that arrives a frame
+       late is a layout that is wrong for a frame, and in a tab that
+       is not on screen — where no frames are served and timers are
+       throttled to the minute — it is a layout that stays wrong. The
+       duplicates are what cost; answering the first one immediately
+       costs nothing. */
     this.onResize = () => {
-      this.setState(this.viewport());
+      const v = this.viewport();
+      const seen = this.lastViewport;
+      if (seen && v.w === seen.w && v.vh === seen.vh) return;
+      this.lastViewport = v;
+      this.doResize(v);
+    };
+    this.doResize = (v) => {
+      this.setState(v);
       this.measureHeader();
       this.mapDo(m => m.invalidateSize());
       this.scheduleNavPill();
@@ -4073,6 +4101,28 @@ class Component extends DCLogic {
   mapRange() { const h = this.mapHeights(); return h.max - h.min; }
 
   setMapScroll(v) {
+    this.mapScrollNow = v;
+    const h = this.mapHeights();
+    /* mapEl is the box mapBoxStyle sizes, so this is the same declaration
+       the next render would have made — it just arrives without one. */
+    if (this.mapEl) this.mapEl.style.height = Math.max(h.min, h.max - v) + 'px';
+    if (this.mapRaf) return;
+    this.mapRaf = requestAnimationFrame(() => {
+      this.mapRaf = 0;
+      /* Leaflet only needs to know the box changed. pan:false so a resize
+         mid-drag cannot also move the map under the finger. */
+      this.mapDo(m => m.invalidateSize({ pan: false }));
+    });
+  }
+
+  /* What the gesture leaves behind, once it is over: React learns the value
+     the drag arrived at — which is also what flips the list to overflow-y
+     auto for every drag after this one — and the pins are re-framed around
+     the height the map ended on. */
+  commitMapScroll() {
+    clearTimeout(this.mapCommitT);
+    const v = this.mapScrollNow;
+    if (v == null || v === this.state.mapScroll) return;
     this.setState({ mapScroll: v }, () => {
       this.mapDo(m => {
         m.invalidateSize();
@@ -4086,7 +4136,8 @@ class Component extends DCLogic {
      the map again once the list is at its top. */
   collapseBy(delta, e) {
     const range = this.mapRange(), el = this.stageAside;
-    const cur = Math.max(0, Math.min(range, this.state.mapScroll));
+    const cur = Math.max(0, Math.min(range,
+      this.mapScrollNow == null ? this.state.mapScroll : this.mapScrollNow));
     let next = cur;
     if (delta > 0) next = Math.min(range, cur + delta);
     else if (delta < 0 && (!el || el.scrollTop <= 0)) next = Math.max(0, cur + delta);
@@ -4098,13 +4149,36 @@ class Component extends DCLogic {
     return true;
   }
 
-  onStageWheel = (e) => { this.collapseBy(e.deltaY, e); };
-  onStageTouchStart = (e) => { this.touchY = e.touches[0].clientY; };
+  onStageWheel = (e) => {
+    if (!this.collapseBy(e.deltaY, e)) return;
+    this.ateGesture = true;
+    clearTimeout(this.mapCommitT);
+    this.mapCommitT = setTimeout(() => this.commitMapScroll(), 140);
+  };
+  onStageTouchStart = (e) => { this.touchY = e.touches[0].clientY; this.ateGesture = false; };
   onStageTouchMove = (e) => {
     const y = e.touches[0].clientY, delta = this.touchY - y;
     this.touchY = y;
-    this.collapseBy(delta, e);
+    if (this.collapseBy(delta, e)) { this.ateGesture = true; return; }
+    const el = this.stageAside;
+    if (!el) return;
+    /* Two reasons the browser will not move this list, and between them they
+       cover every drag that is not already native. It is a clipped box while
+       the map has room to open — overflow-y is hidden until the committed
+       mapScroll reaches the floor — and even once it is a real scroller it
+       will not start scrolling inside a gesture whose first move was
+       cancelled by the collapse. In both cases the list is moved by the
+       distance the finger travelled; scrollTop is settable either way.
+
+       Anything else is a plain drag on a real scroller, and is left alone:
+       returning without preventDefault is what lets the browser scroll it on
+       the compositor, with its own momentum. */
+    if (this.state.mapScroll >= this.mapRange() && !this.ateGesture) return;
+    const from = el.scrollTop;
+    el.scrollTop = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, from + delta));
+    if (el.scrollTop !== from && e.cancelable) e.preventDefault();
   };
+  onStageTouchEnd = () => { this.commitMapScroll(); };
 
   setStageAside = (el) => {
     if (this.stageAside === el) return;
@@ -4112,12 +4186,16 @@ class Component extends DCLogic {
       this.stageAside.removeEventListener('wheel', this.onStageWheel);
       this.stageAside.removeEventListener('touchstart', this.onStageTouchStart);
       this.stageAside.removeEventListener('touchmove', this.onStageTouchMove);
+      this.stageAside.removeEventListener('touchend', this.onStageTouchEnd);
+      this.stageAside.removeEventListener('touchcancel', this.onStageTouchEnd);
     }
     this.stageAside = el;
     if (el) {
       el.addEventListener('wheel', this.onStageWheel, { passive: false });
       el.addEventListener('touchstart', this.onStageTouchStart, { passive: true });
       el.addEventListener('touchmove', this.onStageTouchMove, { passive: false });
+      el.addEventListener('touchend', this.onStageTouchEnd, { passive: true });
+      el.addEventListener('touchcancel', this.onStageTouchEnd, { passive: true });
     }
   };
 

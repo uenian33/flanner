@@ -207,6 +207,26 @@ That is the weight. The rest is the wait.
 Everything above respects `prefers-reduced-motion`, which here means the shapes
 hold still and the navigation goes back to the browser's own cut.
 
+## Scrolling the map view
+
+The phone map view spends the opening stretch of a drag collapsing the map
+instead of scrolling the list — "the map keeps its width, loses height down to a
+floor, and re-frames every pin". The effect is the design's and it stays. How it
+was driven cost a frame every time, and cost the gesture as well.
+
+| | |
+|---|---|
+| The collapse is not a render | Each touchmove in the band called `setState`. The planner is one React component with no memo boundary between the root and the leaves, so a state change reconciles all 539 nodes to write four attributes: a median 10.6ms per event on a desktop core, 5.5 to 23.4 at the edges, against a 16.7ms frame — and four to six times that on a mid-range phone. It does not read as a freeze; it reads as the map landing in four or five steps instead of following the thumb. The height is a number on one node, so `setMapScroll` writes it to that node. React is told once, on `touchend`. Measured after: a median of 0.2ms per event, nothing over frame budget. |
+| The drag no longer dies at the floor | The design says a drag is spent on the map "until it reaches its floor; only then does the list itself start to move". It never did. The first touchmove calls `preventDefault`, and a browser told no at the start of a gesture will not begin scrolling later in that same gesture — so the map collapsed, the list stayed put, and it took a second swipe to move it. The rest of that drag is handed to the list by hand now: one drag collapses the map by 73px *and* scrolls the list 160px, which is what the comment always claimed. |
+| Leaflet waits for the finger | `invalidateSize` was called per event and `fitBounds` re-framed every pin under the thumb, fighting the drag. The resize is coalesced into a frame with `pan:false`; the re-framing happens once, when the finger lifts. |
+| A real scroll is left alone | Once the committed `mapScroll` is at the floor the list is a plain scroller, and a drag on it returns without `preventDefault` — so the browser scrolls it on the compositor with its own momentum. The hand-scrolling above applies only where the browser would not scroll anyway: a clipped box, or a gesture the collapse already took. |
+| One viewport change, one answer | Four sources watch the viewport, and a phone fires all of them for one event, because scrolling is one of the ways a viewport changes there — the address bar slides away mid-scroll. Each arrival cost a `setState`, a header measure, a Leaflet resize and a nav-pill measure that reads layout back. A size is answered once now, by whichever source says it first, compared against the last size acted on rather than against state, which is a commit behind. Twenty redundant events do no work at all. It is not deferred to a frame: coalescing is worth having, a layout that is wrong for a frame is not. |
+
+Left alone deliberately: the two `position:fixed` glass elements over the
+bottom of the scroller do re-blur every scrolled frame, and that is a real cost
+— but it is the M3 surface this bar is drawn on, and the gesture work above is
+the part that was measurable in whole frames.
+
 ## Data
 
 | File | Holds |
