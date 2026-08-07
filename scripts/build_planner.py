@@ -1081,7 +1081,8 @@ SHEET_JS = """
     if (this.sheetEl) this.sheetDragOff();
     this.sheetEl = el;
     this.sheetBodyEl = el ? el.querySelector('[style*="overflow-y: auto"], [style*="overflow-y:auto"]') : null;
-    if (el) this.sheetDragOn();
+    this.sheetPinOff();
+    if (el) { this.sheetDragOn(); this.sheetPinOn(el); }
     /* Every path that produces a sheet arrives here — the ref when the card
        mounts, the update hook when it finds one — so this is where a card is
        started: played in, and handed a clean slate. Both used to hang off the
@@ -1102,6 +1103,42 @@ SHEET_JS = """
     this.startedSheet = this.state.sheet;
     requestAnimationFrame(() => this.playSheetOpen());
   };
+
+  /* ---- the card opens at its own top, and stays there ----
+     On a phone the card is its own scroller and the player inside it is a
+     third-party frame that grows: it opens as Spotify's short card and
+     becomes the tall one when the track list arrives, seconds later. The
+     browser keeps the growing thing in view, and what that costs is the top
+     of the card — the act's name, its picture and the stage it is on scroll
+     away before the reader has touched anything, which is not a scroll they
+     asked for.
+
+     So until they do touch it, the card is held at its top: any scroll that
+     is not theirs is undone. The first press, drag, wheel or key on the card
+     hands it over and this stops for good, so nothing fights a reader who
+     wants to read down. A pin on a timer cannot do this — the growth happens
+     long after any timer worth setting. */
+  sheetPinOn(el) {
+    el.scrollTop = 0;
+    this.sheetOwned = false;
+    this.sheetOwn = () => { this.sheetOwned = true; };
+    this.sheetPin = () => {
+      if (!this.sheetOwned && el.scrollTop !== 0) el.scrollTop = 0;
+    };
+    this.pinnedEl = el;
+    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(t =>
+      el.addEventListener(t, this.sheetOwn, { passive: true }));
+    el.addEventListener('scroll', this.sheetPin, { passive: true });
+  }
+
+  sheetPinOff() {
+    const el = this.pinnedEl;
+    if (!el) return;
+    ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(t =>
+      el.removeEventListener(t, this.sheetOwn));
+    el.removeEventListener('scroll', this.sheetPin);
+    this.pinnedEl = null;
+  }
 
   /* Asking for a card: what it shows, and what the last one must not leave
      behind. Its player gets 35 seconds — Spotify is a third party behind a
@@ -1212,16 +1249,7 @@ SHEET_JS = """
     /* The sheet rises from the edge it will be dragged back to, on M3's
        emphasised decelerate: quick away from the edge, settling into place. */
     if (this.sheetIsBottom()) {
-      /* Held at its own top while it opens. The card is the scroller on a
-         phone and the player in it is a third-party frame that pulls itself
-         into view as it loads — which scrolls the act's name and its picture
-         off the top of the card before anyone has touched it. Three beats,
-         all inside the 420ms the card takes to rise, so a reader who scrolls
-         the moment it lands is not fought. */
       el.scrollTop = 0;
-      [80, 220, 400].forEach(ms => setTimeout(() => {
-        if (this.sheetEl === el) el.scrollTop = 0;
-      }, ms));
       el.animate([{ transform: 'translateY(100%)' }, { transform: 'none' }],
         { duration: 420, easing: 'cubic-bezier(.05,.7,.1,1)' });
       return;
@@ -2154,6 +2182,16 @@ def patch_sheet(src: str) -> str:
         "           is, a card with more to say opens taller and rises into\n"
         "           place, while a short one never scrolls at all. */\n"
         "        overflowY: 'auto', overscrollBehavior: 'contain',\n"
+        "        /* The player in this card is a frame that grows: it opens as\n"
+        "           Spotify's short card and becomes the tall one when the\n"
+        "           track list arrives. Scroll anchoring answers a resize by\n"
+        "           moving the scroll position to hold the view still, and\n"
+        "           what that costs here is the top of the card — the act's\n"
+        "           name, its picture and its stage go up out of sight before\n"
+        "           the reader has touched anything. Growth extends downwards\n"
+        "           without this, which is what a card getting taller should\n"
+        "           do. */\n"
+        "        overflowAnchor: 'none',\n"
         "        width: '100%', height: 'auto',\n"
         "        maxHeight: 'calc(100dvh - var(--sheet-gap))',\n"
         "        borderRadius: '28px 28px 0 0',\n"
