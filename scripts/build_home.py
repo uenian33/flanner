@@ -83,6 +83,11 @@ def main():
                    + [seo.festival_event(f) for f in planned]
         )),
         ("__CATCSS__", schema.category_css(cfg)),
+        # The two places a colour that is not the page's own belongs: a
+        # festival's own drawn cover, and the highlight, which is one festival
+        # at a time rather than a list. The shell stays monochrome — see below.
+        ("__ARTCSS__", schema.artwork_css(cfg) + "\n" + schema.highlight_css(cfg)
+                       + "\n" + schema.calendar_css(cfg)),
         # The home page is drawn in Material's monochrome variant. Every
         # planner is themed from its own festival's colour, so the page that
         # lists them has to be the one surface in the site with no colour of

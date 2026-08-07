@@ -143,13 +143,16 @@ svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:
 
 /* ── masthead ─────────────────────────────────────────
    A defined band rather than three items floating in white space: wordmark
-   left, descriptor after a short rule, controls right, hairline underneath.
-   The deck sits below the rule at a readable measure. */
+   left, descriptor after a short rule, controls right.
+   No hairline under it, here or on the pinned panel on a phone. A planner's
+   own bar draws none — it separates itself from the page by floating over it
+   on a frosted surface — and a line under the one here made the site's two
+   top bars two different components. */
 /* Nothing in this bar is a fixed height: the row is as tall as the lockup
    plus its padding, so shrinking the wordmark shortens the bar with it. */
 header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
 .top{display:flex;align-items:center;gap:14px;
-  padding-bottom:clamp(10px,1.3vw,14px);border-bottom:1px solid var(--md-sys-color-outline-variant)}
+  padding-bottom:clamp(10px,1.3vw,14px)}
 .mark{display:inline-flex;align-items:center;gap:clamp(11px,1.3vw,16px);
   text-decoration:none;white-space:nowrap}
 .wm{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -440,6 +443,12 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   --chip-radius:16px;
   --notch-gap:6px;
   --notch-fillet:12px;
+  /* The same two indirections the section makes, made again here so they
+     resolve against this card's colours rather than the section's. During a
+     slide two cards are on screen; each keeps its own festival's while the
+     eyebrow, the arrows and the dots outside the track change over. */
+  --primary:var(--accent);
+  --surface-card:var(--surface);
 
   flex:1;
   display:grid;
@@ -492,7 +501,13 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   border-end-end-radius:var(--media-radius);
   background:var(--chip);
   color:var(--on-chip);
-  font:700 12px/1 inherit;
+  /* The weight as a longhand. The design asks for it inside `font: 700 12px/1
+     inherit`, which is not a valid shorthand — `inherit` cannot stand for the
+     family there — so the whole declaration is dropped and the label came out
+     at the regular weight. Only the weight is restated: the size and the
+     leading it also carried are the ones the page renders at today, and the
+     narrow widths below set their own. */
+  font-weight:700;
   letter-spacing:.09em;
   text-transform:uppercase;
 }
@@ -725,9 +740,11 @@ __SETTINGS_CSS__
   header::before{content:"";position:absolute;inset:0 -50vw;z-index:0;
     background:color-mix(in srgb,var(--md-sys-color-surface) 86%,transparent);
     -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-    border-bottom:1px solid transparent;opacity:0;pointer-events:none;
-    transition:opacity var(--md-sys-motion-spring-default-effects),border-color var(--md-sys-motion-spring-default-effects)}
-  body.scrolled header::before{opacity:1;border-bottom-color:var(--md-sys-color-outline-variant)}
+    opacity:0;pointer-events:none;
+    transition:opacity var(--md-sys-motion-spring-default-effects)}
+  /* The frosted panel and nothing else: what separates the bar from the page
+     is that the page runs under it, which is how a planner's bar does it. */
+  body.scrolled header::before{opacity:1}
   header > *{position:relative;z-index:1}
   .top{padding-bottom:8px;border-bottom:none;gap:10px}
   /* The mark alone. On a phone the bar is one row shared with the place
@@ -750,6 +767,26 @@ __SETTINGS_CSS__
                opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
   body.at-cards .hslot .sbox{width:44px;margin-left:8px;opacity:1;transform:none;
     pointer-events:auto}
+  /* The planner's own search button, value for value: no border, a faint
+     resting container so the icon reads as a button rather than a glyph, the
+     variant ink, and the hover as an inset flood rather than a second
+     background. Its `--state6` and `--state8` are 5.5% and 8% of the page's
+     ink laid on the surface, so they are written that way here and arrive in
+     this page's ink rather than in a planner's. Both states: a planner draws
+     no line around a search at any width, and neither does this. */
+  .hslot .sbox input{
+    border:0;
+    background:color-mix(in srgb,var(--md-sys-color-on-surface) 5.5%,transparent);
+    color:var(--md-sys-color-on-surface-variant);
+    transition:background-color .2s cubic-bezier(.2,0,0,1),
+               box-shadow .2s cubic-bezier(.2,0,0,1)}
+  .hslot .sbox.open input{color:var(--md-sys-color-on-surface)}
+  .hslot .sbox input:hover{box-shadow:inset 0 0 0 999px
+    color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}
+  .hslot .sbox input:focus{border:0;outline:2px solid var(--md-sys-color-primary);
+    outline-offset:-2px}
+  /* 20px in a 44px disc, which is the size the planner sets its own at. */
+  .hslot .sbox:not(.open) svg.i{width:20px;height:20px}
   /* Open, the field claims the rest of the row instead of guessing at a
      viewport fraction — a guess is what pushed it past the column edge. The
      wordmark and the place selector both step aside for the duration, and the
@@ -766,9 +803,8 @@ __SETTINGS_CSS__
      height — and carries the same frosted panel, so the two read as one
      surface rather than as a bar and a thing stuck to it. */
   .tools .toolmark{display:none}
-  /* Resting against each other, the two bars share one edge: the masthead
-     gives up its rule and the filter bar draws the only one. */
-  body.bars-joined header::before{border-bottom-color:transparent}
+  /* The masthead had a rule to give up here when the two bars came to rest
+     against each other; it no longer draws one, so there is nothing to hide. */
 }
 
 __NAV_CSS__
@@ -1436,7 +1472,12 @@ __NAV_CSS__
   .weekdays .long  { display: none; }
   .weekdays .short { display: inline; }
 
-  .week__grid { grid-template-rows: 30px repeat(3, 7px); row-gap: 4px; padding: 7px 0 11px; }
+  /* Lanes deep enough to be read, not stripes. A bar was 7px here with its
+     label hidden, so a month said something was on and never what: the one
+     place the grid names a festival, and on the width most people open it at
+     it named none of them. 18px takes the label at the type scale's smallest
+     step, which is what the legend under the grid is set at. */
+  .week__grid { grid-template-rows: 30px repeat(3, 18px); row-gap: 4px; padding: 7px 0 11px; }
   .week__bg { inset: 4px 0; }
   .week__bg i { margin-inline: 2px; border-radius: 12px; }
 
@@ -1446,10 +1487,11 @@ __NAV_CSS__
     inline-size: 28px; block-size: 28px;
     font-size: 13px;
   }
-  .event { margin-inline: 2px; padding: 0; border-radius: 4px; gap: 0; }
-  .event span, .event svg { display: none; }
-  .event.cont-left  { border-start-start-radius: 1px; border-end-start-radius: 1px; }
-  .event.cont-right { border-start-end-radius: 1px;   border-end-end-radius: 1px; }
+  .event { margin-inline: 2px; padding: 0 6px; border-radius: 9px; gap: 4px;
+    font-size: 11px; }
+  .event svg { inline-size: 11px; block-size: 11px; }
+  .event.cont-left  { border-start-start-radius: 2px; border-end-start-radius: 2px; }
+  .event.cont-right { border-start-end-radius: 2px;   border-end-end-radius: 2px; }
   .more { display: none; }
 
   .fold__label { display: none; }
@@ -1752,7 +1794,9 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
      roles: four steps of the page's own ink laid into the page's own paper,
      which inverts with the theme for free and keeps its spacing while it
      does. The motif clears 8:1 on its ground in either direction, where a
-     meaningful graphic needs 3. */
+     meaningful graphic needs 3.
+     This is the fallback now: a card states the same five in its own hue —
+     see __ARTCSS__ below — and anything drawn outside a card keeps these. */
   --art-bg:  color-mix(in srgb,var(--md-sys-color-on-surface) 8%,var(--md-sys-color-surface));
   --art-1:   color-mix(in srgb,var(--md-sys-color-on-surface) 16%,var(--md-sys-color-surface));
   --art-3:   color-mix(in srgb,var(--md-sys-color-on-surface) 24%,var(--md-sys-color-surface));
@@ -1764,13 +1808,17 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   --sel-bg: var(--md-sys-color-primary);
   --sel-fg: var(--md-sys-color-on-primary);
 }
+__ARTCSS__
 /* The toggle keeps its own component CSS; only its tokens are pointed at the
-   scheme. Unselected it is a tonal button, selected it is a filled one. */
+   scheme. Unselected it is a tonal button, selected it is a filled one.
+   Pointed at the four above rather than at the roles directly, which are the
+   same four values everywhere on this page but the highlight — and there they
+   are the festival's, so the button in its card goes with the card. */
 .plan-toggle {
-  --plan-bg: var(--md-sys-color-secondary-container);
-  --plan-fg: var(--md-sys-color-on-secondary-container);
-  --plan-bg-on: var(--md-sys-color-primary);
-  --plan-fg-on: var(--md-sys-color-on-primary);
+  --plan-bg: var(--chip);
+  --plan-fg: var(--on-chip);
+  --plan-bg-on: var(--sel-bg);
+  --plan-fg-on: var(--sel-fg);
 }
 
 /* ── the component, shared between compact and detailed ── */
@@ -1883,7 +1931,9 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   border-end-end-radius: var(--media-radius);
   background: var(--chip);
   color: var(--on-chip);
-  font: 700 12px/1 inherit;
+  /* Bold as a longhand — see .banner-card__chip for why the shorthand the
+     design writes it in never arrived. */
+  font-weight: 700;
   letter-spacing: .09em;
   text-transform: uppercase;
 }
@@ -3117,7 +3167,7 @@ if (reel.length) {
   $('#carousel-track').innerHTML = reel.map((f, i) => `
     <li class="carousel__slide" role="group" aria-roledescription="slide"
         aria-label="Event ${i + 1} of ${reel.length}">
-      <article class="banner-card">
+      <article class="banner-card" data-id="${esc(f.id)}" data-cat="${esc(catOf(f).id)}">
         <div class="banner-card__media">
           ${cardArt(f, 'banner-card__art')}
           <div class="banner-card__notch">
@@ -3194,6 +3244,12 @@ if (reel.length) {
 
       hero.classList.remove(...THEMES);
       hero.classList.add('theme-' + catOf(reel[index]).id);
+      /* And which festival it is showing, in the two attributes the colour is
+         keyed off everywhere else on the page — so the eyebrow, the arrows and
+         the dots, which stand outside the track, take the colour of the slide
+         that is under them. The card in the track carries its own. */
+      hero.dataset.cat = catOf(reel[index]).id;
+      hero.dataset.id = reel[index].id;
 
       dots.forEach((dot, i) => {
         dot.setAttribute('aria-pressed', String(i === index));
@@ -3375,6 +3431,11 @@ const CAL = (() => {
           (it.ev.planned ? ' is-planned' : '') +
           (it.contL ? ' cont-left' : '') +
           (it.contR ? ' cont-right' : '');
+        /* The two attributes the colour is keyed off everywhere else, so a
+           bar is drawn in its own festival's colour rather than in the one
+           grey every festival shared. */
+        bar.dataset.cat = it.ev.cat;
+        bar.dataset.id = it.ev.f.id;
         bar.style.gridColumn = `${it.from + 1} / span ${it.to - it.from + 1}`;
         bar.style.gridRow = lane + 2;
 

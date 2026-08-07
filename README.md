@@ -61,8 +61,8 @@ and each planner's would arrive as a clash rather than as the festival's. So
 scheme variant that sets all five palettes to chroma 0 and re-tones the
 accents, primary to the ends of the ramp and its container in to 25/85, whose
 numbers are the `isMonochrome()` branches of material-color-utilities. What
-colour is left on the page belongs to the festivals: their photographs and
-their wordmarks, and nothing else. The mark goes with it — `--mark-ink` is
+colour is left on the page belongs to the festivals: their photographs,
+their wordmarks and their drawn covers, and nothing else. The mark goes with it — `--mark-ink` is
 primary here, which is tone 0 on paper and tone 100 in the dark, where the
 planners keep the brand's green because there the mark is the one thing on
 the page that is not the festival's.
@@ -76,6 +76,26 @@ it, which is what was carrying the meaning alongside the colour. And the
 calendar's five category colours are one tonal bar with a filled one for what
 is in your plan, so the legend that keyed those five is down to the sentence
 that explains that — five identical grey swatches would be a key to nothing.
+
+The cover a card draws when a festival has no photograph is the third of those
+three, and it is the festival's own colour rather than the page's. A festival
+with a planner of ours takes the colour that planner is themed from — the
+`accent` in `festivals.json`, Flow's `#fff203` and Kallio's `#b6fc46` — so the
+card and the page it opens are one colour and the tap between them is not a
+change of subject. A festival we have not built a planner for has no colour of
+its own to borrow, so it takes its category's, the one already on the chip in
+the corner: art, music, film, culture, others, from `categories.json`.
+
+Only the hue travels, which is the rule the planners follow too. The ramp keeps
+the five tones it already resolves to as a grey — the page mixes its own ink
+into its own paper at 8, 16, 24 and 70 per cent — and takes its chroma from the
+planner's own artwork roles, so the two drawings are the same drawing in two
+hues. Nothing moves a lightness: the motif holds 7.9:1 on its ground in the
+light theme and 9.1:1 in the dark, which is what the grey held. And the ramp
+never claims more chroma than the source colour has, so `others` — a grey by
+definition — stays the exact grey it was. `schema.artwork_css` generates it,
+one rule per category and one per themed festival, keyed off the `data-cat` and
+`data-id` the card already carries.
 
 The two planners are one design, held in `scripts/planner.artifact.html`
 exactly as it was exported: a template with `{{ }}` bindings, the component
