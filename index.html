@@ -2121,8 +2121,14 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
    Titles are dropped from the grid: at this width they cannot be read anyway,
    and the spans still show what runs when. The list below carries the names. */
 @media (max-width: 599px) {
-  .cal-title { font-size: 22px; }
-  .cal-header { margin-block-end: 16px; gap: 2px 8px; padding-block: 6px; }
+  /* The row holds the month, the two arrows and Today at 360px: the short
+     month buys the space, and these take the rest of the way. */
+  .cal-title { font-size: 21px; padding: 6px 8px 6px 10px; }
+  .cal-title svg { inline-size: 20px; block-size: 20px; }
+  .cal-header { margin-block-end: 16px; gap: 2px 6px; padding-block: 6px; }
+  .cal-header__nav { gap: 6px; }
+  .calview .text-button { height: 40px; padding: 0 12px; font-size: 13px; }
+  .calview .icon-button { inline-size: 40px; block-size: 40px; }
   .weekdays { padding: 11px 0; }
   .weekdays .long  { display: none; }
   .weekdays .short { display: inline; }
@@ -4091,7 +4097,15 @@ const CAL = (() => {
   const labelEl = $('#monthLabel');
   const summary = $('#a11ySummary');
 
+  /* Two of them: a phone's calendar header carries the month, the two arrows
+     and Today on one row, and at 360px that row has 328 of which "September
+     2026" alone wants 223. The short month is what makes the row fit — no
+     size that keeps the long one readable does. */
   const fmtMonth = new Intl.DateTimeFormat('en-GB', {month: 'long', year: 'numeric', timeZone: 'UTC'});
+  const fmtMonthShort = new Intl.DateTimeFormat('en-GB', {month: 'short', year: 'numeric', timeZone: 'UTC'});
+  const narrowCal = window.matchMedia('(max-width: 599px)');
+  /* Turning the phone crosses that line, so the header restates itself. */
+  narrowCal.addEventListener('change', () => renderGrid());
   const fmtDay   = new Intl.DateTimeFormat('en-GB', {weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC'});
 
   const TODAY = parse(new Date().toISOString().slice(0, 10));
@@ -4113,7 +4127,9 @@ const CAL = (() => {
     const start  = first - offset * DAY;
     const all    = events();
 
-    labelEl.textContent = fmtMonth.format(new Date(first));
+    const when = new Date(first);
+    labelEl.textContent = (narrowCal.matches ? fmtMonthShort : fmtMonth).format(when);
+    labelEl.title = fmtMonth.format(when);
     weeksEl.textContent = '';
 
     for (let w = 0; w < 6; w++) {
@@ -5368,6 +5384,29 @@ body.shell-busy .shell-page{pointer-events:none}
   .shell-page[data-planner]{background:var(--pl-wash,var(--md-sys-color-surface))}
 }
 
+/* ---------- what the list says to the whole document ----------
+   Sharing a document means the list's global rules reach into a planner,
+   which never had them. Two of them are visible on a phone and only on a
+   phone, which is why neither showed up in a desktop browser.
+
+   The touch-target rule is the one that did the damage: the list sets a 48dp
+   minimum height on every button, because M3 asks for a 48dp target around a
+   40dp state layer. A planner's star on a cell is a 28px circle. 28 wide by
+   48 tall is not a circle — it is the vertical ellipse that appeared on every
+   one of them, on the masthead's discs, and anywhere else the design draws a
+   round control. A planner sizes its own targets; the minimum stops at its
+   edge.
+
+   The hyperlink rule is the second: "for hyperlinked text appearing on top of
+   a surface color, use primary… hyperlinks must also be underlined" is the
+   list's reading of the type guidance, and `p a` is broad enough to catch an
+   act's biography. */
+@media(pointer:coarse){
+  .shell-page[data-planner] button,
+  .shell-page[data-planner] [role=button]{min-height:0}
+}
+.shell-page[data-planner] p a{color:inherit;text-decoration:none}
+
 @media(prefers-reduced-motion:reduce){
   .dock,.dock .back,.dock .pill,.dock .dest__ico,.dock .dest__lab,.shell-page{
     transition-duration:1ms!important}
@@ -5541,16 +5580,27 @@ body.shell-busy .shell-page{pointer-events:none}
 
   /* The shell restates what a planner's stylesheet says about the
      document itself, so those three rules stop at the planner. */
-  function reassertShell() {
+  /* Read once, before any planner's stylesheet is in the document. Read later
+     and the body would already be answering in the planner's own colour and
+     face, and the list would be handed them. */
+  const own = (() => {
     const cs = getComputedStyle(document.body);
+    return {color: cs.color, bg: cs.backgroundColor, font: cs.fontFamily};
+  })();
+  function reassertShell() {
+    const cs = own;
     lastWord.textContent =
-      'body{color:' + cs.color + ';background:' + cs.backgroundColor +
-      ';font-family:' + cs.fontFamily + '}' +
+      /* Colour and face on the list's own screen. On the document they were
+         reaching a planner too, which sets Inter and was getting the list's
+         face instead. The ground stays on the document, because that is what
+         shows through a screen that has not painted yet. */
+      '#pHome{color:' + cs.color + ';font-family:' + cs.font + '}' +
+      'body{color:' + cs.color + ';background:' + cs.bg +
+      ';font-family:' + cs.font + '}' +
       '#pHome a{color:inherit}' +
       'html,body{height:auto}';
     document.head.appendChild(lastWord);   /* always last */
   }
-  const shellStyle = {color: '', bg: '', font: ''};
 
   async function mountPlanner(key, href) {
     const el = document.getElementById('p' + key[0].toUpperCase() + key.slice(1));
@@ -5587,6 +5637,11 @@ body.shell-busy .shell-page{pointer-events:none}
       c.textContent = scoped(s.textContent);
       document.head.appendChild(c);
     }
+    /* The face a planner sets on the document, taken off the document and put
+       on its own screen — read rather than written down, so it is whatever
+       the design asks for. The list keeps its own; everything outside a
+       screen, the dock and the drawer, keeps the list's too. */
+    el.style.fontFamily = getComputedStyle(document.body).fontFamily;
     reassertShell();
 
     el.dataset.planner = key;
