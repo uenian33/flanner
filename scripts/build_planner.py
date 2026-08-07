@@ -3511,7 +3511,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
     tickets = ('        <a class="act" href="%s" target="_blank" rel="noopener noreferrer"'
                ' aria-label="Tickets" title="Tickets">\n'
                '          <svg aria-hidden="true" style="fill:currentColor">'
-               '<use href="#i-ticket"></use></svg>\n'
+               '<use href="#i-ticket"></use></svg><span>Tickets</span>\n'
                '        </a>\n' % f["tickets"]) if f.get("tickets") else ""
     compact = (
         '      <sc-if value="{{ phoneCard }}">\n'
@@ -3548,6 +3548,12 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '        <ul class="genres">%(genres)s</ul>\n'
         '\n'
         '        <div class="actions">\n'
+        '          <a class="act" href="%(official)s" target="_blank"'
+        ' rel="noopener noreferrer" aria-label="Official site" title="Official site">\n'
+        '            <svg aria-hidden="true"><use href="#i-ext"></use></svg>'
+        '<span>Official</span>\n'
+        '          </a>\n'
+        '%(tickets)s'
         '          <button class="plan" type="button"'
         ' sc-camel-on-click="{{ toggleFestivalPlan }}"'
         ' aria-pressed="{{ festivalPlanned }}">\n'
@@ -3563,11 +3569,6 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '            </svg>\n'
         '            <span>{{ festivalPlanLabel }}</span>\n'
         '          </button>\n'
-        '          <a class="act" href="%(official)s" target="_blank"'
-        ' rel="noopener noreferrer" aria-label="Official site" title="Official site">\n'
-        '            <svg aria-hidden="true"><use href="#i-ext"></use></svg>\n'
-        '          </a>\n'
-        '%(tickets)s'
         '        </div>\n'
         '\n'
         '        <div class="sec-head">\n'
@@ -4847,28 +4848,38 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 }
 
 /* ---------- actions ---------- */
-.fest .actions { display: flex; gap: 10px; margin-block-start: 16px; }
-.fest .act {
-  flex: none; display: grid; place-items: center;
-  inline-size: 56px; block-size: 56px; border: 0; border-radius: 18px;
-  background: var(--card); color: var(--on); cursor: pointer; text-decoration: none;
-  transition: background var(--effects), border-radius var(--spring);
+/* M3's button group: three that share the row equally, and the one that is
+   on takes room from the other two — the same idea as a selected segment
+   growing, on the emphasised spring so the give and take reads as one
+   movement. Each says what it does; an icon alone made the two links a
+   guess. */
+.fest .actions { display: flex; gap: 8px; margin-block-start: 16px; }
+.fest .act, .fest .plan {
+  flex: 1 1 0; min-inline-size: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  block-size: 56px; padding: 0 8px; border: 0; border-radius: 18px;
+  background: var(--card); color: var(--on);
+  /* Label Medium: at 13 the longest of the three labels, "Add to plan",
+     ran 72px into the 66 a third of the row leaves it and ellipsised. */
+  font-size: 12px; font-weight: 600; font-family: inherit; letter-spacing: .01em;
+  cursor: pointer; text-decoration: none;
+  transition: background var(--effects), color var(--effects),
+    border-radius var(--spring), flex-grow var(--spring);
 }
-.fest .act svg { inline-size: 22px; block-size: 22px; }
+.fest .act span, .fest .plan span {
+  min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.fest .act svg { flex: none; inline-size: 18px; block-size: 18px; }
 .fest .act:hover { background: var(--hover,#EAE8DF); border-radius: 28px; }
 .fest .act:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 /* filled tonal, shape-morphing on selection — the app's own plan button */
-.fest .plan {
-  flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  block-size: 56px; padding: 0 22px; border: 0; border-radius: 18px;
-  background: var(--card); color: var(--on);
-  font-size: 15px; font-weight: 550; font-family: inherit; letter-spacing: .006em; cursor: pointer;
-  transition: background var(--effects), color var(--effects), border-radius var(--spring);
+.fest .plan[aria-pressed="true"] {
+  flex-grow: 1.5; border-radius: 28px;
+  background: var(--heart-cont,#FBE0C0); color: var(--on-heart-cont,#2B1700);
 }
-.fest .plan[aria-pressed="true"] { border-radius: 28px; background: var(--heart-cont,#FBE0C0); color: var(--on-heart-cont,#2B1700); }
 .fest .plan:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-.fest .plan svg { inline-size: 22px; block-size: 22px; overflow: visible; color: var(--heart,#8F4C0A); }
+.fest .plan svg { flex: none; inline-size: 18px; block-size: 18px; overflow: visible; color: var(--heart,#8F4C0A); }
 .fest .plan[aria-pressed="true"] svg { color: currentColor; }
 
 /* ---------- the lineup, a row you scroll ----------

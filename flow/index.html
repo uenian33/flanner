@@ -1475,28 +1475,38 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 
 /* ---------- actions ---------- */
-.fest .actions { display: flex; gap: 10px; margin-block-start: 16px; }
-.fest .act {
-  flex: none; display: grid; place-items: center;
-  inline-size: 56px; block-size: 56px; border: 0; border-radius: 18px;
-  background: var(--card); color: var(--on); cursor: pointer; text-decoration: none;
-  transition: background var(--effects), border-radius var(--spring);
+/* M3's button group: three that share the row equally, and the one that is
+   on takes room from the other two — the same idea as a selected segment
+   growing, on the emphasised spring so the give and take reads as one
+   movement. Each says what it does; an icon alone made the two links a
+   guess. */
+.fest .actions { display: flex; gap: 8px; margin-block-start: 16px; }
+.fest .act, .fest .plan {
+  flex: 1 1 0; min-inline-size: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  block-size: 56px; padding: 0 8px; border: 0; border-radius: 18px;
+  background: var(--card); color: var(--on);
+  /* Label Medium: at 13 the longest of the three labels, "Add to plan",
+     ran 72px into the 66 a third of the row leaves it and ellipsised. */
+  font-size: 12px; font-weight: 600; font-family: inherit; letter-spacing: .01em;
+  cursor: pointer; text-decoration: none;
+  transition: background var(--effects), color var(--effects),
+    border-radius var(--spring), flex-grow var(--spring);
 }
-.fest .act svg { inline-size: 22px; block-size: 22px; }
+.fest .act span, .fest .plan span {
+  min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.fest .act svg { flex: none; inline-size: 18px; block-size: 18px; }
 .fest .act:hover { background: var(--hover,#EAE8DF); border-radius: 28px; }
 .fest .act:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 /* filled tonal, shape-morphing on selection — the app's own plan button */
-.fest .plan {
-  flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  block-size: 56px; padding: 0 22px; border: 0; border-radius: 18px;
-  background: var(--card); color: var(--on);
-  font-size: 15px; font-weight: 550; font-family: inherit; letter-spacing: .006em; cursor: pointer;
-  transition: background var(--effects), color var(--effects), border-radius var(--spring);
+.fest .plan[aria-pressed="true"] {
+  flex-grow: 1.5; border-radius: 28px;
+  background: var(--heart-cont,#FBE0C0); color: var(--on-heart-cont,#2B1700);
 }
-.fest .plan[aria-pressed="true"] { border-radius: 28px; background: var(--heart-cont,#FBE0C0); color: var(--on-heart-cont,#2B1700); }
 .fest .plan:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
-.fest .plan svg { inline-size: 22px; block-size: 22px; overflow: visible; color: var(--heart,#8F4C0A); }
+.fest .plan svg { flex: none; inline-size: 18px; block-size: 18px; overflow: visible; color: var(--heart,#8F4C0A); }
 .fest .plan[aria-pressed="true"] svg { color: currentColor; }
 
 /* ---------- the lineup, a row you scroll ----------
@@ -4290,6 +4300,12 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
         <ul class="genres"><li>Pop</li><li>Electronic</li><li>Indie</li><li>Jazz</li></ul>
 
         <div class="actions">
+          <a class="act" href="https://www.flowfestival.com/en/" target="_blank" rel="noopener noreferrer" aria-label="Official site" title="Official site">
+            <svg aria-hidden="true"><use href="#i-ext"></use></svg><span>Official</span>
+          </a>
+        <a class="act" href="https://www.flowfestival.com/en/tickets/" target="_blank" rel="noopener noreferrer" aria-label="Tickets" title="Tickets">
+          <svg aria-hidden="true" style="fill:currentColor"><use href="#i-ticket"></use></svg><span>Tickets</span>
+        </a>
           <button class="plan" type="button" sc-camel-on-click="{{ toggleFestivalPlan }}" aria-pressed="{{ festivalPlanned }}">
             <svg sc-camel-view-box="0 0 24 24" aria-hidden="true" style="{{ heartSvgStyle }}">
               <defs><clipPath id="{{ heartClipId2 }}" sc-camel-clip-path-units="userSpaceOnUse">
@@ -4300,12 +4316,6 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             </svg>
             <span>{{ festivalPlanLabel }}</span>
           </button>
-          <a class="act" href="https://www.flowfestival.com/en/" target="_blank" rel="noopener noreferrer" aria-label="Official site" title="Official site">
-            <svg aria-hidden="true"><use href="#i-ext"></use></svg>
-          </a>
-        <a class="act" href="https://www.flowfestival.com/en/tickets/" target="_blank" rel="noopener noreferrer" aria-label="Tickets" title="Tickets">
-          <svg aria-hidden="true" style="fill:currentColor"><use href="#i-ticket"></use></svg>
-        </a>
         </div>
 
         <div class="sec-head">
