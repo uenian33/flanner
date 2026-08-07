@@ -572,11 +572,22 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
    tall so they sit level with the toggle at the far end of the row. The group
    holds only the two stateless actions here — the banner's stateful one is
    the filled pill it was drawn with. */
-.banner-card .btn-group{inline-size:auto;flex:0 1 auto;gap:8px}
-.banner-card .btn-group .opt{block-size:44px;padding:0 18px;border-radius:14px}
-.banner-card .opt--icon{flex:0 1 auto}
-/* The labels are drawn, not clipped: this is the widest thing on the page and
-   there is room for the words. */
+/* The planner's own row of three, value for value: `.fest .actions`. Three
+   buttons of one width rather than two icons and a pill — each 48dp on a 16px
+   corner, label-medium at 600 beside an 18px glyph, on the tonal step above
+   the card. The corner opens to 28 under a pointer and the plan button, once
+   it is pressed, takes a 24px corner and half a share more of the row, which
+   is the shape morph the planner's plan button makes. A festival's card here
+   and its page there now offer the same three things in the same shape. */
+.banner-card__actions{flex-wrap:nowrap;gap:8px}
+.banner-card .btn-group{inline-size:auto;flex:1 1 auto;gap:8px}
+.banner-card .btn-group .opt{flex:1 1 0;block-size:48px;padding:0 8px;
+  border-radius:16px;gap:6px;font-size:12px;font-weight:600;letter-spacing:.01em}
+.banner-card .btn-group .opt:hover{border-radius:28px}
+.banner-card .opt--icon{flex:1 1 0}
+.banner-card .opt__icon{inline-size:18px;block-size:18px}
+/* The labels are drawn, not clipped: three equal buttons have room for three
+   short words at any width this card is drawn at. */
 .banner-card .opt--icon .opt__text{
   position:static;
   inline-size:auto;block-size:auto;margin:0;
@@ -598,9 +609,31 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
 .highlights .text-button:hover{background:color-mix(in srgb,var(--primary) 10%,transparent)}
 .highlights .text-button:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
 
-.banner-card .plan-toggle{--plan-height:44px;margin-inline-start:auto}
-.banner-card .plan-toggle__button{font-size:15px;padding:0 22px 0 18px}
-.banner-card .plan-toggle__icons svg{width:20px;height:20px}
+/* The third of the three, and the same button as the other two until it is
+   pressed: the planner's plan button rests on the same white step its two
+   neighbours rest on and is told apart by its mark, not by its fill. What
+   filling it says is that the festival is in your plan, so that is when it
+   fills — in the festival's own tint. */
+.banner-card .plan-toggle{
+  --plan-bg:var(--md-sys-color-surface-container-lowest);
+  --plan-fg:var(--on-surface);
+  --plan-bg-on:var(--chip);
+  --plan-fg-on:var(--on-chip);
+  --plan-height:48px;--plan-radius:16px;flex:1 1 0;
+  margin-inline-start:0;display:flex;
+  transition:flex-grow 350ms cubic-bezier(.42,1.67,.21,.90)}
+.banner-card .plan-toggle:has(.plan-toggle__input:checked){flex-grow:1.5}
+.banner-card .plan-toggle:has(.plan-toggle__input:checked) .plan-toggle__button{
+  --plan-radius:24px}
+.banner-card .plan-toggle__button{inline-size:100%;justify-content:center;
+  padding:0 8px;gap:6px;font:600 12px/1 "Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  letter-spacing:.01em;
+  transition:background .18s ease,color .18s ease,box-shadow .18s ease,
+    border-radius 350ms cubic-bezier(.42,1.67,.21,.90)}
+.banner-card .plan-toggle__icons svg{width:18px;height:18px}
+/* Unpressed the mark carries the colour, which is how the planner's does it;
+   pressed, the fill carries it and the mark goes back to the label's ink. */
+.banner-card .plan-toggle__icons svg[data-state=off]{color:var(--accent)}
 
 /* ---- two-column from 840px ---- */
 @media (min-width:840px){
@@ -634,16 +667,9 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   }
   .banner-card__place{margin-block-start:14px}
   .banner-card__actions{padding-block-start:18px}
-  /* Three labelled controls do not share a phone's row, and the toggle's
-     label is the one that changes with its state — so the two links give
-     theirs up and become the icons they already carry. Clipped, not deleted:
-     each still has its name. */
-  .banner-card .btn-group .opt{padding:0;inline-size:44px}
-  .banner-card .opt--icon .opt__text{
-    position:absolute;
-    inline-size:1px;block-size:1px;margin:-1px;
-    overflow:hidden;clip-path:inset(50%);white-space:nowrap;
-  }
+  /* The three keep their names here too. They used to give them up on a
+     phone — two icons and a pill — but as three equal shares of the row the
+     words fit, and the planner's own card carries all three at this width. */
   .carousel-dots{margin-block-start:20px}
 }
 
@@ -1632,6 +1658,9 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 .plan-toggle__labels > * { justify-self: center; white-space: nowrap; }
 
 .plan-toggle__icons svg { display: block; width: 18px; height: 18px; fill: currentColor; }
+/* The outline star draws its own stroke and must not be flooded by the
+   rule above; the filled one is the same path with no stroke. */
+.plan-toggle__icons svg[data-state=off] path { fill: none; }
 
 .plan-toggle [data-state="on"]  { opacity: 0; transform: scale(.7); }
 .plan-toggle__input:checked + .plan-toggle__button [data-state="off"] {
@@ -1809,6 +1838,45 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   --sel-fg: var(--md-sys-color-on-primary);
 }
 __ARTCSS__
+/* ── the favourite blast ───────────────────────────────
+   The planner's own, keyframe for keyframe: two rings, a wave of streaks, a
+   wave of sparks and a wave of stars, thrown out of the button that was
+   pressed into a fixed layer over the page. Starring a festival here is the
+   same act as starring an act there, so it is the same blast. */
+@keyframes fp-fav-spin {
+  0%   { transform: rotate(0deg) scale(1); }
+  18%  { transform: rotate(48deg) scale(.74); }
+  52%  { transform: rotate(232deg) scale(1.2); }
+  76%  { transform: rotate(318deg) scale(.96); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes fp-fav-ring {
+  0%   { transform: scale(.2); opacity: 0; border-width: 12px; }
+  10%  { opacity: .85; }
+  100% { transform: scale(2.9); opacity: 0; border-width: 1px; }
+}
+@keyframes fp-fav-spark {
+  0%   { transform: rotate(var(--a)) translateX(calc(var(--fs) * .1)) scale(.35); opacity: 0; }
+  12%  { opacity: 1; }
+  72%  { opacity: 1; }
+  100% { transform: rotate(var(--a)) translateX(calc(var(--fs) * var(--d))) scale(.12); opacity: 0; }
+}
+@keyframes fp-fav-star {
+  0%   { transform: rotate(var(--a)) translateX(calc(var(--fs) * .1)) scale(.2) rotate(0deg); opacity: 0; }
+  14%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: rotate(var(--a)) translateX(calc(var(--fs) * var(--d))) scale(1) rotate(300deg); opacity: 0; }
+}
+/* The star turns as it floods, which is what says the press landed. */
+.plan-toggle__input:checked + .plan-toggle__button .plan-toggle__icons svg[data-state=on],
+.btn-group__input:checked + .opt .opt__icon--toggle{
+  animation: fp-fav-spin 640ms cubic-bezier(.32,.9,.32,1);
+}
+@media (prefers-reduced-motion: reduce){
+  .plan-toggle__input:checked + .plan-toggle__button .plan-toggle__icons svg[data-state=on],
+  .btn-group__input:checked + .opt .opt__icon--toggle{ animation: none; }
+}
+
 /* The toggle keeps its own component CSS; only its tokens are pointed at the
    scheme. Unselected it is a tonal button, selected it is a filled one.
    Pointed at the four above rather than at the roles directly, which are the
@@ -2189,7 +2257,7 @@ __ARTCSS__
 }
 /* plus ⇄ check, stacked so the icon box never shifts */
 .opt__icon--toggle path { transition: opacity var(--m3-effects-default); }
-.opt__icon--toggle .ic-on { opacity: 0; }
+.opt__icon--toggle .ic-on { opacity: 0; fill: currentColor; }
 .btn-group__input:checked + .opt .ic-off { opacity: 0; }
 .btn-group__input:checked + .opt .ic-on  { opacity: 1; }
 
@@ -3080,20 +3148,28 @@ const Plan = (() => {
    of its own each time rather than one derived from the festival; the two
    copies are kept in step when either changes. */
 let planSeq = 0;
-function planToggle(f) {
+const PLAN_STAR = 'M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z';
+const PLAN_HEART = 'M12 20.3l-1.4-1.3C5.9 14.7 3 12.1 3 8.9 3 6.3 5 4.3 7.6 4.3c1.5 0 2.9.7 3.8 1.8.9-1.1 2.3-1.8 3.8-1.8C17.8 4.3 19.8 6.3 19.8 8.9c0 3.2-2.9 5.8-7.4 10.1z';
+/* Two marks, one control. A favourite is a star everywhere on this site — the
+   planner's own act rows star and unstar — so that is what a card in the list
+   carries. The highlight is the planner's festival card drawn on this page,
+   and that card's plan button is a heart, so the highlight carries a heart.
+   Same button, same states, same blast; the mark says which card you are on. */
+function planToggle(f, mark) {
   const id = 'plan-' + (++planSeq);
   const on = Plan.has(f.id);
+  const d = mark === 'heart' ? PLAN_HEART : PLAN_STAR;
   return `<span class="plan-toggle">
     <input class="plan-toggle__input" type="checkbox" id="${id}" autocomplete="off"
            data-plan="${esc(f.id)}"${on ? ' checked' : ''}>
     <label class="plan-toggle__button" for="${id}">
       <span class="plan-toggle__icons" aria-hidden="true">
-        <svg data-state="off" viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>
-        <svg data-state="on"  viewBox="0 0 24 24"><path d="M9.6 16.2 4.8 11.4l1.4-1.4 3.4 3.4 8-8L19 6.8z"/></svg>
+        <svg data-state="off" viewBox="0 0 24 24"><path d="${d}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <svg data-state="on"  viewBox="0 0 24 24"><path d="${d}"/></svg>
       </span>
       <span class="plan-toggle__labels">
-        <span data-state="off">Add to plan</span>
-        <span data-state="on">In your plan</span>
+        <span data-state="off">Add</span>
+        <span data-state="on">Favorited</span>
       </span>
     </label>
   </span>`;
@@ -3111,7 +3187,81 @@ document.addEventListener('change', e => {
     .forEach(other => { other.checked = box.checked; });
   /* The calendar paints a festival in the plan solid, so it redraws too. */
   if (window.redrawCal) window.redrawCal();
+  /* And starring throws the blast, out of the control that was pressed and in
+     that festival's own colours — the tokens its card is already drawn in. */
+  if (box.checked) {
+    const btn = box.parentElement && box.parentElement.querySelector('label');
+    if (btn) favBurst(btn.getBoundingClientRect(), btn);
+  }
 });
+
+/* ── the blast ─────────────────────────────────────────
+   Ported from the planner, function for function: two rings, then waves of
+   streaks, sparks and stars thrown out of the pressed control into a fixed
+   layer of its own, so nothing clips them and nothing reflows. */
+function burstParts(pal) {
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const parts = [];
+  [[0, 560], [90, 620]].forEach(pair => parts.push({
+    position: 'absolute', width: '100%', height: '100%', borderRadius: '50%',
+    border: '3px solid currentColor', opacity: 0, willChange: 'transform, opacity',
+    animation: 'fp-fav-ring ' + pair[1] + 'ms cubic-bezier(.12,.78,.26,1) ' + pair[0] + 'ms forwards'
+  }));
+  const wave = (count, o) => {
+    const spread = 360 / count;
+    for (let i = 0; i < count; i++) {
+      const sz = rnd(o.size[0], o.size[1]);
+      const st = {
+        position: 'absolute', opacity: 0, willChange: 'transform, opacity',
+        '--a': ((o.offset || 0) + spread * i + rnd(-spread / 4, spread / 4)).toFixed(1) + 'deg',
+        '--d': rnd(o.dist[0], o.dist[1]).toFixed(3),
+        '--fs': '40px',
+        width: 'calc(40px * ' + sz.toFixed(4) + (o.kind === 'streak' ? ' * 3.4' : '') + ')',
+        height: 'calc(40px * ' + sz.toFixed(4) + ')',
+        borderRadius: '999px',
+        background: pal[Math.floor(rnd(0, pal.length))],
+        animation: 'fp-fav-' + (o.kind === 'star' ? 'star' : 'spark') + ' ' + o.dur +
+          'ms cubic-bezier(.08,.72,.2,1) ' + (o.delay + rnd(0, 70)).toFixed(0) + 'ms forwards'
+      };
+      if (o.kind === 'star') {
+        st.borderRadius = 0;
+        st.clipPath = 'polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)';
+      }
+      parts.push(st);
+    }
+  };
+  wave(14, {dist: [1.15, 1.75], size: [.045, .07], delay: 0, dur: 640, kind: 'streak'});
+  wave(10, {dist: [.75, 1.15], size: [.04, .065], delay: 70, dur: 580, offset: 14});
+  wave(6, {dist: [.95, 1.45], size: [.10, .16], delay: 130, dur: 760, offset: 28, kind: 'star'});
+  return parts;
+}
+
+function favBurst(rect, host) {
+  if (!rect || !rect.width) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  /* The festival's own five, read off the element rather than written down:
+     whatever its card is themed in is what the sparks are. */
+  const cs = getComputedStyle(host.closest('[data-id]') || host);
+  const pick = n => cs.getPropertyValue(n).trim();
+  const pal = ['--accent', '--art-2', '--chip', '--art-ink', '--accent']
+    .map(pick).filter(Boolean);
+  const layer = document.createElement('div');
+  layer.setAttribute('aria-hidden', 'true');
+  layer.style.cssText = 'position:fixed;z-index:90;width:40px;height:40px;'
+    + 'pointer-events:none;color:' + (pal[0] || 'currentColor') + ';left:'
+    + (rect.left + rect.width / 2 - 20).toFixed(1) + 'px;top:'
+    + (rect.top + rect.height / 2 - 20).toFixed(1) + 'px';
+  burstParts(pal.length ? pal : ['#888']).forEach(style => {
+    const el = document.createElement('i');
+    Object.keys(style).forEach(k => {
+      if (k.charAt(0) === '-') el.style.setProperty(k, style[k]);
+      else el.style[k] = style[k];
+    });
+    layer.appendChild(el);
+  });
+  document.body.appendChild(layer);
+  setTimeout(() => layer.remove(), 1300);
+}
 
 /* Days until a festival opens — drives the "on now / in N days" line. */
 const today = new Date(); today.setHours(0,0,0,0);
@@ -3190,7 +3340,7 @@ if (reel.length) {
             <div class="btn-group" role="group" aria-label="Festival links">
               ${actionLinks(f)}
             </div>
-            ${planToggle(f)}
+            ${planToggle(f, 'heart')}
           </div>
         </div>
       </article>
@@ -3710,7 +3860,7 @@ function actionLinks(f) {
         <path d="M13.6 4.5H19.5V10.4"/>
         <path d="M19.5 4.5 11.2 12.8"/>
       </svg>
-      <span class="opt__text">Official site<span class="sr"> (opens in a new tab)</span></span>
+      <span class="opt__text">Official<span class="sr"> site (opens in a new tab)</span></span>
     </a>
     ${f.tickets ? `<a class="opt opt--icon" href="${esc(f.tickets)}" target="_blank"
        rel="noopener noreferrer" title="Tickets"
@@ -3734,12 +3884,12 @@ function buttonGroup(f) {
            data-plan="${esc(f.id)}"${on ? ' checked' : ''}>
     <label class="opt opt--toggle" for="${id}">
       <svg class="opt__icon opt__icon--toggle" viewBox="0 0 24 24" aria-hidden="true">
-        <path class="ic-off" d="M12 6.6v10.8M6.6 12h10.8"/>
-        <path class="ic-on"  d="M6.8 12.4 10.4 16 17.2 8.6"/>
+        <path class="ic-off" d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>
+        <path class="ic-on"  d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="currentColor"/>
       </svg>
       <span class="opt__labels">
-        <span class="lbl-off">Add to plan</span>
-        <span class="lbl-on">In your plan</span>
+        <span class="lbl-off">Add</span>
+        <span class="lbl-on">Favorited</span>
       </span>
     </label>
   </div>`;

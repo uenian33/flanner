@@ -97,6 +97,46 @@ definition — stays the exact grey it was. `schema.artwork_css` generates it,
 one rule per category and one per themed festival, keyed off the `data-cat` and
 `data-id` the card already carries.
 
+**The five category colours are a setting, not a derivation.** They live in
+`data/categories.json` and nothing else on the site decides them:
+
+| | | |
+|---|---|---|
+| Art | `#ff9ec4` | pink |
+| Music | `#FFD8E8` | pale pink |
+| Film | `#b69df8` | purple |
+| Culture | `#ffc861` | amber |
+| Others | `#d9d9d9` | grey, and grey on purpose |
+
+Film is purple rather than the blue it was: it lands on Material's own
+baseline purple once toned — a scheme sourced from it puts primary within a
+hair of `#6750a4` — and it is set at the tone the other four are set at, so
+the family keeps one lightness and one chroma range and only the hue changes
+between them. Editing one of these five re-themes every drawn cover, calendar
+bar and highlight for every festival in that category; nothing needs touching
+in a stylesheet.
+
+The same five values feed three things: the cover's ramp, the highlight's
+scheme, and the calendar bar. A festival's own `accent` overrides all three
+where it has a planner.
+
+Three controls on this page are the planner's rather than this page's, and
+they are copied value for value rather than approximated. The masthead's
+search is the planner's search button — no border, a 5.5% resting wash, an 8%
+inset flood on hover, 20px glyph in a 44px disc — and the masthead draws no
+rule under itself, because a planner's bar does not either: what separates it
+from the page is that the page runs under it. The highlight's three actions
+are `.fest .actions`: three equal shares of the row, 48dp on a 16px corner
+that opens to 28 under a pointer, label-medium at 600 beside an 18px glyph, on
+the white step above the card, with the plan button filling in the festival's
+tint and taking half a share more of the row once it is pressed. And starring
+throws the planner's own blast — two rings, then waves of streaks, sparks and
+stars — in the festival's colours, read off the card rather than written down.
+
+A favourite is a star on this site, so a card in the list carries one: the
+page's own grey until it is starred, the festival's own colour once it is.
+The highlight keeps the heart, because the card it is a copy of does.
+
 The two planners are one design, held in `scripts/planner.artifact.html`
 exactly as it was exported: a template with `{{ }}` bindings, the component
 that feeds them, and the runtime that compiles the one against the other.
