@@ -47,7 +47,8 @@ REQUIRED = {
 # A festival the site lists but has not built a planner for carries none of
 # these: no planner directory, no poster, no wordmark. It shows as a card with
 # the category's own artwork and a link to the festival's own site.
-OPTIONAL = {"planner": str, "logo": str, "promo": str, "linkLabel": str}
+OPTIONAL = {"planner": str, "logo": str, "promo": str, "linkLabel": str,
+            "previewNote": str}
 DERIVED = ("month", "dates", "stats.days")
 
 
@@ -122,10 +123,11 @@ def normalise(f: dict, cats: dict, problems: list[str]) -> dict:
         problems.append(f"{where}: a ticketed festival needs a tickets URL")
     if f.get("planner") and not str(f["planner"]).endswith("/"):
         problems.append(f"{where}: planner should be a directory path ending in /")
-    # A planner page is built from a poster and a wordmark, so a festival that
-    # has one needs both; one without needs neither.
-    if f.get("planner") and not (f.get("promo") and f.get("logo")):
-        problems.append(f"{where}: a festival with a planner needs promo and logo")
+    # A planner page is built from a poster and a wordmark where the festival
+    # has published them; where it has not, the planner draws the category's
+    # own artwork, exactly as its card on the list does.
+    if f.get("planner") and f.get("promo") and not f.get("logo"):
+        problems.append(f"{where}: a festival with a poster needs its wordmark too")
 
     ids = {c["id"] for c in cats["categories"]}
     # Accepts the label people actually type ("Music") as well as the id.
@@ -140,8 +142,10 @@ def normalise(f: dict, cats: dict, problems: list[str]) -> dict:
         problems.append(f"{where}: tags must be a non-empty list")
     # The line-up and the counts belong to a festival we have the programme
     # for. A listed festival without a planner states its own facts instead.
-    if f.get("planner") and (not isinstance(f.get("stars"), list) or not f["stars"]):
-        problems.append(f"{where}: stars must be a non-empty list")
+    # Headliners are the organiser's own billing, and a festival that has not
+    # published a running order has not billed anyone yet.
+    if f.get("stars") is not None and (not isinstance(f["stars"], list) or not f["stars"]):
+        problems.append(f"{where}: stars must be a non-empty list or absent")
     stats = f.setdefault("stats", {})
     if not isinstance(stats, dict):
         problems.append(f"{where}: stats must be an object")
@@ -149,8 +153,10 @@ def normalise(f: dict, cats: dict, problems: list[str]) -> dict:
     for key in ("acts", "stages"):
         if key in stats and (not isinstance(stats[key], int) or stats[key] < 1):
             problems.append(f"{where}: stats.{key} must be a positive integer")
-    if f.get("planner") and not (stats.get("acts") and stats.get("stages")):
-        problems.append(f"{where}: a festival with a planner needs stats.acts and stats.stages")
+    # Counted from the programme where there is one. A planner that only knows
+    # where the festival is counts nothing, and says so rather than saying 0.
+    if f.get("planner") and stats and not (stats.get("acts") and stats.get("stages")):
+        problems.append(f"{where}: stats needs both acts and stages, or neither")
 
     facts = f.get("facts")
     if facts is not None and (not isinstance(facts, dict)

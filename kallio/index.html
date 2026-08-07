@@ -1750,14 +1750,13 @@ a[x-apple-data-detectors] {
     position:relative;z-index:1;inline-size:32px;block-size:4px;
     border-radius:2px;background:rgb(255 255 255 / .4);pointer-events:none;
     transition:background var(--md-sys-motion-spring-fast-effects,150ms ease)}
-  /* Once the picture has gone under it the handle is over the card's own
-     paper, where white on white is nothing. The strip fades its surface in
-     behind itself and the handle takes the ink of what it now sits on. */
-  .ac__grip::before{
-    content:"";position:absolute;inset-block-start:0;inset-inline:0;block-size:44px;
-    background:linear-gradient(var(--card,#F2F0EB) 42%,transparent);
-    opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects,200ms ease)}
-  .ac.is-scrolled .ac__grip::before{opacity:1}
+  /* No veil under the handle. A 44px strip of the card's paper used to fade
+     in behind it once the card had been scrolled, so that a white handle over
+     white paper still read — but it also faded out the top of whatever was
+     passing under it, and what passes under it first is the act's own name.
+     A band of the picture dissolving into nothing at the top of the card is
+     the thing that looked broken. The handle keeps the other half of that
+     idea and takes the ink of what it is over. */
   .ac.is-scrolled .ac__grab{background:color-mix(in srgb,var(--on,#191D13) 38%,transparent)}
   /* The picture is a grip too, so a drag that starts on it moves the sheet
      rather than passing it to the scroll: without this the browser starts
@@ -2308,6 +2307,7 @@ body{overscroll-behavior:none}
         </div>
         </section>
 
+        <sc-if value="{{ hasLineup }}">
         <div class="sec-head">
           <h2>Lineup</h2>
           <button type="button" sc-camel-on-click="{{ seeAll }}">See all {{ lineupTotal }}</button>
@@ -2328,6 +2328,7 @@ body{overscroll-behavior:none}
             </li>
           </sc-for>
         </ul>
+        </sc-if>
 
         <section class="{{ aboutClass }}">
           <h2>About</h2>
@@ -2512,7 +2513,7 @@ body{overscroll-behavior:none}
     <section style="{{ emptySectionStyle }}">
       <svg aria-hidden="true" style="width:36px;height:36px;fill:var(--dot-m,#A9CE88)"><use href="#i-cal"></use></svg>
       <h3 style="margin:14px 0 0;font-size:20px;font-weight:650;letter-spacing:-.02em">{{ emptyDayTitle }}</h3>
-      <p style="margin:8px auto 0;max-width:44ch;font-size:14.5px;line-height:1.5;color:var(--on-var,#494E42);text-wrap:pretty">Only Saturday is published so far. The other two days land in June, act by act.</p>
+      <p style="margin:8px auto 0;max-width:44ch;font-size:14.5px;line-height:1.5;color:var(--on-var,#494E42);text-wrap:pretty">{{ emptyDayBody }}</p>
     </section>
   </sc-if>
 
@@ -2891,7 +2892,7 @@ body{overscroll-behavior:none}
      an external script has none — so the page makes it here, at the end of the
      body, which is before the runtime's own DOMContentLoaded boot. -->
 <script src="../data/kallio/planner.js"></script>
-<script src="../assets/js/planner-a7d9ba0d85.js"></script>
+<script src="../assets/js/planner-4ebd74cced.js"></script>
 <script>
 (() => {
   const s = document.createElement('script');

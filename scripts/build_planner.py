@@ -366,6 +366,7 @@ def patch_script(src: str, fest: Festival) -> str:
         "     stands for the whole festival rather than for its main stage.\n"
         "     Anything over six hours is a day-long installation rather than\n"
         "     a set, and is not what closes anything. */\n"
+        "  get hasLineup() { return this.LINEUP.length > 0; }\n"
         "  STARS = FP.stars;\n"
         "  FEST_NAME = FP.festName;\n"
         "  FEST_WHEN = FP.festWhen;\n"
@@ -463,7 +464,18 @@ def patch_script(src: str, fest: Festival) -> str:
                    "empty day")
 
     src = sub_once(src, r"emptyDayTitle: \([^)]*\) \+ ' is not published yet'",
-                   "emptyDayTitle: (this.DAY_WINDOW.label) + ' is not published yet'",
+                   "emptyDayTitle: this.EVENTS.length\n"
+                   "        ? (this.DAY_WINDOW.label) + ' is not published yet'\n"
+                   "        : 'The running order is not out yet',\n"
+                   "      /* Two different absences, and a reader can tell them apart:\n"
+                   "         a festival part-way through publishing, and one that has\n"
+                   "         announced its line-up but no clock times. The second says\n"
+                   "         where to look, because the organiser's own page is where it\n"
+                   "         will appear first. */\n"
+                   "      emptyDayBody: this.EVENTS.length\n"
+                   "        ? 'The rest of the programme lands act by act. Everything already "
+                   "published is here.'\n"
+                   "        : FP.previewNote",
                    "empty day title")
 
     # ---- the act sheet's four link buttons ----
@@ -4878,6 +4890,10 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '        </div>\n'
         '        </section>\n'
         '\n'
+        # A festival that has not published a running order has no line-up to
+        # show, and an empty row of faces under a heading is worse than no
+        # heading. The whole section stands or falls together.
+        '        <sc-if value="{{ hasLineup }}">\n'
         '        <div class="sec-head">\n'
         '          <h2>Lineup</h2>\n'
         '          <button type="button" sc-camel-on-click="{{ seeAll }}">'
@@ -4904,6 +4920,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '            </li>\n'
         '          </sc-for>\n'
         '        </ul>\n'
+        '        </sc-if>\n'
         '\n'
         '        <section class="{{ aboutClass }}">\n'
         '          <h2>About</h2>\n'
@@ -5281,6 +5298,15 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '</path><circle cx="19" cy="30" r="9"></circle>'
         '<circle cx="30" cy="33.5" r="6.5"></circle></symbol>'
         '<symbol id="wi-cloudy"', "daytime icons", flags=0)
+
+    # The sentence under "not published yet" was written for a design that had
+    # one day of three. It is the component's to say now, because what is
+    # missing differs: a day still to come, or a whole running order.
+    tpl = sub_once(
+        tpl,
+        r'>Only Saturday is published so far\. The other two days land in June, act by act\.<',
+        ">{{ emptyDayBody }}<",
+        "empty day body")
 
     # The line under the map counts the stages it is drawing.
     tpl = sub_once(tpl, r">Five stages inside the Suvilahti yards\..*?<",
@@ -5917,14 +5943,13 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
     position:relative;z-index:1;inline-size:32px;block-size:4px;
     border-radius:2px;background:rgb(255 255 255 / .4);pointer-events:none;
     transition:background var(--md-sys-motion-spring-fast-effects,150ms ease)}
-  /* Once the picture has gone under it the handle is over the card's own
-     paper, where white on white is nothing. The strip fades its surface in
-     behind itself and the handle takes the ink of what it now sits on. */
-  .ac__grip::before{
-    content:"";position:absolute;inset-block-start:0;inset-inline:0;block-size:44px;
-    background:linear-gradient(var(--card,#F2F0EB) 42%,transparent);
-    opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects,200ms ease)}
-  .ac.is-scrolled .ac__grip::before{opacity:1}
+  /* No veil under the handle. A 44px strip of the card's paper used to fade
+     in behind it once the card had been scrolled, so that a white handle over
+     white paper still read — but it also faded out the top of whatever was
+     passing under it, and what passes under it first is the act's own name.
+     A band of the picture dissolving into nothing at the top of the card is
+     the thing that looked broken. The handle keeps the other half of that
+     idea and takes the ink of what it is over. */
   .ac.is-scrolled .ac__grab{background:color-mix(in srgb,var(--on,#191D13) 38%,transparent)}
   /* The picture is a grip too, so a drag that starts on it moves the sheet
      rather than passing it to the scroll: without this the browser starts
@@ -6646,6 +6671,12 @@ def build(fid: str) -> pathlib.Path:
         "stars": f.get("stars") or [],
         "bounds": fest.basemap["bounds"],
         "days": [dict(d, date=d.get("date", "")) for d in fest.days],
+        # What to say where a running order would be. Taken from the record so
+        # it can name the organiser's own page, which is where the times will
+        # appear first.
+        "previewNote": (f.get("previewNote")
+                        or "The organiser has not published set times yet. "
+                           "The line-up and the venues are here; the clock is not."),
         "dayIds": [{"id": d["id"], "date": d.get("date", "")} for d in fest.days],
     })
     script = patch_script(art.js, fest)
