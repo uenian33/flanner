@@ -1571,7 +1571,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
    12 further in. So the Lineup's heading and the first face in its row line
    up with About's heading and its copy. */
 .fest .sec-head { display: flex; align-items: baseline; gap: 12px; margin: 18px 0 10px;
-  padding-inline: 8px; }
+  padding-inline: 20px; }
 .fest .sec-head h2 { margin: 0; font-size: var(--title-size); font-weight: 650; letter-spacing: -.01em; }
 .fest .sec-head button {
   /* the -12px is the rule the About card's Read more already follows: a
@@ -1585,9 +1585,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .fest .sec-head button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 .fest .lineup {
-  display: flex; gap: 14px; margin: 0 -16px; padding: 2px 16px 6px 24px;
+  display: flex; gap: 14px; margin: 0 -16px; padding: 2px 16px 6px 36px;
   overflow-x: auto; overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity; scroll-padding-inline-start: 24px;
+  scroll-snap-type: x proximity; scroll-padding-inline-start: 36px;
   scrollbar-width: none; list-style: none;
 }
 .fest .lineup::-webkit-scrollbar { block-size: 0; }
@@ -1629,7 +1629,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 /* ---------- about ---------- */
 .fest .about {
-  margin-block-start: 14px; margin-inline: -4px; padding: 14px 12px 12px;
+  /* 24 inside a card that sits on 12, which puts every word in it on the
+     36 the forecast card writes on — its card pads 12 and each block in
+     it pads 12 again. Surfaces stay at 24: the picture above, the chips,
+     the actions, the forecast's own hourly rows. */
+  margin-block-start: 14px; margin-inline: -4px; padding: 14px 24px 12px;
   border-radius: 24px; background: var(--card);
 }
 .fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
@@ -4473,7 +4477,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
             <span style="font-size:15px;font-weight:500;color:var(--pink-primary,#8E4460)">{{ wxWord }}</span>
           </span>
         </div>
-        <p style="margin:0;padding:0 0 14px;font-size:13px;line-height:1.45;color:var(--pink-on-var,#6B3A50);text-wrap:pretty">{{ wxNote }}</p>
+        <p style="margin:0;padding:0 12px 14px;font-size:13px;line-height:1.45;color:var(--pink-on-var,#6B3A50);text-wrap:pretty">{{ wxNote }}</p>
         <ul style="margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:6px">
           <sc-for list="{{ forecast }}" as="f" hint-placeholder-count="5">
             <li style="{{ f.rowStyle }}">

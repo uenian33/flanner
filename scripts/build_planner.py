@@ -4084,16 +4084,6 @@ def patch_template(tpl: str, fest: Festival) -> str:
     tpl = sub_once(tpl, r">Rain likely 18:00–20:00\. The yards are unsheltered\.<",
                    ">{{ wxNote }}<", "weather note")
 
-    # The forecast's own sentence sat 12 further in than everything else the
-    # page writes — its card pads 12 and the paragraph padded 12 again — so it
-    # did not line up with the About copy beside it. The card's padding is the
-    # inset; the paragraph keeps only the air under it.
-    tpl = sub_once(
-        tpl,
-        r'<p style="margin:0;padding:0 12px 14px;font-size:13px;',
-        '<p style="margin:0;padding:0 0 14px;font-size:13px;',
-        "weather note inset")
-
     # The chip above the timetable already says which mode this is; the
     # heading and the sentence under it said it twice more.
     tpl = sub_once(
@@ -5091,7 +5081,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
    12 further in. So the Lineup's heading and the first face in its row line
    up with About's heading and its copy. */
 .fest .sec-head { display: flex; align-items: baseline; gap: 12px; margin: 18px 0 10px;
-  padding-inline: 8px; }
+  padding-inline: 20px; }
 .fest .sec-head h2 { margin: 0; font-size: var(--title-size); font-weight: 650; letter-spacing: -.01em; }
 .fest .sec-head button {
   /* the -12px is the rule the About card's Read more already follows: a
@@ -5105,9 +5095,9 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 .fest .sec-head button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 .fest .lineup {
-  display: flex; gap: 14px; margin: 0 -16px; padding: 2px 16px 6px 24px;
+  display: flex; gap: 14px; margin: 0 -16px; padding: 2px 16px 6px 36px;
   overflow-x: auto; overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity; scroll-padding-inline-start: 24px;
+  scroll-snap-type: x proximity; scroll-padding-inline-start: 36px;
   scrollbar-width: none; list-style: none;
 }
 .fest .lineup::-webkit-scrollbar { block-size: 0; }
@@ -5149,7 +5139,11 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 
 /* ---------- about ---------- */
 .fest .about {
-  margin-block-start: 14px; margin-inline: -4px; padding: 14px 12px 12px;
+  /* 24 inside a card that sits on 12, which puts every word in it on the
+     36 the forecast card writes on — its card pads 12 and each block in
+     it pads 12 again. Surfaces stay at 24: the picture above, the chips,
+     the actions, the forecast's own hourly rows. */
+  margin-block-start: 14px; margin-inline: -4px; padding: 14px 24px 12px;
   border-radius: 24px; background: var(--card);
 }
 .fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
