@@ -1045,16 +1045,23 @@ SHEET_JS = """
        update hook's own guard, and on the path where that guard never fired
        the card opened with no animation and with the last card's player
        already marked loaded, so the wave that says it is loading never came. */
-    if (!el) return;
-    requestAnimationFrame(() => this.playSheetOpen());
-    /* Keyed to the card, not to the element: a cached frame reports itself
-       loaded in the same tick this runs, and a reset that fires afterwards
-       puts the indicator back over a player that is already there — which is
-       a wave that never stops. */
+    if (!el) { this.startedSheet = null; return; }
+    /* Keyed to the card, not to the element. Two reasons, and the second one
+       cost a card that rose twice: a cached frame reports itself loaded in
+       the same tick this runs, so a reset that fires afterwards puts the
+       indicator back over a player already there; and the element itself is
+       replaced on a re-render, so anything guarded on its identity runs again
+       for the same act. One card, one start. */
     if (this.startedSheet === this.state.sheet) return;
     this.startedSheet = this.state.sheet;
-    this.setState({ embedReady: false, embedDead: false, bioOpen: false,
-      bioFits: false, bioFull: 0, playerOpen: false });
+    /* Off the commit: a ref fires while React is still committing, and a
+       setState from there is the one thing it will not have — it throws
+       #185 and the page stops rendering entirely. */
+    requestAnimationFrame(() => {
+      this.playSheetOpen();
+      this.setState({ embedReady: false, embedDead: false, bioOpen: false,
+        bioFits: false, bioFull: 0, playerOpen: false });
+    });
     /* And a deadline. Spotify is a third party behind a frame we cannot
        inspect: if it has not answered in 35 seconds it is not going to, and
        the card says there is no preview rather than waving forever. */
