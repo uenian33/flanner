@@ -248,6 +248,30 @@ That is the weight. The rest is the wait.
 Everything above respects `prefers-reduced-motion`, which here means the shapes
 hold still and the navigation goes back to the browser's own cut.
 
+## One design, one copy of it
+
+A planner is a page, a dataset and a design, and until recently the three were
+one file — so the design shipped again for every festival. `patch_script` takes
+the festival's own values out of it now and puts them in `fest.D`, and what is
+left is the same 212 KB for every planner there will ever be.
+
+| | |
+|---|---|
+| The design | `assets/js/planner-<hash>.js`, one file for the site. It arrives as a string because the runtime reads a component out of an inline script's textContent and an external one has none, so the page makes that element itself at the end of the body — before the runtime's own DOMContentLoaded boot. |
+| The dataset | `data/<id>/planner.js`, beside the festival's other data, setting `window.FP`. A classic tag rather than a fetch: it runs before the body is parsed, so the component finds its values already there and there is no round trip in front of the first render. |
+| The page | Its own URL, `<head>`, first-paint theme and markup — 46 KB gzipped, the same for both planners. |
+| Checked, not assumed | The second planner to ask for the shared file is compared against the first, and a difference fails the build rather than shipping one planner another's code. It caught three things while this was being written: the weather coordinates, the map bounds and its attribution were all still festival-specific. |
+
+Over the wire, gzipped: Flow is 46 KB of page and 39 KB of data, Kallio 46 and 5,
+against 135 and 101 before. The shared 169 KB of JavaScript is fetched once for
+the whole site — so the sixth festival costs its page and its data and nothing
+else.
+
+Everything a festival needs now lives in `data/<id>/`: Kallio's files used to
+sit at the data root among the site-wide ones, which left a third festival with
+no obvious home. `data/festivals.json`, `data/categories.json` and
+`data/info.json` are the site's; everything else belongs to a festival.
+
 ## The scheme, in the browser
 
 Every planner is the same design in a different hue, and the turning used to

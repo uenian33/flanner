@@ -87,6 +87,10 @@ class Festival:
     def __init__(self, fid: str, out: str, record: str, data: pathlib.Path,
                  basemap: pathlib.Path, images: dict):
         self.fid, self.out, self.data = fid, out, data
+        # Everything the design used to have written into it. `patch_script`
+        # fills this as it takes each value out, and `build` writes it beside
+        # the festival's other data.
+        self.D: dict = {}
         self.f = schema.festival(record)
         self.acts = json.loads((data / "acts.json").read_text())
         self.basemap = json.loads(basemap.read_text())
@@ -280,15 +284,26 @@ def data_uri(path: pathlib.Path) -> str:
 
 # ── the substitutions ─────────────────────────────────
 def patch_script(src: str, fest: Festival) -> str:
+    """The design, with this festival's data taken out of it.
+
+    Every value below used to be written into the script as a literal, which
+    made the script a different file for every festival — 212 KB of identical
+    code shipped once per planner. It is named here instead, and the values go
+    to `fest.D`, which is written out as the festival's own data file. What is
+    left is the same for all of them and can be shared.
+    """
     days, stages, events = fest.days, fest.stages, fest.events
     f = fest.f
     first = days[0]["id"]
+    D = fest.D
 
+    D["stages"] = stages
     src = sub_once(src, r"  STAGES = \[.*?\n  \];",
-                   "  STAGES = %s;" % js(stages), "STAGES")
+                   "  STAGES = FP.stages;", "STAGES")
 
+    D["events"] = events
     src = sub_once(src, r"  EVENTS = \[.*?\n  \}\)\);",
-                   "  EVENTS = %s;" % js(events), "EVENTS")
+                   "  EVENTS = FP.events;", "EVENTS")
 
     # One window per day, read off the day the reader is on. The design had a
     # single pair of constants because it drew a single day. The pair and the
@@ -297,11 +312,11 @@ def patch_script(src: str, fest: Festival) -> str:
     src = sub_once(
         src,
         r"  DAY_START = \d+;\n  DAY_END = \d+;",
-        "  DAYS = %s;\n"
+        "  DAYS = FP.days;\n"
         "  get DAY_WINDOW() { return this.DAYS.find(d => d.id === this.state.day) || this.DAYS[0]; }\n"
         "  get DAY_START() { return this.DAY_WINDOW.start; }\n"
         "  get DAY_END() { return this.DAY_WINDOW.end; }"
-        % js([dict(d, date=d.get("date", "")) for d in days]),
+        ,
         "day window")
 
     src = sub_once(
@@ -334,11 +349,11 @@ def patch_script(src: str, fest: Festival) -> str:
         "     stands for the whole festival rather than for its main stage.\n"
         "     Anything over six hours is a day-long installation rather than\n"
         "     a set, and is not what closes anything. */\n"
-        "  STARS = " + js(f.get("stars") or []) + ";\n"
-        "  FEST_NAME = " + js("%s %s" % (f["name"], f.get("year") or "")).strip() + ";\n"
-        "  FEST_WHEN = " + js("%s · %s" % (f["dates"], f["city"])) + ";\n"
-        "  FEST_SLUG = " + js(fest.fid) + ";\n"
-        "  BASE_BOUNDS = " + js(fest.basemap["bounds"]) + ";\n"
+        "  STARS = FP.stars;\n"
+        "  FEST_NAME = FP.festName;\n"
+        "  FEST_WHEN = FP.festWhen;\n"
+        "  FEST_SLUG = FP.slug;\n"
+        "  BASE_BOUNDS = FP.bounds;\n"
         "  get LINEUP() {\n"
         "    if (this._lineup) return this._lineup;\n"
         "    const out = [], seen = new Set();\n"
@@ -385,17 +400,18 @@ def patch_script(src: str, fest: Festival) -> str:
     # ---- the two pickers in the drawer ----
     # The language picker keeps its job — it names the day chips — and gets the
     # festival's own days to name.
+    D["langs"] = fest.langs
     src = sub_once(src, r"  LANGS = \[.*?\n  \];",
-                   "  LANGS = %s;" % js(fest.langs), "languages")
+                   "  LANGS = FP.langs;", "languages")
 
     # The location picker offered three cities. A planner is one festival in
     # one place, so the list is that place and the row that would ask you to
     # choose between three of them goes.
+    D["places"] = [{"id": "site", "label": f["city"],
+                    "sub": f["city"].split(",")[0],
+                    "site": f["city"].split(",")[0]}]
     src = sub_once(src, r"  PLACES = \[.*?\n  \];",
-                   "  PLACES = %s;" % js([{
-                       "id": "site", "label": fest.f["city"],
-                       "sub": fest.f["city"].split(",")[0],
-                       "site": fest.f["city"].split(",")[0]}]), "places")
+                   "  PLACES = FP.places;", "places")
     src = sub_once(src, r",\n      \{ id: 'place', aria: 'Location'[^\n]*\n    \];",
                    "\n    ];", "location row")
     src = sub_once(src, r"lang: 'en', place: 'helsinki',", "lang: 'en', place: 'site',",
@@ -583,8 +599,8 @@ def patch_script(src: str, fest: Festival) -> str:
 
     # Day labels that were written into strings.
     src = sub_once(src, r"'Flow Festival 2026 · Sat 15 August\\n'",
-                   "(%s + ' · ' + this.DAY_WINDOW.label + '\\n')"
-                   % js(fest.f["name"] + " " + fest.f["year"]), "clipboard header")
+                   "(FP.nameYear + ' · ' + this.DAY_WINDOW.label + '\\n')",
+                   "clipboard header")
     src = sub_once(src, r"' · Sat 15 August'",
                    "' · ' + this.DAY_WINDOW.label", "sheet time line")
     src = sub_once(src, r"' acts on Saturday</span>'",
@@ -598,8 +614,7 @@ def patch_script(src: str, fest: Festival) -> str:
     src = sub_once(src, r"'Nothing on Saturday matches every filter at once\. ",
                    "'Nothing on ' + %s + ' matches every filter at once. ' + '" % day_short,
                    "no-match copy")
-    src = sub_once(src, r"'Your Flow weekend'",
-                   js("Your " + fest.f["name"]), "plan heading")
+    src = sub_once(src, r"'Your Flow weekend'", "FP.planHeading", "plan heading")
     src = sub_once(src, r"'Your Saturday schedule'",
                    "'Your ' + %s + ' schedule'" % day_short, "picks heading")
     src = sub_once(src, r"'Saturday, act by act'",
@@ -610,8 +625,7 @@ def patch_script(src: str, fest: Festival) -> str:
     # The day the planner opens on: the one being held today, else the first.
     src = sub_once(src, r"day: 'sat',",
                    "day: (function (D) { const t = new Date().toISOString().slice(0, 10);\n"
-                   "      return (D.find(d => d.date === t) || D[0]).id; })(%s),"
-                   % js([{"id": d["id"], "date": d.get("date", "")} for d in days]),
+                   "      return (D.find(d => d.date === t) || D[0]).id; })(FP.dayIds),",
                    "opening day")
 
     return patch_nav(patch_card(patch_sheet(patch_rows(patch_cards(patch_grid(patch_viewport(
@@ -1198,6 +1212,16 @@ SHEET_JS = """
     /* The sheet rises from the edge it will be dragged back to, on M3's
        emphasised decelerate: quick away from the edge, settling into place. */
     if (this.sheetIsBottom()) {
+      /* Held at its own top while it opens. The card is the scroller on a
+         phone and the player in it is a third-party frame that pulls itself
+         into view as it loads — which scrolls the act's name and its picture
+         off the top of the card before anyone has touched it. Three beats,
+         all inside the 420ms the card takes to rise, so a reader who scrolls
+         the moment it lands is not fought. */
+      el.scrollTop = 0;
+      [80, 220, 400].forEach(ms => setTimeout(() => {
+        if (this.sheetEl === el) el.scrollTop = 0;
+      }, ms));
       el.animate([{ transform: 'translateY(100%)' }, { transform: 'none' }],
         { duration: 420, easing: 'cubic-bezier(.05,.7,.1,1)' });
       return;
@@ -3430,13 +3454,13 @@ def stage_palette(n: int, hue: float = SEED_HUE) -> tuple[list[dict], str]:
 
 
 def patch_stage_colours(src: str, fest: Festival) -> str:
-    pal = stage_palette(len(fest.stages))[0]
+    fest.D["stagePalette"] = stage_palette(len(fest.stages))[0]
     src = sub_once(
         src, r"  CAT = \{",
-        "  STAGE_PALETTE = %s;\n"
+        "  STAGE_PALETTE = FP.stagePalette;\n"
         "  /* The colour of everything that belongs to a stage. */\n"
-        "  stageColor(i) { return this.STAGE_PALETTE[i %% this.STAGE_PALETTE.length]; }\n\n"
-        "  CAT = {" % js(pal),
+        "  stageColor(i) { return this.STAGE_PALETTE[i % this.STAGE_PALETTE.length]; }\n\n"
+        "  CAT = {",
         "stage palette")
 
     for old, new, what in [
@@ -3584,8 +3608,9 @@ def patch_weather(src: str, fest: Festival) -> str:
     stages = fest.stages
     lat = round(sum(s["lat"] for s in stages) / len(stages), 4)
     lon = round(sum(s["lng"] for s in stages) / len(stages), 4)
+    fest.D["weather"] = {"lat": lat, "lon": lon, "tz": "Europe/Helsinki"}
     block = (WEATHER_JS + WEATHER_NOTE_JS + POSTER_JS).replace(
-        "__WEATHER__", js({"lat": lat, "lon": lon, "tz": "Europe/Helsinki"}))
+        "__WEATHER__", "FP.weather")
 
     # The component gains the weather methods, and asks for the forecast when it
     # mounts and whenever the day changes.
@@ -3625,8 +3650,7 @@ def patch_weather(src: str, fest: Festival) -> str:
         # they were. These are Open-Meteo's, for this festival's own
         # coordinates, so the caption says so.
         (r"weatherPlace: \(this\.PLACES\.find\(p => p\.id === S\.place\) \|\| this\.PLACES\[0\]\)\.site \+ ' · illustrative',",
-         "weatherPlace: %s + (this.wxPast() ? ' · recorded' : ' · forecast'),"
-         % js(fest.f["city"].split(",")[0]),
+         "weatherPlace: FP.town + (this.wxPast() ? ' · recorded' : ' · forecast'),",
          "artwork label"),
     ]:
         src = sub_once(src, old, new, what)
@@ -4002,8 +4026,11 @@ def patch_map(src: str, fest: Festival) -> str:
     centre = [(b["s"] + b["n"]) / 2, (b["w"] + b["e"]) / 2]
     attr = fest.basemap.get("attribution", "(c) OpenStreetMap contributors (c) CARTO")
 
+    fest.D["centre"] = centre
+    fest.D["mapBounds"] = bounds
+    fest.D["mapAttribution"] = attr
     src = sub_once(src, r"\.setView\(\[[\d.]+, [\d.]+\], 16\)",
-                   ".setView(%s, 16)" % js(centre), "map centre")
+                   ".setView(FP.centre, 16)", "map centre")
 
     # ---- the pin ----
     # A 32px disc ringed in 2px of white and dropped on an 8px shadow, which is
@@ -4445,11 +4472,11 @@ def patch_map(src: str, fest: Festival) -> str:
        which is the point of a planner you open in a field. Where there IS a
        signal the real slippy layers take over, and then you can pan past the
        festival; the probe below is what decides, and it costs one tile. */
-    const BOUNDS = %s;
+    const BOUNDS = FP.mapBounds;
     const still = (url, credit) => L.layerGroup(
       [L.imageOverlay(url, BOUNDS, { attribution: credit })]);
     this.layers = {
-      street: still(this.BASE_STREET, %s),
+      street: still(this.BASE_STREET, FP.mapAttribution),
       satellite: still(this.BASE_SATELLITE, 'Imagery &copy; Esri')
     };
     map.setMaxBounds(L.latLngBounds(BOUNDS).pad(0.25));
@@ -4469,8 +4496,7 @@ def patch_map(src: str, fest: Festival) -> str:
       });
     };
     probe.referrerPolicy = 'no-referrer';
-    probe.src = 'https://a.basemaps.cartocdn.com/light_all/0/0/0.png';""" % (
-            js(bounds), js(attr)),
+    probe.src = 'https://a.basemaps.cartocdn.com/light_all/0/0/0.png';""",
         "map layers")
 
     # ---- the map view's first 73px ----
@@ -6421,6 +6447,68 @@ NO_ZOOM_JS = """(function () {
 })();"""
 
 
+
+_COMPONENT_ASSET: tuple[str, str] | None = None
+
+
+def component_asset(script: str) -> str:
+    """The component, as the one file every planner shares.
+
+    With the festival's own values taken out of it this is the same 212 KB for
+    every planner there will ever be, so it is written once and named by a hash
+    of itself. That it really is the same is checked rather than assumed: the
+    second planner to ask for it is compared against the first, and a
+    difference fails the build rather than shipping one planner another's code.
+
+    It arrives as a string because the runtime reads the component out of an
+    inline `<script>`'s textContent — an external one has none. The page makes
+    that element itself, at the end of the body, which is before the runtime's
+    own DOMContentLoaded boot.
+    """
+    global _COMPONENT_ASSET
+    if _COMPONENT_ASSET:
+        url, first = _COMPONENT_ASSET
+        if script != first:
+            import difflib
+            d = next((x for x in difflib.unified_diff(
+                first.splitlines(), script.splitlines(), n=0, lineterm="")
+                if x.startswith(("+", "-")) and not x.startswith(("+++", "---"))), "?")
+            raise MissingAnchor(
+                "the component is not the same for every festival — it is shipped "
+                "as one shared file, so it has to be. First difference: " + d[:200])
+        return url
+    data = ("/* Generated by build_planner.py — the design, with no festival in "
+            "it. */\nwindow.__FP_SRC__ = %s;\n" % json.dumps(script)).encode()
+    name = "planner-%s.js" % hashlib.sha256(data).hexdigest()[:10]
+    out = ROOT / "assets" / "js" / name
+    if not out.exists() or out.read_bytes() != data:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_bytes(data)
+    _COMPONENT_ASSET = ("../assets/js/" + name, script)
+    return _COMPONENT_ASSET[0]
+
+
+def data_asset(fest: "Festival") -> str:
+    """One festival's own values, beside its other data.
+
+    A plain script rather than a fetched JSON on purpose: it is a classic tag
+    in the head, so it is loaded and run before the body is parsed, and the
+    component finds `FP` already there. Fetching it would put a round trip in
+    front of the first render and need a loading state for a file that is
+    already on the critical path.
+    """
+    body = ("/* %s — generated by build_planner.py from data/%s/. */\n"
+            "window.FP = window.__FP_DATA__ = %s;\n"
+            % (fest.f["name"], fest.fid,
+               json.dumps(fest.D, ensure_ascii=False, separators=(",", ":"))))
+    out = ROOT / "data" / fest.fid / "planner.js"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    data = body.encode()
+    if not out.exists() or out.read_bytes() != data:
+        out.write_bytes(data)
+    return "../data/%s/planner.js" % fest.fid
+
+
 # ── the page ──────────────────────────────────────────
 # ---------------------------------------------------------------------------
 # The one thing that keeps being lost
@@ -6482,6 +6570,18 @@ def build(fid: str) -> pathlib.Path:
     art = art_mod.Artifact()
     f = fest.f
 
+    fest.D.update({
+        "slug": fest.fid,
+        "festName": ("%s %s" % (f["name"], f.get("year") or "")).strip(),
+        "festWhen": "%s · %s" % (f["dates"], f["city"]),
+        "nameYear": "%s %s" % (f["name"], f["year"]),
+        "planHeading": "Your " + f["name"],
+        "town": f["city"].split(",")[0],
+        "stars": f.get("stars") or [],
+        "bounds": fest.basemap["bounds"],
+        "days": [dict(d, date=d.get("date", "")) for d in fest.days],
+        "dayIds": [{"id": d["id"], "date": d.get("date", "")} for d in fest.days],
+    })
     script = patch_script(art.js, fest)
     template = art.resolve(patch_template(art.template, fest))
 
@@ -6492,16 +6592,22 @@ def build(fid: str) -> pathlib.Path:
     # are fetched when the map is first shown, by which time the timetable has
     # been on screen for a while; the worker keeps them for the times there is
     # no signal, which is the case they were inlined for.
-    script = ("  BASE_STREET = %s;\n  BASE_SATELLITE = %s;\n" % (
-        js("../" + fest.images["street"]),
-        js("../" + fest.images["satellite"])
-    )).join(script.split("  STAGES = ", 1)[0:1] + ["  STAGES = " + script.split("  STAGES = ", 1)[1]])
+    fest.D["street"] = "../" + fest.images["street"]
+    fest.D["satellite"] = "../" + fest.images["satellite"]
+    script = ("  BASE_STREET = FP.street;\n  BASE_SATELLITE = FP.satellite;\n"
+              ).join(script.split("  STAGES = ", 1)[0:1]
+                     + ["  STAGES = " + script.split("  STAGES = ", 1)[1]])
 
+    data_js = data_asset(fest)
+    planner_js = component_asset(script)
     props = json.loads(art.props)
     # The weather is real now — fetched for the festival's own coordinates — so
     # the control stays on. It shows nothing until the forecast answers.
     props["showWeather"]["default"] = True
     props_attr = json.dumps(props, ensure_ascii=False).replace('"', "&quot;")
+    # Set with setAttribute rather than written into the markup, so it is the
+    # value itself rather than an escaped copy of it.
+    props_json = json.dumps(json.dumps(props, ensure_ascii=False))
 
     title = "%s %s timetable — set times, stages and a map" % (f["name"], f["year"])
     desc = ("%s Set times for all %d acts on %d stages, filters by stage, type "
@@ -6604,8 +6710,22 @@ x-dc{{display:none}}
 <x-dc>
 {template}
 </x-dc>
-<script type="text/x-dc" data-dc-script="" data-props="{props_attr}">
-{script}
+<!-- The festival's own values, then the design that has none of them, then
+     the element the runtime reads the component out of. That element has to be
+     inline — the runtime takes the component from a script's textContent, and
+     an external script has none — so the page makes it here, at the end of the
+     body, which is before the runtime's own DOMContentLoaded boot. -->
+<script src="{data_js}"></script>
+<script src="{planner_js}"></script>
+<script>
+(() => {{
+  const s = document.createElement('script');
+  s.type = 'text/x-dc';
+  s.setAttribute('data-dc-script', '');
+  s.setAttribute('data-props', {props_json});
+  s.textContent = window.__FP_SRC__;
+  document.body.appendChild(s);
+}})();
 </script>
 <!-- The same page-to-page layer the rest of the site runs, which the planners
      did without: a navigation off one of them was a bare document load, and a
@@ -6615,7 +6735,9 @@ x-dc{{display:none}}
 </body>
 </html>
 """
-    check_card_gestures(page, fest.out)
+    # The component is a shared file now, so the guard reads what actually
+    # ships rather than the page that links it.
+    check_card_gestures(script, fest.out)
     out = ROOT / fest.out / "index.html"
     out.parent.mkdir(exist_ok=True)
     out.write_text(page)
@@ -6624,8 +6746,28 @@ x-dc{{display:none}}
     return out
 
 
+def sweep_shared() -> None:
+    """Drop hashed files no built page names any more.
+
+    Content-hashed assets accumulate: every edit to the component leaves the
+    last one behind, and the worker precaches what it finds. Only what a page
+    still points at is kept.
+    """
+    named = set()
+    for fid in FESTIVALS:
+        page = ROOT / FESTIVALS[fid].out / "index.html"
+        if page.exists():
+            named |= set(re.findall(r"assets/js/([\w.-]+\.js)", page.read_text()))
+    for f in sorted((ROOT / "assets" / "js").glob("*.js")):
+        if f.name not in named:
+            f.unlink()
+            print(f"  swept {f.name}")
+
+
 if __name__ == "__main__":
     which = sys.argv[1:] or list(FESTIVALS)
     print(ROOT)
     for fid in which:
         build(fid)
+    if not sys.argv[1:]:
+        sweep_shared()

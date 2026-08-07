@@ -1,0 +1,37 @@
+{
+ "pages": [
+  "./",
+  "./kallio/",
+  "./flow/",
+  "./about/",
+  "./faq/",
+  "./terms/",
+  "./privacy/"
+ ],
+ "assets": [
+  "./assets/font/disp-latin-ext.woff2",
+  "./assets/font/disp-latin.woff2",
+  "./assets/font/festiplannr.css",
+  "./assets/font/inter-latin-ext.woff2",
+  "./assets/font/inter-latin.woff2",
+  "./assets/font/robotoflex-latin-ext.woff2",
+  "./assets/font/robotoflex-latin.woff2",
+  "./assets/font/space-grotesk-latin-ext.woff2",
+  "./assets/font/space-grotesk-latin.woff2",
+  "./assets/font/title-latin.woff2",
+  "./assets/home/flow-promo.jpg",
+  "./assets/home/kbp-promo.jpg",
+  "./assets/icons/apple-touch-icon.png",
+  "./assets/icons/icon-192.png",
+  "./assets/icons/icon-512.png",
+  "./assets/icons/icon-maskable-512.png",
+  "./assets/js/dc-runtime-8fe7df7440.js",
+  "./assets/js/leaflet-db49d009c8.js",
+  "./assets/js/planner-c07b809576.js",
+  "./assets/js/react-d949f1c368.js",
+  "./assets/js/react-dom-35f4f974f4.js",
+  "./assets/js/theme-cd8b355c10.js",
+  "./data/flow/planner.js",
+  "./data/kallio/planner.js"
+ ]
+}
