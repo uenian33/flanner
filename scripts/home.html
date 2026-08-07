@@ -1956,7 +1956,14 @@ body.plan-only .section-headline{position:absolute;width:1px;height:1px;
   background:var(--md-sys-color-surface-container-high);
   color:var(--md-sys-color-on-surface);
   font-family:inherit;transition:filter .18s cubic-bezier(.2,0,0,1)}
-body.plan-only .a2hs:not([hidden]){display:flex}
+/* A phone's offer only — the same width at which the bar replaces the rail,
+   which is the width at which this is an app rather than a page. A home
+   screen is not what a laptop has, and on a tablet the browser's own menu is
+   where people already look for this; a band across a 1000px column asking
+   for it is an advertisement. */
+@media(max-width:599.98px){
+  body.plan-only .a2hs:not([hidden]){display:flex}
+}
 .a2hs:hover{filter:brightness(.97)}
 .a2hs:active{filter:brightness(.94)}
 .a2hs:focus-visible{outline:3px solid var(--md-sys-color-on-surface);

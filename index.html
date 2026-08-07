@@ -2929,7 +2929,14 @@ body.plan-only .section-headline{position:absolute;width:1px;height:1px;
   background:var(--md-sys-color-surface-container-high);
   color:var(--md-sys-color-on-surface);
   font-family:inherit;transition:filter .18s cubic-bezier(.2,0,0,1)}
-body.plan-only .a2hs:not([hidden]){display:flex}
+/* A phone's offer only — the same width at which the bar replaces the rail,
+   which is the width at which this is an app rather than a page. A home
+   screen is not what a laptop has, and on a tablet the browser's own menu is
+   where people already look for this; a band across a 1000px column asking
+   for it is an advertisement. */
+@media(max-width:599.98px){
+  body.plan-only .a2hs:not([hidden]){display:flex}
+}
 .a2hs:hover{filter:brightness(.97)}
 .a2hs:active{filter:brightness(.94)}
 .a2hs:focus-visible{outline:3px solid var(--md-sys-color-on-surface);
@@ -6409,20 +6416,21 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     ? new URL(document.querySelector('link[rel=manifest]').getAttribute('href'), location.href)
         .href.replace(/manifest\.webmanifest$/, '')
     : './';
-  /* The pages, and the files they no longer carry inside them. A planner used
-     to be one document with its map and its type inlined; now it names them,
-     which means saving the document alone would save a planner that opens with
-     no basemap in a field — the one place this button exists for. */
-  const PAGES = ['', 'kallio/', 'flow/', 'about/', 'faq/', 'terms/', 'privacy/']
-    .map(p => ROOT + p);
-  const ASSETS = [
-    'assets/font/inter-latin.woff2', 'assets/font/inter-latin-ext.woff2',
-    'assets/font/robotoflex-latin.woff2', 'assets/font/robotoflex-latin-ext.woff2',
-    'assets/basemap-light.jpg', 'assets/satellite.jpg',
-    'assets/flow-basemap-light.jpg', 'assets/flow-satellite.jpg',
-    'assets/home/flow-promo.jpg', 'assets/home/kbp-promo.jpg',
-  ].map(p => ROOT + p);
-  const ALL = PAGES.concat(ASSETS);
+  /* What to save is read rather than listed: `build_pwa.py` writes
+     assets/offline.json from what actually shipped. The shared files are
+     content-hashed and a festival is a folder someone drops in, so a list
+     kept by hand here would be one planner behind the moment either changed
+     — and the reader would find that out in a field. */
+  let PAGES = ['', 'kallio/', 'flow/', 'about/', 'faq/', 'terms/', 'privacy/'].map(p => ROOT + p);
+  let ALL = PAGES.slice();
+  const manifest = fetch(ROOT + 'assets/offline.json')
+    .then(r => r.ok ? r.json() : null)
+    .then(j => {
+      if (!j) return;
+      PAGES = j.pages.map(p => new URL(p, ROOT).href);
+      ALL = PAGES.concat(j.assets.map(p => new URL(p, ROOT).href));
+    })
+    .catch(() => {});
 
   /* Write into the worker's own cache, or the download is invisible to it.
      Waiting for the registration to activate is the difference between saving
@@ -6439,6 +6447,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   };
 
   const report = async () => {
+    await manifest;
     if (!('caches' in window)) { state.textContent = 'This browser cannot store pages.'; btn.hidden = true; return; }
     const c = await store();
     const have = (await Promise.all(ALL.map(u => c.match(u, {ignoreSearch: true})))).filter(Boolean).length;
@@ -6456,6 +6465,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 
   btn.onclick = async () => {
     btn.disabled = true;
+    await manifest;
     const c = await store();
     let done = 0;
     for (const url of ALL) {
