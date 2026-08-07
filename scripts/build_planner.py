@@ -2740,7 +2740,103 @@ ROLES = (
 ALWAYS_DARK = {"artBg", "art1", "art2", "art3", "artInk"}
 
 
-def stage_palette(n: int) -> tuple[list[dict], str]:
+
+# ── the festival's own hue ────────────────────────────
+# The design is drawn in one green, and that green is the card system's, not
+# any festival's. A planner is one festival, so it is drawn in that festival's
+# colour instead — data/festivals.json carries the accent each organiser
+# publishes, and the whole scheme turns to its hue.
+#
+# What turns is the hue and only the hue. Every token keeps the lightness and
+# the chroma the design gave it, so every contrast pair the design was drawn
+# against still holds; the page changes colour without changing tone. And only
+# what is in the seed's own hue turns: the warm heart, the pink plan sheet,
+# the amber and violet strands are deliberate second colours, and a rotation
+# that swept them up would flatten the scheme into one hue.
+SEED_HUE = 124.4          # the LCh hue of #4C662B, the design's own green
+SEED_SPAN = 45.0          # how far from it still counts as "the seed's hue"
+
+
+def _lch(hexstr: str) -> tuple[float, float, float]:
+    import m3color, math
+    L, a, b = m3color.hex_to_lab(hexstr)
+    return L, math.hypot(a, b), math.degrees(math.atan2(b, a)) % 360
+
+
+def _turn(value: str, hue: float) -> str:
+    """One colour, turned to the festival's hue if it is in the design's.
+
+    Takes a hex or an rgba(); anything else, and anything too grey or too far
+    from the seed to be the seed's colour, comes back untouched."""
+    import m3color, re as _re
+    v = value.strip()
+    m = _re.fullmatch(r"rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)", v)
+    if m:
+        r, g, b = (int(m.group(i)) for i in (1, 2, 3))
+        base, alpha = "#%02x%02x%02x" % (r, g, b), m.group(4)
+    elif _re.fullmatch(r"#[0-9a-fA-F]{6}", v):
+        base, alpha = v, None
+    else:
+        return value
+    L, C, h = _lch(base)
+    if C < 3 or abs((h - SEED_HUE + 180) % 360 - 180) > SEED_SPAN:
+        return value
+    turned = m3color.tone(hue, C, L)
+    if alpha is None:
+        return turned
+    r, g, b = (int(turned[i:i + 2], 16) for i in (1, 3, 5))
+    return "rgba(%d,%d,%d,%s)" % (r, g, b, alpha)
+
+
+def _decls(block: str) -> dict:
+    """The custom properties in one CSS block, in order."""
+    import re as _re
+    out, i = {}, 0
+    while True:
+        m = _re.compile(r"(--[a-z0-9-]+)\s*:").search(block, i)
+        if not m:
+            return out
+        j, depth = m.end(), 0
+        while j < len(block) and not (depth == 0 and block[j] in ";}"):
+            depth += 1 if block[j] == "(" else -1 if block[j] == ")" else 0
+            j += 1
+        out[m.group(1)] = block[m.end():j].strip()
+        i = j + 1
+
+
+def theme_css(accent: str, design_css: str, *more: str) -> str:
+    """The whole scheme, in the festival's hue, both themes.
+
+    The values are read out of the design rather than restated here, because
+    the design keeps them in three places and only one of them is a stylesheet:
+    39 of the light tokens are declared in the card's own block, 26 exist
+    nowhere but as the fallback written beside each use — `var(--heart,#8F4C0A)`
+    — and the dark ones are declared once, by the design itself. A re-theme
+    that missed the 26 would turn the dark page and leave the light one green.
+    """
+    import re as _re
+    hue = _lch(accent)[2]
+    dark_block = _re.search(r'\[data-theme="dark"\]\s*{([^}]*)}', design_css)
+    light_block = _re.search(r':root:not\(\[data-theme="dark"\]\)\s*{([^}]*)}', CARD_CSS)
+    dark = _decls(dark_block.group(1)) if dark_block else {}
+    light = _decls(light_block.group(1)) if light_block else {}
+    # the ones with no light declaration anywhere: the fallback is the value
+    for src in (design_css, CARD_CSS, SHEET_CSS, FEST_CSS) + more:
+        for name, fb in _re.findall(r"var\((--[a-z0-9-]+),\s*([^()]*?(?:\([^()]*\))?[^()]*?)\)", src):
+            if name in dark and name not in light:
+                light[name] = fb.strip()
+    turn = lambda d: ";".join("%s:%s" % (k, _turn(v, hue)) for k, v in d.items())
+    # The hero's tint is declared on the strand class rather than on the root,
+    # so it is not in either block above; it is stated here at the same weight
+    # and later, and it takes its light tone under both themes because the
+    # line it colours always stands on the picture's own wash.
+    return ("/* %s's own hue — every tone the design chose, turned to it */\n"
+            ":root:not([data-theme=\"dark\"]){%s}\n"
+            "[data-theme=\"dark\"]{%s}\n"
+            ".fest{--hero-tint:%s}\n"
+            % (accent, turn(light), turn(dark), _turn("#CDEDA3", hue)))
+
+def stage_palette(n: int, hue: float = SEED_HUE) -> tuple[list[dict], str]:
     """Hues by the golden angle rather than in equal steps.
 
     Ten stages spaced evenly are 36° apart, and 36° at these tones is the
@@ -2754,7 +2850,7 @@ def stage_palette(n: int) -> tuple[list[dict], str]:
     import m3color
     ref, light, dark = [], [], []
     for i in range(n):
-        h = (124 + i * 137.507) % 360
+        h = (hue + i * 137.507) % 360
         ref.append({k: "var(--st%d-%s)" % (i, k.lower()) for k, _l, _d in ROLES})
         for k, lt, dk in ROLES:
             here = dk if k in ALWAYS_DARK else lt
@@ -3478,6 +3574,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
         ("#i-pin-line", "%s stages" % stats.get("stages", "")),
         ("#i-time", ("%d days" % days) if days > 1 else "%d hours" % hours),
         ("#i-mic-line", "%s acts" % stats.get("acts", "")),
+        ("#i-tag", fest.facts[2]),
     ]
     # The hero is the festival's own photograph and its own mark where there
     # is one — the picture the home page's card already shows, and the logo
@@ -3489,17 +3586,6 @@ def patch_template(tpl: str, fest: Festival) -> str:
     if promo and promo.exists():
         hero_art = ('          <img class="hero__photo" src="%s" alt="">\n'
                     '          <span class="hero__scrim"></span>\n' % data_uri(promo))
-        if logo and logo.exists():
-            # A mark is drawn for one background and this is not it, so it
-            # gets a surface of its own — the same wash the notch cuts into
-            # the opposite corner, so the two read as one idea. A wordmark
-            # long enough to be a strip stands shorter than a round one.
-            wide = _aspect(logo) >= 3
-            hero_art += ('          <span class="hero__mark">'
-                         '<img src="%s" alt="" aria-hidden="true" style="%s">'
-                         '</span>\n'
-                         % (data_uri(logo),
-                            "block-size:20px" if wide else "block-size:34px"))
     else:
         hero_art = ('          <svg class="hero__art" sc-camel-view-box="0 0 400 250"'
                     ' sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img"'
@@ -3518,7 +3604,17 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '      <div class="fest t-%(strand)s">\n'
         '        <div class="hero">\n'
         '%(heroArt)s'
-        '          <div class="notch"><i></i><i></i><span>%(strandName)s</span></div>\n'
+        '          <div class="hero__overlay">\n'
+        '            <p class="hero__eyebrow">%(when)s</p>\n'
+        '            <h1 class="hero__title">%(name)s</h1>\n'
+        '            <button class="hero__where" type="button"'
+        ' sc-camel-on-click="{{ openMap }}">\n'
+        '              <svg aria-hidden="true"><use href="#i-pin"></use></svg>\n'
+        '              <span>%(city)s · %(type)s</span>\n'
+        '              <svg class="hero__where-go" aria-hidden="true">'
+        '<use href="#i-near"></use></svg>\n'
+        '            </button>\n'
+        '          </div>\n'
         '        </div>\n'
         '\n'
         '        <sc-if value="{{ festLive }}">\n'
@@ -3527,25 +3623,8 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '        </div>\n'
         '        </sc-if>\n'
         '\n'
-        '        <ul class="meta">\n'
-        '          <li>\n'
-        '            <svg aria-hidden="true"><use href="#i-time"></use></svg>\n'
-        '            %(dates)s <em>· %(hours)s</em>\n'
-        '          </li>\n'
-        '          <li>\n'
-        '            <button type="button" sc-camel-on-click="{{ openMap }}"'
-        ' aria-label="%(city)s — show the site map">\n'
-        '              <svg aria-hidden="true"><use href="#i-pin-line"></use></svg>\n'
-        '              %(city)s <em>· %(type)s</em>\n'
-        '            </button>\n'
-        '          </li>\n'
-        '          <li>\n'
-        '            <svg aria-hidden="true"><use href="#i-tag"></use></svg>\n'
-        '            %(price)s\n'
-        '          </li>\n'
-        '        </ul>\n'
-        '\n'
-        '        <ul class="genres">%(genres)s</ul>\n'
+        '        <ul class="genres"><li class="strand">%(strandName)s</li>'
+        '%(genres)s</ul>\n'
         '\n'
         '        <div class="actions">\n'
         '          <a class="act" href="%(official)s" target="_blank"'
@@ -3588,7 +3667,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '                    <use href="#i-art"></use><use href="{{ a.motif }}"></use>\n'
         '                  </svg>\n'
         '                  <sc-if value="{{ a.planned }}"><b aria-hidden="true">'
-        '<svg sc-camel-view-box="0 0 24 24"><use href="#i-check"></use></svg>'
+        '<svg sc-camel-view-box="0 0 24 24"><use href="#i-star-fill"></use></svg>'
         '</b></sc-if>\n'
         '                </span>\n'
         '                <span class="who__name">{{ a.name }}</span>\n'
@@ -3619,6 +3698,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
         "strandName": strand.title(),
         "heroArt": hero_art,
         "name": name,
+        "when": ("%s · %s" % (f["dates"], fest.hours_line.split(" · ")[0])).upper(),
         "dates": f["dates"],
         # the hours alone: how many days it runs is a fact below, and a date
         # range with the count after it wraps this line in two.
@@ -4188,7 +4268,7 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
 .ac__overlay { position: relative; z-index: 1; display: grid; gap: 7px; padding: 0 20px 18px; }
 .ac__eyebrow {
   margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--hero-tint);
+  text-transform: uppercase; color: var(--hero-tint,#CDEDA3);
 }
 .ac__title {
   margin: 0; padding-inline-end: 4px; color: var(--on-hero);
@@ -4743,10 +4823,45 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
    design brings — the artwork and the About card — come out to meet the
    weather card under them rather than standing 4px in from it. */
 .fest .hero {
-  position: relative; aspect-ratio: 16 / 10;
-  margin-inline: -4px;
+  position: relative; display: grid; align-content: end;
+  aspect-ratio: 16 / 10; margin-inline: -4px;
   border-radius: 24px; overflow: hidden; background: var(--art-bg);
 }
+/* The festival says what it is the way an act does: the card's own hero,
+   rule for rule — the flat wash rather than a gradient, so the line keeps
+   its contrast wherever the picture happens to be light; the date over the
+   name in the strand's tint; and the place as the pill that goes to the
+   map. Which is why nothing under the picture repeats them. */
+.fest .hero__overlay {
+  position: relative; z-index: 1; display: grid; gap: 6px; padding: 0 16px 15px;
+}
+.fest .hero__eyebrow {
+  margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--hero-tint,#CDEDA3);
+}
+.fest .hero__title {
+  margin: 0; padding-inline-end: 4px; color: var(--on-hero,#FFFFFF);
+  font-size: 26px; font-weight: 700; line-height: 1.08; letter-spacing: -.03em;
+  text-wrap: balance;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.fest .hero__where {
+  display: inline-flex; justify-self: start; align-items: center; gap: 8px;
+  margin: 3px 0 0; max-inline-size: 100%;
+  padding: 7px 12px 7px 10px; border: 0; border-radius: 20px;
+  background: rgb(255 255 255 / .16);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  color: var(--on-hero,#FFFFFF); font-family: inherit; font-size: 13px;
+  font-weight: 500; line-height: 1.2; text-align: start; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--effects);
+}
+.fest .hero__where:hover { background: rgb(255 255 255 / .30); }
+.fest .hero__where:active { background: rgb(255 255 255 / .38); }
+.fest .hero__where:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+.fest .hero__where span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fest .hero__where svg { flex: none; inline-size: 17px; block-size: 17px; fill: currentColor; }
+.fest .hero__where-go { opacity: .8; }
 .fest .hero__art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
 .fest .hero__photo {
   position: absolute; inset: 0; inline-size: 100%; block-size: 100%;
@@ -4756,17 +4871,8 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
    else, and a scrim over all of it would read as a dimmed photograph
    rather than as a surface something is written on. */
 .fest .hero__scrim {
-  position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(to top,
-    rgba(12,15,8,.62) 0, rgba(12,15,8,.34) 26%, rgba(12,15,8,0) 58%);
+  position: absolute; inset: 0; pointer-events: none; background: rgb(0 0 0 / .46);
 }
-.fest .hero__mark {
-  position: absolute; inset-block-end: 12px; inset-inline-start: 12px;
-  display: grid; place-items: center; padding: 8px 11px;
-  border-radius: 16px; background: var(--wash,#FFFFFF);
-  box-shadow: 0 2px 12px rgba(20,24,14,.20);
-}
-.fest .hero__mark img { display: block; max-inline-size: 190px; object-fit: contain; }
 /* the card system's notch, cutting into the page rather than a card */
 .fest .notch {
   position: absolute; inset-block-end: 0; inset-inline-end: 0;
@@ -4837,7 +4943,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 
 /* ---------- genre chips ---------- */
 .fest .genres {
-  display: flex; gap: 8px; margin: 14px -16px 0; padding: 0 16px;
+  display: flex; flex-wrap: nowrap; gap: 8px; margin: 14px -16px 0; padding: 0 16px;
   overflow-x: auto; scrollbar-width: none; list-style: none;
 }
 .fest .genres::-webkit-scrollbar { block-size: 0; }
@@ -4845,6 +4951,13 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
   flex: none; display: inline-flex; align-items: center; block-size: 32px; padding: 0 14px;
   border: 1px solid var(--outline); border-radius: 8px;
   font-size: 13.5px; font-weight: 500; color: var(--on-var); white-space: nowrap;
+}
+/* What the festival is stands with what it plays, in the festival's own
+   colour — the one chip in the row that is filled, so it reads as the
+   heading of the list rather than another entry in it. */
+.fest .genres li.strand {
+  border-color: transparent; background: var(--sec); color: var(--on-sec); font-weight: 600;
+  letter-spacing: .02em;
 }
 
 /* ---------- actions ---------- */
@@ -5079,8 +5192,9 @@ def build(fid: str) -> pathlib.Path:
 <style>
 {art.font_css()}
 {art.other_css()}
-{stage_palette(len(fest.stages))[1]}
+{stage_palette(len(fest.stages), _lch(fest.f['accent'])[2])[1]}
 {CARD_CSS}
+{theme_css(fest.f['accent'], art.other_css(), art.js)}
 {FEST_CSS}
 {SHEET_CSS}
 {NO_ZOOM_CSS}
