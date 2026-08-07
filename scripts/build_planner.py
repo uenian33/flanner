@@ -3521,14 +3521,11 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '          <div class="notch"><i></i><i></i><span>%(strandName)s</span></div>\n'
         '        </div>\n'
         '\n'
+        '        <sc-if value="{{ festLive }}">\n'
         '        <div class="status">\n'
-        '          <sc-if value="{{ festLive }}">'
-        '<span class="chip chip--live"><b aria-hidden="true"></b>Live now</span></sc-if>\n'
-        '          <button class="chip" type="button" sc-camel-on-click="{{ toProgramme }}">'
-        '<svg aria-hidden="true"><use href="#i-eq"></use></svg>Set times</button>\n'
+        '          <span class="chip chip--live"><b aria-hidden="true"></b>Live now</span>\n'
         '        </div>\n'
-        '\n'
-        '        <h1 class="title">%(name)s</h1>\n'
+        '        </sc-if>\n'
         '\n'
         '        <ul class="meta">\n'
         '          <li>\n'
@@ -3670,10 +3667,6 @@ def patch_template(tpl: str, fest: Festival) -> str:
         ' stroke="currentColor"><path d="M20.6 12.4 12.4 20.6a2 2 0 0 1-2.8 0l-6.2-6.2A2'
         ' 2 0 0 1 2.8 13V4.8A1.8 1.8 0 0 1 4.6 3h8.2a2 2 0 0 1 1.4.6l6.4 6.4a2 2 0 0 1 0'
         ' 2.4Z"></path><circle cx="7.6" cy="7.6" r="1.4"></circle></symbol>\n'
-        '  <symbol id="i-eq" sc-camel-view-box="0 0 24 24"><rect x="3.5" y="10"'
-        ' width="3.4" height="10" rx="1.7"></rect><rect x="10.3" y="4" width="3.4"'
-        ' height="16" rx="1.7"></rect><rect x="17.1" y="13" width="3.4" height="7"'
-        ' rx="1.7"></rect></symbol>\n'
         '  <symbol id="i-mic-line" sc-camel-view-box="0 0 24 24" fill="none"'
         ' stroke="currentColor" stroke-linecap="round"><rect x="9" y="2.8" width="6"'
         ' height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21m-3'
@@ -4793,7 +4786,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 }
 
 /* ---------- status row (M3 assist chips, 32dp) ---------- */
-.fest .status { display: flex; flex-wrap: wrap; gap: 8px; margin-block-start: 18px; }
+.fest .status { display: flex; flex-wrap: wrap; gap: 8px; margin-block-start: 14px; }
 .fest .chip {
   display: inline-flex; align-items: center; gap: 8px;
   block-size: 32px; padding: 0 14px 0 10px;
@@ -4817,10 +4810,14 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
   font-size: var(--headline-size); font-weight: 700; line-height: var(--headline-lh);
   letter-spacing: -.03em; text-wrap: balance;
 }
-.fest .meta { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 13px; }
-.fest .meta li { display: flex; align-items: center; gap: 12px; font-size: var(--body-size); line-height: 1.32; }
+/* The name is the bar's, not this page's — it says it at the top of every
+   view — so the facts under the picture are what this block is, and they are
+   set at the size the Lineup sets an act's name in. One size for the two
+   things on the page that name something, and the page is shorter for it. */
+.fest .meta { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.fest .meta li { display: flex; align-items: center; gap: 10px; font-size: 13px; line-height: 1.35; }
 .fest .meta svg {
-  flex: none; inline-size: 20px; block-size: 20px;
+  flex: none; inline-size: 18px; block-size: 18px;
   fill: none; stroke: var(--on-var); stroke-width: 1.7;
   stroke-linecap: round; stroke-linejoin: round;
 }
@@ -4839,7 +4836,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 
 /* ---------- genre chips ---------- */
 .fest .genres {
-  display: flex; gap: 8px; margin: 18px -16px 0; padding: 0 16px;
+  display: flex; gap: 8px; margin: 14px -16px 0; padding: 0 16px;
   overflow-x: auto; scrollbar-width: none; list-style: none;
 }
 .fest .genres::-webkit-scrollbar { block-size: 0; }
@@ -4850,7 +4847,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 }
 
 /* ---------- actions ---------- */
-.fest .actions { display: flex; gap: 10px; margin-block-start: 22px; }
+.fest .actions { display: flex; gap: 10px; margin-block-start: 16px; }
 .fest .act {
   flex: none; display: grid; place-items: center;
   inline-size: 56px; block-size: 56px; border: 0; border-radius: 18px;
@@ -4878,7 +4875,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
    The row bleeds past the page's margin so a cut item shows at the edge;
    that is the only affordance a scrolling row needs. Snap points align to
    the margin rather than to the screen edge. */
-.fest .sec-head { display: flex; align-items: baseline; gap: 12px; margin: 26px 0 12px; }
+.fest .sec-head { display: flex; align-items: baseline; gap: 12px; margin: 18px 0 10px; }
 .fest .sec-head h2 { margin: 0; font-size: var(--title-size); font-weight: 650; letter-spacing: -.01em; }
 .fest .sec-head button {
   /* the -12px is the rule the About card's Read more already follows: a
@@ -4936,7 +4933,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 
 /* ---------- about ---------- */
 .fest .about {
-  margin-block-start: 24px; margin-inline: -4px; padding: 18px 18px 14px;
+  margin-block-start: 18px; margin-inline: -4px; padding: 16px 16px 12px;
   border-radius: 24px; background: var(--card);
 }
 .fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
@@ -4953,7 +4950,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 .fest .about__more svg { inline-size: 18px; block-size: 18px; fill: currentColor; transition: transform var(--spring); }
 .fest .about.is-open .about__more svg { transform: rotate(180deg); }
 .fest .about__facts {
-  display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 14px 0 0; padding: 12px 0 0;
+  display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 12px 0 0; padding: 10px 0 0;
   border-block-start: 1px solid var(--outline); list-style: none;
 }
 .fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: var(--body-sm-size); color: var(--on-var); }
