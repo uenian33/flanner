@@ -23,10 +23,10 @@ import urllib.request
 from PIL import Image
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-ACTS = ROOT / "data" / "acts.json"
+ACTS = ROOT / "data" / "kallio" / "acts.json"
 CURATED = ROOT / "scripts" / "curated.json"
 ART_DIR = ROOT / "assets" / "art"
-OUT = ROOT / "data" / "artwork.json"
+OUT = ROOT / "data" / "kallio" / "artwork.json"
 
 UA = "KallioBlockPartyPlanner/1.0 (personal festival schedule)"
 SIZE = 320

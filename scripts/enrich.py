@@ -22,8 +22,8 @@ import urllib.parse
 import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-ACTS = ROOT / "data" / "acts.json"
-OUT = ROOT / "data" / "enriched.json"
+ACTS = ROOT / "data" / "kallio" / "acts.json"
+OUT = ROOT / "data" / "kallio" / "enriched.json"
 
 UA = "KallioBlockPartyPlanner/1.0 (personal schedule tool)"
 

@@ -18,7 +18,7 @@ from PIL import Image, ImageEnhance
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT_IMG = ROOT / "assets" / "basemap.jpg"
-OUT_META = ROOT / "data" / "basemap.json"
+OUT_META = ROOT / "data" / "kallio" / "basemap.json"
 
 Z = 17
 RETINA = 2

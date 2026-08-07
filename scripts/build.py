@@ -2,9 +2,9 @@
 """Build the self-contained Kallio Block Party 2026 stage planner.
 
 Inputs
-  data/acts.json        timetable, genre classification, stage coordinates
-  data/basemap.json     Web Mercator origin of the stitched basemap
-  data/artwork.json     verified artist images
+  data/kallio/acts.json     timetable, genre classification, stage coordinates
+  data/kallio/basemap.json  Web Mercator origin of the stitched basemap
+  data/kallio/artwork.json  verified artist images
   scripts/curated.json  hand-verified artist links
   scripts/template.html markup, styles and behaviour
 

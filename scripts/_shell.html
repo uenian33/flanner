@@ -123,6 +123,14 @@ body.shell-busy .shell-page{pointer-events:none}
   body.nav-min .dock .dest__lab{
     block-size:0;opacity:0;overflow:hidden;
     transition:opacity var(--nt-exit),block-size var(--nt-resize)}
+  /* The indicator mirrors a destination's own stack — glyph box, gap, a
+     spacer standing in for the label — which is what lands it on the icon
+     without an offset to retune. So it has to lose the same two things at the
+     same moment: left as they were, the pill kept a 3px gap and a label's
+     worth of height the cell no longer had, and sat that far above the glyph
+     it is meant to be behind. */
+  body.nav-min .dock .pill{gap:0}
+  body.nav-min .dock .pill span{block-size:0}
   .dock .dest__lab{block-size:auto;transition:opacity var(--nt-effects),
     block-size var(--nt-resize)}
   /* The track is the destination row itself, so the indicator is

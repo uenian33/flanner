@@ -6,8 +6,8 @@
 
 `scripts/planner.py` unpacks the design; everything here is the festival's own
 side of it. Nothing about a line-up is written in this file: the stages, the
-sets, the days and the facts under the title all come out of data/acts.json,
-data/flow/ and data/festivals.json, so a corrected set time is a data edit.
+sets, the days and the facts under the title all come out of the festival's
+own data/<id>/ and data/festivals.json, so a corrected set time is a data edit.
 
 Every substitution is anchored to a string in the design and fails the build if
 that string moves — a silent miss would publish a planner carrying the design's
@@ -242,8 +242,8 @@ class Festival:
 
 
 FESTIVALS = {
-    "kallio": Festival("kallio", "kallio", "kbp", ROOT / "data",
-                       ROOT / "data" / "basemap.json",
+    "kallio": Festival("kallio", "kallio", "kbp", ROOT / "data" / "kallio",
+                       ROOT / "data" / "kallio" / "basemap.json",
                        {"street": "assets/basemap-light.jpg",
                         "satellite": "assets/satellite.jpg"}),
     "flow": Festival("flow", "flow", "flow", ROOT / "data" / "flow",

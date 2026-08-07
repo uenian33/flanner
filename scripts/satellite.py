@@ -7,7 +7,7 @@ import json, math, pathlib, time, urllib.request
 from PIL import Image
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-META = json.loads((ROOT / "data" / "basemap.json").read_text())
+META = json.loads((ROOT / "data" / "kallio" / "basemap.json").read_text())
 B = META["bounds"]
 Z, PX = META["z"], 256
 OUT = ROOT / "assets" / "satellite.jpg"

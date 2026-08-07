@@ -4,7 +4,7 @@
 The planner's pin coordinates were inferred by reading the organiser's stylised
 map against real street geometry. This tool puts those pins on the real street
 map as draggable markers, with the official map alongside for reference, and
-emits corrected coordinates to paste back into data/acts.json.
+emits corrected coordinates to paste back into data/kallio/acts.json.
 """
 
 import json
