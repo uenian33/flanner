@@ -2144,10 +2144,10 @@ def patch_nav(src: str) -> str:
         "          aria: ev.title + ', ' + day + ev.from + ' at ' + st.name\n"
         "            + (planned ? ', in your plan' : ''),\n"
         "          avatarClass: planned ? 'avatar avatar--on' : 'avatar',\n"
-        "          avatarStyle: { background: c.artBg, '--accent': c.art2 },\n"
+        "          avatarStyle: { background: c.qBg, '--accent': c.qInk },\n"
         "          artStyle: {\n"
-        "            '--art-bg': c.artBg, '--art-1': c.art1, '--art-2': c.art2,\n"
-        "            '--art-3': c.art3, '--art-ink': c.artInk\n"
+        "            '--art-bg': c.qBg, '--art-1': c.qTone, '--art-2': c.qInk,\n"
+        "            '--art-3': c.qTone, '--art-ink': c.qInk\n"
         "          },\n"
         "          onOpen: () => this.setState({ sheet: ev.id })\n"
         "        };\n"
@@ -2775,6 +2775,17 @@ ROLES = (
     # The line over the artwork. Light in both themes, because the hero is
     # dark in both: a 46% scrim sits over every artwork.
     ("hero",    (18, 95),              (30, 88)),
+    # The same drawing again, quiet. In the Lineup an act is a face in a row
+    # of faces, and M3 makes that a surface — a surface-variant ground with an
+    # on-surface-variant mark — not a picture. The hero's tones are drawn to
+    # be read through a 46% wash; a row of them on a card, at 72px and eight
+    # across, is eight full-chroma discs shouting over the names under them.
+    # These hold the stage's hue and drop the chroma to a tint: the ground a
+    # step off the card it sits on, the mark at a middle tone, which is the
+    # 4.5:1 M3 asks of a graphic against its own container.
+    ("qBg",     (10, 94),              (12, 24)),
+    ("qTone",   (16, 86),              (16, 34)),
+    ("qInk",    (26, 52),              (22, 66)),
 )
 
 # Roles that take their dark value in both themes: the five the artwork reads.
@@ -2889,8 +2900,9 @@ def theme_css(accent: str, design_css: str, *more: str) -> str:
     return ("/* %s's own hue — every tone the design chose, turned to it */\n"
             ":root:not([data-theme=\"dark\"]){%s}\n"
             "[data-theme=\"dark\"]{%s}\n"
-            ".fest{--hero-tint:%s}\n"
-            % (accent, turn(light), turn(dark), _turn("#CDEDA3", hue)))
+            ".fest{--hero-tint:%s;--hero-duo:%s}\n"
+            % (accent, turn(light), turn(dark),
+               _turn("#CDEDA3", hue), _turn("#4C662B", hue)))
 
 def stage_palette(n: int, hue: float = SEED_HUE) -> tuple[list[dict], str]:
     """Hues by the golden angle rather than in equal steps.
@@ -3641,6 +3653,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
     logo = ROOT / "assets" / f["logo"] if f.get("logo") else None
     if promo and promo.exists():
         hero_art = ('          <img class="hero__photo" src="%s" alt="">\n'
+                    '          <span class="hero__duo"></span>\n'
                     '          <span class="hero__scrim"></span>\n' % data_uri(promo))
     else:
         hero_art = ('          <svg class="hero__art" sc-camel-view-box="0 0 400 250"'
@@ -4896,7 +4909,7 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 }
 .fest .hero {
   position: relative; display: grid; align-content: end;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 10; isolation: isolate;
   border-radius: 20px; overflow: hidden; background: var(--art-bg);
 }
 /* The festival says what it is the way an act does: the card's own hero,
@@ -4937,15 +4950,27 @@ FEST_CSS = """/* ---------- the festival, compact ---------- */
 .fest .hero__where svg { flex: none; inline-size: 17px; block-size: 17px; fill: currentColor; }
 .fest .hero__where-go { opacity: .8; }
 .fest .hero__art { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; }
+/* A photograph arrives in whatever colours the festival's photographer found,
+   and a poster arrives in whatever colours it was printed in — neither is the
+   app's. So the picture is taken to luminance and the festival's own hue is
+   blended back over it: `color` takes hue and chroma from the layer above and
+   lightness from the picture below, which is a duotone in the colour the rest
+   of the page is drawn in. The picture keeps its shapes and gives up its
+   palette. The two layers isolate, so nothing under the hero blends with them. */
 .fest .hero__photo {
   position: absolute; inset: 0; inline-size: 100%; block-size: 100%;
   object-fit: cover; display: block;
+  filter: grayscale(1) contrast(1.05);
+}
+.fest .hero__duo {
+  position: absolute; inset: 0; pointer-events: none;
+  background: var(--hero-duo,#4C662B); mix-blend-mode: color;
 }
 /* Only where the mark stands: the picture keeps its own light everywhere
    else, and a scrim over all of it would read as a dimmed photograph
    rather than as a surface something is written on. */
 .fest .hero__scrim {
-  position: absolute; inset: 0; pointer-events: none; background: rgb(0 0 0 / .46);
+  position: absolute; inset: 0; pointer-events: none; background: rgb(0 0 0 / .52);
 }
 /* the card system's notch, cutting into the page rather than a card */
 .fest .notch {
