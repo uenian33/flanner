@@ -12,7 +12,10 @@
      used to be; none of them is new to the site. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'inline-speculation-rules' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.basemaps.cartocdn.com https://server.arcgisonline.com; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com; frame-src https://open.spotify.com https://www.youtube-nocookie.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- The planner's own viewport, word for word. A phone opens this page as
+     an app rather than as a document: it does not zoom, and the two pages
+     of the site behave the same way under a thumb. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
@@ -646,7 +649,7 @@ button,a[href],[role=button],input,select{min-height:0}
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
+html{touch-action:manipulation;-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-x:clip}
 body{margin:0;background:var(--md-sys-color-surface);color:var(--md-sys-color-on-surface);
   font:var(--md-sys-typescale-body-medium-size)/var(--md-sys-typescale-body-medium-line-height) var(--sans);
   letter-spacing:var(--md-sys-typescale-body-medium-tracking);
@@ -3681,6 +3684,39 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 }
 </style>
 </head>
+<script>
+/* ── no pinch on a touch screen ─────────────────────────
+   The same block the planners run — `NO_ZOOM_JS` in `build_planner.py` — kept
+   here rather than shared, because the two files are built by two scripts and
+   this one is three listeners. If it changes there it changes here.
+
+   Safari has ignored `user-scalable=no` since iOS 10 and listens to its own
+   gesture events instead, so the tag above is not enough on the phone this is
+   mostly read on. Coarse pointers only: a desktop keeps its zoom, which is
+   how someone reads this page at 200%. */
+(function () {
+  if (!window.matchMedia || !matchMedia('(pointer: coarse)').matches) return;
+  /* Leaflet does its own two-finger zoom, on the one element that should
+     have one — a planner opens inside this page on a phone. */
+  var onMap = function (e) {
+    var t = e.target;
+    return !!(t && t.closest && t.closest('.leaflet-container'));
+  };
+  var stop = function (e) {
+    if (onMap(e)) return;
+    if (e.cancelable) e.preventDefault();
+  };
+  /* Safari's own pinch events, which is what it listens to instead of the
+     viewport tag. */
+  document.addEventListener('gesturestart', stop, { passive: false });
+  document.addEventListener('gesturechange', stop, { passive: false });
+  document.addEventListener('gestureend', stop, { passive: false });
+  /* Everywhere else: a touch that has become two fingers is a pinch. */
+  document.addEventListener('touchmove', function (e) {
+    if (e.touches && e.touches.length > 1) stop(e);
+  }, { passive: false });
+})();
+</script>
 <body id="top" class="fx-shell">
 
 <!-- Every id here is prefixed h-. On a phone a planner is mounted into this
