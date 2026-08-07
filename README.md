@@ -42,10 +42,40 @@ rail from 600 up, and below that the same four-cell bar, whose last cell opens
 the rail as a 280px drawer — the mark and the name at its head, the same three
 destinations, a hairline, then the utilities as labelled rows. It is one
 element throughout, so the destinations and the utilities in the panel are the
-buttons from the bar with the handlers they already had. The colours are the
-planners' colours: `m3color` is seeded with their primary, and `--glass*` in
-`_tokens.css` names surface-container and secondary-container rather than
-tints of its own.
+buttons from the bar with the handlers they already had. Below 600 the bar is
+the planner's bar measured off it rather than described a second time: 16px of
+air under it, `min(94vw, 430px)` wide, 64 tall on the extra-large corner with
+6 of padding, the card tone at 88% behind `blur(14px) saturate(1.4)`, a
+hairline of outline-variant at 60%, and a 54×30 indicator on a 16px corner
+behind the icon of the cell you are on. It states the same two heights, 64 and
+48, and minimises the same way — the label's box collapses and the icon takes
+the middle. The planner's is the same capsule less 72px, which is where its
+back button stands; this page is where back goes, so that width is a fourth
+destination instead.
+
+And it is the one page on the site with no colour of its own. Every planner is
+themed from its festival's own hue, so a list of them cannot be: a shell in
+some third colour would be advertising a hue that belongs to nothing on it,
+and each planner's would arrive as a clash rather than as the festival's. So
+`build_home.py` asks `m3color` for Material's **monochrome** variant — the
+scheme variant that sets all five palettes to chroma 0 and re-tones the
+accents, primary to the ends of the ramp and its container in to 25/85, whose
+numbers are the `isMonochrome()` branches of material-color-utilities. What
+colour is left on the page belongs to the festivals: their photographs and
+their wordmarks, and nothing else. The mark goes with it — `--mark-ink` is
+primary here, which is tone 0 on paper and tone 100 in the dark, where the
+planners keep the brand's green because there the mark is the one thing on
+the page that is not the festival's.
+
+Two things followed from taking the hue out. The card was five tonal palettes,
+one per category, written as light-only hexes — so a pale pink card burned a
+hole in the dark page. It is one theme now and every value in it is a role, so
+it follows the theme and stands in step with the chrome around it; the
+category is still on the chip in words and still drawn as its own motif behind
+it, which is what was carrying the meaning alongside the colour. And the
+calendar's five category colours are one tonal bar with a filled one for what
+is in your plan, so the legend that keyed those five is down to the sentence
+that explains that — five identical grey swatches would be a key to nothing.
 
 The two planners are one design, held in `scripts/planner.artifact.html`
 exactly as it was exported: a template with `{{ }}` bindings, the component
