@@ -4542,6 +4542,12 @@ function flyToPlan(host) {
   const cell = planCell();
   const target = planMark(cell);
   if (!target) return;
+  /* A phone only, which is where the bar is. Above its width the plan lives
+     in the rail down the side of the page: a copy crossing a wide page to a
+     column that never left view is travel for its own sake, and the count
+     going up on a cell already on screen says it without the journey. So the
+     test is which cell is showing rather than a width written down here. */
+  if (!cell.closest('.dock')) return;
   const ghost = planGhost(host);
   if (!ghost) return;
   const from = ghost.getBoundingClientRect(), to = target.getBoundingClientRect();
