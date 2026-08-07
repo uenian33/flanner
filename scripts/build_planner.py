@@ -1316,9 +1316,12 @@ SHEET_JS = """
        the sheet, wherever the sheet happens to be scrolled to. Anywhere else
        the old rule holds — a drag from the top of the content dismisses, one
        from the middle of it scrolls. */
+    /* The handle first, because it is the one that is always there: the
+       picture scrolls away and it does not. */
     this.onSheetDown = (e) => {
       if (e.button != null && e.button !== 0) return;
-      const grip = !!(e.target && e.target.closest && e.target.closest('.ac__hero'));
+      const t = e.target;
+      const grip = !!(t && t.closest && (t.closest('.ac__grip') || t.closest('.ac__hero')));
       this.drag = { y: e.clientY, t: performance.now(), on: false,
                     top: grip || atTop(), grip: grip, dy: 0 };
     };
@@ -1361,6 +1364,17 @@ SHEET_JS = """
         scrim.style.opacity = '1';
       }
     };
+    /* Whether the handle is over the picture or over the paper, which is
+       what decides its colour. Passive and coalesced into a frame: it writes
+       one class, and it must not be in the way of the scroll it is watching. */
+    this.onSheetScroll = () => {
+      if (this.sheetScrollRaf) return;
+      this.sheetScrollRaf = requestAnimationFrame(() => {
+        this.sheetScrollRaf = 0;
+        if (this.sheetEl) this.sheetEl.classList.toggle('is-scrolled', this.sheetEl.scrollTop > 8);
+      });
+    };
+    el.addEventListener('scroll', this.onSheetScroll, { passive: true });
     el.addEventListener('pointerdown', this.onSheetDown);
     el.addEventListener('pointermove', this.onSheetMove, { passive: false });
     el.addEventListener('pointerup', this.onSheetUp);
@@ -1639,6 +1653,7 @@ SHEET_JS = """
     el.removeEventListener('pointermove', this.onSheetMove);
     el.removeEventListener('pointerup', this.onSheetUp);
     el.removeEventListener('pointercancel', this.onSheetUp);
+    if (this.onSheetScroll) el.removeEventListener('scroll', this.onSheetScroll);
     this.drag = null;
   }
 """
@@ -5071,12 +5086,12 @@ def patch_template(tpl: str, fest: Festival) -> str:
 # pointer device is left entirely alone — browser zoom there is untouched.
 CARD_HTML = """    <div class="ac-host" style="{{ sheetHostStyle }}">
     <article class="{{ sheet.cardClass }}" role="dialog" aria-modal="true" aria-label="{{ sheet.title }}" style="{{ sheetStyle }}" ref="{{ sheetRef }}">
+      <div class="ac__grip" aria-hidden="true"><div class="ac__grab"></div></div>
       <div class="ac__hero">
         <svg class="ac__art" sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img" aria-label="{{ sheet.artLabel }}">
           <use href="#i-art"></use><use class="motif" href="{{ sheet.motif }}"></use>
         </svg>
         <div class="ac__scrim" aria-hidden="true"></div>
-        <div class="ac__grab" aria-hidden="true"></div>
         <div class="ac__tools">
           <button class="ac__tool" type="button" sc-camel-on-click="{{ closeSheet }}" aria-label="Close">
             <svg sc-camel-view-box="0 0 24 24" aria-hidden="true" style="fill:currentColor"><use href="#i-close"></use></svg>
@@ -5661,18 +5676,47 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
      sheet for a gesture to fall through to. */
   body.fp-sheet{overflow:hidden;overscroll-behavior:none}
   /* M3's drag handle: 32×4, on the surface it sits on at 40%. The hero is
-     dark under both themes, so it is drawn in white. */
+     dark under both themes, so it is drawn in white over it.
+
+     It is the sheet's own top edge, not the picture's. It used to sit inside
+     the hero, and the hero is part of the scroll — so the moment a card was
+     scrolled far enough to be worth scrolling, the handle went off the top
+     with it and took the only place a dismiss could start. The rest of the
+     sheet is `touch-action: pan-y`, which hands a vertical drag to the
+     scroller before a pointermove ever reaches us, so a scrolled card could
+     not be swiped away at all. Sticky at the top of the scroller, it is where
+     M3 says it is: always on the sheet's leading edge, always the affordance
+     for the gesture.
+
+     It floats: 28 tall for a comfortable target, pulled back out of the flow
+     by the same 28 so the picture still runs to the sheet's top edge and the
+     card looks as it did. */
+  .ac__grip{
+    position:sticky;inset-block-start:0;z-index:4;
+    display:grid;place-items:center;
+    block-size:28px;margin-block-end:-28px;touch-action:none}
   .ac__grab{
-    position:absolute;inset-block-start:8px;inset-inline-start:50%;
-    transform:translateX(-50%);z-index:3;inline-size:32px;block-size:4px;
-    border-radius:2px;background:rgb(255 255 255 / .4);pointer-events:none}
-  /* The picture is the sheet's grip, so it takes the gesture rather than
-     passing it to the scroll: without this the browser starts scrolling the
-     sheet on the first pixel and the drag never gets its chance. */
+    position:relative;z-index:1;inline-size:32px;block-size:4px;
+    border-radius:2px;background:rgb(255 255 255 / .4);pointer-events:none;
+    transition:background var(--md-sys-motion-spring-fast-effects,150ms ease)}
+  /* Once the picture has gone under it the handle is over the card's own
+     paper, where white on white is nothing. The strip fades its surface in
+     behind itself and the handle takes the ink of what it now sits on. */
+  .ac__grip::before{
+    content:"";position:absolute;inset-block-start:0;inset-inline:0;block-size:44px;
+    background:linear-gradient(var(--card,#F2F0EB) 42%,transparent);
+    opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects,200ms ease)}
+  .ac.is-scrolled .ac__grip::before{opacity:1}
+  .ac.is-scrolled .ac__grab{background:color-mix(in srgb,var(--on,#191D13) 38%,transparent)}
+  /* The picture is a grip too, so a drag that starts on it moves the sheet
+     rather than passing it to the scroll: without this the browser starts
+     scrolling on the first pixel and the drag never gets its chance. */
   .ac__hero{touch-action:none}
   .ac__hero{padding-block-start:64px}
 }
-@media (min-width:640px){ .ac__grab{display:none} }
+/* Above the phone the card is a dialog in the middle of the screen, not a
+   sheet standing on the bottom edge, and there is nothing to drag it towards. */
+@media (min-width:640px){ .ac__grip{display:none} }
 @media (prefers-reduced-motion:reduce){
   [data-fp-shell]{transition:none}
 }

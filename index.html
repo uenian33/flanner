@@ -1453,9 +1453,14 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 
      It crosses on the planners' own swap: opacity out over 180ms on the
      accelerate, the arriving name rising 6px into place over 280 on the
-     emphasised decelerate. Same signal as the search beside it, `at-cards`,
-     which is on while the Festivals cell is the one the page is under — so
-     the name and the field arrive together and leave together. */
+     emphasised decelerate.
+
+     It arrives when the heading itself has gone under the bar and not before,
+     which is the rule a planner's bar follows with the festival's name. It
+     used to follow `at-cards` — on while the Festivals cell is the one the
+     page is under — and that turns on as soon as the list owns the middle of
+     the screen, with the heading still in plain sight above it: the page said
+     the same words twice, once in the bar and once under it. */
   .mtitle{display:block;flex:1 1 auto;min-width:0;margin:0;
     font-size:17px;line-height:24px;font-weight:600;letter-spacing:-.014em;
     color:var(--md-sys-color-on-surface);
@@ -1463,7 +1468,7 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
     opacity:0;transform:translateY(6px);pointer-events:none;
     transition:opacity .18s cubic-bezier(.3,0,.8,.15),
                transform .28s cubic-bezier(.05,.7,.1,1)}
-  body.at-cards .mtitle{opacity:1;transform:none}
+  body.title-up .mtitle{opacity:1;transform:none}
   @media(prefers-reduced-motion:reduce){
     .mtitle{transition:none;transform:none}
   }
@@ -5651,7 +5656,12 @@ function apply() {
   /* What the list is a list of. The heading is the page's own title for it —
      there is no other on this page at any width — and the empty line has to
      say which of the two nothing-found it is. */
-  $('#all-festivals-headline').textContent = planOnly ? 'My Plans' : 'All Festivals';
+  const listName = planOnly ? 'My Plans' : 'All Festivals';
+  $('#all-festivals-headline').textContent = listName;
+  /* The bar carries the same words when it carries this section's name at
+     all — which of the page's headings it is showing is decided in one place,
+     and switching between the two lists has to reach it. */
+  if (window.syncBarTitle) window.syncBarTitle();
   $('#empty').textContent = planOnly
     ? (Plan.size() ? 'Nothing in your plan matches that filter.'
                    : 'Nothing in your plan yet — star a festival to put it here.')
@@ -5860,6 +5870,41 @@ document.addEventListener('keydown', e => {
      the cell the observer activates over the list, so it is the one to
      watch — the old rail watched a cell nothing ever activated, which is why
      scrolling down to the festivals left the search behind. */
+  /* The bar takes a section's name once that section's heading has gone under
+     it, and gives it back when the heading comes out again — the rule a
+     planner's bar follows with the festival's name. Both headings are in the
+     list, in the order they appear on the page, and the last one that has
+     passed under the bar is the one the bar says: scrolling from the highlight
+     into the festivals hands the name over rather than clearing it.
+
+     Read on scroll rather than watched with an observer, because the answer is
+     which of several is lowest past the line — one ordered pass over two rects
+     says that directly, where two observers would each know only their own and
+     have to be reconciled. A heading in a section that is not on the page does
+     not count: with the plan showing, the highlight is display:none.
+
+     `--headh` is the masthead's own measured height, published by readStuck,
+     so "under the bar" means under it rather than off the top of the screen. */
+  const mt = $('#mtitle');
+  const TITLE_SPOTS = ['.highlights__headline', '#all-festivals-headline'];
+  const syncBarTitle = () => {
+    if (!mt) return;
+    const h = parseFloat(getComputedStyle(document.documentElement)
+      .getPropertyValue('--headh')) || 52;
+    let name = '';
+    TITLE_SPOTS.forEach(sel => {
+      const el = document.querySelector(sel);
+      if (!el || !el.offsetParent) return;
+      if (el.getBoundingClientRect().top < h) name = el.textContent.trim();
+    });
+    document.body.classList.toggle('title-up', !!name);
+    if (name && mt.textContent !== name) mt.textContent = name;
+  };
+  window.syncBarTitle = syncBarTitle;
+  addEventListener('scroll', syncBarTitle, {passive: true});
+  addEventListener('resize', syncBarTitle, {passive: true});
+  syncBarTitle();
+
   const atCards = on => document.body.classList.toggle('at-cards', on);
   const cardsTabs = ['#nFest'].map($).filter(Boolean);
   const syncCards = () => atCards(cardsTabs.some(t => t.classList.contains('on')));
