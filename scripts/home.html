@@ -305,7 +305,7 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   font-weight:var(--md-sys-typescale-title-weight);
   color:var(--md-sys-color-on-surface)}
 .tools .drop > button:hover{background:var(--md-sys-color-surface-container-high)}
-.tools .vseg{background:var(--md-sys-color-surface-container);border:0;
+.tools .vseg{--vpad:4px;background:var(--md-sys-color-surface-container);border:0;box-shadow:none;
   border-radius:var(--md-sys-shape-corner-full);padding:4px}
 .tools .sbox input{background:var(--md-sys-color-surface-container);border:0;
   height:48px;border-radius:var(--md-sys-shape-corner-full)}
@@ -970,7 +970,12 @@ __NAV_CSS__
 /* ── card size switcher ────────────────────────────────
    Same height and radius as the two filter triggers so the three read as one
    set of controls rather than a control and a widget. */
-.vseg{display:flex;flex:none;gap:3px;padding:3px;border:1px solid var(--md-sys-color-outline);
+/* The ring is an inset shadow rather than a border, so the box the indicator
+   measures against and the box the cells sit in are the same one. With a
+   border they differ by its two pixels, and a percentage width drifts the
+   disc a pixel further off the icon at every slot. */
+.vseg{position:relative;display:flex;flex:none;gap:0;padding:3px;border:0;
+  box-shadow:inset 0 0 0 1px var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);background:var(--md-sys-color-surface-container-lowest)}
 .vseg button{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;
   border-radius:var(--shape,var(--md-sys-shape-corner-full));--shape-pressed:var(--md-sys-shape-corner-pressed-m);--shape-selected:var(--md-sys-shape-corner-full);transition:border-radius var(--md-sys-motion-spring-fast-spatial);font-size:var(--f-sub);font-weight:var(--md-sys-typescale-emphasized-label-weight);color:var(--md-sys-color-on-surface-variant);
@@ -988,11 +993,28 @@ __NAV_CSS__
 /* Square buttons, so the pressed state has to be a disc — a pill on a 44x42
    box reads as a squashed circle. */
 .vseg button[aria-pressed=true]{background:none;color:var(--md-sys-color-surface)}
-.vseg button::before{content:"";position:absolute;left:0;right:0;top:50%;
-  transform:translateY(-50%);aspect-ratio:1;border-radius:50%;
-  background:transparent;transition:background var(--md-sys-motion-spring-fast-effects)}
-.vseg button[aria-pressed=true]::before{background:var(--md-sys-color-on-surface)}
+/* One indicator, spanning a whole cell so the index move is a transform of
+   its own width — no measuring and no resize listener — and drawing only the
+   disc inside it, centred, because a 44x42 cell filled is a squashed circle.
+   It travels on the emphasised spatial spring, which is the one that
+   overshoots: the disc arrives, settles back, and the eye follows it from the
+   shape it left rather than finding it already there. */
+.vseg__pill{position:absolute;z-index:0;top:var(--vpad,3px);bottom:var(--vpad,3px);left:var(--vpad,3px);
+  width:calc((100% - 2 * var(--vpad,3px)) / var(--vn,2));
+  transform:translateX(calc(var(--vi,0) * 100%));
+  transition:transform var(--md-sys-motion-spring-default-spatial),
+             opacity var(--md-sys-motion-spring-fast-effects);
+  pointer-events:none}
+.vseg__pill::after{content:"";position:absolute;top:50%;left:50%;
+  block-size:100%;aspect-ratio:1;transform:translate(-50%,-50%);
+  border-radius:50%;background:var(--md-sys-color-on-surface)}
+/* Neither shape is in force while the month is showing, so the disc is not
+   sitting on one of them saying otherwise. */
+.vseg[data-off] .vseg__pill{opacity:0}
 .vseg button svg.i{position:relative;z-index:1}
+/* The month control takes the same filled state as a chosen shape. */
+.trig[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
+.trig[aria-pressed=true] svg.i{color:var(--md-sys-color-surface)}
 @media(min-width:600px){
   /* The bar wrapped, which put the switcher on a second row underneath. */
   .tools{flex-wrap:nowrap}
@@ -2632,9 +2654,13 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
   </div>
   <div class="dropset">
   <div class="drop">
-    <button class="trig st" id="whenTrig" aria-expanded="false" aria-controls="whenSheet">
-      <svg class="i"><use href="#h-i-cal"/></svg><span id="whenLabel">All</span>
-      <svg class="i cv"><use href="#h-i-down"/></svg></button>
+    <!-- The month. It used to drop a list of ranges; the calendar underneath
+         is the same question asked better — you pick the day off a grid that
+         also shows what is on it — so the control opens that instead of a
+         sheet, and the switcher beside it is down to the two shapes a list
+         can take. The label still says which range is in force. -->
+    <button class="trig st" id="whenTrig" aria-pressed="false" title="Calendar">
+      <svg class="i"><use href="#h-i-cal"/></svg><span id="whenLabel">All</span></button>
     <div class="sheet" id="whenSheet" hidden role="dialog" aria-label="Filter by date">
       <h4>Filter by date</h4>
       <div class="opts" id="whenOpts" role="radiogroup"></div>
@@ -2654,8 +2680,10 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
     </div>
   </div>
   <div class="vseg" id="viewSeg" role="group" aria-label="How to show festivals">
-    <button data-view="cal" aria-pressed="false" title="Calendar">
-      <svg class="i"><use href="#h-i-cal"/></svg><span class="lbl">Calendar</span></button>
+    <!-- The indicator is one element that travels, not a state on each button:
+         a disc that fades in where you pressed says the choice was made, a
+         disc that moves says which of the two it moved from. -->
+    <span class="vseg__pill" aria-hidden="true"></span>
     <button data-view="tile" aria-pressed="false" title="Compact">
       <svg class="i"><use href="#h-i-grid"/></svg><span class="lbl">Compact</span></button>
     <button data-view="full" aria-pressed="true" title="Detailed">
@@ -3787,8 +3815,10 @@ function apply() {
 }
 
 /* one open sheet at a time, and a click outside closes it */
-const sheets = [['#whenTrig', '#whenSheet'], ['#catTrig', '#catSheet'],
-                ['#locTrig', '#locSheet']];
+/* #whenSheet stays in the markup and keeps its options wired — the calendar
+   sets the same filter — but nothing opens it any more: its trigger shows the
+   calendar instead. */
+const sheets = [['#catTrig', '#catSheet'], ['#locTrig', '#locSheet']];
 function openSheet(which) {
   sheets.forEach(([t, sh]) => {
     const on = sh === which;
@@ -4029,8 +4059,16 @@ document.addEventListener('keydown', e => {
       g.classList.toggle('list', rows);
       g.classList.toggle('tile', !rows && v !== 'full');
     });
-    seg.querySelectorAll('[data-view]').forEach(b =>
-      b.setAttribute('aria-pressed', b.dataset.view === v));
+    const shapes = [...seg.querySelectorAll('[data-view]')];
+    shapes.forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v));
+    /* The indicator is told how many slots there are and which one is live;
+       with the month showing there is no live shape, so it stands down and
+       keeps the index it had, which is where it comes back to. */
+    const at = shapes.findIndex(b => b.dataset.view === v);
+    seg.style.setProperty('--vn', shapes.length);
+    if (at >= 0) seg.style.setProperty('--vi', at);
+    seg.toggleAttribute('data-off', at < 0);
+    $('#whenTrig').setAttribute('aria-pressed', v === 'cal');
     if (remember) Store.set('view', v);
     /* What is shown depends on the view — the calendar leaves out the
        festivals that have been — so the filters are asked again on every
@@ -4041,6 +4079,17 @@ document.addEventListener('keydown', e => {
 
   seg.querySelectorAll('[data-view]').forEach(b =>
     b.onclick = () => { chosen = b.dataset.view; paintView(chosen, true); });
+  /* The month is the third destination for the list, it just does not live in
+     the switcher: pressing it shows the calendar, pressing it again goes back
+     to whichever shape was last chosen. */
+  $('#whenTrig').onclick = (e) => {
+    e.stopPropagation();
+    const back = [...seg.querySelectorAll('[data-view]')]
+      .find(b => b.dataset.view === chosen && chosen !== 'cal');
+    chosen = document.body.dataset.view === 'cal'
+      ? (back ? back.dataset.view : fallback()) : 'cal';
+    paintView(chosen, true);
+  };
   /* No stored choice yet: a phone gets the compact grid, where two tiles per
      row beat one tall card, and a pointer device gets the detailed cards it
      has the width for. Until someone picks a shape, the default keeps
