@@ -1100,28 +1100,56 @@ md-filled-button span[slot=icon] svg,md-outlined-button span[slot=icon] svg{
   line-height:1.15;
   letter-spacing:-.02em;
 }
+/* The whole card is the way in, as the list's rows already are: the title
+   carries the destination so a keyboard has the same target a pointer does,
+   and the link is stretched over the card. It sits under the actions rather
+   than over them — they are later in the markup and raised — so pressing one
+   of the three does what it says instead of opening the planner. */
+.banner-card{position:relative;cursor:pointer}
+.banner-card__link{color:inherit;text-decoration:none}
+.banner-card__link::after{content:"";position:absolute;inset:0;
+  border-radius:inherit;z-index:0}
+.banner-card__actions{position:relative;z-index:1}
+.banner-card::before{content:"";position:absolute;inset:0;
+  border-radius:inherit;background:var(--on-surface);opacity:0;
+  transition:opacity .18s ease;pointer-events:none}
+.banner-card:has(.banner-card__link:hover)::before{opacity:.04}
+.banner-card:has(.banner-card__link:active)::before{opacity:.08}
+.banner-card:has(.banner-card__link:focus-visible){outline:3px solid var(--accent);
+  outline-offset:2px}
+@media(prefers-reduced-motion:reduce){
+  .banner-card::before{transition-duration:.01ms}
+}
 /* No measure of its own: the paragraph runs to the same edge the actions row
    below it finishes on, so the panel reads as one column rather than as a
    short block of text with a button floating off to the right of it. */
+/* The planner's About card, value for value: `.fest .about__text` for the
+   sentence and `.fest .about__facts li` for the line under it. 13px at 1.45
+   on the variant ink is the one size that page writes a sentence or a fact
+   in, and this card is the same card on a different page — it was setting a
+   15 and a 14.5 of its own, so the two read as two products. The pin comes
+   with them at the 16px the facts row draws its own marks at. */
 .banner-card__supporting{
   margin:14px 0 0;
   color:var(--on-surface-var);
-  font-size:15px;
-  line-height:1.6;
+  font-size:13px;
+  line-height:1.45;
+  text-wrap:pretty;
 }
 .banner-card__place{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
   margin:18px 0 0;
-  color:var(--on-surface);
-  font-size:14.5px;
-  font-weight:500;
+  color:var(--on-surface-var);
+  font-size:13px;
+  line-height:1.45;
+  font-weight:400;
 }
 .banner-card__place svg{
   flex:none;
-  inline-size:20px;block-size:20px;
-  fill:var(--on-surface-var);
+  inline-size:16px;block-size:16px;
+  fill:currentColor;
 }
 
 .banner-card__actions{
@@ -4448,7 +4476,9 @@ if (reel.length) {
   $('#carousel-track').innerHTML = reel.map((f, i) => `
     <li class="carousel__slide" role="group" aria-roledescription="slide"
         aria-label="Event ${i + 1} of ${reel.length}">
-      <article class="banner-card" data-id="${esc(f.id)}" data-cat="${esc(catOf(f).id)}">
+      <article class="banner-card" data-id="${esc(f.id)}" data-cat="${esc(catOf(f).id)}"${
+               f.planner ? ` data-planner="${esc(f.planner)}"`
+                         : ` data-away="${esc(f.tickets || f.official)}"`}>
         <div class="banner-card__media">
           ${cardArt(f, 'banner-card__art')}
           <div class="banner-card__notch">
@@ -4460,7 +4490,10 @@ if (reel.length) {
           <p class="banner-card__date">
             <time datetime="${esc(f.start)}">${esc(f.dates)}</time>
           </p>
-          <h3 class="banner-card__title">${esc(f.name)}${f.year ? ' ' + esc(f.year) : ''}</h3>
+          <h3 class="banner-card__title"><a class="banner-card__link"
+            href="${esc(f.planner || f.tickets || f.official)}"${
+              f.planner ? '' : ' target="_blank" rel="noopener noreferrer"'
+            }>${esc(f.name)}${f.year ? ' ' + esc(f.year) : ''}</a></h3>
           <p class="banner-card__supporting">${esc(f.description)}</p>
           <p class="banner-card__place">
             <svg aria-hidden="true"><use href="#h-i-place"/></svg>
@@ -5638,11 +5671,20 @@ document.addEventListener('keydown', e => {
      Clicks that do land on the link are left to it — that is the first
      selector's job. Bound to the document, so the day the calendar has open is
      covered as well as the month groups. */
+  /* The highlight's card is the same target: one festival, said larger, with
+     the same three controls held out of it. It is dragged as well as pressed,
+     though — the track takes a swipe — so a press that travelled is a swipe
+     and not a tap, and only a tap opens anything. */
+  let downAt = null;
+  document.addEventListener('pointerdown', e => { downAt = {x: e.clientX, y: e.clientY}; },
+    {passive: true});
   document.addEventListener('click', e => {
-    if (!e.target.closest('.grid')) return;
+    if (!e.target.closest('.grid,#hero')) return;
     if (e.target.closest('a,button,.plan-toggle,.btn-group')) return;
-    const card = e.target.closest('.card[data-planner],.card[data-away]');
+    const card = e.target.closest(
+      '.card[data-planner],.card[data-away],.banner-card[data-planner],.banner-card[data-away]');
     if (!card) return;
+    if (downAt && Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 8) return;
     /* Ours opens in place; a festival we have not built a planner for opens
        its own site in a new tab, the way its link in the card does. */
     if (card.dataset.planner) location.href = card.dataset.planner;
