@@ -113,8 +113,12 @@ def main() -> None:
         "orientation": "any",
         "lang": "en",
         "dir": "ltr",
-        "background_color": "#f5f5f5",
-        "theme_color": "#f5f5f5",
+        # The installed app opens on the home page, and the home page's
+        # surface is tone 100 on the monochrome scheme — the same value its
+        # own theme-color meta carries, so the title bar and the page are one
+        # colour rather than a tone apart.
+        "background_color": "#ffffff",
+        "theme_color": "#ffffff",
         "categories": ["music", "entertainment", "travel"],
         "icons": [
             {"src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
