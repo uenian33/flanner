@@ -564,7 +564,7 @@ def patch_script(src: str, fest: Festival) -> str:
         "        background: 'var(--scrim,rgba(20,24,14,.32))',\n"
         "        animation: 'fp-fade .18s cubic-bezier(.2,0,0,1)'\n"
         "      },\n"
-        "      sheetBodyStyle: tight ? { overflowY: 'auto', minHeight: 0 } : null,\n"
+        "      sheetBodyStyle: tight ? { minHeight: 0 } : null,\n"
         "      /* On a phone the row rides at the foot of the scroll, over the\n"
         "         card's own surface and clear of the home indicator. Every\n"
         "         other thing about it — its layout, its rule, its buttons — is\n"
@@ -1229,12 +1229,23 @@ SHEET_JS = """
   sheetDragOnBottom() {
     const el = this.sheetEl, scrim = this.sheetScrimEl();
     const atTop = () => {
-      const b = this.sheetBodyEl;
+      /* The sheet is the scroller now, not the block under its picture. */
+      const b = this.sheetEl || this.sheetBodyEl;
       return !b || b.scrollTop <= 0;
     };
+    /* M3's rule for a sheet with something scrollable in it: the handle and
+       the header move the sheet, the content scrolls itself. The player is a
+       cross-origin frame with its own track list — a finger on it belongs to
+       it, and no gesture of ours can or should take it back. So the picture
+       above it is the sheet's own grip: a drag that starts there always moves
+       the sheet, wherever the sheet happens to be scrolled to. Anywhere else
+       the old rule holds — a drag from the top of the content dismisses, one
+       from the middle of it scrolls. */
     this.onSheetDown = (e) => {
       if (e.button != null && e.button !== 0) return;
-      this.drag = { y: e.clientY, t: performance.now(), on: false, top: atTop(), dy: 0 };
+      const grip = !!(e.target && e.target.closest && e.target.closest('.ac__hero'));
+      this.drag = { y: e.clientY, t: performance.now(), on: false,
+                    top: grip || atTop(), grip: grip, dy: 0 };
     };
     this.onSheetMove = (e) => {
       const d = this.drag;
@@ -1242,8 +1253,9 @@ SHEET_JS = """
       const dy = e.clientY - d.y;
       if (!d.on) {
         if (dy < 6) { if (dy < -4) this.drag = null; return; }
-        /* The card may have been scrolled between the press and the move. */
-        if (!d.top || !atTop()) { this.drag = null; return; }
+        /* The card may have been scrolled between the press and the move —
+           unless the grip is what was pressed, which is always the sheet's. */
+        if (!d.top || (!d.grip && !atTop())) { this.drag = null; return; }
         d.on = true;
         el.style.transition = 'none';
         if (el.setPointerCapture && e.pointerId != null) {
@@ -1548,8 +1560,16 @@ def patch_card(src: str) -> str:
         "  measureBio() {\n"
         "    const clip = this.bioClipEl;\n"
         "    if (!clip || !clip.firstElementChild) return;\n"
-        "    const full = clip.firstElementChild.scrollHeight;\n"
-        "    const fits = !this.state.bioOpen && full <= clip.clientHeight + 2;\n"
+        "    const p = clip.firstElementChild;\n"
+        "    const full = p.scrollHeight;\n"
+        "    /* Against three lines of the paragraph's own leading, not\n"
+        "       against the box: the box is what opens and closes, and\n"
+        "       measuring it during the 340ms it takes answers for a\n"
+        "       height it is halfway through leaving — which is how\n"
+        "       folding an introduction back up took its own button\n"
+        "       away with it. */\n"
+        "    const lh = parseFloat(getComputedStyle(p).lineHeight) || 23;\n"
+        "    const fits = full <= lh * 3 + 2;\n"
         "    if (this.state.bioFull !== full || this.state.bioFits !== fits) {\n"
         "      this.setState({ bioFull: full, bioFits: fits });\n"
         "    }\n"
@@ -1902,7 +1922,13 @@ def patch_sheet(src: str) -> str:
         "           keeps the page behind it in view. The card stays a grid —\n"
         "           its columns are decided by its own container queries and\n"
         "           nothing here may take that. */\n"
-        "        gridTemplateRows: 'auto minmax(0, 1fr)', overflow: 'hidden',\n"
+        "        /* One column and one scroll. The picture is the first of\n"
+        "           what an act has to say rather than a header standing\n"
+        "           over it, so it goes up with the words; and because the\n"
+        "           sheet is as tall as what is in it up to the height there\n"
+        "           is, a card with more to say opens taller and rises into\n"
+        "           place, while a short one never scrolls at all. */\n"
+        "        overflowY: 'auto', overscrollBehavior: 'contain',\n"
         "        width: '100%', height: 'auto',\n"
         "        maxHeight: 'calc(100dvh - var(--sheet-gap))',\n"
         "        borderRadius: '28px 28px 0 0',\n"
@@ -1941,7 +1967,7 @@ def patch_sheet(src: str) -> str:
     # top before it takes the gesture as a dismissal.
     src = sub_once(
         src,
-        r"      sheetBodyStyle: tight \? \{ overflowY: 'auto', minHeight: 0 \} : null,\n",
+        r"      sheetBodyStyle: tight \? \{ minHeight: 0 \} : null,\n",
         "      /* The reference's own wrapper: the size container lives here,\n"
         "         not on the card, or the card's own @container rules for .ac\n"
         "         could never match and every threshold would be out by its\n"
@@ -1956,7 +1982,7 @@ def patch_sheet(src: str) -> str:
         "        maxHeight: 'calc(100dvh - var(--sheet-gap))' } : null),\n"
         "      sheetRef: this.setSheetEl,\n"
         "      sheetBodyRef: (el) => { this.sheetBodyEl = el; },\n"
-        "      sheetBodyStyle: tight ? { overflowY: 'auto', minHeight: 0 } : null,\n",
+        "      sheetBodyStyle: tight ? { minHeight: 0 } : null,\n",
         "sheet refs")
     src = sub_once(
         src,
@@ -4570,7 +4596,11 @@ CARD_CSS = """/* The card's colour names in the light theme. The design declares
    4 · BIOGRAPHY — three lines, then on request
    ============================================================ */
 .bio { margin-block-start: 20px; }
-.bio__clip { overflow: hidden; max-block-size: calc(3 * 1.55em); transition: max-block-size 340ms var(--ease); }
+/* The introduction starts where the button under it starts: a text
+   button carries 12 of padding before its label and the paragraph
+   carried none, so the two stood a pad apart down the left. The clip
+   takes the 12; the button already has it. */
+.bio__clip { overflow: hidden; padding-inline-start: 12px; max-block-size: calc(3 * 1.55em); transition: max-block-size 340ms var(--ease); }
 .bio__text { margin: 0; font-size: 15px; line-height: 1.55; color: var(--on-var); }
 .bio__more {
   display: inline-flex; align-items: center; gap: 6px;
@@ -4807,12 +4837,20 @@ SHEET_CSS = """/* ---- modal bottom sheet, phone only ---- */
     transition:transform .44s cubic-bezier(.2,0,0,1),border-radius .44s cubic-bezier(.2,0,0,1)}
   body.fp-sheet [data-fp-shell]{
     transform:scale(.94) translateY(8px);border-radius:28px;overflow:clip}
+  /* Reading an act is the only thing happening: the page under the
+     sheet does not move, and there is no scroll of its own behind the
+     sheet for a gesture to fall through to. */
+  body.fp-sheet{overflow:hidden;overscroll-behavior:none}
   /* M3's drag handle: 32×4, on the surface it sits on at 40%. The hero is
      dark under both themes, so it is drawn in white. */
   .ac__grab{
     position:absolute;inset-block-start:8px;inset-inline-start:50%;
     transform:translateX(-50%);z-index:3;inline-size:32px;block-size:4px;
     border-radius:2px;background:rgb(255 255 255 / .4);pointer-events:none}
+  /* The picture is the sheet's grip, so it takes the gesture rather than
+     passing it to the scroll: without this the browser starts scrolling the
+     sheet on the first pixel and the drag never gets its chance. */
+  .ac__hero{touch-action:none}
   .ac__hero{padding-block-start:64px}
 }
 @media (min-width:640px){ .ac__grab{display:none} }
