@@ -1047,11 +1047,24 @@ SHEET_JS = """
        already marked loaded, so the wave that says it is loading never came. */
     if (!el) return;
     requestAnimationFrame(() => this.playSheetOpen());
-    const S = this.state;
-    if (S.embedReady || S.bioOpen || S.bioFits || S.playerOpen) {
-      this.setState({ embedReady: false, bioOpen: false, bioFits: false,
-        bioFull: 0, playerOpen: false });
-    }
+    /* Keyed to the card, not to the element: a cached frame reports itself
+       loaded in the same tick this runs, and a reset that fires afterwards
+       puts the indicator back over a player that is already there — which is
+       a wave that never stops. */
+    if (this.startedSheet === this.state.sheet) return;
+    this.startedSheet = this.state.sheet;
+    this.setState({ embedReady: false, embedDead: false, bioOpen: false,
+      bioFits: false, bioFull: 0, playerOpen: false });
+    /* And a deadline. Spotify is a third party behind a frame we cannot
+       inspect: if it has not answered in 35 seconds it is not going to, and
+       the card says there is no preview rather than waving forever. */
+    clearTimeout(this.embedTimer);
+    const card = this.state.sheet;
+    this.embedTimer = setTimeout(() => {
+      if (this.state.sheet === card && !this.state.embedReady) {
+        this.setState({ embedDead: true });
+      }
+    }, 35000);
   };
 
   /* The page behind steps back while a sheet is up — the class is on the body
@@ -1634,14 +1647,17 @@ def patch_card(src: str) -> str:
     src = sub_once(
         src,
         r"        hasPlayer: !!media, noPlayer: false,",
-        "        hasSources: srcKeys.length > 0, noSources: srcKeys.length === 0,\n"
+        "        /* A frame that never answers is the same to a reader as no\n"
+        "           frame at all — see the timer in setSheetEl. */\n"
+        "        hasSources: srcKeys.length > 0 && !S.embedDead,\n"
+        "        noSources: srcKeys.length === 0 || !!S.embedDead,\n"
         "        /* The player is the card Spotify draws — the row of cover,\n"
         "           name and play button that used to stand over it said the\n"
         "           same three things a second time, in our own hand. */\n"
         "        embedTitle: sev.title,\n"
         "        embedOpen: srcKeys.length > 0,\n"
         "        /* The indicator stands until the frame reports itself loaded. */\n"
-        "        embedLoading: srcKeys.length > 0 && !S.embedReady,\n"
+        "        embedLoading: srcKeys.length > 0 && !S.embedReady && !S.embedDead,\n"
         "        onEmbedLoad: () => this.setState({ embedReady: true }),\n"
         "        navLabel: 'Go to ' + st.name + ' on the map',\n"
         "        embedSrc: !playSrc ? ''\n"
