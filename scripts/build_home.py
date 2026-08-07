@@ -30,6 +30,11 @@ H = ROOT / "assets" / "home"
 LIB_ORDER = ("react-", "react-dom-", "leaflet-", "dc-runtime-")
 
 
+def sprite(html: str) -> str:
+    """Point a shared partial's glyph references at this page's own sprite."""
+    return html.replace('href="#i-', 'href="#h-i-')
+
+
 def shell_libs() -> list[str]:
     # The stem is followed by the hash and nothing else, so `react-` does not
     # also claim `react-dom-`.
@@ -90,8 +95,12 @@ def main():
         ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
-        ("__SETTINGS__", (ROOT / "scripts" / "_settings.html").read_text()),
-        ("__FOOTER__", (ROOT / "scripts" / "_footer.html").read_text()),
+        # The shared partials name the sprite the way every other page does.
+        # This page prefixes its own symbols, because on a phone it hosts a
+        # planner and an id is document-wide — so their references are moved
+        # with them, here rather than in the partials the other pages share.
+        ("__SETTINGS__", sprite((ROOT / "scripts" / "_settings.html").read_text())),
+        ("__FOOTER__", sprite((ROOT / "scripts" / "_footer.html").read_text())),
         ("__ROOT__", "./"),
         ("__NOTE__", NOTE),
         ("__CUR_PRIVACY__", ""), ("__CUR_TERMS__", ""), ("__CUR_ABOUT__", ""),
