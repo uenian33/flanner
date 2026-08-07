@@ -3603,6 +3603,23 @@ body[data-rows=on] #months{grid-template-columns:minmax(0,1fr);gap:12px}
 
 .empty{padding:40px 0;text-align:center;color:var(--md-sys-color-on-surface-variant);font-size:var(--f-body);
   line-height:var(--l-body)}
+.empty p{margin:0}
+/* M3's filled button, which is the page's own strongest: on the monochrome
+   scheme primary is tone 0, so this is ink on paper rather than a hue that
+   would belong to no festival on the page. It is the one action an empty
+   plan offers, so it takes the emphasis a single action is given. */
+.empty__go{display:inline-flex;align-items:center;justify-content:center;
+  margin-block-start:18px;min-block-size:40px;padding:0 24px;
+  border:0;border-radius:var(--md-sys-shape-corner-full);
+  background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);
+  font-family:inherit;font-size:var(--md-sys-typescale-label-large-size);
+  font-weight:var(--md-sys-typescale-emphasized-label-weight);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:filter var(--md-sys-motion-spring-fast-effects)}
+.empty__go:hover{filter:brightness(1.15)}
+.empty__go:active{filter:brightness(1.3)}
+.empty__go:focus-visible{outline:3px solid var(--md-sys-color-primary);outline-offset:2px}
+.empty__go[hidden]{display:none}
 
 /* ── footer ────────────────────────────────────────────
    Measured off festiplannr.com rather than eyeballed: four equal columns on a
@@ -4210,7 +4227,14 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 </div>
 
 <section class="months" id="months"></section>
-<p class="empty" id="empty" hidden>No festivals match that filter.</p>
+<div class="empty" id="empty" hidden>
+  <p id="emptyMsg">No festivals match that filter.</p>
+  <!-- The one thing to do from an empty plan, and it is the thing the message
+       just asked for. Shown only when the plan is empty — where a filter has
+       merely narrowed a plan that has something in it, the way out is to widen
+       the filter, not to leave. -->
+  <button class="empty__go" id="emptyGo" type="button" hidden>Browse all festivals</button>
+</div>
 
 <!-- The questions are a page of their own now, linked from the footer's Info
      column: they were a wall of text between the festivals and the end of the
@@ -4954,8 +4978,17 @@ if (reel.length) {
         {threshold: 0.35}).observe(carousel);
     }
 
+    /* The track's own easing, named because two places put it back: the drag
+       turns it off to follow the finger, and everything else has to restore
+       it. */
+    const SLIDE_EASE = 'transform .4s cubic-bezier(.2,0,0,1)';
+
     function show(next) {
       index = (next + slides.length) % slides.length;
+      /* A drag turns the easing off to follow the finger; whatever moves the
+         track afterwards — a dot, an arrow, a key, the timer — has to put it
+         back, or the card would jump rather than travel. */
+      track.style.transition = SLIDE_EASE;
       track.style.transform = `translateX(-${index * 100}%)`;
 
       hero.classList.remove(...THEMES);
@@ -4992,26 +5025,76 @@ if (reel.length) {
       dots[index].focus();
     });
 
-    /* Swipe. The redesign compares two clientX values and nothing else, which
-       is enough for a mouse drag and close to useless on a touch screen: a
-       finger that starts on the card and moves down is a page scroll, the
-       browser takes the gesture over and fires pointercancel, so pointerup
-       never arrives — and on the occasions it did, a slightly slanted scroll
-       counted as a swipe. So the vertical delta is measured too, the gesture
-       only counts when it is clearly horizontal, and a cancelled pointer drops
-       it. touch-action:pan-y in the stylesheet is the other half. */
-    let startX = null, startY = null;
-    const dropGesture = () => { startX = startY = null; };
-    track.addEventListener('pointerdown', (e) => { startX = e.clientX; startY = e.clientY; });
-    track.addEventListener('pointercancel', dropGesture);
-    track.addEventListener('pointerup', (e) => {
-      if (startX === null) return;
-      const dx = e.clientX - startX, dy = e.clientY - startY;
-      dropGesture();
-      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.6) {
-        show(index + (dx < 0 ? 1 : -1));
-      }
+    /* The card follows the finger. It used to compare two clientX values and,
+       on release, decide whether that had been a swipe — so nothing moved
+       until the finger was lifted and then a card slid on its own. What a
+       reader is doing when they drag is moving the thing they are touching,
+       and everything about whether it will go is in how far it has come.
+
+       So the track is offset by the distance travelled while the finger is
+       down, and on release it either carries on to the next card or falls
+       back to the one it left, whichever it is nearer — or whichever way it
+       was thrown, since a short fast flick is as clear an instruction as a
+       long slow drag.
+
+       The gesture only takes over once it is clearly sideways: a finger that
+       starts on the card and goes down is a page scroll, and taking that
+       would make the highlight a trap. Until then nothing is moved and
+       nothing is claimed. `touch-action: pan-y` in the stylesheet is the
+       other half of that — the browser keeps vertical, we take horizontal. */
+    let drag = null;
+
+    const offsetBy = (dx) => {
+      /* Past either end there is nothing to drag to, so it resists rather
+         than showing the blank beyond the last card. */
+      const atStart = index === 0 && dx > 0;
+      const atEnd = index === slides.length - 1 && dx < 0;
+      const moved = (atStart || atEnd) ? dx * .3 : dx;
+      track.style.transition = 'none';
+      track.style.transform =
+        'translateX(calc(' + (-index * 100) + '% + ' + moved.toFixed(1) + 'px))';
+    };
+    const settle = (to) => {
+      track.style.transition = SLIDE_EASE;
+      if (to === index) track.style.transform = 'translateX(' + (-index * 100) + '%)';
+      else show(to);
+    };
+
+    track.addEventListener('pointerdown', (e) => {
+      if (e.button != null && e.button !== 0) return;
+      drag = {x: e.clientX, y: e.clientY, t: performance.now(), on: false, dx: 0};
     });
+    track.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.on) {
+        /* Which way this is going, decided once. */
+        if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { drag = null; return; }
+        if (Math.abs(dx) < 8) return;
+        drag.on = true;
+        if (track.setPointerCapture) { try { track.setPointerCapture(e.pointerId); } catch (err) {} }
+      }
+      drag.dx = dx;
+      offsetBy(dx);
+    });
+    const release = (cancelled) => {
+      if (!drag) return;
+      const {dx, t} = drag;
+      const wasOn = drag.on;
+      drag = null;
+      if (!wasOn) return;
+      const w = track.getBoundingClientRect().width || 1;
+      const speed = Math.abs(dx) / Math.max(1, performance.now() - t);
+      /* A quarter of the card, or a flick quick enough to mean it — and a
+         flick still has to travel: at 500px a second a twitch of five pixels
+         qualifies on speed alone, and a twitch is not an instruction. */
+      const carries = !cancelled &&
+        (Math.abs(dx) > w * .25 || (speed > .5 && Math.abs(dx) > 24));
+      const step = carries ? (dx < 0 ? 1 : -1) : 0;
+      settle(Math.max(0, Math.min(slides.length - 1, index + step)));
+    };
+    track.addEventListener('pointerup', () => release(false));
+    track.addEventListener('pointercancel', () => release(true));
 
     show(0);
   })();
@@ -5831,10 +5914,13 @@ function apply() {
      all — which of the page's headings it is showing is decided in one place,
      and switching between the two lists has to reach it. */
   if (window.syncBarTitle) window.syncBarTitle();
-  $('#empty').textContent = planOnly
+  $('#emptyMsg').textContent = planOnly
     ? (Plan.size() ? 'Nothing in your plan matches that filter.'
                    : 'Nothing in your plan yet — star a festival to put it here.')
     : 'No festivals match that filter.';
+  /* The way out of an empty plan is the festivals; the way out of a filter
+     that found nothing is the filter. */
+  $('#emptyGo').hidden = !(planOnly && !Plan.size());
   /* The same invitation, pointed at whichever list is showing. */
   const cap = $('#endCap') && $('#endCap').querySelector('p');
   if (cap) cap.textContent = planOnly ? 'Add more to your plans' : 'More to be discovered';
@@ -6067,6 +6153,11 @@ document.addEventListener('keydown', e => {
     apply();
   };
   window.leavePlan = () => { if (planOnly) setPlan(false); };
+  /* The empty plan's one action is the Festivals destination, so it is that
+     destination pressed rather than a second route to the same place. */
+  const emptyGo = $('#emptyGo');
+  if (emptyGo) emptyGo.onclick = () => { const f = $('#nFest'); if (f) f.click(); };
+
   const planBtn = $('#nPlan');
   if (planBtn) {
     planBtn.removeAttribute('aria-disabled');
