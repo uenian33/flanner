@@ -1682,7 +1682,15 @@ a[x-apple-data-detectors] {
   border-radius: 24px; background: var(--card);
 }
 .fest .about h2 { margin: 0 0 10px; font-size: var(--title-size); font-weight: 650; line-height: 1.35; letter-spacing: -.01em; }
-.fest .about__clip { overflow: hidden; max-block-size: calc(3 * 1.45em); transition: max-block-size 340ms var(--ease); }
+/* Three lines, and three whole ones. The height is three of the paragraph's
+   line boxes — but `em` resolves against the box's own font-size, and the box
+   inherited the card's 15px while the paragraph is set at 13, so the window
+   was 65.25px over an 18.85px line: three lines and 46% of a fourth, sliced
+   through the middle of its letters. The size is restated here so `1.45em` is
+   the line it is counting. What decides whether there is a Read more at all
+   already measures the paragraph's own leading; this is the box catching up
+   with it. */
+.fest .about__clip { overflow: hidden; font-size: 13px; max-block-size: calc(3 * 1.45em); transition: max-block-size 340ms var(--ease); }
 /* The size the forecast writes its own line in, so the two cards under
    the festival read as one page rather than two. */
 .fest .about__text { margin: 0; font-size: 13px; line-height: 1.45; color: var(--on-var); text-wrap: pretty; }
@@ -3908,13 +3916,14 @@ class Component extends DCLogic {
        whole. A row does not: it is the width of the screen, and a
        thing that wide drawn through a 40px button is a curtain
        closing rather than an act being put somewhere, so what leaves
-       a row is the act — its picture and its name — in a box the
-       size of the picture. Both then take the same arc. */
+       a row is the row copied and cut at its controls: the picture
+       and what it says, and none of the buttons. Both take the same
+       arc from there. */
     const host = srcEl && srcEl.closest
       ? srcEl.closest('[role="button"]') : null;
     if (host && !this.state.star[id]) {
       if (host.closest('li')) {
-        const g = this.rowFlyGhost(host, ev && ev.title);
+        const g = this.rowFlyGhost(host);
         if (g) this.flyToPlan(host, g);
       } else {
         this.flyToPlan(host);
@@ -4598,32 +4607,41 @@ class Component extends DCLogic {
      the name, in the row's own container at the picture's height. Built here
      rather than cloned, because there is no one node in a row holding those
      two and only those two. */
-  rowFlyGhost(host, title) {
-    const art = host.querySelector('div');
-    if (!art) return null;
-    const ar = art.getBoundingClientRect();
-    if (!ar.width) return null;
-    const pad = 8, room = Math.max(120, Math.min(260, window.innerWidth - ar.left - 24));
-    const box = document.createElement('div');
-    box.setAttribute('aria-hidden', 'true');
-    box.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
-      + 'display:flex;align-items:center;gap:12px;padding:' + pad + 'px;'
-      + 'left:' + (ar.left - pad).toFixed(1) + 'px;'
-      + 'top:' + (ar.top - pad).toFixed(1) + 'px;'
-      + 'max-width:' + room.toFixed(1) + 'px;'
-      + 'border-radius:20px;background:var(--card,#F2F0EB);color:var(--on,#191D13);'
-      + 'overflow:hidden;transform-origin:50% 50%;will-change:transform,opacity;'
+  rowFlyGhost(host) {
+    const rb = host.getBoundingClientRect();
+    if (!rb.width) return null;
+    /* The row copied whole and then cut, rather than the picture and the name
+       laid out again beside each other. Laid out again they land somewhere
+       else: a row sets its name on the first of three lines and the copy
+       centred it against the picture, so the moment the copy appeared the
+       name dropped half its height. A clone at the row's own width has the
+       row's own layout by construction — every glyph on the pixel it was on —
+       and the cut is a window over it, at the edge where the trailing
+       controls begin. Those are what the copy leaves behind: the star is the
+       thing being pressed and the arrow goes nowhere. */
+    const kids = host.children;
+    const tail = kids.length ? kids[kids.length - 1].getBoundingClientRect() : null;
+    const cut = tail && tail.width ? Math.max(64, tail.left - rb.left - 4) : rb.width;
+    const wrap = document.createElement('div');
+    wrap.setAttribute('aria-hidden', 'true');
+    wrap.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
+      + 'left:' + rb.left.toFixed(1) + 'px;top:' + rb.top.toFixed(1) + 'px;'
+      + 'width:' + cut.toFixed(1) + 'px;height:' + rb.height.toFixed(1) + 'px;'
+      + 'border-radius:' + getComputedStyle(host).borderRadius + ';overflow:hidden;'
+      + 'transform-origin:50% 50%;will-change:transform,opacity;'
       + 'box-shadow:0 8px 24px rgba(20,24,14,.18)';
-    const pic = art.cloneNode(true);
-    pic.style.flex = '0 0 auto';
-    box.appendChild(pic);
-    const name = document.createElement('span');
-    name.textContent = title || '';
-    name.style.cssText = 'min-width:0;overflow:hidden;text-overflow:ellipsis;'
-      + 'white-space:nowrap;font-size:14px;font-weight:600;letter-spacing:-.01em';
-    box.appendChild(name);
-    document.body.appendChild(box);
-    return box;
+    const copy = host.cloneNode(true);
+    copy.removeAttribute('id');
+    copy.setAttribute('aria-hidden', 'true');
+    copy.style.position = 'absolute';
+    copy.style.margin = '0';
+    copy.style.left = '0';
+    copy.style.top = '0';
+    copy.style.width = rb.width.toFixed(1) + 'px';
+    copy.style.height = rb.height.toFixed(1) + 'px';
+    wrap.appendChild(copy);
+    document.body.appendChild(wrap);
+    return wrap;
   }
 
   flyToPlan(host, prebuilt) {
