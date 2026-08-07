@@ -2282,13 +2282,7 @@ def patch_nav(src: str) -> str:
         "      wxIcon: S.onlyPicks ? '#i-share' : (S.wx ? S.wx.icon : '#wi-cloudy'),",
         "the pill's glyph")
 
-    # ---- one bar height, and one name across the navigation ----
-    # The names are what let the page-to-page layer treat this bar and the
-    # home page's as one component: same name on both sides, so the browser
-    # morphs rather than replaces. The back button carries the second name
-    # because it exists on this side only and has to arrive somehow. The
-    # animations for both are in scripts/_pagefx.html.
-    #
+    # ---- one bar height, everywhere ----
     # The bar was 76 tall with its labels and 50 without, and the home page's
     # was 80: three heights for one component. M3's navigation bar is 80dp on
     # a handset, but this one floats over the page rather than sitting on its
@@ -2298,14 +2292,12 @@ def patch_nav(src: str) -> str:
     src = sub_once(
         src,
         r"      height: mini \? '50px' : '76px', padding: mini \? '5px' : '6px',",
-        "      height: mini ? '48px' : '64px', padding: mini ? '5px' : '6px',\n"
-        "      viewTransitionName: 'navbar',",
+        "      height: mini ? '48px' : '64px', padding: mini ? '5px' : '6px',",
         "bar height")
     src = sub_once(
         src,
         r"          left: clusterLeft, width: backW \+ 'px', height: \(mini \? 50 : 76\) \+ 'px',",
-        "          left: clusterLeft, width: backW + 'px', height: (mini ? 48 : 64) + 'px',\n"
-        "          viewTransitionName: 'navback',",
+        "          left: clusterLeft, width: backW + 'px', height: (mini ? 48 : 64) + 'px',",
         "back button height")
 
     # ---- a phone opens on Info ----
@@ -5787,11 +5779,21 @@ NAV_VT_CSS = """/* ---------- the bar carries across the navigation ----------
    the foot, and naming both would ask the browser to fly a column into a pill
    and present it as continuity.
 
-   The two selectors are the design's own, and both are festival-independent:
-   one nav labelled Main, one button back to the list. */
+   The selectors are the design's own, and all of them are
+   festival-independent: one nav labelled Main, and one button back to the
+   list — which names itself for what it does, so a reader who arrived from
+   the list sees `Go back` and one who arrived cold sees the mark and the
+   site's name. Both labels, or the transition would name the button in the
+   one case where there is nothing behind it to go back to.
+
+   The dash is written as itself rather than as a CSS escape: an escape eats
+   the space that terminates it, so `\2014 all` looks for `Flanner —all
+   festivals` and nothing on the page is called that. The document is UTF-8
+   and so is this file. */
 @media (max-width: 599.98px) {
   #dc-root nav[data-hide-scrollbar][aria-label="Main"] { view-transition-name: navbar; }
-  #dc-root button[aria-label="Flanner \\2014 all festivals"] { view-transition-name: navback; }
+  #dc-root button[aria-label="Go back"],
+  #dc-root button[aria-label="Flanner — all festivals"] { view-transition-name: navback; }
 }"""
 
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
