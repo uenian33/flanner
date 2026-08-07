@@ -6,7 +6,7 @@ rail on top. The markup, the styles and the data travel in the page; the font
 and the photographs are files the whole site shares, so opening a planner after
 this does not download either of them again.
 """
-import json, pathlib
+import json, pathlib, re
 from assets import ROOT
 import fontsub
 import m3color
@@ -23,6 +23,25 @@ NOTE = (
 
 OUT = ROOT / "index.html"
 H = ROOT / "assets" / "home"
+
+# React, ReactDOM, Leaflet, the runtime — in that order, because the runtime
+# needs React in the document before it compiles. The names carry a hash of
+# their contents, so they are found rather than written down.
+LIB_ORDER = ("react-", "react-dom-", "leaflet-", "dc-runtime-")
+
+
+def shell_libs() -> list[str]:
+    # The stem is followed by the hash and nothing else, so `react-` does not
+    # also claim `react-dom-`.
+    js = sorted((ROOT / "assets" / "js").glob("*.js"))
+    out = []
+    for stem in LIB_ORDER:
+        pat = re.compile(re.escape(stem) + r"[0-9a-f]+\.js$")
+        hit = [f for f in js if pat.match(f.name)]
+        if len(hit) != 1:
+            raise SystemExit(f"assets/js: expected one {stem}<hash>.js, found {len(hit)}")
+        out.append(f"./assets/js/{hit[0].name}")
+    return out
 
 def main():
     # Validated and normalised before anything is rendered — see schema.py.
@@ -79,6 +98,12 @@ def main():
         ("__CUR_FAQ__", ""),
         ("__OFFLINE__", (ROOT / "scripts" / "_offline.html").read_text()),
         ("__SETTINGS_CSS__", (ROOT / "scripts" / "_settings.css").read_text()),
+        # The app shell — the dock, the screens and the router that swaps
+        # them without a document load. It names the four libraries a planner
+        # needs, which are content-hashed, so it reads them off disk in the
+        # order the runtime wants rather than repeating the names here.
+        ("__SHELL__", (ROOT / "scripts" / "_shell.html").read_text().replace(
+            "__LIBS__", json.dumps(shell_libs(), separators=(",", ":")))),
         ("__PAGEFX__", (ROOT / "scripts" / "_pagefx.html").read_text()),
         ("__MWC__", mwc.script()),
         ("__CONTACT__", cfg["site"]["contact"]),

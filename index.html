@@ -4,7 +4,13 @@
 <link rel="preload" href="./assets/font/robotoflex-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="./assets/font/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<!-- The union of this page's policy and a planner's, because on a phone a
+     planner is mounted into this document rather than fetched as one: the
+     runtime compiles its logic class with new Function, its map fetches
+     basemap tiles, its forecast asks Open-Meteo, and an act's card embeds
+     Spotify. Every one of those was already allowed on the page the planner
+     used to be; none of them is new to the site. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'inline-speculation-rules' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.basemaps.cartocdn.com https://server.arcgisonline.com; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com; frame-src https://open.spotify.com https://www.youtube-nocookie.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
@@ -3396,6 +3402,12 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 
 <div class="wrap">
 
+<!-- ── the list screen ──────────────────────────────────
+     On a phone this document is the whole app: the list and both
+     planners are screens in it, and the dock outside them never
+     unmounts. This is the first of the three. Above 600 it is simply
+     the page, and a planner is its own document again. -->
+<section class="page shell-page" id="pHome">
 
 <header>
   <div class="top">
@@ -3557,6 +3569,13 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <div class="endcap" id="endCap">
   <p>More to be discovered</p>
 </div>
+
+</section>
+<!-- The two screens a planner is mounted into, empty until the first time one
+     is asked for. What arrives is the planner document's own <x-dc> and its
+     logic script, compiled where they stand — see scripts/_shell.html. -->
+<section class="page shell-page" id="pFlow" hidden></section>
+<section class="page shell-page" id="pKallio" hidden></section>
 
 <!-- The destination list is m3.material.io's own, copied at the user's request:
      same seven labels in the same order, the same glyphs, the same leading
@@ -5141,6 +5160,607 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   };
 
   report();
+})();
+</script>
+
+<style>
+/* ══════════════════════════════════════════════════════════
+   THE APP SHELL
+   The site used to be three documents and a navigation between
+   them. On a phone it is one document now: the list and both
+   planners are screens in it, and the dock — back button and bar
+   — lives outside all three and never unmounts.
+
+   That is the whole reason the reference feels the way it does.
+   A document navigation tears the bar down and builds another
+   one; there is no animation that hides it, because there is a
+   frame where neither bar exists. Keeping one bar means the
+   change of screen is something the bar *does* rather than
+   something that happens to it.
+
+   Above 600 nothing here applies: the rail is a rail, the
+   planners are their own documents, and a link is a link.
+   ══════════════════════════════════════════════════════════ */
+
+/* ---------- motion ----------
+   The reference's own table, name for name. Spatial moves may
+   overshoot; opacity and colour may not. Exits are shorter than
+   entrances and accelerate away.
+
+   Prefixed, because a planner mounted into this document brings
+   its own --effects, --spring and --ease to the root and the two
+   sets would otherwise fight over the same three names. */
+:root{
+  --nt-spatial: 440ms cubic-bezier(.32,1.24,.30,1);
+  --nt-elastic: 520ms cubic-bezier(.30,1.62,.36,1);
+  --nt-effects: 180ms cubic-bezier(.34,.80,.34,1);
+  --nt-exit:    180ms cubic-bezier(.4,0,1,1);
+  /* The bar reflows text, so its width must not overshoot: a spring
+     here bounces the column narrower than its final size and
+     "Programme" flickers into an ellipsis and back. Emphasised
+     easing, no overshoot. Springs stay on things that only move. */
+  --nt-resize:  440ms cubic-bezier(.2,0,0,1);
+  --nt-stagger: 28ms;
+  --nt-lab: 11px;
+}
+
+/* ---------- screens ----------
+   Not the reference's absolutely-positioned pages. This document's
+   list screen has a sticky masthead, a sticky calendar header and
+   three observers that all read the window's own scroll; a planner
+   expects to be a document too. So exactly one screen is in flow
+   at a time and the window keeps scrolling the way both were
+   written for. Each remembers where it was. */
+.shell-page[hidden]{display:none}
+.shell-page{
+  transition: opacity var(--nt-effects), transform var(--nt-spatial);
+  transform-origin: 50% 42%;
+}
+.shell-page.is-out{opacity:0;transform:scale(.97)}
+.shell-page.is-in{opacity:0;transform:scale(1.03)}
+/* Nothing may be pressed while a screen is on its way out. */
+body.shell-busy .shell-page{pointer-events:none}
+
+@media(min-width:600px){
+  /* The shell is the phone's. A wide screen keeps the rail, the
+     documents and the links they always had. */
+  .dock{display:none!important}
+}
+
+@media(max-width:599.98px){
+  /* The old bar steps aside for the dock; it stays as the drawer,
+     which is the one job the dock does not do. */
+  .mnav{display:none}
+  body.nav-drawer .mnav{display:flex}
+
+  /* ---------- the dock ----------
+     Back button and bar share one grid. Animating the grid's first
+     column is what makes the bar give up width — nothing is
+     repositioned by hand, and the bar never has to know the button
+     exists. The span is the bar's own: min(94vw,430px), centred,
+     16px of air beneath it. */
+  .dock{
+    position:fixed; z-index:60;
+    inset-inline:calc(50% - min(94vw,430px) / 2);
+    inset-block-end:calc(16px + var(--safe-b));
+    display:grid; grid-template-columns:0px minmax(0,1fr); column-gap:0px;
+    transform:translateY(var(--vvshift,0px));
+    transition:grid-template-columns var(--nt-resize), column-gap var(--nt-resize);
+  }
+  .dock[data-deep]{grid-template-columns:64px minmax(0,1fr);column-gap:8px}
+
+  .dock .glass{
+    background:color-mix(in srgb,var(--md-sys-color-surface-container-low) 88%,transparent);
+    -webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);
+    border:1px solid color-mix(in srgb,var(--md-sys-color-outline-variant) 60%,transparent);
+    box-shadow:0 10px 32px color-mix(in srgb,var(--md-sys-color-scrim) 16%,transparent);
+    border-radius:var(--md-sys-shape-corner-extra-large);
+  }
+
+  /* --- the back button: a bubble, not a slide --- */
+  .dock .back{
+    grid-column:1;block-size:64px;min-inline-size:0;
+    display:grid;place-items:center;padding:0;
+    color:var(--md-sys-color-on-surface-variant);cursor:pointer;overflow:hidden;
+    transform:scale(.2);opacity:0;
+    transition:transform var(--nt-exit),opacity var(--nt-exit);
+  }
+  .dock .back svg{inline-size:24px;block-size:24px;fill:currentColor;stroke:none}
+  .dock[data-deep] .back{
+    transform:scale(1);opacity:1;
+    /* it may only land once the space exists, so it waits */
+    transition:transform var(--nt-elastic) 120ms,opacity var(--nt-effects) 120ms;
+  }
+  .dock .back:focus-visible{outline:2px solid var(--md-sys-color-primary);outline-offset:2px}
+
+  /* --- the bar --- */
+  .dock .bar{grid-column:2;block-size:64px;padding:6px;min-inline-size:0}
+  /* The track is the destination row itself, so the indicator is
+     positioned against it directly — no allowance for the bar's
+     padding and no column gap to throw the arithmetic off. */
+  .dock .track{position:relative;block-size:100%}
+  .dock .dests{
+    position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;
+    block-size:100%;margin:0;padding:0;list-style:none;
+  }
+  .dock .dests li{display:grid;min-inline-size:0}
+  /* the button must fill its cell, or it shrinks to its content and
+     sits top-left of the slot the indicator is measuring */
+  .dock .dest{
+    position:relative;z-index:1;inline-size:100%;block-size:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    border:0;background:none;border-radius:22px;padding:0;min-inline-size:0;
+    color:var(--md-sys-color-on-surface-variant);font-family:inherit;
+    font-size:var(--nt-lab);font-weight:var(--md-sys-typescale-label-weight);line-height:1;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+  }
+  .dock .dest:focus-visible{outline:2px solid var(--md-sys-color-primary);outline-offset:-2px}
+  .dock .dest__ico{display:grid;place-items:center;inline-size:54px;block-size:30px}
+  .dock .dest__ico svg{inline-size:24px;block-size:24px}
+  .dock .dest__lab{max-inline-size:100%;padding-inline:3px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* the bar is 72dp narrower once the back button is out, so the
+     labels step down a size — it changes while they are invisible,
+     mid-swap */
+  .dock[data-deep]{--nt-lab:10.5px}
+  .dock .dest.is-current{color:var(--md-sys-color-on-secondary-container);font-weight:600}
+  .dock .dest[aria-disabled=true]{opacity:.38}
+
+  /* The glyph and label only cross-fade. They must not translate:
+     the slots are already sliding horizontally as the bar narrows,
+     and a vertical offset on top of that sends every icon along a
+     diagonal — four diagonals at four different stagger delays,
+     which is what reads as disorganised. Fade in place, let the
+     layout do the moving. */
+  .dock .dest__ico,.dock .dest__lab{
+    transition:opacity var(--nt-effects) calc(var(--i) * var(--nt-stagger));
+  }
+  .dock .dests.is-swapping .dest__ico,.dock .dests.is-swapping .dest__lab{
+    opacity:0;transition:opacity var(--nt-exit) calc(var(--i) * var(--nt-stagger));
+  }
+  .dock .dests.is-entering .dest__ico,.dock .dests.is-entering .dest__lab{
+    opacity:0;transition:none;
+  }
+
+  /* --- the active indicator ---
+     Sized in percent so it tracks the bar as the bar narrows: no
+     measuring, no resize listener. It mirrors a destination's own
+     stack — glyph box, gap, label-height spacer, centred — so it
+     lands on the icon by construction rather than by an offset that
+     has to be retuned whenever the label size changes. One slot is
+     exactly 100% of the indicator's own width, so the index move is
+     a transform; the width and the offset stay layout-driven and
+     untransitioned, because transitioning a percentage of a box
+     that is itself resizing makes the indicator chase a moving
+     target and lag behind the icons. */
+  .dock .pill{
+    position:absolute;z-index:0;inset-block:0;inset-inline-start:0;
+    inline-size:calc(100% / var(--n,4));
+    transform:translateX(calc(var(--idx,0) * 100%));
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    pointer-events:none;
+    transition:transform var(--nt-spatial);
+  }
+  .dock .pill i{display:block;inline-size:54px;block-size:30px;
+    border-radius:var(--md-sys-shape-corner-large);background:var(--md-sys-color-secondary-container)}
+  .dock .pill span{display:block;block-size:var(--nt-lab)}
+
+  /* A planner mounted here brings its own dock. One bar serves both
+     screens, so its own is taken out of the layout — not merely
+     hidden, because the shell's cells click through to it. */
+  .shell-page[data-planner] nav[aria-label="Main"],
+  .shell-page[data-planner] button[aria-label="Go back"],
+  .shell-page[data-planner] button[aria-label^="Flanner"]{
+    position:absolute!important;inline-size:1px;block-size:1px;
+    overflow:hidden;clip:rect(0 0 0 0);pointer-events:none;opacity:0;
+  }
+  /* Everything in the column that is not a screen belongs to the list: the
+     footer, its wave, the settings card. The drawer and its scrim stay,
+     because More opens them from either screen. */
+  body.shell-deep .wrap > *:not(.shell-page):not(.mnav):not(.navscrim){display:none}
+  /* The dot grid is the list's weave. A planner brings its own ground. */
+  body.shell-deep::before{opacity:0}
+  .shell-page[data-planner]{background:var(--pl-wash,var(--md-sys-color-surface))}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .dock,.dock .back,.dock .pill,.dock .dest__ico,.dock .dest__lab,.shell-page{
+    transition-duration:1ms!important}
+}
+</style>
+
+<div class="dock" id="dock" hidden>
+  <button class="back glass" id="dockBack" type="button" aria-label="Go back">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20z"/>
+    </svg>
+  </button>
+  <nav class="bar glass" aria-label="Main">
+    <div class="track">
+      <span class="pill" aria-hidden="true"><i></i><span></span></span>
+      <ul class="dests" id="dockDests"></ul>
+    </div>
+  </nav>
+</div>
+<!-- The shell always has the last word: a planner's stylesheet writes three
+     rules on the document itself — body colour, body font, link colour — and
+     inside this document those would reach the list screen too. This element
+     is re-appended after every stylesheet the shell injects. -->
+<style id="shellLastWord"></style>
+
+<script>
+(() => {
+  const dock = document.getElementById('dock');
+  if (!dock) return;
+  const dests = document.getElementById('dockDests');
+  const pill = dock.querySelector('.pill');
+  const backBtn = document.getElementById('dockBack');
+  const lastWord = document.getElementById('shellLastWord');
+  const phone = () => matchMedia('(max-width: 599.98px)').matches;
+
+  /* Where the site is, from the one link every page carries. */
+  const manifest = document.querySelector('link[rel=manifest]');
+  const BASE = manifest
+    ? new URL(manifest.getAttribute('href'), location.href).href.replace(/manifest\.webmanifest$/, '')
+    : new URL('./', location.href).href;
+
+  /* ── the screens ──────────────────────────────────────
+     The list is markup that is already here; a planner is a screen
+     with nothing in it until the first time it is asked for. */
+  const screens = {
+    home: {el: document.getElementById('pHome'), scroll: 0, title: document.title, url: BASE},
+  };
+  let current = 'home', busy = false;
+
+  const ICONS = {
+    home: '<svg viewBox="0 0 96 96" aria-hidden="true"><use href="#i-logo"/></svg>',
+    fest: '<svg class="i" aria-hidden="true"><use href="#i-ticket"/></svg>',
+    plan: '<svg class="i" aria-hidden="true"><use href="#i-star-sq"/></svg>',
+    more: '<svg class="i" aria-hidden="true"><use href="#i-more"/></svg>',
+  };
+
+  /* The list's own four, wired to the buttons the page already had —
+     the dock draws them, the old bar's handlers still run them. */
+  const relay = (id) => () => { const b = document.getElementById(id); if (b) b.click(); };
+  const HOME_SET = () => ({
+    current: homeIndex(),
+    items: [
+      {html: ICONS.home, label: 'Home', run: relay('nTop')},
+      {html: ICONS.fest, label: 'Festivals', run: relay('nFest')},
+      {html: ICONS.plan, label: 'My plan', run: relay('nPlan'), disabled: true},
+      {html: ICONS.more, label: 'More', run: relay('nMore')},
+    ],
+  });
+  const homeIndex = () => {
+    const on = document.querySelector('.mnav .railnav button.on');
+    if (!on) return 0;
+    return [...document.querySelectorAll('.mnav .railnav button')].indexOf(on);
+  };
+
+  /* ── painting the bar ─────────────────────────────────
+     The reference's own: the row is rebuilt, each cell carries its
+     index so the stagger is a delay multiplier, and the indicator is
+     told how many slots there are and which one is live. */
+  let liveSet = null;
+  function paint(set) {
+    liveSet = set;
+    dests.innerHTML = set.items.map((d, i) =>
+      '<li style="--i:' + i + '"><button class="dest' + (i === set.current ? ' is-current' : '') +
+      '" type="button" style="--i:' + i + '"' +
+      (i === set.current ? ' aria-current="page"' : '') +
+      (d.disabled ? ' aria-disabled="true"' : '') + '>' +
+      '<span class="dest__ico">' + d.html + '</span>' +
+      '<span class="dest__lab">' + d.label + '</span></button></li>').join('');
+    [...dests.querySelectorAll('.dest')].forEach((b, i) => {
+      b.addEventListener('click', () => {
+        const item = liveSet.items[i];
+        if (!item || item.disabled) return;
+        item.run();
+        setCurrent(i);
+      });
+    });
+    pill.style.setProperty('--n', set.items.length);
+    pill.style.setProperty('--idx', set.current);
+  }
+  function setCurrent(i) {
+    if (!liveSet || i < 0 || i === liveSet.current) return;
+    liveSet.current = i;
+    [...dests.querySelectorAll('.dest')].forEach((b, n) => {
+      b.classList.toggle('is-current', n === i);
+      if (n === i) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+    pill.style.setProperty('--idx', i);
+  }
+
+  /* Out, staggered; swap while invisible; back in from nothing. */
+  function swapDestinations(getSet) {
+    dests.classList.add('is-swapping');
+    const land = (set) => {
+      paint(set);
+      dests.classList.remove('is-swapping');
+      dests.classList.add('is-entering');
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        dests.classList.remove('is-entering');
+      }));
+    };
+    setTimeout(() => {
+      /* React has not necessarily painted the planner's own bar by the time
+         the row is due back, so the row waits with its cells still empty
+         rather than coming back holding nothing. */
+      let tries = 0;
+      const tick = () => {
+        const set = typeof getSet === 'function' ? getSet() : getSet;
+        if (set && set.items.length) return land(set);
+        if (++tries > 60) return land({current: 0, items: []});
+        setTimeout(tick, 50);
+      };
+      tick();
+    }, 180 + 3 * 28);
+  }
+
+  function crossfade(from, to, forward) {
+    from.classList.add(forward ? 'is-out' : 'is-in');
+    setTimeout(() => {
+      from.hidden = true;
+      from.classList.remove('is-out', 'is-in');
+      to.hidden = false;
+      to.classList.add(forward ? 'is-in' : 'is-out');
+      requestAnimationFrame(() => requestAnimationFrame(() =>
+        to.classList.remove('is-in', 'is-out')));
+    }, 180);
+  }
+
+  /* ── loading a planner ────────────────────────────────
+     The four shared libraries, once, on the first planner asked for.
+     Then the document is fetched, its stylesheet adopted, and its
+     <x-dc> and logic script moved into the screen — which is all the
+     runtime needs to compile and mount it where it stands. */
+  let libs = null;
+  const loadScript = (src) => new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src; s.async = false;
+    s.onload = () => res(); s.onerror = () => rej(new Error('load ' + src));
+    document.head.appendChild(s);
+  });
+  /* Resolved against the site root rather than against the document, because
+     by the time these are asked for the address is already the planner's and
+     a relative src would go looking under /flow/. */
+  const LIBS = ["./assets/js/react-d949f1c368.js","./assets/js/react-dom-35f4f974f4.js","./assets/js/leaflet-db49d009c8.js","./assets/js/dc-runtime-8fe7df7440.js"].map((f) => new URL(f, BASE).href);
+  function ensureLibs() {
+    if (!libs) libs = (async () => { for (const f of LIBS) await loadScript(f); })();
+    return libs;
+  }
+
+  /* The shell restates what a planner's stylesheet says about the
+     document itself, so those three rules stop at the planner. */
+  function reassertShell() {
+    const cs = getComputedStyle(document.body);
+    lastWord.textContent =
+      'body{color:' + cs.color + ';background:' + cs.backgroundColor +
+      ';font-family:' + cs.fontFamily + '}' +
+      '#pHome a{color:inherit}' +
+      'html,body{height:auto}';
+    document.head.appendChild(lastWord);   /* always last */
+  }
+  const shellStyle = {color: '', bg: '', font: ''};
+
+  async function mountPlanner(key, href) {
+    const el = document.getElementById('p' + key[0].toUpperCase() + key.slice(1));
+    if (!el) return null;
+    if (el.dataset.mounted) return el;
+    await ensureLibs();
+    const html = await (await fetch(href, {credentials: 'same-origin'})).text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const xdc = doc.querySelector('x-dc');
+    const logic = doc.querySelector('script[data-dc-script]');
+    if (!xdc || !logic) return null;
+
+    /* A planner writes its scheme on :root. Two of them in one document and
+       the second would repaint the first — and the list with it. Each one's
+       root blocks are re-pointed at its own screen instead; the theme
+       attribute stays where it is, on the document, so a light and a dark
+       rule still read the same switch. */
+    const scopeId = '#' + el.id;
+    /* `:root` cannot appear in a declaration value, so these are plain
+       substitutions rather than a parse. The theme-qualified forms go first,
+       because the switch stays on the document and only the scope moves. */
+    const DARK = /\[data-theme=("|')dark\1\]/;
+    const scoped = (css) => css
+      .replace(/:root:not\(\[data-theme=("|')dark\1\]\)/g,
+        'html:not([data-theme="dark"]) ' + scopeId)
+      .replace(/:root\[data-theme=("|')dark\1\]/g,
+        'html[data-theme="dark"] ' + scopeId)
+      .replace(/(^|[},])(\s*)\[data-theme=("|')dark\3\](?=\s*[{,])/g,
+        (m, a, b2) => a + b2 + 'html[data-theme="dark"] ' + scopeId)
+      .replace(/:root/g, scopeId);
+    for (const s of doc.head.querySelectorAll('style')) {
+      const c = document.createElement('style');
+      c.dataset.planner = key;
+      c.textContent = scoped(s.textContent);
+      document.head.appendChild(c);
+    }
+    reassertShell();
+
+    el.dataset.planner = key;
+    el.appendChild(document.importNode(xdc, true));
+    const s2 = document.createElement('script');
+    s2.type = 'text/x-dc';
+    s2.setAttribute('data-dc-script', '');
+    s2.setAttribute('data-props', logic.getAttribute('data-props') || '');
+    s2.textContent = logic.textContent;
+    el.appendChild(s2);
+
+    /* The runtime names its root from the address, so the URL is
+       already the planner's by the time it boots — which also makes
+       the raw-template refetch it does hit the right document. */
+    window.__dcBoot();
+    /* Its own full-page rule would clamp this document's height. */
+    for (const s of document.head.querySelectorAll('style')) {
+      if (s.textContent.indexOf('#dc-root,#dc-root>.sc-host{height:100%}') === 0 ||
+          /^html,body\{height:100%;margin:0\}/.test(s.textContent)) s.remove();
+    }
+    reassertShell();
+    /* The screen takes the planner's own paper, so nothing of the list shows
+       through it while the two are crossing. */
+    el.style.setProperty('--pl-wash', getComputedStyle(el).getPropertyValue('--wash') || '');
+    el.dataset.mounted = '1';
+    const t = doc.querySelector('title');
+    if (screens[key] && t) screens[key].title = t.textContent;
+    return el;
+  }
+
+  /* A planner's own bar, read rather than reinvented: its labels, its
+     glyphs and which one is lit. The shell's cells press its buttons,
+     so nothing about how a planner switches view changes. */
+  function plannerSet(el) {
+    const nav = el.querySelector('nav[aria-label="Main"]');
+    if (!nav) return null;
+    const btns = [...nav.querySelectorAll('button')];
+    if (!btns.length) return null;
+    const lit = btns.findIndex(b => b.getAttribute('aria-current') === 'page' ||
+      b.getAttribute('aria-selected') === 'true');
+    return {
+      current: lit < 0 ? 0 : lit,
+      items: btns.map((b) => {
+        const svg = b.querySelector('svg');
+        const lab = b.lastElementChild;
+        return {
+          html: svg ? svg.outerHTML : '',
+          label: (lab && lab.textContent || '').trim(),
+          run: () => b.click(),
+        };
+      }),
+    };
+  }
+
+  /* ── the move ─────────────────────────────────────────
+     Three things at once, in the reference's order: the bar gives up
+     width on its leading edge, the back button springs into what it
+     left 120ms later, and the destinations swap while the screens
+     cross-fade. */
+  async function go(key, href, push) {
+    if (busy || key === current) return;
+    busy = true;
+    document.body.classList.add('shell-busy');
+    const forward = key !== 'home';
+    const from = screens[current].el;
+
+    screens[current].scroll = window.scrollY;
+    if (forward) {
+      dock.toggleAttribute('data-deep', true);
+      let el = document.getElementById('p' + key[0].toUpperCase() + key.slice(1));
+      screens[key] = screens[key] || {el, scroll: 0, title: document.title, url: href};
+      screens[key].el = el;
+      /* The address comes first. The runtime names its root from the path and
+         re-reads the raw template from location.href, so booting a planner at
+         the list's URL compiles it as the list and fetches the wrong
+         document — which is what "logic class eval FAILED for index" was. */
+      if (push) { history.pushState({screen: key}, '', href); push = false; }
+      if (!el.dataset.mounted) {
+        try { el = screens[key].el = await mountPlanner(key, href); }
+        catch (e) { console.error('[shell]', e); location.href = href; return; }
+      }
+      swapDestinations(() => plannerSet(el));
+      crossfade(from, el, true);
+      document.body.classList.add('shell-deep');
+      watch(el);
+    } else {
+      dock.toggleAttribute('data-deep', false);
+      swapDestinations(HOME_SET);
+      crossfade(from, screens.home.el, false);
+      document.body.classList.remove('shell-deep');
+      unwatch();
+    }
+    current = key;
+    if (push) history.pushState({screen: key}, '', screens[key] ? screens[key].url : BASE);
+    document.title = screens[key] ? screens[key].title : screens.home.title;
+    setTimeout(() => {
+      window.scrollTo(0, screens[key] ? screens[key].scroll : 0);
+      busy = false;
+      document.body.classList.remove('shell-busy');
+    }, 200);
+  }
+
+  /* The planner moves its own indicator when something inside it
+     changes view — a card's See all, a deep link, the back gesture —
+     so the dock follows its bar rather than assuming it led. */
+  let mo = null;
+  function watch(el) {
+    unwatch();
+    const nav = el.querySelector('nav[aria-label="Main"]');
+    if (!nav) return;
+    mo = new MutationObserver(() => {
+      const btns = [...nav.querySelectorAll('button')];
+      const lit = btns.findIndex(b => b.getAttribute('aria-current') === 'page' ||
+        b.getAttribute('aria-selected') === 'true');
+      if (lit >= 0) setCurrent(lit);
+    });
+    mo.observe(nav, {subtree: true, attributes: true,
+      attributeFilter: ['aria-current', 'aria-selected', 'class']});
+  }
+  function unwatch() { if (mo) { mo.disconnect(); mo = null; } }
+
+  /* ── wiring ───────────────────────────────────────────
+     A card still carries a real href, so it is a link on a wide
+     screen, to a crawler, and on a middle click. On a phone the
+     shell takes the press instead. */
+  const plannerAt = (e) => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    let href = a && a.target !== '_blank' ? a.href : null;
+    if (!href) {
+      /* The whole card is a target, not only its words, and the page opens
+         that one by assignment rather than by following a link. */
+      const card = e.target.closest && e.target.closest('.card[data-planner]');
+      if (card && !e.target.closest('a,button,.plan-toggle,.btn-group')) {
+        href = new URL(card.dataset.planner, location.href).href;
+      }
+    }
+    if (!href) return null;
+    const u = new URL(href, location.href);
+    if (!u.href.startsWith(BASE)) return null;
+    const m = /^(flow|kallio)\/$/.exec(u.href.slice(BASE.length).replace(/index\.html$/, ''));
+    return m ? {key: m[1], href: u.href} : null;
+  };
+
+  /* Capture, and stop there. preventDefault is not enough on its own: the
+     card's own handler navigates by assigning location, and the page-effects
+     layer would arm its loading skeleton for a document that is never going
+     to be fetched. Neither may run once the shell has taken the press. */
+  document.addEventListener('click', (e) => {
+    if (!phone()) return;
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const hit = plannerAt(e);
+    if (!hit) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    go(hit.key, hit.href, true);
+  }, true);
+
+  backBtn.addEventListener('click', () => { history.back(); });
+
+  addEventListener('popstate', (e) => {
+    const key = (e.state && e.state.screen) || 'home';
+    if (key === current) return;
+    go(key, screens[key] ? screens[key].url : BASE, false);
+  });
+
+  /* The dock is the phone's bar, so it appears with the breakpoint
+     and the old one steps aside underneath it. */
+  const sync = () => {
+    dock.hidden = !phone();
+    if (phone() && !dests.children.length) paint(HOME_SET());
+  };
+  matchMedia('(max-width: 599.98px)').addEventListener('change', sync);
+  sync();
+  history.replaceState({screen: 'home'}, '', location.href);
+
+  /* The list's own bar still runs its views; the dock mirrors which
+     one is lit so pressing either keeps them in step. */
+  new MutationObserver(() => {
+    if (current === 'home') setCurrent(homeIndex());
+  }).observe(document.querySelector('.mnav .railnav'),
+    {subtree: true, attributes: true, attributeFilter: ['class']});
 })();
 </script>
 

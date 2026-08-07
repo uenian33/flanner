@@ -2,7 +2,13 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<!-- The union of this page's policy and a planner's, because on a phone a
+     planner is mounted into this document rather than fetched as one: the
+     runtime compiles its logic class with new Function, its map fetches
+     basemap tiles, its forecast asks Open-Meteo, and an act's card embeds
+     Spotify. Every one of those was already allowed on the page the planner
+     used to be; none of them is new to the site. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'inline-speculation-rules' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.basemaps.cartocdn.com https://server.arcgisonline.com; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com; frame-src https://open.spotify.com https://www.youtube-nocookie.com; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
@@ -2541,6 +2547,12 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 
 <div class="wrap">
 
+<!-- ── the list screen ──────────────────────────────────
+     On a phone this document is the whole app: the list and both
+     planners are screens in it, and the dock outside them never
+     unmounts. This is the first of the three. Above 600 it is simply
+     the page, and a planner is its own document again. -->
+<section class="page shell-page" id="pHome">
 
 <header>
   <div class="top">
@@ -2702,6 +2714,13 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <div class="endcap" id="endCap">
   <p>More to be discovered</p>
 </div>
+
+</section>
+<!-- The two screens a planner is mounted into, empty until the first time one
+     is asked for. What arrives is the planner document's own <x-dc> and its
+     logic script, compiled where they stand — see scripts/_shell.html. -->
+<section class="page shell-page" id="pFlow" hidden></section>
+<section class="page shell-page" id="pKallio" hidden></section>
 
 <!-- The destination list is m3.material.io's own, copied at the user's request:
      same seven labels in the same order, the same glyphs, the same leading
@@ -4107,6 +4126,7 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 }
 </script>
 __OFFLINE__
+__SHELL__
 __PAGEFX__
 __MWC__
 </body>
