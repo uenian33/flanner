@@ -285,11 +285,14 @@ def _site_qa(festivals: list[dict]) -> list[tuple[str, str, str]]:
          "Ei. Flanner on riippumaton, epävirallinen aikataulusovellus, joka ei ole sidoksissa "
          "mihinkään festivaaliin. Aikataulut perustuvat järjestäjien omiin julkaisuihin."),
         ("en", "Does it work without a signal?",
-         "Yes. Every page is one self-contained file and can be installed to your home screen, "
-         "so the timetable, the stage map and your own plan keep working with no connection."),
+         "Yes. Flanner installs to your home screen and keeps every page it has opened, "
+         "so the timetable, the stage map and your own plan keep working with no connection. "
+         "Settings has a Save button that fetches the whole site in one go, for a festival "
+         "you know you will reach before the signal does."),
         ("fi", "Toimiiko se ilman verkkoyhteyttä?",
-         "Kyllä. Jokainen sivu on yksi itsenäinen tiedosto, jonka voi asentaa puhelimen "
-         "aloitusnäytölle. Aikataulu, kartta ja oma ohjelmasi toimivat ilman kenttää."),
+         "Kyllä. Flannerin voi asentaa puhelimen aloitusnäytölle, ja se säilyttää jokaisen "
+         "avatun sivun. Aikataulu, kartta ja oma ohjelmasi toimivat ilman kenttää. "
+         "Asetuksista voi tallentaa koko sivuston kerralla."),
     ]
 
 

@@ -1,104 +1,419 @@
 <style>
-/* ── page transitions ──────────────────────────────────
-   Leaving a page it settles back and fades; arriving, it comes forward. The
-   loader only appears if the next page is slow enough to be worth explaining —
-   these are single self-contained files, so most navigations never show it.
+/* ── moving between pages ──────────────────────────────
+   Every page here is one document, so a navigation is a document load and the
+   browser does the work. What this file adds is the three things the browser
+   cannot infer: that the two documents are the same app and should cross-fade
+   rather than cut; that a link the reader is about to press is worth fetching
+   before they press it; and that a wait long enough to notice should be
+   explained with the shape of the page they asked for.
 
-   Everything here is opt-out: with reduced motion the links behave like plain
-   links, and if navigation stalls the page restores itself rather than leaving
-   the reader on a faded screen. */
-.fx-shell{transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-default-spatial);
-  transform-origin:50% 38%}
-html.fx-out .fx-shell{opacity:0;transform:scale(.972)}
-html.fx-in .fx-shell{opacity:0;transform:scale(1.014)}
+   What it no longer does is get in the way. The version before this one held
+   every navigation back by 190ms so its own fade could finish — a fade that
+   existed to cover a gap the browser does not actually leave. The rule now is
+   that nothing may delay the navigation: the departure is the browser's, and
+   the only frames this file owns are the arrival and the wait. */
 
-.fx{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
-  background:var(--md-sys-color-surface);opacity:0;pointer-events:none;
-  transition:opacity var(--md-sys-motion-spring-default-effects)}
-.fx.on{opacity:1;pointer-events:auto}
-.fx svg{width:74px;height:74px;overflow:visible}
-/* The mark's two halves drift apart and settle back, which is the shape doing
-   what it already does rather than a spinner borrowed from somewhere else. */
-.fx .fx-a{animation:fxa var(--md-sys-motion-spring-slow-spatial) infinite}
-.fx .fx-b{animation:fxa var(--md-sys-motion-spring-slow-spatial) infinite reverse}
-@keyframes fxa{
-  0%,100%{transform:translate(0,0)}
-  50%{transform:translate(2.4px,-3.6px)}
+/* ── 1. the transition ────────────────────────────────
+   M3's fade-through, which is the pattern for "destinations that do not have a
+   spatial relationship" — the four cells of a bottom bar are exactly that. The
+   outgoing page leaves on the accelerate curve over 90ms; the incoming one
+   arrives on the decelerate curve over 210ms and settles up from 92%. They
+   overlap, which is the part that matters: the new page has already begun
+   before the old one is gone, so there is no frame with nothing on it. */
+@view-transition { navigation: auto }
+
+::view-transition-old(root) {
+  animation: fx-leave 90ms cubic-bezier(.3, 0, 1, 1) both;
 }
-.fx figcaption{position:absolute;bottom:calc(38% - 78px);font-size:var(--md-sys-typescale-label-small-size);
-  letter-spacing:.16em;text-transform:uppercase;color:var(--md-sys-color-on-surface-variant)}
+::view-transition-new(root) {
+  animation: fx-arrive 210ms cubic-bezier(0, 0, 0, 1) 30ms both;
+}
+@keyframes fx-leave  { to   { opacity: 0 } }
+@keyframes fx-arrive { from { opacity: 0; transform: scale(.92) } }
 
-@media(prefers-reduced-motion:reduce){
-  .fx-shell,html.fx-out .fx-shell,html.fx-in .fx-shell{transition:none;opacity:1;transform:none}
-  .fx{transition:none}
-  .fx .fx-a,.fx .fx-b{animation:none}
+/* ── 1b. the bar carries across ───────────────────────
+   The bottom bar is on both sides of a navigation between the list and a
+   planner, and it is the same component in both, so it is named — and a named
+   element is captured on its own rather than inside the page's snapshot. Two
+   things follow. It stays on top and lit while the page behind it fades,
+   which is what the reader is holding on to; and the browser morphs the one
+   bar into the other instead of replacing it. That is M3's container
+   transform: the element persists and grows or shrinks between the two
+   states, rather than one being swapped for another.
+
+   The bar's right edge is in the same place on both pages — that is what the
+   width arithmetic in _nav.css is for — so what the morph shows is the left
+   edge travelling in by the width of the back button, and the cells settling
+   into their new columns as it goes. The box moves on the spatial spring,
+   which overshoots; the two sets of icons cross-fade over it on the effects
+   curve, which does not, so the icons change without wobbling.
+
+   The two snapshots keep the browser's own sizing — each is scaled to the
+   group's width with its proportions held, so a row of cells is never
+   stretched into a different shape while the capsule around it is still
+   moving. Only the timing is ours. */
+::view-transition-group(navbar) {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(.38, 1.21, .22, 1.00);
+}
+::view-transition-old(navbar),
+::view-transition-new(navbar) {
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(.34, .80, .34, 1.00);
+}
+
+/* The back button is on one side of the navigation only, so there is nothing
+   to morph it from and nothing the browser would do with it but fade it in.
+   It arrives as a bubble instead: up from a quarter of its size, on the same
+   spatial spring the bar's box is travelling on, so the two moves read as one
+   gesture — the bar draws back and the button surfaces in the room it left.
+   Leaving, it goes the way it came. */
+::view-transition-new(navback) {
+  animation: nav-pop-in 460ms cubic-bezier(.38, 1.21, .22, 1.00) both;
+  transform-origin: 50% 50%;
+}
+::view-transition-old(navback) {
+  animation: nav-pop-out 160ms cubic-bezier(.3, 0, 1, 1) both;
+  transform-origin: 50% 50%;
+}
+@keyframes nav-pop-in  { from { transform: scale(.25); opacity: 0 } }
+@keyframes nav-pop-out { to   { transform: scale(.25); opacity: 0 } }
+
+/* Where cross-document transitions are not implemented, the arrival is still
+   ours. It has to be CSS and not script: a class added by a tag at the end of
+   the body is added after the first frame has been painted, which turns a fade
+   in into a flash followed by a fade in. A rule is in force before the body
+   exists, so the page is transparent from its first frame and comes up on the
+   same decelerate curve as above.
+
+   Opacity only, and no transform — both the home page and the planners hang
+   fixed chrome off the body, and a transformed ancestor makes a fixed child
+   position against it instead of against the viewport. */
+@supports not (view-transition-name: none) {
+  body { animation: fx-settle 210ms cubic-bezier(0, 0, 0, 1) both }
+  @keyframes fx-settle { from { opacity: 0 } }
+}
+
+/* ── 2. the wait ──────────────────────────────────────
+   Shown only if the page asked for has not arrived in 110ms, which is about
+   where a delay stops reading as the press and starts reading as a wait. Most
+   navigations here never reach it: the destination has usually been fetched
+   already, and a prerendered one swaps in the same frame.
+
+   It is the layout of the page being loaded, not a spinner. A spinner says
+   "something is happening"; the shape says "the thing you asked for is
+   happening", and it puts the header, the rail and the bar where they are
+   about to be, so the arrival lands on top of its own outline rather than
+   replacing an unrelated picture. */
+.fx {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  overflow: hidden;
+  padding: calc(20px + env(safe-area-inset-top)) 16px 0;
+  background: var(--md-sys-color-surface, var(--low, #F8F7F3));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms cubic-bezier(0, 0, 0, 1);
+}
+.fx.on { opacity: 1; pointer-events: auto }
+
+/* The placeholder tone is one step up from the surface it sits on — M3's
+   surface-container-highest, which is the same tone the pressed state of a
+   card lands on. The planners do not carry the md-sys names (they run their
+   own festival-rotated scheme) so each one falls back to that scheme's
+   equivalent, and then to the literal, exactly as the rest of the planner
+   CSS does. */
+.fx {
+  --sk: var(--md-sys-color-surface-container-highest, var(--hover, #EAE8DF));
+  --sk-lift: rgb(255 255 255 / .58);
+}
+[data-theme=dark] .fx { --sk-lift: rgb(255 255 255 / .06) }
+
+/* The column is cut off above the bar and faded into it, rather than being
+   given a shape short enough to clear it. A fixed shape only clears the bar at
+   the height it was drawn for: one row too many and the last one collides with
+   the bar on a small phone, one too few and a tall one ends halfway up an empty
+   screen. Cutting where the bar begins is right at both. */
+.fx__sk {
+  max-width: 640px;
+  margin-inline: auto;
+  max-block-size: calc(100dvh - 128px - env(safe-area-inset-bottom));
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent);
+}
+
+.fx i {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: var(--sk);
+  border-radius: 8px;
+}
+.fx i[hidden] { display: none }
+/* One sweep, one property. The band is a pseudo-element moved with a
+   transform rather than a gradient whose position is animated, so the whole
+   skeleton is composited and nothing repaints per frame. Every block shares
+   the timing, so the light crosses the page as one pass rather than each
+   block flickering on its own clock. */
+.fx i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--sk-lift) 52%, transparent);
+  animation: fx-sweep 1.6s cubic-bezier(.4, 0, .2, 1) infinite;
+}
+@keyframes fx-sweep { to { transform: translateX(100%) } }
+
+/* the parts */
+.fx__row  { display: flex; align-items: center; gap: 12px }
+.fx__rail { display: flex; gap: 12px; overflow: hidden; margin-inline: -16px; padding-inline: 16px }
+.fx__card { padding: 12px 12px 16px; border-radius: 28px;
+            background: var(--md-sys-color-surface-container-low, var(--card, #F2F0EB)) }
+.fx__hero { aspect-ratio: 16 / 10; border-radius: 20px }
+.fx__chips, .fx__acts { display: flex; gap: 8px; margin-block-start: 12px }
+.fx__chips i { block-size: 32px; border-radius: 8px }
+.fx__acts i  { flex: 1 1 0; block-size: 48px; border-radius: 16px }
+.fx__av      { display: flex; gap: 16px; overflow: hidden }
+.fx__av span { flex: none; display: grid; gap: 8px; justify-items: center }
+.fx__av i:first-child { inline-size: 56px; block-size: 56px; border-radius: 50% }
+.fx__av i + i { inline-size: 48px; block-size: 10px; border-radius: 5px }
+
+/* The bar is the one piece of chrome that is on both sides of the navigation,
+   so the skeleton draws it where the real one already is: same width, same
+   64px, same extra-large corner, same 16px of air beneath it.
+
+   The ring is the stand-in for what the real bar has and a flat block does
+   not. That bar floats: it is glass over the page with a shadow under it, and
+   the list runs on beneath it. Without something to part them, a placeholder
+   row that happens to end at the same height merges into the bar and the two
+   read as one odd shape. A band of the page's own surface separates them at
+   any viewport height, which is what the shadow does on the real thing. */
+.fx i.fx__bar {
+  /* Selector, not just `.fx__bar`: the block rule above is `.fx i`, and an
+     element-plus-class selector outranks a class on its own. */
+  position: absolute;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  inline-size: min(94vw, 430px);
+  block-size: 64px;
+  border-radius: 28px;
+  box-shadow: 0 0 0 10px var(--md-sys-color-surface, var(--low, #F8F7F3));
+}
+
+@media (min-width: 600px) { .fx__bar { display: none } }
+
+/* Someone who has asked for less motion gets the shape, and the shape holds
+   still. The transition between documents goes back to the browser's cut,
+   which is what "no animation" means for a navigation. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important }
+  body { animation: none }
+  .fx { transition: none }
+  .fx i::after { animation: none; background: none }
 }
 </style>
 
-<div class="fx" id="fx" role="status" aria-live="polite">
-  <figure style="margin:0;display:grid;place-items:center">
-    <svg viewBox="0 0 40 40" aria-hidden="true">
-      <defs>
-        <linearGradient id="fxg" x1=".06" y1=".95" x2=".94" y2=".05">
-          <stop offset="0" stop-color="#b6fc46"/>
-          <stop offset=".55" stop-color="#e4fb27"/>
-          <stop offset="1" stop-color="#fff203"/>
-        </linearGradient>
-        <clipPath id="fxup"><path d="M-14 -14H54V20H-14Z" transform="rotate(-34 20 20)"/></clipPath>
-        <clipPath id="fxdn"><path d="M-14 20H54V54H-14Z" transform="rotate(-34 20 20)"/></clipPath>
-      </defs>
-      <g class="fx-a" clip-path="url(#fxup)"><circle cx="22.2" cy="16.7" r="18.4" fill="url(#fxg)"/></g>
-      <g class="fx-b" clip-path="url(#fxdn)"><circle cx="17.8" cy="23.3" r="18.4" fill="url(#fxg)"/></g>
-    </svg>
-    <figcaption>Loading</figcaption>
-  </figure>
+<div class="fx" id="fx" aria-hidden="true">
+  <div class="fx__sk" id="fxSk"></div>
+  <!-- Outside the column on purpose: the column is masked, and a mask
+       applies to everything under it, absolutely positioned or not. -->
+  <i class="fx__bar" id="fxBar" hidden></i>
 </div>
+<div id="fxSay" role="status" aria-live="polite"
+     style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap"></div>
 
 <script>
 (() => {
-  const root = document.documentElement;
   const fx = document.getElementById('fx');
+  const sk = document.getElementById('fxSk');
+  const bar = document.getElementById('fxBar');
+  const say = document.getElementById('fxSay');
   const calm = matchMedia('(prefers-reduced-motion: reduce)');
 
-  /* Arrive: start slightly forward and settle. */
-  root.classList.add('fx-in');
-  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('fx-in')));
-  addEventListener('load', () => root.classList.remove('fx-in'));
+  /* ── where the site is ──────────────────────────────
+     The manifest is the one link on every page that points at the site root,
+     so it is what tells a page at any depth what "ours" means. */
+  const man = document.querySelector('link[rel=manifest]');
+  const BASE = man
+    ? new URL(man.getAttribute('href'), location.href).href.replace(/manifest\.webmanifest$/, '')
+    : new URL('./', location.href).href;
 
-  /* Coming back through the bfcache restores a page that was mid-exit. */
+  const ours = (url) => url.href.startsWith(BASE);
+
+  /* Coming back through the bfcache restores a page mid-exit: it kept the
+     skeleton it was showing when it left. */
   addEventListener('pageshow', () => {
-    root.classList.remove('fx-out', 'fx-in');
     fx.classList.remove('on');
+    say.textContent = '';
   });
 
-  const sameDoc = (a) => {
-    const u = new URL(a.href, location.href);
-    return u.origin === location.origin &&
-           u.pathname + u.search !== location.pathname + location.search;
+  /* ── 2. the shapes ──────────────────────────────────
+     Three, because the site has three kinds of page. Each is the real page's
+     geometry — the card's 28px corner, the hero's 16/10, the 48px actions, the
+     56px line-up avatars — so what arrives lands on its own outline. */
+  const b = (style) => `<i style="${style}"></i>`;
+  const lines = (widths, gap = 12) => widths
+    .map(w => b(`block-size:14px;inline-size:${w};margin-block-start:${gap}px;border-radius:7px`))
+    .join('');
+
+  const SHAPES = {
+    home: () => `
+      ${b('block-size:34px;inline-size:44%;border-radius:12px')}
+      ${b('block-size:14px;inline-size:66%;margin-block-start:14px;border-radius:7px')}
+      ${b('block-size:22px;inline-size:32%;margin:26px 0 14px;border-radius:11px')}
+      <div class="fx__rail">
+        ${b('flex:none;inline-size:78%;aspect-ratio:16/10;border-radius:28px')}
+        ${b('flex:none;inline-size:78%;aspect-ratio:16/10;border-radius:28px')}
+      </div>
+      ${b('block-size:22px;inline-size:38%;margin:26px 0 14px;border-radius:11px')}
+      ${b('block-size:96px;border-radius:28px')}
+      ${b('block-size:96px;margin-block-start:12px;border-radius:28px')}`,
+
+    planner: () => `
+      <div class="fx__row">
+        ${b('inline-size:40px;block-size:40px;border-radius:50%')}
+        ${b('inline-size:46%;block-size:18px;border-radius:9px')}
+      </div>
+      <div class="fx__card" style="margin-block-start:16px">
+        <i class="fx__hero"></i>
+        <div class="fx__chips">
+          ${b('inline-size:64px')}${b('inline-size:52px')}${b('inline-size:58px')}${b('inline-size:46px')}
+        </div>
+        <div class="fx__acts">${b('')}${b('')}${b('')}</div>
+      </div>
+      ${b('block-size:20px;inline-size:30%;margin:24px 0 14px;border-radius:10px')}
+      <div class="fx__av">
+        ${'<span><i></i><i></i></span>'.repeat(5)}
+      </div>
+      ${b('block-size:72px;margin-block-start:22px;border-radius:16px')}
+      ${b('block-size:72px;margin-block-start:8px;border-radius:16px')}
+      ${b('block-size:72px;margin-block-start:8px;border-radius:16px')}`,
+
+    page: () => `
+      ${b('block-size:14px;inline-size:26%;border-radius:7px')}
+      ${b('block-size:30px;inline-size:76%;margin-block-start:18px;border-radius:12px')}
+      ${b('block-size:30px;inline-size:52%;margin-block-start:10px;border-radius:12px')}
+      <div style="margin-block-start:20px">
+        ${lines(['100%', '96%', '88%', '100%', '72%'])}
+      </div>
+      <div style="margin-block-start:28px">
+        ${lines(['100%', '92%', '80%'])}
+      </div>`,
   };
 
-  document.addEventListener('click', e => {
-    if (calm.matches || e.defaultPrevented) return;
-    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    const a = e.target.closest('a[href]');
-    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
-    if (a.getAttribute('href').startsWith('#') || a.protocol === 'mailto:') return;
-    if (!sameDoc(a)) return;
+  /* Which of the three a URL is. The planners are the two directories that
+     carry one; everything else with a path segment is an article. */
+  const shapeFor = (url) => {
+    const rest = url.href.slice(BASE.length).replace(/index\.html$/, '');
+    if (!rest) return 'home';
+    return /^(flow|kallio)\//.test(rest) ? 'planner' : 'page';
+  };
 
-    e.preventDefault();
-    const url = a.href;
-    root.classList.add('fx-out');
-    /* Only explain a wait the reader would actually notice. */
-    const slow = setTimeout(() => fx.classList.add('on'), 320);
-    /* If the navigation never happens, put the page back rather than leaving
-       it faded out with nothing to click. */
-    const bail = setTimeout(() => {
-      clearTimeout(slow);
-      root.classList.remove('fx-out');
-      fx.classList.remove('on');
-    }, 4000);
-    addEventListener('pagehide', () => { clearTimeout(slow); clearTimeout(bail); }, {once: true});
-    setTimeout(() => { location.href = url; }, 190);
+  /* ── 3. fetching ahead ──────────────────────────────
+     Two mechanisms for the same intent, because no engine has both. Where
+     speculation rules are understood the browser prerenders the destination on
+     hover and the navigation costs a frame. Everywhere else the page is
+     fetched into the worker's cache, which removes the network from the
+     navigation even though the parse remains.
+
+     Neither runs when the reader has asked the browser to save data, and
+     neither runs on a connection that would make the speculative fetch compete
+     with the page they are actually reading. */
+  const conn = navigator.connection || {};
+  const thrifty = conn.saveData === true ||
+    /(^|-)2g$/.test(conn.effectiveType || '');
+
+  if (!thrifty && HTMLScriptElement.supports &&
+      HTMLScriptElement.supports('speculationrules')) {
+    const s = document.createElement('script');
+    s.type = 'speculationrules';
+    s.textContent = JSON.stringify({
+      prerender: [{
+        where: {href_matches: new URL(BASE).pathname + '*'},
+        /* "moderate" is hover on a pointer and the press itself on a touch
+           screen — intent, rather than every link on the page. A planner is
+           300KB and runs its own runtime; prerendering all of them because
+           they are linked would cost more than it saves. */
+        eagerness: 'moderate',
+      }],
+    });
+    document.head.appendChild(s);
+  }
+
+  const warmed = new Set();
+  const warm = (url) => {
+    if (thrifty || warmed.has(url) || url === location.href) return;
+    warmed.add(url);
+    fetch(url, {credentials: 'same-origin'}).catch(() => {});
+  };
+
+  const linkAt = (e) => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return null;
+    if (a.getAttribute('href').startsWith('#') || a.protocol === 'mailto:') return null;
+    const u = new URL(a.href, location.href);
+    return ours(u) && u.href !== location.href ? u : null;
+  };
+
+  for (const ev of ['pointerenter', 'touchstart']) {
+    document.addEventListener(ev, (e) => {
+      const u = linkAt(e);
+      if (u) warm(u.href);
+    }, {capture: true, passive: true});
+  }
+
+  /* Going back to the list is the one move every page shares, and it is the
+     cheapest page on the site. It is warmed once the current page has settled
+     and the browser has nothing better to do. */
+  addEventListener('load', () => {
+    const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1200));
+    /* A page being prerendered has not been asked for yet; it does not get to
+       speculate on top of a speculation. */
+    const later = () => idle(() => warm(BASE), {timeout: 4000});
+    if (document.prerendering) {
+      document.addEventListener('prerenderingchange', later, {once: true});
+    } else {
+      later();
+    }
   });
+
+  /* ── 4. the wait ────────────────────────────────────
+     The navigation is never held back — no preventDefault, no timer in front
+     of it. This only arms a timer behind it: if the document is still here
+     110ms after the press, the reader is waiting, and they are shown what for.
+     If it arrived first, the page is gone and the timer with it. */
+  let armed = null;
+
+  const waiting = (url) => {
+    clearTimeout(armed);
+    armed = setTimeout(() => {
+      const shape = shapeFor(new URL(url, location.href));
+      sk.innerHTML = SHAPES[shape]();
+      /* The bar stands outside the masked column, so it is shown rather than
+         written into the shape — the two pages that carry one get it, the
+         written pages do not. */
+      bar.hidden = shape === 'page';
+      fx.classList.add('on');
+      say.textContent = 'Loading';
+    }, 110);
+  };
+
+  addEventListener('pagehide', () => clearTimeout(armed));
+
+  document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const u = linkAt(e);
+    if (u) waiting(u.href);
+  });
+
+  /* The planners' home button is a handler, not a link, so it says so. */
+  window.__fxNav = (url) => { waiting(url); location.href = url; };
 })();
 </script>

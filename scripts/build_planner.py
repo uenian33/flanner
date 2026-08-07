@@ -5768,6 +5768,32 @@ a[x-apple-data-detectors] {
 .fest .about__facts li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--on-var); }
 .fest .about__facts svg { inline-size: 16px; block-size: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }"""
 
+NAV_VT_CSS = """/* ---------- the bar carries across the navigation ----------
+   The other half of the pairing in `_nav.css`, which names the home page's bar
+   `navbar`. A view transition only morphs an element into another when both
+   documents name it: named on one side alone the browser has an element
+   leaving and nothing arriving, and animates it out — which is worse than the
+   plain cross-fade it replaces. So the planner names the same two parts.
+
+   `navbar` is the bar itself. Its right edge sits where the home page's does,
+   so the morph shows the left edge travelling in by the width of the button
+   beside it, rather than the whole capsule sliding. `navback` is that button,
+   which exists on a planner and not on the list, and so has nothing to morph
+   from; it is named anyway to be animated on its own terms — see the arrival
+   in `_pagefx.html` — instead of being faded in with the page behind it.
+
+   Below 600 only, and for the same reason `_nav.css` stops there: above it the
+   home page's element is a rail down the side and this is still a capsule at
+   the foot, and naming both would ask the browser to fly a column into a pill
+   and present it as continuity.
+
+   The two selectors are the design's own, and both are festival-independent:
+   one nav labelled Main, one button back to the list. */
+@media (max-width: 599.98px) {
+  #dc-root nav[data-hide-scrollbar][aria-label="Main"] { view-transition-name: navbar; }
+  #dc-root button[aria-label="Flanner \\2014 all festivals"] { view-transition-name: navback; }
+}"""
+
 NO_ZOOM_CSS = """/* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 /* The bounce again, for the scrollers inside the page. The timetable, the
@@ -5902,6 +5928,7 @@ x-dc{{display:none}}
 {theme_css(fest.f['accent'], art.other_css(), art.js, script, template)}
 {FEST_CSS}
 {SHEET_CSS}
+{NAV_VT_CSS}
 {NO_ZOOM_CSS}
 </style>
 <script>/* the page holds its scale on a touch screen */

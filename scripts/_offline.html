@@ -16,7 +16,20 @@
     ? new URL(document.querySelector('link[rel=manifest]').getAttribute('href'), location.href)
         .href.replace(/manifest\.webmanifest$/, '')
     : './';
-  const PAGES = ['', 'kallio/', 'flow/', 'about/', 'terms/', 'privacy/'].map(p => ROOT + p);
+  /* The pages, and the files they no longer carry inside them. A planner used
+     to be one document with its map and its type inlined; now it names them,
+     which means saving the document alone would save a planner that opens with
+     no basemap in a field — the one place this button exists for. */
+  const PAGES = ['', 'kallio/', 'flow/', 'about/', 'faq/', 'terms/', 'privacy/']
+    .map(p => ROOT + p);
+  const ASSETS = [
+    'assets/font/inter-latin.woff2', 'assets/font/inter-latin-ext.woff2',
+    'assets/font/robotoflex-latin.woff2', 'assets/font/robotoflex-latin-ext.woff2',
+    'assets/basemap-light.jpg', 'assets/satellite.jpg',
+    'assets/flow-basemap-light.jpg', 'assets/flow-satellite.jpg',
+    'assets/home/flow-promo.jpg', 'assets/home/kbp-promo.jpg',
+  ].map(p => ROOT + p);
+  const ALL = PAGES.concat(ASSETS);
 
   /* Write into the worker's own cache, or the download is invisible to it.
      Waiting for the registration to activate is the difference between saving
@@ -35,13 +48,16 @@
   const report = async () => {
     if (!('caches' in window)) { state.textContent = 'This browser cannot store pages.'; btn.hidden = true; return; }
     const c = await store();
-    const have = (await Promise.all(PAGES.map(u => c.match(u, {ignoreSearch: true})))).filter(Boolean).length;
-    state.textContent = have >= PAGES.length
+    const have = (await Promise.all(ALL.map(u => c.match(u, {ignoreSearch: true})))).filter(Boolean).length;
+    /* Counted in files, reported in pages: a reader is deciding whether the
+       app will work in a field, not auditing a manifest. */
+    const pages = Math.min(PAGES.length, Math.round(have * PAGES.length / ALL.length));
+    state.textContent = have >= ALL.length
       ? 'All pages saved — the app opens with no signal.'
       : have
-        ? `${have} of ${PAGES.length} pages saved.`
-        : 'Not saved yet. About 6 MB.';
-    btn.textContent = have >= PAGES.length ? 'Refresh' : 'Save';
+        ? `${pages} of ${PAGES.length} pages saved.`
+        : 'Not saved yet. About 4 MB.';
+    btn.textContent = have >= ALL.length ? 'Refresh' : 'Save';
     btn.disabled = false;
   };
 
@@ -49,8 +65,8 @@
     btn.disabled = true;
     const c = await store();
     let done = 0;
-    for (const url of PAGES) {
-      state.textContent = `Saving ${++done} of ${PAGES.length}…`;
+    for (const url of ALL) {
+      state.textContent = `Saving ${++done} of ${ALL.length}…`;
       try {
         const res = await fetch(url, {cache: 'reload'});
         if (res.ok) await c.put(url, res.clone());

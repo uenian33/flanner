@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import base64
 import gzip
+import hashlib
 import html
 import json
 import pathlib
@@ -110,15 +111,24 @@ class Artifact:
                        if e["mime"] != "text/javascript"}
 
     # -- fonts ---------------------------------------------------------
-    def font_css(self) -> str:
+    def font_css(self, root: str = "../") -> str:
         """The @font-face block, trimmed to the subsets this site sets and to
-        one face per subset.
+        one face per subset, pointing at the site's shared files.
 
         The export declares thirty-five faces — seven subsets at five weights —
         but each subset's five weights name the same file: Inter is a variable
         font and one file carries the whole axis. Inlined face by face that is
         the same 85KB of Latin base64'd five times over. Each subset is emitted
-        once instead, with the weight range the file actually holds."""
+        once instead, with the weight range the file actually holds.
+
+        Once is still once per page, though, and the home page sets Inter too:
+        three copies of the same 133 KB, none of them shared, each parsed out of
+        base64 before a single rule could apply. The export's files are the ones
+        already in `assets/font` — same bytes, checked below — so the faces name
+        those instead and the browser fetches Inter once for the whole site.
+        Where the export's copy has moved on, it wins and the file is rewritten,
+        because a page must not be left pointing at a font it was not built
+        against."""
         seen, kept = set(), []
         for subset, rule in re.findall(r"/\* ([\w-]+) \*/\s*(@font-face \{.*?\})",
                                        self.head_css, re.S):
@@ -128,12 +138,47 @@ class Artifact:
             rule = re.sub(r"font-weight: [^;]+;", "font-weight: 100 900;", rule)
             for uid in re.findall(r"[0-9a-f-]{36}", rule):
                 if uid in self.assets:
-                    rule = rule.replace(uid, self.data_uri(uid))
+                    rule = rule.replace(uid, self.share(uid, f"inter-{subset}.woff2", root))
             kept.append(rule)
         if len(kept) != len(KEEP_SUBSETS):
             raise MissingAnchor(
                 f"expected one face per subset {KEEP_SUBSETS}, got {len(kept)}")
         return "\n".join(kept)
+
+    def share(self, uid: str, name: str, root: str) -> str:
+        """An asset written out to `assets/font/` once, and the URL to it."""
+        return self._file(_asset(self.assets[uid]), "font", name, root)
+
+    # -- libraries -----------------------------------------------------
+    def lib_tags(self, root: str = "../") -> str:
+        """The four libraries as files, in load order, and the tags for them.
+
+        React, React DOM, Leaflet and the runtime come to 351 KB, and both
+        planners carry exactly the same 351 KB. Inlined that is the same code
+        parsed from scratch on every page and every visit, and a reader who
+        opens the second planner after the first downloads all of it again
+        under a different filename.
+
+        As files they are fetched once for the site and answered from the
+        worker's cache after that. The name carries a hash of the contents, so
+        re-exporting the design ships a new file rather than a stale one, and
+        the tags stay classic and in order because the runtime has to have
+        React before it compiles anything against it."""
+        out = []
+        for name in LIB_ORDER:
+            src = self.libs[name].encode()
+            stamp = hashlib.sha256(src).hexdigest()[:10]
+            url = self._file(src, "js", f"{name}-{stamp}.js", root)
+            out.append(f'<script src="{url}"></script>')
+        return "\n".join(out)
+
+    def _file(self, data: bytes, kind: str, name: str, root: str) -> str:
+        """Write a shared asset if it is not already there, and return its URL."""
+        out = ROOT / "assets" / kind / name
+        if not out.exists() or out.read_bytes() != data:
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_bytes(data)
+        return f"{root}assets/{kind}/{name}"
 
     def other_css(self) -> str:
         """Everything in the helmet that is not a font face."""

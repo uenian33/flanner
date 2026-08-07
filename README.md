@@ -2,10 +2,10 @@
 
 Plannable timetables for Helsinki festivals — **<https://uenian33.github.io/flanner/>**
 
-Each planner is a single self-contained HTML file: fonts, maps, artwork and code
-are inlined, so once a page has loaded it makes no further network requests and
-keeps working with no signal. Installable to a home screen, where it opens
-without browser chrome.
+Each page carries its own markup, styles and data; the type, the libraries and
+the pictures are files the whole site shares. It keeps working with no signal —
+the worker holds the pages and everything they name — and it is installable to a
+home screen, where it opens without browser chrome.
 
 | Page | |
 |---|---|
@@ -83,6 +83,38 @@ anchored the same way and commented where it is made:
 | Two names in the bar | While the festival's own card is on screen the bar has nothing to add — the card says the name at four times the size — so it carries the site's instead, and takes the festival's when that card goes under it. Both names are in the bar, stacked in one grid cell so it keeps its width and its ellipsis, and they change places on M3's fade through: the one leaving falls out over 180ms on the accelerate, the one arriving rises 6px into place over 280 on the emphasised decelerate. It reverses the moment the card's bottom clears the bar again, and above the phone's breakpoint — or on any view but Info — the festival's name simply stays. The name with `Your` in front of it, which the bar takes when the plan is the only thing showing, is a third in the same cell and crosses the same way: it used to appear and vanish with the word. |
 | The plan, as a picture | With the picks filter on, the page is showing one thing — what you starred — so the pill that carries the temperature carries the way to send it instead: the same pill, in the same place, saying what it does now. It draws the plan on a canvas and hands it to the share sheet, or saves it where there is no sheet. One layout: the schedule, as stage columns against the clock, with the site's own map under it. A column is headed by the pin the map drops for that stage — the same number in the same disc — so the two halves name a stage the same way and the plan can be read against the ground. The map is fitted to the box the stages occupy rather than to the basemap sheet: containing the whole sheet letterboxes a portrait map into a landscape panel, covering it crops the pins at the edges away, and a pin is the whole reason the map is there. The stages of the plan wear their pin in the stage's own dark container; the rest of the site is a light dot, there so the plan reads against the whole ground rather than against a map with holes in it. It draws the still basemap, which is same-origin — a live tile would taint the canvas and make the export throw online where it passed offline. Both carry the mark, `Flanner`, `Your Festival Planner`, the festival's name, its dates and its city, and a footer that says where it came from and that set times move. Every colour is read off the page's live custom properties, so a poster is in the festival's own hue and in the theme the reader has on, and everything in it is drawn — no map tile, no photograph, nothing that could taint the canvas and make the export throw online where it passed offline. It is all synchronous: iOS spends the tap's activation on the first `await`, and a share without activation is a `NotAllowedError`, so the PNG is made with `toDataURL` and turned into a blob by hand rather than fetched back — which `connect-src` would refuse anyway. A grid is one day's shape, so on a three-day festival it draws the day on screen and names it; the list carries the whole plan. |
 | A quieter filter card | Its foot carried a count and two buttons about the plan; the card keeps `Clear all`, at the top right. |
+
+## Going between pages
+
+A planner used to be one file with everything inside it, which is a good answer
+to "does it work in a field" and a bad one to "what does it cost to open". It
+cost a megabyte, and base64 does not compress: a photograph inlined into a
+document is 33% larger than the file it came from and gzip cannot win any of
+that back. The reader paid it on every page, and paid it again on the second
+planner, because two documents cannot share a byte.
+
+So the pages carry what is theirs and name what is not.
+
+| | |
+|---|---|
+| The libraries | React, ReactDOM, Leaflet and the runtime are 351 KB and both planners had the same 351 KB. They are four files under `assets/js/` now, named by a hash of their contents, so the second planner is free and a re-export ships a new name rather than a stale file. `Artifact.lib_tags` writes them; the tags stay classic and in order, because the runtime needs React in the document before it compiles. |
+| The type | Every page inlined its own cut of the font. Subsetting was written to make that cheap and it stopped paying on the pages that matter: a planner sets every artist's name, so its cut of Inter came to 83 KB against the full file's 84. The four faces are shared files, preloaded, fetched once for the site. `fontsub.inline` is still there for the artifact, which really is one file. |
+| The maps | 573 KB of basemap sat in front of the first paint for a view most readers never open — and when there is a signal the probe in `initMap` throws both stills away for live tiles a moment later. They are fetched when the map is first shown. |
+| The photographs | The home page inlined every festival's picture, including two it never draws, and a data URI cannot be lazy. They are files, so `loading="lazy"` means something; the planner's hero is the same file as the card that linked to it, so arriving from the list costs nothing. |
+| Assets are not revalidated | The worker treats a document as something that can be corrected — cache first, refresh behind the reader — and an asset as something that cannot. The cache name hashes every page *and* every file under `assets/`, so a changed basemap arrives with a new store rather than being asked about on every page view. |
+
+That is the weight. The rest is the wait.
+
+| | |
+|---|---|
+| Nothing delays the navigation | The page-transition layer used to hold every navigation for 190ms so its own fade could finish, covering a gap the browser does not leave. It does not preventDefault at all now. The departure is the browser's; the only frames the file owns are the arrival and the wait. |
+| Fetched before it is asked for | Speculation rules prerender a destination on hover, or on the press itself on a touch screen. Where they are not understood, `pointerenter` and `touchstart` warm the worker's cache, which takes the network out of the navigation even though the parse remains. Neither runs under `saveData` or on a 2g connection. |
+| The transition | M3's fade-through between documents: the old page leaves over 90ms on the accelerate, the new one arrives over 210 on the decelerate and settles up from 92%, overlapping, so no frame is empty. Where cross-document transitions are not implemented the arrival is a CSS animation on `body` — it has to be CSS, because a class added by a tag at the end of the body arrives after the first paint and turns a fade in into a flash. |
+| The bar carries across | The bottom bar is the same component on the list and on a planner, so both name it `navbar` and the browser morphs one into the other instead of fading a page over it — M3's container transform. The right edges are in the same place, so what the morph shows is the left edge travelling in by the width of the back button, which surfaces in the room it leaves. Named on one side only this would be worse than a cross-fade, so `_nav.css` and `NAV_VT_CSS` in `build_planner.py` are two halves of one thing. Below 600 only: above it the list's element is a rail down the side, and flying a column into a pill is not continuity. |
+| The wait, when there is one | If the page has not arrived in 110ms, the reader is shown the shape of the one they asked for — the header, the card, the rail, the bar, in the real geometry — sweeping on a 1.6s pass. Three shapes for the three kinds of page. It is armed *behind* the navigation, so a destination that was prerendered or cached never shows it. The map and the home page's cards use the same tone and the same sweep while their pictures load, and both stop themselves: `:has()` matches only while nothing has painted. |
+
+Everything above respects `prefers-reduced-motion`, which here means the shapes
+hold still and the navigation goes back to the browser's own cut.
 
 ## Data
 

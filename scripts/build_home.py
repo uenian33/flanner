@@ -2,11 +2,12 @@
 """Build the Festival Planner home page.
 
 One card per festival that has a planner, grouped by month, with a highlight
-rail on top. Everything is inlined so the page is a single file like the
-planners it links to.
+rail on top. The markup, the styles and the data travel in the page; the font
+and the photographs are files the whole site shares, so opening a planner after
+this does not download either of them again.
 """
 import json, pathlib
-from assets import ROOT, data_uri
+from assets import ROOT
 import fontsub
 import m3color
 import mwc
@@ -29,10 +30,15 @@ def main():
     for f in cfg["festivals"]:
         # A festival we have not built a planner for has no poster and no
         # wordmark of its own; its card draws the category's artwork instead.
+        # Named, not carried. A data URI cannot be lazy — the browser has the
+        # bytes the moment it has the markup — so inlining these was paying for
+        # every festival's photograph up front to render the two cards that are
+        # on screen. As URLs the `loading="lazy"` the card already sets starts
+        # working, and the shared logo is fetched once however many cards show it.
         if f.get("promo"):
-            f["promoSrc"] = data_uri(H / f["promo"])
+            f["promoSrc"] = f"./assets/home/{f['promo']}"
         if f.get("logo"):
-            f["logoSrc"] = data_uri(ROOT / "assets" / f["logo"])
+            f["logoSrc"] = f"./assets/{f['logo']}"
         f.pop("promo", None); f.pop("logo", None)
     # The structured data describes the pages this site publishes, so only the
     # festivals with a planner of ours appear in it.
@@ -53,7 +59,14 @@ def main():
                    + [seo.festival_event(f) for f in planned]
         )),
         ("__CATCSS__", schema.category_css(cfg)),
-        ("__TOKENS__", m3color.css(m3color.SOURCE) + "\n" +
+        # The home page is drawn in Material's monochrome variant. Every
+        # planner is themed from its own festival's colour, so the page that
+        # lists them has to be the one surface in the site with no colour of
+        # its own — otherwise the shell would be advertising a hue that
+        # belongs to nothing on it, and each planner's would arrive as a
+        # clash rather than as the festival's. What colour there is here
+        # belongs to the festivals: their photographs and their wordmarks.
+        ("__TOKENS__", m3color.css(m3color.SOURCE, mono=True) + "\n" +
          (ROOT / "scripts" / "_tokens.css").read_text()),
         ("__FONTCSS__", (ROOT / "scripts" / "_font.css").read_text()),
         ("__NAV_CSS__", (ROOT / "scripts" / "_nav.css").read_text()),
@@ -74,7 +87,7 @@ def main():
     left = [t for t in ("__DATA__", "__FONTCSS__", "__CONTACT__") if t in html]
     if left:
         raise SystemExit(f"unreplaced tokens: {left}")
-    OUT.write_text(fontsub.inline(html))
+    OUT.write_text(fontsub.link(html, "./"))
     print(f"{OUT}\n  {len(cfg['festivals'])} festivals · {OUT.stat().st_size // 1024} KB")
 
 if __name__ == "__main__":

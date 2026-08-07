@@ -1878,6 +1878,31 @@ a[x-apple-data-detectors] {
    sizes. At Body Medium it is the size every other piece of supporting text
    in the card is. */
 .bio__text{font-size:14px;line-height:20px;letter-spacing:.25px}
+/* ---------- the bar carries across the navigation ----------
+   The other half of the pairing in `_nav.css`, which names the home page's bar
+   `navbar`. A view transition only morphs an element into another when both
+   documents name it: named on one side alone the browser has an element
+   leaving and nothing arriving, and animates it out — which is worse than the
+   plain cross-fade it replaces. So the planner names the same two parts.
+
+   `navbar` is the bar itself. Its right edge sits where the home page's does,
+   so the morph shows the left edge travelling in by the width of the button
+   beside it, rather than the whole capsule sliding. `navback` is that button,
+   which exists on a planner and not on the list, and so has nothing to morph
+   from; it is named anyway to be animated on its own terms — see the arrival
+   in `_pagefx.html` — instead of being faded in with the page behind it.
+
+   Below 600 only, and for the same reason `_nav.css` stops there: above it the
+   home page's element is a rail down the side and this is still a capsule at
+   the foot, and naming both would ask the browser to fly a column into a pill
+   and present it as continuity.
+
+   The two selectors are the design's own, and both are festival-independent:
+   one nav labelled Main, one button back to the list. */
+@media (max-width: 599.98px) {
+  #dc-root nav[data-hide-scrollbar][aria-label="Main"] { view-transition-name: navbar; }
+  #dc-root button[aria-label="Flanner \2014 all festivals"] { view-transition-name: navback; }
+}
 /* No double-tap zoom, and no rubber-banding past the page. */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 /* The bounce again, for the scrollers inside the page. The timetable, the
@@ -6644,10 +6669,10 @@ class Component extends DCLogic {
 @view-transition { navigation: auto }
 
 ::view-transition-old(root) {
-  animation: fx-leave 1000ms cubic-bezier(.3, 0, 1, 1) both;
+  animation: fx-leave 90ms cubic-bezier(.3, 0, 1, 1) both;
 }
 ::view-transition-new(root) {
-  animation: fx-arrive 2500ms cubic-bezier(0, 0, 0, 1) 30ms both;
+  animation: fx-arrive 210ms cubic-bezier(0, 0, 0, 1) 30ms both;
 }
 @keyframes fx-leave  { to   { opacity: 0 } }
 @keyframes fx-arrive { from { opacity: 0; transform: scale(.92) } }
@@ -6674,12 +6699,12 @@ class Component extends DCLogic {
    stretched into a different shape while the capsule around it is still
    moving. Only the timing is ours. */
 ::view-transition-group(navbar) {
-  animation-duration: 6000ms;
+  animation-duration: 500ms;
   animation-timing-function: cubic-bezier(.38, 1.21, .22, 1.00);
 }
 ::view-transition-old(navbar),
 ::view-transition-new(navbar) {
-  animation-duration: 2400ms;
+  animation-duration: 200ms;
   animation-timing-function: cubic-bezier(.34, .80, .34, 1.00);
 }
 
@@ -6690,7 +6715,7 @@ class Component extends DCLogic {
    gesture — the bar draws back and the button surfaces in the room it left.
    Leaving, it goes the way it came. */
 ::view-transition-new(navback) {
-  animation: nav-pop-in 5000ms cubic-bezier(.38, 1.21, .22, 1.00) both;
+  animation: nav-pop-in 460ms cubic-bezier(.38, 1.21, .22, 1.00) both;
   transform-origin: 50% 50%;
 }
 ::view-transition-old(navback) {
@@ -6745,27 +6770,40 @@ class Component extends DCLogic {
    own festival-rotated scheme) so each one falls back to that scheme's
    equivalent, and then to the literal, exactly as the rest of the planner
    CSS does. */
-.fx__sk {
+.fx {
   --sk: var(--md-sys-color-surface-container-highest, var(--hover, #EAE8DF));
   --sk-lift: rgb(255 255 255 / .58);
+}
+[data-theme=dark] .fx { --sk-lift: rgb(255 255 255 / .06) }
+
+/* The column is cut off above the bar and faded into it, rather than being
+   given a shape short enough to clear it. A fixed shape only clears the bar at
+   the height it was drawn for: one row too many and the last one collides with
+   the bar on a small phone, one too few and a tall one ends halfway up an empty
+   screen. Cutting where the bar begins is right at both. */
+.fx__sk {
   max-width: 640px;
   margin-inline: auto;
+  max-block-size: calc(100dvh - 128px - env(safe-area-inset-bottom));
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 64px), transparent);
 }
-[data-theme=dark] .fx__sk { --sk-lift: rgb(255 255 255 / .06) }
 
-.fx__sk i {
+.fx i {
   display: block;
   position: relative;
   overflow: hidden;
   background: var(--sk);
   border-radius: 8px;
 }
+.fx i[hidden] { display: none }
 /* One sweep, one property. The band is a pseudo-element moved with a
    transform rather than a gradient whose position is animated, so the whole
    skeleton is composited and nothing repaints per frame. Every block shares
    the timing, so the light crosses the page as one pass rather than each
    block flickering on its own clock. */
-.fx__sk i::after {
+.fx i::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -6799,7 +6837,9 @@ class Component extends DCLogic {
    row that happens to end at the same height merges into the bar and the two
    read as one odd shape. A band of the page's own surface separates them at
    any viewport height, which is what the shadow does on the real thing. */
-.fx__bar {
+.fx i.fx__bar {
+  /* Selector, not just `.fx__bar`: the block rule above is `.fx i`, and an
+     element-plus-class selector outranks a class on its own. */
   position: absolute;
   left: 50%;
   bottom: calc(16px + env(safe-area-inset-bottom));
@@ -6821,11 +6861,16 @@ class Component extends DCLogic {
   ::view-transition-new(*) { animation: none !important }
   body { animation: none }
   .fx { transition: none }
-  .fx__sk i::after { animation: none; background: none }
+  .fx i::after { animation: none; background: none }
 }
 </style>
 
-<div class="fx" id="fx" aria-hidden="true"><div class="fx__sk" id="fxSk"></div></div>
+<div class="fx" id="fx" aria-hidden="true">
+  <div class="fx__sk" id="fxSk"></div>
+  <!-- Outside the column on purpose: the column is masked, and a mask
+       applies to everything under it, absolutely positioned or not. -->
+  <i class="fx__bar" id="fxBar" hidden></i>
+</div>
 <div id="fxSay" role="status" aria-live="polite"
      style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap"></div>
 
@@ -6833,6 +6878,7 @@ class Component extends DCLogic {
 (() => {
   const fx = document.getElementById('fx');
   const sk = document.getElementById('fxSk');
+  const bar = document.getElementById('fxBar');
   const say = document.getElementById('fxSay');
   const calm = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -6873,8 +6919,7 @@ class Component extends DCLogic {
       </div>
       ${b('block-size:22px;inline-size:38%;margin:26px 0 14px;border-radius:11px')}
       ${b('block-size:96px;border-radius:28px')}
-      ${b('block-size:96px;margin-block-start:12px;border-radius:28px')}
-      <div class="fx__bar"><i style="block-size:100%;border-radius:28px"></i></div>`,
+      ${b('block-size:96px;margin-block-start:12px;border-radius:28px')}`,
 
     planner: () => `
       <div class="fx__row">
@@ -6894,8 +6939,7 @@ class Component extends DCLogic {
       </div>
       ${b('block-size:72px;margin-block-start:22px;border-radius:16px')}
       ${b('block-size:72px;margin-block-start:8px;border-radius:16px')}
-      ${b('block-size:72px;margin-block-start:8px;border-radius:16px')}
-      <div class="fx__bar"><i style="block-size:100%;border-radius:28px"></i></div>`,
+      ${b('block-size:72px;margin-block-start:8px;border-radius:16px')}`,
 
     page: () => `
       ${b('block-size:14px;inline-size:26%;border-radius:7px')}
@@ -6995,7 +7039,12 @@ class Component extends DCLogic {
   const waiting = (url) => {
     clearTimeout(armed);
     armed = setTimeout(() => {
-      sk.innerHTML = SHAPES[shapeFor(new URL(url, location.href))]();
+      const shape = shapeFor(new URL(url, location.href));
+      sk.innerHTML = SHAPES[shape]();
+      /* The bar stands outside the masked column, so it is shown rather than
+         written into the shape — the two pages that carry one get it, the
+         written pages do not. */
+      bar.hidden = shape === 'page';
       fx.classList.add('on');
       say.textContent = 'Loading';
     }, 110);

@@ -13,6 +13,16 @@
 /* Lifted out of the planner so the home page can use the identical bar.
    --navn is the number of section tabs beside the Home button. */
 .mnav{display:none}
+/* Named for the page-to-page transition, so a navigation to a planner morphs
+   this bar into that one instead of cross-fading a page over it — the
+   animation is in _pagefx.html, with the rest of the navigation layer.
+
+   Only where it is a bar. Above 600 this element is a rail down the side of
+   the page and the planner's is still a capsule at the foot of it: naming
+   both would have the browser fly a 96×800 column into a 358×64 pill and
+   call it continuity. Where the two are not the same component, the page
+   cross-fade is the honest answer. */
+@media(max-width:599.98px){ .mnav{view-transition-name:navbar} }
 /* The utility foot belongs to the rail. On a phone the same element is a
    bottom bar of fixed cells, where an extra child would take a column of its
    own and squeeze the destinations — the theme lives in Settings there, and
@@ -97,56 +107,87 @@
       transition:transform var(--md-sys-motion-spring-default-spatial)}
   body.nav-min .navhome-m svg{transform:translateY(0) scale(.96)}
   .mnav{display:grid;grid-template-columns:repeat(var(--navcols,calc(var(--navn,4) + 1)),1fr);position:fixed;left:50%;
-      bottom:calc(18px + var(--safe-b));transform:translate(-50%,var(--vvshift,0px));
-      /* 64, and 48 minimised — the planners' bar states the same two. M3's
-         navigation bar is 80dp on a handset, but this one floats over the
-         page rather than sitting on its edge, and at 80 a capsule with air
-         under it took a fifth of a phone's height for four words. */
-      width:min(94vw,430px);max-width:calc(100vw - 32px);height:64px;overflow:hidden;
+      /* Every measurement below is the planners' bar, read off it rather
+         than chosen here, so the two are one component: 16px of air under it,
+         min(94vw,430px) wide, 64 tall on the extra-large corner with 6 of
+         padding, and the same glass — the card tone at 88%, blurred 14 and
+         saturated 1.4, on a hairline of outline-variant at 60% with a
+         0 10px 32px shadow under it. The planner's is the same capsule minus
+         72px, which is where its back button sits; this page is where back
+         goes, so the cell that would be pointing at it is a destination and
+         the bar runs the full width.
+
+         64, and 48 minimised, in both. M3's navigation bar is 80dp on a
+         handset, but this one floats over the page rather than sitting on its
+         edge, and at 80 a capsule with air under it took a fifth of a phone's
+         height for four words. */
+      bottom:calc(16px + var(--safe-b));transform:translate(-50%,var(--vvshift,0px));
+      /* No second cap on the width. The planner's bar is measured off
+         min(94vw,430px) alone, and a clamp here left this one 4.75px short of
+         it at 375px — invisible on its own, and the whole difference between
+         a right edge that stays put through the navigation and one that
+         jumps. */
+      width:min(94vw,430px);height:64px;overflow:hidden;
       contain:layout style;
-      transition:width var(--md-sys-motion-spring-default-spatial),height var(--md-sys-motion-spring-default-spatial);
-      z-index:60;padding:4px;isolation:isolate;
-      border-radius:var(--md-sys-shape-corner-extra-large);background:var(--glass);
-      -webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5);
-      border:1px solid var(--glass-line);
-      box-shadow:0 8px 32px var(--shade),inset 0 1px 0 var(--glass-line)}
-  /* The indicator is the planners' indicator: "the active indicator hugs
-     contents", so it is a 56×32 pill behind the icon rather than a block
-     filling the cell. The element still spans a cell — that is what lets it
-     travel by whole columns — and paints only the pill. */
-  .mnav .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/var(--navcols,calc(var(--navn,4) + 1)));
+      transition:height var(--md-sys-motion-spring-default-spatial),
+                 padding var(--md-sys-motion-spring-default-spatial);
+      z-index:60;padding:var(--navpad,6px);isolation:isolate;
+      border-radius:var(--md-sys-shape-corner-extra-large);
+      background:color-mix(in srgb,var(--md-sys-color-surface-container-low) 88%,transparent);
+      -webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);
+      border:1px solid color-mix(in srgb,var(--md-sys-color-outline-variant) 60%,transparent);
+      box-shadow:0 10px 32px color-mix(in srgb,var(--md-sys-color-scrim) 16%,transparent);
+      }
+  /* "The active indicator hugs contents", so it is a 54×30 pill behind the
+     icon rather than a block filling the cell — the planners' own numbers,
+     including the 16px corner, which is what makes it read as a rounded
+     rectangle rather than as a lozenge. The element spans a whole cell, which
+     is what lets it travel by whole columns with no script, and paints only
+     the pill. */
+  .mnav .pill{position:absolute;top:var(--navpad,6px);bottom:var(--navpad,6px);
+      left:var(--navpad,6px);
+      width:calc((100% - 2 * var(--navpad,6px))/var(--navcols,calc(var(--navn,4) + 1)));
       background:none;z-index:0;
       transform:translateX(calc((var(--i,0) + var(--pillbase,1)) * 100%));
       transition:transform var(--md-sys-motion-spring-default-spatial)}
-  .mnav .pill::after{content:"";position:absolute;left:50%;top:6px;
-      width:56px;height:32px;margin-left:-28px;
-      border-radius:var(--md-sys-shape-corner-full);background:var(--glass-pill);
-      transition:top var(--md-sys-motion-spring-default-spatial)}
-  body.nav-min .mnav .pill::after{top:4px}
-  .mnav button{display:grid;place-content:center;padding:0;
-      font-size:var(--md-sys-typescale-label-medium-size);
-      line-height:var(--md-sys-typescale-label-medium-line-height);
+  .mnav .pill::after{content:"";position:absolute;left:50%;top:1px;
+      width:54px;height:30px;margin-left:-27px;
+      border-radius:var(--md-sys-shape-corner-large);background:var(--glass-pill)}
+  /* The cell is a column — indicator over label — centred in its own box, so
+     the label leaving on the minimise re-centres the icon instead of sliding
+     it. Label at 11/14, which is what the planners' cells are set at. */
+  .mnav button{display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:3px;padding:0;min-width:0;height:100%;
+      position:relative;z-index:1;border-radius:22px;
+      font-size:11px;line-height:14px;
       letter-spacing:var(--md-sys-typescale-label-medium-tracking);
-      font-weight:var(--md-sys-typescale-label-weight);color:var(--glass-tx);position:relative;height:100%;z-index:1;
-      transition:color var(--md-sys-motion-spring-default-effects);border-radius:var(--md-sys-shape-corner-extra-large)}
-  .mnav button svg{transform:translateY(-6px);
-      transition:transform var(--md-sys-motion-spring-default-spatial)}
-  .mnav .lbl{position:absolute;left:0;right:0;bottom:5px;text-align:center;
-      transition:opacity var(--md-sys-motion-spring-fast-effects),transform var(--md-sys-motion-spring-default-spatial)}
-  body.nav-min .mnav{width:min(74vw,272px);height:48px}
-  body.nav-min .mnav .lbl{opacity:0;transform:translateY(5px)}
-  body.nav-min .mnav button svg{transform:translateY(0) scale(.96)}
-  .mnav button svg{width:24px;height:24px;font-size:var(--md-sys-typescale-title-large-size);stroke-width:1.8;
-      transition:transform var(--md-sys-motion-spring-default-spatial)}
-  .mnav button.on{color:var(--glass-on);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
+      font-weight:var(--md-sys-typescale-label-weight);color:var(--glass-tx);
+      transition:color var(--md-sys-motion-spring-default-effects)}
+  .mnav .ind{display:grid;place-items:center;flex:0 0 auto;
+      width:54px;height:30px;border-radius:var(--md-sys-shape-corner-large)}
+  .mnav button svg{width:24px;height:24px;stroke-width:1.8;
+      transition:transform var(--md-sys-motion-spring-fast-spatial)}
+  /* The label collapses rather than fades in place: the cell is a flex column,
+     so a label with no height is a cell with no label and the icon takes the
+     middle on its own. */
+  .mnav .lbl{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      max-width:100%;height:14px;opacity:1;text-align:center;
+      transition:height var(--md-sys-motion-spring-default-effects),
+                 opacity var(--md-sys-motion-spring-fast-effects)}
+  body.nav-min .mnav{--navpad:5px;height:48px}
+  body.nav-min .mnav .lbl{height:0;opacity:0}
+  /* 600, which is the weight the planners' selected cell is set at, not the
+     700 the emphasized-label token carries: at 11px the token reads as a
+     different typeface from the cell beside it. */
+  .mnav button.on{color:var(--glass-on);font-weight:600}
   .mnav button:active svg{transform:scale(.9)}
   /* Desktop only — on a phone Home is a cell inside the bar, and leaving this
      visible put a half-cut disc beside it. */
-  .navhome{display:none;left:50%;bottom:calc(18px + var(--safe-b));width:54px;height:54px;border-radius:var(--md-sys-shape-corner-extra-large);
+  .navhome{display:none;left:50%;bottom:calc(16px + var(--safe-b));width:54px;height:54px;border-radius:var(--md-sys-shape-corner-extra-large);
       transform:translate(calc(-50% - (var(--navw,360px) / 2) - 9px),var(--vvshift,0px))}
   body.nav-min .navhome{width:46px;height:46px}
   .mnav .nb{position:absolute;top:6px;left:calc(50% + 9px);min-width:17px;height:17px;
-      border-radius:var(--md-sys-shape-corner-extra-large);background:var(--accent);color:var(--on-accent);font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);
+      border-radius:var(--md-sys-shape-corner-extra-large);background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);
       display:grid;place-items:center;padding:0 4.5px;z-index:3;
-      box-shadow:0 1px 4px rgba(0,0,0,.4)}
+      box-shadow:0 1px 4px color-mix(in srgb,var(--md-sys-color-scrim) 40%,transparent)}
 }

@@ -2,10 +2,10 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f5f5f5">
+<meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./assets/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -25,9 +25,11 @@ __FONTCSS__
    file per subset carries wght 100–900, which covers everything the cards ask
    for: 700 titles, 550 buttons, 500 chips, 450 dates, 400 body.
 
-   Inlined, like every other asset here, because the page is one self-contained
-   file that works with no network — a <link> to fonts.googleapis.com would be
-   its only request, and would send a reader's address to a third party. */
+   Served from this origin, never from fonts.googleapis.com: a <link> there
+   would send a reader's address to a third party for a file we can keep. It
+   was inlined until the planners started setting Inter too — three copies of
+   the same 133 KB, none of them shared. It is one file for the site now, and
+   `fontsub.link` points every page at it. */
 @font-face{font-family:"Inter";src:url(__INTER_LATIN__) format("woff2");
   font-weight:100 900;font-style:normal;font-display:swap;
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,
@@ -54,6 +56,20 @@ __TOKENS__
   /* One inner inset for everything in the content column. */
   --card-pad:clamp(24px,2.6vw,34px);
   --hslot-h:108px;   /* measured at runtime; this is the fallback */
+  /* The mark is drawn in the page's own strongest colour rather than in the
+     brand's green. On the monochrome scheme that role is tone 0 — ink, the
+     same black the headlines are set in — and it inverts to tone 100 in the
+     dark theme on its own, because it is a role and not a pigment. The
+     planners keep the green: there the mark is the one piece of the site
+     that is not the festival's, and it needs to say so. */
+  --mark-ink:var(--md-sys-color-primary);
+}
+/* The shared token file names the two greens under a heavier selector than a
+   plain :root, so the role has to be restated at the same weight to reach the
+   dark theme. */
+:root[data-theme=dark]{--mark-ink:var(--md-sys-color-primary)}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme=light]){--mark-ink:var(--md-sys-color-primary)}
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -242,21 +258,19 @@ header{padding:clamp(14px,1.8vw,20px) 0 0;margin-bottom:clamp(30px,4vw,48px)}
    --md-sys-* for colour, shape and type, which this project already emits, so
    they arrive themed; what is set below is only what the product decides.
 
-   Two product decisions carry over. Buttons stay ink-on-paper rather than
-   taking the brand colour, which is DESIGN.md §9 — the components expose that
-   as container and label tokens rather than as a stylesheet override. And the
-   press-morph from the Expressive shape work is re-applied through the
-   component's own container-shape token, so it survives the migration. */
+   DESIGN.md §9 asked these buttons to stay ink-on-paper rather than take the
+   brand colour, and used to get it by overriding six container and label
+   tokens onto surface roles. The scheme does it now: on the monochrome
+   variant primary is tone 0 and on-primary tone 90, so a filled button is
+   already black with a paper label, and an outlined one already draws its
+   own outline in ink. The overrides are gone — they were saying in the
+   stylesheet what the colour system now says on its own, and they would have
+   held the buttons one tone off the rest of the page.
+
+   What is left is what the product still decides: the emphasized label on a
+   primary action, and the press-morph from the Expressive shape work,
+   re-applied through the component's own container-shape token. */
 md-filled-button,md-outlined-button{
-  --md-filled-button-container-color:var(--md-sys-color-on-surface);
-  --md-filled-button-label-text-color:var(--md-sys-color-surface-container-lowest);
-  --md-filled-button-icon-color:var(--md-sys-color-surface-container-lowest);
-  --md-filled-button-hover-label-text-color:var(--md-sys-color-surface-container-lowest);
-  --md-filled-button-pressed-label-text-color:var(--md-sys-color-surface-container-lowest);
-  --md-filled-button-focus-label-text-color:var(--md-sys-color-surface-container-lowest);
-  --md-outlined-button-label-text-color:var(--md-sys-color-on-surface);
-  --md-outlined-button-icon-color:var(--md-sys-color-on-surface);
-  --md-outlined-button-outline-color:var(--md-sys-color-on-surface);
   --md-filled-button-label-text-weight:var(--md-sys-typescale-emphasized-label-weight);
   --md-outlined-button-label-text-weight:var(--md-sys-typescale-label-weight);
   --md-filled-button-container-shape:var(--shape,var(--md-sys-shape-corner-full));
@@ -800,8 +814,16 @@ __NAV_CSS__
     letter-spacing:var(--md-sys-typescale-label-large-tracking);
     font-weight:var(--md-sys-typescale-label-weight)}
   body.nav-drawer .mnav button svg{transform:none;width:24px;height:24px}
+  /* The bar's indicator is a 54×30 block behind the icon; a drawer row draws
+     its own selected state as the full pill, so here the wrapper hugs the
+     glyph again instead of holding a bar-sized column open in front of every
+     label. */
+  body.nav-drawer .mnav .ind{inline-size:auto;block-size:auto;border-radius:0}
+  /* In the bar the label is a 14px box that collapses to nothing on the
+     minimise; a drawer row sets it at label-large and needs the line box it
+     asks for, so the height goes back to auto. */
   body.nav-drawer .mnav .lbl{position:static;opacity:1;transform:none;text-align:start;
-    white-space:nowrap}
+    white-space:nowrap;height:auto;overflow:visible}
   body.nav-drawer .mnav button.on{background:var(--md-sys-color-secondary-container);
     color:var(--md-sys-color-on-secondary-container);
     font-weight:var(--md-sys-typescale-emphasized-label-weight)}
@@ -828,8 +850,10 @@ __NAV_CSS__
     margin-top:0;padding-top:0}
   /* The bar centres its cells' contents; a row reads from its leading edge,
      so the place-content the bar sets is cleared rather than inherited. */
+  /* A cell in the bar is a column — glyph over label — and these are rows,
+     so the direction is restated rather than inherited. */
   body.nav-drawer .mnav .railfoot > *{width:100%;height:48px;padding:0 16px;
-    display:flex;place-content:center flex-start;
+    display:flex;flex-direction:row;place-content:center flex-start;
     align-items:center;gap:12px;border:0;border-radius:24px;
     background:none;color:var(--md-sys-color-on-surface-variant);
     font-size:13.5px;font-weight:500;text-align:start}
@@ -1009,33 +1033,32 @@ __NAV_CSS__
    read. The fold handle opens the full grid. */
 .calview[hidden]{display:none}
 .calview{
-  --surface:        #FFFFFF;
-  --surface-dim:    #FAF9F4;
-  --surface-card:   #F2F0EB;
-  --on-surface:     #191D13;
-  --on-surface-var: #5B6053;
-  --outline:        #E3E2DA;
-  /* The grid's own chrome is neutral — the hover, the day you have picked,
-     the fold, the focus ring. Colour in this view means a festival: the bars
-     carry their category's container pair and nothing else does, so a green
-     fill can never be mistaken for a music festival that is not there. */
-  --chrome:         #1B1B19;
-  --on-chrome:      #FFFFFF;
-  --wash:           #EFEFEC;
+  --surface:        var(--md-sys-color-surface);
+  --surface-dim:    var(--md-sys-color-surface-container-low);
+  --surface-card:   var(--md-sys-color-surface-container);
+  --on-surface:     var(--md-sys-color-on-surface);
+  --on-surface-var: var(--md-sys-color-on-surface-variant);
+  --outline:        var(--md-sys-color-outline-variant);
+  /* The grid's chrome — the hover, the day you have picked, the fold, the
+     focus ring — was already neutral here, and now the whole page is: these
+     are the same five hexes expressed as the roles they were copied from, so
+     the calendar follows the theme instead of staying light inside it. */
+  --chrome:         var(--md-sys-color-on-surface);
+  --on-chrome:      var(--md-sys-color-surface);
+  --wash:           var(--md-sys-color-surface-container-high);
 
-  --cat-music: #FFD8E8;  --on-cat-music: #441B2F;
-  --cat-art:   #F2DFC3;  --on-cat-art:   #2B1700;
-  --cat-film:  #E8DEF8;  --on-cat-film:  #1D192B;
-  /* Our data has two categories the redesign does not draw; they take the
-     pairs their own card theme already uses. */
-  --cat-culture: #FBD9DF;  --on-cat-culture: #2C151A;
-  --cat-others:  #E2E2DF;  --on-cat-others:  #1B1B19;
-
-  --plan-music: #71294E;  --on-plan-music: #FFEEF5;
-  --plan-art:   #6B4310;  --on-plan-art:   #FFEEDC;
-  --plan-film:  #4F378B;  --on-plan-film:  #EADDFF;
-  --plan-culture: #6B333E;  --on-plan-culture: #FFE1E6;
-  --plan-others:  #3C3D37;  --on-plan-others:  #E9E9E4;
+  /* A bar used to be its category's container pair, and the legend under the
+     grid was the key to those five colours. With the page monochrome there is
+     no key to give: every bar carries its festival's name, which is a better
+     answer to "what is this" than a pink rectangle was, and the one
+     distinction left — whether it is in your plan — is the difference between
+     a tonal bar and a filled one, which is the same pair the plan toggle uses
+     on every card. So the five pairs are one pair, and the legend is down to
+     the sentence that explains it. */
+  --cat-bar:  var(--md-sys-color-secondary-container);
+  --on-cat-bar: var(--md-sys-color-on-secondary-container);
+  --plan-bar: var(--md-sys-color-primary);
+  --on-plan-bar: var(--md-sys-color-on-primary);
 
   --shape-xl: 28px;
   --shape-l:  16px;
@@ -1114,16 +1137,15 @@ __NAV_CSS__
 .calview .text-button:focus-visible { outline: 2px solid var(--chrome); outline-offset: 2px; }
 
 /* Neutral, not green: the month arrows are chrome, and in the category's own
-   colour they read as though they belonged to the music festivals underneath
-   them. They take the neutral container pair the calendar already defines for
-   the categories its five colours do not name. */
+   The arrows are chrome, not content, so they take the same tonal container
+   the bars take and nothing louder. */
 .calview .icon-button {
   position: relative;
   display: grid; place-items: center;
   inline-size: 44px; block-size: 44px;
   border: 0; border-radius: 50%;
-  background: var(--cat-others);
-  color: var(--on-cat-others);
+  background: var(--cat-bar);
+  color: var(--on-cat-bar);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -1135,7 +1157,7 @@ __NAV_CSS__
 }
 .calview .icon-button:hover::before  { opacity: .08; }
 .calview .icon-button:active::before { opacity: .12; }
-.calview .icon-button:focus-visible  { outline: 2px solid var(--on-cat-others); outline-offset: 2px; }
+.calview .icon-button:focus-visible  { outline: 2px solid var(--on-cat-bar); outline-offset: 2px; }
 
 /* ---- grid ---- */
 .calendar {
@@ -1224,16 +1246,11 @@ __NAV_CSS__
 .event.cont-left  { border-start-start-radius: 3px; border-end-start-radius: 3px; margin-inline-start: 0; }
 .event.cont-right { border-start-end-radius: 3px;   border-end-end-radius: 3px;   margin-inline-end: 0; }
 
-.event.cat-music   { background: var(--cat-music);   color: var(--on-cat-music); }
-.event.cat-art     { background: var(--cat-art);     color: var(--on-cat-art); }
-.event.cat-film    { background: var(--cat-film);    color: var(--on-cat-film); }
-.event.cat-culture { background: var(--cat-culture); color: var(--on-cat-culture); }
-.event.cat-others  { background: var(--cat-others);  color: var(--on-cat-others); }
-.event.is-planned.cat-music   { background: var(--plan-music);   color: var(--on-plan-music); }
-.event.is-planned.cat-art     { background: var(--plan-art);     color: var(--on-plan-art); }
-.event.is-planned.cat-film    { background: var(--plan-film);    color: var(--on-plan-film); }
-.event.is-planned.cat-culture { background: var(--plan-culture); color: var(--on-plan-culture); }
-.event.is-planned.cat-others  { background: var(--plan-others);  color: var(--on-plan-others); }
+/* One bar, two states. The five category rules are gone with the colours
+   they applied; .event still carries its cat-<id> class, which the grid uses
+   to group by festival and the filter uses to hide. */
+.event            { background: var(--cat-bar);  color: var(--on-cat-bar); }
+.event.is-planned { background: var(--plan-bar); color: var(--on-plan-bar); }
 
 .more {
   grid-row: 4;
@@ -1279,13 +1296,14 @@ __NAV_CSS__
   margin-block-start: 20px;
   padding-inline: 4px;
 }
-.legend__item {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 13px; font-weight: 500;
-  color: var(--on-surface-var);
-}
-.legend__swatch { inline-size: 26px; block-size: 14px; border-radius: 7px; }
-.legend__note { margin-inline-start: auto; font-size: 13px; color: var(--on-surface-var); }
+/* The note is the whole legend now, so it reads from the start of the column
+   the grid above it starts on rather than being pushed to the far end by the
+   auto margin that used to hold it clear of the swatches. Body-small, which
+   is the size a caption under a component is set at. */
+.legend__note { font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+  color: var(--on-surface-var); }
 .legend__note b { color: var(--on-surface); font-weight: 600; }
 
 /* ---- medium — tablet ---- */
@@ -1324,9 +1342,6 @@ __NAV_CSS__
   .fold { block-size: 44px; }
 
   .legend { gap: 8px 14px; margin-block-start: 16px; }
-  .legend__item { font-size: 12px; }
-  .legend__swatch { inline-size: 20px; block-size: 10px; }
-  .legend__note { margin-inline-start: 0; inline-size: 100%; font-size: 12px; }
 }
 
 /* ── one list, in the card views ───────────────────────
@@ -1373,10 +1388,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 /* The calendar's own control, so it takes the calendar's neutral chrome
    rather than the green it used to carry. */
 .dayfilter button{margin-inline-start:auto;height:40px;padding:0 16px;border:0;
-  border-radius:20px;background:none;color:#1B1B19;cursor:pointer;
+  border-radius:20px;background:none;color:var(--md-sys-color-on-surface);cursor:pointer;
   font:550 14px/1 "Inter","Segoe UI",system-ui,sans-serif;
   transition:background .18s cubic-bezier(.2,0,0,1)}
-.dayfilter button:hover{background:#EFEFEC}
+.dayfilter button:hover{background:var(--md-sys-color-surface-container-high)}
 
 /* ── the three shapes ──────────────────────────────────
    Compact tiles, detailed cards and rows are one component in three sizes;
@@ -1393,14 +1408,14 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
    a hidden checkbox drives both states, so the control needs no script to
    look right and keeps its place in the accessibility tree. Both sizes of
    card carry it — centred under the compact one, opposite the links on the
-   detailed one — and each theme re-points its colours. */
+   detailed one. */
 .plan-toggle {
-  /* The neutral pair, for a toggle that is not inside a category theme —
-     every one on this page is, and each re-points these four. */
-  --plan-bg:          #E2E2DF;
-  --plan-fg:          #1B1B19;
-  --plan-bg-on:       #3C3D37;
-  --plan-fg-on:       #E9E9E4;
+  /* Pointed at the scheme above; restated here so the component still
+     stands up on its own if it is ever lifted out of this page. */
+  --plan-bg:          var(--md-sys-color-secondary-container);
+  --plan-fg:          var(--md-sys-color-on-secondary-container);
+  --plan-bg-on:       var(--md-sys-color-primary);
+  --plan-fg-on:       var(--md-sys-color-on-primary);
   --plan-height:      40px;
   --plan-radius:      20px;
 }
@@ -1579,122 +1594,65 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
    re-rendering every card to swap a modifier would lose their state. The
    declarations are the reference's.
 
-   ── category themes ──
-   Each is one tonal palette. Everything in the card — surface, text, chip,
-   artwork, toggle — reads its colour from these, so a new category is a new
-   theme block and nothing else. Music, art and film are the redesign's own;
-   culture and others are built to the same recipe, since our data has five
-   categories where it draws three. */
-/* Rose — music festivals. One hue at three chroma levels, which is the recipe
-   every theme here follows: the surface and its two text roles are all but
-   neutral (C≈3–9), the chip and the artwork's ground carry a container's worth
-   (C≈11–21), and the accent, the artwork's shapes and the selected fill run at
-   the hue's full strength (C≈36–40). Only the hue changes between categories;
-   the tones do not, so a card reads the same whatever it is showing.
+   ── one theme, and no categories in it ──
+   The card used to carry a tonal palette per category — rose for music, amber
+   for art, purple for film, and two more built to the same recipe. On a page
+   whose whole job is to hand a reader on to a planner that has a colour of
+   its own, those five were five claims this page could not keep. A card here
+   is not the festival's colour; it is the site's, and the site's is now
+   Material's monochrome variant.
 
-   Generated at hue 350 by scripts/m3color.py at the tones the other themes
-   use, then checked against them: 5.7:1 for the accent on the surface, 11.3:1
-   for the chip's label, 8.4:1 for the artwork's ink. The artwork's first shape
-   sits at tone 85 rather than 90 — pink runs out of gamut before green does,
-   and at 90 it came back the same colour as the chip beside it. */
-.theme-music {
-  --surface:        #F6EFF2;
-  --on-surface:     #24181D;
-  --on-surface-var: #57474E;
-  --outline-var:    #D9C4CC;
-  --chip:           #FFD8E8;
-  --on-chip:        #441B2F;
-  --accent:         #8F4669;
-  /* artwork */
-  --art-bg:  #FFE4EF;
-  --art-1:   #FFC4DD;
-  --art-2:   #8F4669;
-  --art-3:   #FFABD0;
-  --art-ink: #6F284D;
-}
-.theme-art {                         /* amber / brown — art festivals */
-  --surface:        #F7F1E8;
-  --on-surface:     #211A11;
-  --on-surface-var: #51443A;
-  --outline-var:    #D4C5B4;
-  --chip:           #F2DFC3;
-  --on-chip:        #2B1700;
-  --accent:         #855318;
-  --art-bg:  #FBEBD3;
-  --art-1:   #FFDDB3;
-  --art-2:   #855318;
-  --art-3:   #E5C193;
-  --art-ink: #4A2A02;
-}
-.theme-film {                        /* purple — film festivals */
-  --surface:        #F4F0F7;
-  --on-surface:     #1D1B20;
-  --on-surface-var: #49454F;
-  --outline-var:    #CAC4D0;
-  --chip:           #E8DEF8;
-  --on-chip:        #1D192B;
-  --accent:         #6750A4;
-  --art-bg:  #EFE6FA;
-  --art-1:   #EADDFF;
-  --art-2:   #6750A4;
-  --art-3:   #CFC1E8;
-  --art-ink: #341E73;
-}
-.theme-culture {                     /* rose — street festivals, food, heritage */
-  --surface:        #F8F0F1;
-  --on-surface:     #201A1B;
-  --on-surface-var: #524345;
-  --outline-var:    #D8C2C5;
-  --chip:           #FBD9DF;
-  --on-chip:        #2C151A;
-  --accent:         #8F4A56;
-  --art-bg:  #FBE4E8;
-  --art-1:   #FFD9DF;
-  --art-2:   #8F4A56;
-  --art-3:   #E7B9C1;
-  --art-ink: #4E2029;
-}
-.theme-others {                      /* neutral — anything the four do not describe */
-  --surface:        #F1F1EF;
-  --on-surface:     #1B1B19;
-  --on-surface-var: #464644;
-  --outline-var:    #C6C6C3;
-  --chip:           #E2E2DF;
-  --on-chip:        #1B1B19;
-  --accent:         #55564F;
-  --art-bg:  #E9E9E6;
-  --art-1:   #DCDCD8;
-  --art-2:   #55564F;
-  --art-3:   #C9C9C5;
-  --art-ink: #38382F;
-}
+   So there is one theme, and every value in it is a role rather than a
+   pigment. That is what puts the card in step with the chrome around it, and
+   it is what makes the card follow the theme at all: the blocks this replaces
+   were light-only hexes, which left a pale pink card burning a hole in the
+   dark page.
 
-/* The toggle keeps its own component CSS; only its tokens are re-pointed per
-   theme. Two classes beat the component's one. */
-.theme-music { --sel-bg: #71294E; --sel-fg: #FFEEF5; }
-.theme-music .plan-toggle {
-  --plan-bg: #FFD8E8; --plan-fg: #441B2F;
-  --plan-bg-on: #71294E; --plan-fg-on: #FFEEF5;
+   The category has not stopped being visible — it has stopped being a colour.
+   It is written on the chip in words, and the artwork behind the chip draws
+   its own motif for each one: the equaliser, the brush stroke, the film
+   strip, the bunting, the trio. Material's rule is that colour may not be the
+   only thing carrying a meaning; here it carries none, and the two signals
+   that were already carrying this one carry it alone.
+
+   The theme-<category> classes stay on the elements, because the carousel and
+   the card renderer both write them and a category that wanted its own
+   treatment could still be given one. */
+:root{
+  --surface:        var(--md-sys-color-surface-container-low);
+  --on-surface:     var(--md-sys-color-on-surface);
+  --on-surface-var: var(--md-sys-color-on-surface-variant);
+  --outline-var:    var(--md-sys-color-outline-variant);
+  --chip:           var(--md-sys-color-secondary-container);
+  --on-chip:        var(--md-sys-color-on-secondary-container);
+  /* The card's one accent: the date line, its text buttons, its focus ring.
+     On the monochrome scheme primary is tone 0 — the ink the title is set
+     in — so the date reads as the card's own strongest line rather than as a
+     tint of something. */
+  --accent:         var(--md-sys-color-primary);
+  /* The artwork is decorative, so it is built as a ramp rather than out of
+     roles: four steps of the page's own ink laid into the page's own paper,
+     which inverts with the theme for free and keeps its spacing while it
+     does. The motif clears 8:1 on its ground in either direction, where a
+     meaningful graphic needs 3. */
+  --art-bg:  color-mix(in srgb,var(--md-sys-color-on-surface) 8%,var(--md-sys-color-surface));
+  --art-1:   color-mix(in srgb,var(--md-sys-color-on-surface) 16%,var(--md-sys-color-surface));
+  --art-3:   color-mix(in srgb,var(--md-sys-color-on-surface) 24%,var(--md-sys-color-surface));
+  /* Drawn at .28 and .45, so this one starts much darker than it lands. */
+  --art-2:   color-mix(in srgb,var(--md-sys-color-on-surface) 70%,var(--md-sys-color-surface));
+  --art-ink: var(--md-sys-color-on-surface-variant);
+  /* Selected is the filled button's pair, because "in your plan" is what a
+     filled button is for. */
+  --sel-bg: var(--md-sys-color-primary);
+  --sel-fg: var(--md-sys-color-on-primary);
 }
-.theme-art { --sel-bg: #6B4310; --sel-fg: #FFEEDC; }
-.theme-art .plan-toggle {
-  --plan-bg: #F2DFC3; --plan-fg: #2B1700;
-  --plan-bg-on: #6B4310; --plan-fg-on: #FFEEDC;
-}
-.theme-film { --sel-bg: #4F378B; --sel-fg: #EADDFF; }
-.theme-film .plan-toggle {
-  --plan-bg: #E8DEF8; --plan-fg: #1D192B;
-  --plan-bg-on: #4F378B; --plan-fg-on: #EADDFF;
-}
-.theme-culture { --sel-bg: #6B333E; --sel-fg: #FFE1E6; }
-.theme-culture .plan-toggle {
-  --plan-bg: #FBD9DF; --plan-fg: #2C151A;
-  --plan-bg-on: #6B333E; --plan-fg-on: #FFE1E6;
-}
-.theme-others { --sel-bg: #3C3D37; --sel-fg: #E9E9E4; }
-.theme-others .plan-toggle {
-  --plan-bg: #E2E2DF; --plan-fg: #1B1B19;
-  --plan-bg-on: #3C3D37; --plan-fg-on: #E9E9E4;
+/* The toggle keeps its own component CSS; only its tokens are pointed at the
+   scheme. Unselected it is a tonal button, selected it is a filled one. */
+.plan-toggle {
+  --plan-bg: var(--md-sys-color-secondary-container);
+  --plan-fg: var(--md-sys-color-on-secondary-container);
+  --plan-bg-on: var(--md-sys-color-primary);
+  --plan-fg-on: var(--md-sys-color-on-primary);
 }
 
 /* ── the component, shared between compact and detailed ── */
@@ -1743,6 +1701,35 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
+}
+
+/* The photographs are files now rather than data URIs, which is what lets
+   `loading="lazy"` mean anything — but it also means a card can be on screen
+   before its picture is. The media box already waits in the category's own
+   colour; this adds the same sweep the page-transition skeleton uses, so a
+   card that is waiting says so in the same language.
+
+   It stops itself twice over: the rule only matches a card whose <img> has
+   not fired its load yet, and the loaded photograph is opaque and fills the
+   box, so it covers the sweep even if that flag never arrives. Cards drawn
+   from the generated artwork have no <img> at all and never match.
+
+   The photograph itself is deliberately not faded in on that same flag. A
+   fade needs the picture to start invisible, and a picture that starts
+   invisible and waits for an event is a picture that stays invisible when the
+   event does not come. It arrives over the sweep instead. */
+.card__media:has(> img.card__art:not([data-ready]))::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent,
+    color-mix(in srgb, var(--md-sys-color-surface) 62%, transparent) 52%, transparent);
+  animation: fx-sweep 1.6s cubic-bezier(.4, 0, .2, 1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card__media::after { animation: none; background: none }
 }
 
 /* The notch is a block of card colour over the artwork's corner. It wraps the
@@ -1917,14 +1904,14 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
    toggle morphs its corner and fills: in M3 the shape change signals
    selection, and a stateless button must never borrow it.
 
-   The container is white against the card's tinted surface, and the selected
-   fill is the pair the plan toggle already uses, so the two controls mean the
-   same thing in every theme. */
+   The container is a tonal step lighter than the card it sits on, and the
+   selected fill is the pair the plan toggle already uses, so the two controls
+   mean the same thing in every theme. */
 .btn-group {
   /* ---- colour roles, taken from the card ---- */
   --md-primary:    var(--sel-bg);
   --md-on-primary: var(--sel-fg);
-  --md-surface:    #FFFFFF;
+  --md-surface:    var(--md-sys-color-surface-container-lowest);
 
   /* ---- motion tokens ----
      Material's published web conversions of the expressive spring tokens. */
@@ -3330,11 +3317,12 @@ const CAL = (() => {
   $('#monthBtn').addEventListener('click', () => setFold(collapsed ? false : true));
   $('#dayFilterClear').addEventListener('click', () => pick(null));
 
-  /* The legend names the categories the data actually has, in their own
-     colours, so it cannot drift from what the grid can draw. */
-  $('#calLegend').innerHTML = CATEGORIES.map(c =>
-    `<span class="legend__item"><span class="legend__swatch"
-       style="background:var(--cat-${esc(c.id)})"></span>${esc(c.label)}</span>`).join('') +
+  /* The legend used to name each category beside its own colour. The grid
+     draws in one tone now, so there are no colours to name — a row of five
+     identical grey swatches would be a key to nothing. What is left is the
+     one distinction the grid still makes, which is the one the key was
+     really for. */
+  $('#calLegend').innerHTML =
     '<span class="legend__note">Solid bars are <b>in your plan</b></span>';
 
   syncViewToSelected();
@@ -3372,7 +3360,8 @@ $('#months').innerHTML = Object.keys(groups).sort().map(m => {
 function cardArt(f, cls = 'card__art') {
   const cat = catOf(f).id;
   if (f.cardArt === 'photo') {
-    return `<img class="${cls}" src="${f.promoSrc}" alt="" loading="lazy">`;
+    return `<img class="${cls}" src="${f.promoSrc}" alt="" loading="lazy"
+      decoding="async" onload="this.dataset.ready=1">`;
   }
   return `<svg class="${cls}" viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice"
        role="img" aria-label="${esc(catOf(f).label)} festival artwork">
@@ -4061,7 +4050,7 @@ function applyTheme(t) {
     if (lbl) lbl.textContent = next === 'dark' ? 'Dark theme' : 'Light theme';
   }
   const meta = document.querySelector('meta[name=theme-color]');
-  if (meta) meta.content = t === 'dark' ? '#101010' : '#f5f5f5';
+  if (meta) meta.content = t === 'dark' ? '#131313' : '#ffffff';
   Store.set('theme', t);
 }
 document.querySelectorAll('#themeSeg button').forEach(b =>

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bundle the Material Web components and hand them to the page builders.
 
-Every page here is one self-contained file, so the components cannot be a
+Every page here carries its own markup and styles, so the components cannot be a
 script tag pointing at a CDN — they are bundled with esbuild and inlined like
 the fonts and the artwork. The bundle is rebuilt only when its entry point or
 the installed package changes.

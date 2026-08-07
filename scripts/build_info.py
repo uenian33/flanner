@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build the About / Terms / EU data policy pages.
 
-One template, one JSON file of copy, three self-contained pages under
-about/, terms/ and privacy/. Nothing here is fetched at runtime.
+One template, one JSON file of copy, four pages under about/, faq/, terms/
+and privacy/. Nothing here is fetched at runtime but the shared font.
 """
 import json
 import sys
@@ -11,7 +11,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fontsub
 import m3color
-from assets import data_uri
 import seo
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -99,7 +98,7 @@ def main() -> None:
 
         out = ROOT / slug / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(fontsub.inline(html))
+        out.write_text(fontsub.link(html, "../"))
         print(f"  {out.relative_to(ROOT)} · {len(html) / 1024:.0f} KB")
 
 
