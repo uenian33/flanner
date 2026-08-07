@@ -27,6 +27,9 @@ cd scripts && python3 build_pwa.py   # icons, manifest, service worker
 python3 scripts/build_seo.py    # robots.txt, sitemap.xml, IndexNow key — run last
 ```
 
+`python3 tools/theme_parity.py` checks the browser's colour engine against the
+build's, tone for tone and token for token. Run it after touching either.
+
 `build_seo.py --submit` additionally pushes the six URLs to IndexNow (Bing,
 Yandex, Seznam, Naver). Google has no equivalent ping and picks changes up by
 crawling, or immediately if the URL is submitted in Search Console. To verify
@@ -214,6 +217,26 @@ That is the weight. The rest is the wait.
 
 Everything above respects `prefers-reduced-motion`, which here means the shapes
 hold still and the navigation goes back to the browser's own cut.
+
+## The scheme, in the browser
+
+Every planner is the same design in a different hue, and the turning used to
+happen only in Python: `theme_recipe` reads every tone the design chose,
+`render_recipe` re-emits them at the festival's hue, and the answer is baked
+into that festival's page. It still is — the first paint is themed, never a
+green flash — but the same arithmetic now ships to the browser as well, so a
+planner can be handed an accent it was never built for and draw itself.
+
+| | |
+|---|---|
+| One recipe, two renderers | `theme_recipe` returns the design's tokens with the hue taken out of them: a lightness and a chroma waiting for an angle, or the literal value where the scheme leaves a colour alone. The page's stylesheet and the browser's are rendered from that same object, so they cannot drift into disagreeing about a festival. |
+| Only the hue moves | Every token keeps the lightness and chroma the design gave it, so every contrast pair the design was drawn against still holds. That is what makes it safe to theme a festival nobody has audited by hand. 22 of the 63 tokens are the same for every festival: below chroma 3 there is no hue to turn — `--card` measures 2.65, `--wash` 0.00 — and the amber and violet strands are second colours on purpose. |
+| Proved, not trusted | Two implementations of the same maths drift silently, and the drift is a colour nobody chose. `tools/theme_parity.py` holds `scripts/_theme.js` against `scripts/m3color.py`: 8,280 tones across the whole space, then every token of the whole scheme at every festival's accent, at 10 stages and at 17. Any disagreement fails; the Python wins. Run it before pushing a colour change. |
+| One file for the site | The engine and the recipe are hue-independent, so they are written once as `assets/js/theme-<hash>.js` and shared. That it really is festival-independent is checked rather than assumed — the second planner to ask for it is compared against the first, and a difference fails the build. |
+| What a page carries | `<html data-festival data-accent data-stages>`. That is the whole interface: the engine reads those three and writes the scheme, including the per-stage palettes. Re-theming a live page measures 3.4ms. |
+
+`FlannerTheme.apply(accent, stages)` re-themes the document at any time, which
+is what a planner rendered from a dataset rather than from a build will use.
 
 ## Scrolling the map view
 

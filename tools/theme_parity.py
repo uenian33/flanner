@@ -60,7 +60,18 @@ def sample() -> list[tuple[float, float, float]]:
 
 JS_HARNESS = r"""
 const fs = require('fs');
+/* Enough document for the file to load. It themes whatever page it finds
+   itself in; here there is no page, so `data-accent` is absent and the
+   bootstrap at the end of it does nothing — which is the behaviour being
+   relied on, and is worth it going wrong loudly here rather than quietly in a
+   browser. */
 global.window = {};
+global.document = {
+  documentElement: { getAttribute: () => null },
+  getElementById: () => null,
+  createElement: () => ({}),
+  head: { appendChild() {} },
+};
 new Function(fs.readFileSync(process.argv[2], 'utf8'))();
 const T = global.window.FlannerTheme;
 const job = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
@@ -90,7 +101,12 @@ def decls_of(css: str) -> dict:
 
 def main() -> int:
     cases = sample()
-    recipe = B.theme_recipe(B.CARD_CSS, B.SHEET_CSS, B.FEST_CSS)
+    # The recipe the build actually ships, from the sources the build reads —
+    # a recipe assembled any other way would be checking something the site
+    # does not use.
+    import planner as art_mod
+    art = art_mod.Artifact()
+    recipe = B.theme_recipe(art.other_css(), art.js)
     fests = [(f["id"], f["accent"]) for f in schema.load()["festivals"] if f.get("accent")]
     # Ten stages is what both planners have; a festival with more is the case
     # the golden angle exists for, so one is checked well past it.

@@ -1,5 +1,9 @@
 <!doctype html>
-<html lang="en">
+<!-- The festival this page is, in the two facts the theme needs. The
+     scheme below is already written at this accent, so the first paint is
+     themed; these are what let the same engine re-derive it at runtime for
+     a festival the build never saw. -->
+<html lang="en" data-festival="flow" data-accent="#fff203" data-stages="10">
 <head>
 <meta charset="utf-8">
 <!-- Two departures from the policy the rest of the site runs under, both
@@ -1993,6 +1997,10 @@ body{overscroll-behavior:none}
 <script src="../assets/js/react-dom-35f4f974f4.js"></script>
 <script src="../assets/js/leaflet-db49d009c8.js"></script>
 <script src="../assets/js/dc-runtime-8fe7df7440.js"></script>
+<!-- The colour engine and the design's own tones with the hue taken out of
+     them: one file for the whole site, which themes a planner from the
+     accent on <html> above. -->
+<script src="../assets/js/theme-cd8b355c10.js"></script>
 </head>
 <body>
 <x-dc>
