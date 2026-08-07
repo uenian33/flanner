@@ -1757,6 +1757,13 @@ dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
 .trig svg.i{width:17px;height:17px;color:var(--md-sys-color-on-surface-variant)}
 .trig:hover{border-color:var(--md-sys-color-on-surface)}
 .trig[aria-expanded=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
+/* Time is the third of the three shapes the list takes, so it is filled
+   while the calendar is the one showing and plain while it is not —
+   said on the element, because the phone styles this row with its own
+   rules and the class-level pressed state never reached it there. */
+#whenTrig[aria-pressed=true]{background:var(--md-sys-color-on-surface);
+  color:var(--md-sys-color-surface);border-color:var(--md-sys-color-on-surface)}
+#whenTrig[aria-pressed=true] svg.i{color:var(--md-sys-color-surface)}
 .trig[aria-expanded=true] svg.i{color:var(--md-sys-color-surface)}
 .trig .cv{width:12px;height:12px;flex:none;opacity:.7;
   transition:transform var(--md-sys-motion-spring-fast-spatial)}
@@ -4941,11 +4948,13 @@ function apply() {
   /* The trigger says what the filter is set to, not what it filters — the
      sheet it opens is already titled "Filter by date". */
   const w2 = WHEN.find(x => x.k === when);
-  /* The trigger is named for what it filters, not for what it is filtering
-     to: the active chips under the bar carry the values, and a control whose
-     name changes to "3 kinds" is a control you have to read twice to find
-     again. Its filled state says a filter is on. */
-  $('#whenTrig').classList.toggle('is-set', when !== 'all');
+  /* Time is the third of the three shapes the list can take — beside Compact
+     and Detailed — so what its filled state says is which shape is showing,
+     and nothing else. It said two things at once before: pressed for the
+     calendar, filled for a date filter, so it sat black over a compact list
+     because a range was set. The range is on the chip under the bar, where
+     every other filter's value is. */
+  $('#whenTrig').classList.remove('is-set');
   /* The filter state is held as category ids; everything shown to a reader is
      the label that belongs to the id. */
   const catLabel = id => (CAT_BY_ID.get(id) || {label: id}).label;
