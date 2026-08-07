@@ -1045,34 +1045,31 @@ SHEET_JS = """
        update hook's own guard, and on the path where that guard never fired
        the card opened with no animation and with the last card's player
        already marked loaded, so the wave that says it is loading never came. */
+    /* This runs from a ref, which React calls while it is still committing.
+       Nothing here may touch state: a setState from a ref throws #185 and
+       the component stops rendering — a planner that shows nothing at all.
+       What a new card needs setting is set where the card is asked for, in
+       openCard, which is an event handler and may. This is the DOM only. */
     if (!el) { this.startedSheet = null; return; }
-    /* Keyed to the card, not to the element. Two reasons, and the second one
-       cost a card that rose twice: a cached frame reports itself loaded in
-       the same tick this runs, so a reset that fires afterwards puts the
-       indicator back over a player already there; and the element itself is
-       replaced on a re-render, so anything guarded on its identity runs again
-       for the same act. One card, one start. */
     if (this.startedSheet === this.state.sheet) return;
     this.startedSheet = this.state.sheet;
-    /* Off the commit: a ref fires while React is still committing, and a
-       setState from there is the one thing it will not have — it throws
-       #185 and the page stops rendering entirely. */
-    requestAnimationFrame(() => {
-      this.playSheetOpen();
-      this.setState({ embedReady: false, embedDead: false, bioOpen: false,
-        bioFits: false, bioFull: 0, playerOpen: false });
-    });
-    /* And a deadline. Spotify is a third party behind a frame we cannot
-       inspect: if it has not answered in 35 seconds it is not going to, and
-       the card says there is no preview rather than waving forever. */
+    requestAnimationFrame(() => this.playSheetOpen());
+  };
+
+  /* Asking for a card: what it shows, and what the last one must not leave
+     behind. Its player gets 35 seconds — Spotify is a third party behind a
+     frame we cannot inspect, and if it has not answered by then the card
+     says there is no preview rather than waving at the reader forever. */
+  openCard(id) {
     clearTimeout(this.embedTimer);
-    const card = this.state.sheet;
     this.embedTimer = setTimeout(() => {
-      if (this.state.sheet === card && !this.state.embedReady) {
+      if (this.state.sheet === id && !this.state.embedReady) {
         this.setState({ embedDead: true });
       }
     }, 35000);
-  };
+    this.setState({ sheet: id, embedReady: false, embedDead: false,
+      bioOpen: false, bioFits: false, bioFull: 0, playerOpen: false });
+  }
 
   /* The page behind steps back while a sheet is up — the class is on the body
      so the shell's own rule does the moving. Read on every update rather than
@@ -2091,6 +2088,16 @@ def patch_sheet(src: str) -> str:
     return src
 
 
+    # Every way into a card is the same way in: openCard sets what the card
+    # needs and clears what the last one left, from an event handler, where
+    # touching state is allowed.
+    for _ in range(3):
+        try:
+            src = sub_once(src, r"this\.setState\(\{ sheet: ev\.id \}\)",
+                           "this.openCard(ev.id)", "a card is asked for")
+        except MissingAnchor:
+            break
+
 def patch_nav(src: str) -> str:
     # One rail across the site. The festival list draws a 96px rail with a
     # 48×32 indicator; the design's is 88 with 56×32. Same numbers here, so
@@ -2282,7 +2289,7 @@ def patch_nav(src: str) -> str:
         "            '--art-bg': c.qBg, '--art-1': c.qTone, '--art-2': c.qInk,\n"
         "            '--art-3': c.qTone, '--art-ink': c.qInk\n"
         "          },\n"
-        "          onOpen: () => this.setState({ sheet: ev.id })\n"
+        "          onOpen: () => this.openCard(ev.id)\n"
         "        };\n"
         "      }),\n"
         "      showHeroFold: true, showControls: true, filterScrim: false,",
