@@ -105,4 +105,5 @@ if __name__ == "__main__":
         print(f"{i}. {got:11} {s['text']}")
     if not SRC.is_dir():
         print(f"\nno sources yet — put screenshots in {SRC.relative_to(ROOT)}/ "
-              f"named {', '.join(s['src'] + '.png' for s in STEPS)}")
+              f"named {', '.join(s['src'] + '.webp' for s in STEPS)} "
+              f"(any image extension; the stem is what is matched)")
