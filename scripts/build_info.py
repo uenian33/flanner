@@ -64,6 +64,7 @@ def main() -> None:
             ("__UPDATED__", info["updated"]),
             ("__ROOT__", "../"),
             ("__NOTE__", NOTE),
+            ("__THEMEBOOT__", schema.theme_boot()),
             ("__PAGEFX__", schema.pagefx()),
             ("__CONTACT__", site["contact"]),
             ("__BASE__", seo.BASE),

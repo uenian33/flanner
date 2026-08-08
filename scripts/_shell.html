@@ -423,25 +423,32 @@ body.shell-busy .shell-page{pointer-events:none}
     return libs;
   }
 
-  /* The shell restates what a planner's stylesheet says about the
-     document itself, so those three rules stop at the planner. */
-  /* Read once, before any planner's stylesheet is in the document. Read later
-     and the body would already be answering in the planner's own colour and
-     face, and the list would be handed them. */
-  const own = (() => {
-    const cs = getComputedStyle(document.body);
-    return {color: cs.color, bg: cs.backgroundColor, font: cs.fontFamily};
-  })();
+  /* The shell restates what a planner's stylesheet says about the document
+     itself, so those three rules stop at the planner. */
+  /* The face is read once, before any planner's stylesheet is in the document:
+     read later and the body would already be answering in the planner's own,
+     and the list would be handed Inter. The colours are NOT read — they are
+     named. Read, they were a snapshot of whichever theme happened to be on at
+     load, written into the one stylesheet that is always appended last and so
+     always wins: open a planner in the light theme, come back, switch to dark,
+     and the page stayed white under a scheme that had gone black. That is the
+     "some components do not switch back" — it was the body itself, and it only
+     started once a planner had been opened, which is what made it look random.
+     Named, they resolve against the list's own tokens, which is what the theme
+     switch moves. A planner's own `:root` blocks are scoped to its screen when
+     it is mounted, so `:root` here is still the list's. */
+  const own = { font: getComputedStyle(document.body).fontFamily };
+  const INK = 'var(--md-sys-color-on-surface)';
+  const PAPER = 'var(--md-sys-color-surface)';
   function reassertShell() {
-    const cs = own;
     lastWord.textContent =
       /* Colour and face on the list's own screen. On the document they were
          reaching a planner too, which sets Inter and was getting the list's
          face instead. The ground stays on the document, because that is what
          shows through a screen that has not painted yet. */
-      '#pHome{color:' + cs.color + ';font-family:' + cs.font + '}' +
-      'body{color:' + cs.color + ';background:' + cs.bg +
-      ';font-family:' + cs.font + '}' +
+      '#pHome{color:' + INK + ';font-family:' + own.font + '}' +
+      'body{color:' + INK + ';background:' + PAPER +
+      ';font-family:' + own.font + '}' +
       '#pHome a{color:inherit}' +
       'html,body{height:auto}';
     document.head.appendChild(lastWord);   /* always last */

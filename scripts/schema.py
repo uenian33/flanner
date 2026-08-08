@@ -71,6 +71,16 @@ def planner_dirs() -> list[str]:
     return [f["planner"].strip("/") for f in load()["festivals"] if f.get("planner")]
 
 
+def theme_boot() -> str:
+    """The three-line reader that puts `data-theme` on the document.
+
+    Every page includes it, first thing in the head. Stated once because the
+    site has one setting and three kinds of page, and a planner that read the
+    wrong key would sit in the wrong theme with nothing on screen to say why.
+    """
+    return (ROOT / "scripts" / "_theme-boot.html").read_text().rstrip("\n")
+
+
 def pagefx() -> str:
     """The page-to-page layer, with the list of planners written into it.
 

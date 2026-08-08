@@ -7050,6 +7050,9 @@ def build(fid: str) -> pathlib.Path:
 
     accent = f["accent"]
     nstages = len(fest.stages)
+    # The site's one theme reader, shared with the list and the info pages so
+    # the three cannot answer differently.
+    theme_boot = schema.theme_boot()
     # One recipe, used twice: to write this page's stylesheet, and to hand the
     # browser what it needs to write the same one for an accent it has not seen.
     recipe = theme_recipe(art.other_css(), art.js, script, template)
@@ -7063,6 +7066,13 @@ def build(fid: str) -> pathlib.Path:
 <html lang="en" data-festival="{fid}" data-accent="{accent}" data-stages="{nstages}">
 <head>
 <meta charset="utf-8">
+<!-- The reader's own light or dark, before anything is fetched. This page had
+     no reader at all: its whole scheme is keyed on [data-theme="dark"] with no
+     prefers-color-scheme fallback, and nothing here ever set that attribute, so
+     a planner stayed light whatever had been chosen on the page that linked to
+     it. What it does not touch is the festival's hue, which is this page's own
+     and is the same in both themes. -->
+{theme_boot}
 <!-- Two departures from the policy the rest of the site runs under, both
      forced by the design's runtime and both scoped to the planners.
 

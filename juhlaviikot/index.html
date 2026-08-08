@@ -6,6 +6,46 @@
 <html lang="en" data-festival="juhlaviikot" data-accent="#ffc861" data-stages="1">
 <head>
 <meta charset="utf-8">
+<!-- The reader's own light or dark, before anything is fetched. This page had
+     no reader at all: its whole scheme is keyed on [data-theme="dark"] with no
+     prefers-color-scheme fallback, and nothing here ever set that attribute, so
+     a planner stayed light whatever had been chosen on the page that linked to
+     it. What it does not touch is the festival's hue, which is this page's own
+     and is the same in both themes. -->
+<script>
+/* ── the theme, before the first paint ──────────────────
+   One reader for the whole site. The list page owns the setting and writes it
+   four ways — cookie and local storage, under `flanner1.theme` and the legacy
+   `fp-theme` — and every page has to arrive at the same answer before its
+   stylesheet is applied, or a reader who chose dark gets a white flash on the
+   way into a page that is about to be black.
+
+   The planners had no reader at all. Their whole scheme is keyed on
+   `[data-theme="dark"]` with no `prefers-color-scheme` fallback, and nothing
+   on the page ever set that attribute — so every planner was permanently
+   light, whatever the reader had chosen two pages earlier. That is what this
+   fixes; the flash on the other pages is what it fixes on the way past.
+
+   It runs in the head, before anything is fetched, and it is deliberately
+   small: no dependencies, nothing to wait for, and a failure in any of the
+   four reads leaves the default rather than throwing in front of the page.
+
+   The default is light, not the device's preference — which is what the list
+   page's Store has always answered for an unset value, and changing it here
+   would change what an untouched device sees. */
+(function () {
+  var read = function (k) {
+    try {
+      var m = document.cookie.match('(?:^|; )' + k.replace('.', '\\.') + '=([^;]*)');
+      if (m) return decodeURIComponent(m[1]);
+    } catch (e) {}
+    try { return localStorage.getItem(k); } catch (e) {}
+    return null;
+  };
+  var t = read('flanner1.theme') || read('fp-theme');
+  document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+})();
+</script>
 <!-- Two departures from the policy the rest of the site runs under, both
      forced by the design's runtime and both scoped to the planners.
 
