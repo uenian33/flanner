@@ -3149,6 +3149,11 @@ body.plan-only .section-headline{position:absolute;width:1px;height:1px;
     animation:a2hspop .3s cubic-bezier(.2,0,0,1)}
   @keyframes a2hspop{from{opacity:0;transform:translate(-50%,-46%) scale(.97)}
     to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+  /* A dialog in the middle of the screen has no edge to slide back to, so the
+     translate the phone's card leaves on is neutralised here and it simply
+     goes. Its own centring transform would fight it besides. */
+  .a2hs-card.is-going{opacity:0;transform:translate(-50%,-50%) scale(.98);
+    transition:opacity .2s,transform .2s}
 }
 /* The handle is the card's, always: a drag from it moves the card whatever
    the words under it have been scrolled to, so the browser must not take the
@@ -6494,8 +6499,21 @@ document.addEventListener('click', e => {
     sheet.style.transform = '';
     if (scrim) { scrim.style.transition = 'opacity .32s'; scrim.style.opacity = ''; }
   };
-  const throwCard = () => {
+  /* It leaves the way it arrived, back down to the edge it rose from — M3's
+     rule for a bottom sheet, and quicker on the way out than in: 280ms on the
+     accelerate against 420 on the emphasised decelerate. Every way of closing
+     it goes through here, the drag included, so a card thrown out and a card
+     dismissed by its own button do the same thing. From wherever the card has
+     been dragged to, since that is where a transition starts from. */
+  const slideCardOut = () => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { openCardSheet(false); return; }
+    if (sheet.hidden) return;
+    if (!phoneSheet.matches) {
+      sheet.classList.add('is-going');
+      if (scrim) { scrim.style.transition = 'opacity .2s'; scrim.style.opacity = '0'; }
+      setTimeout(() => { sheet.classList.remove('is-going'); openCardSheet(false); }, 200);
+      return;
+    }
     sheet.style.transition = 'transform .28s cubic-bezier(.3,0,.8,.15)';
     sheet.style.transform = 'translateY(100%)';
     if (scrim) { scrim.style.transition = 'opacity .28s'; scrim.style.opacity = '0'; }
@@ -6533,7 +6551,7 @@ document.addEventListener('click', e => {
     if (!on) return;
     const speed = dy / Math.max(1, performance.now() - t);
     /* Far enough, or thrown hard enough to mean it. */
-    if (!cancelled && (dy > cardH() * .28 || speed > .6)) throwCard();
+    if (!cancelled && (dy > cardH() * .28 || speed > .6)) slideCardOut();
     else restCard();
   };
   sheet.addEventListener('pointerup', () => letGo(false));
@@ -6546,11 +6564,11 @@ document.addEventListener('click', e => {
      opened from it — and not before. */
   $('#a2hsNo').onclick = (e) => {
     e.stopPropagation();
-    openCardSheet(false);
+    slideCardOut();
   };
-  if (scrim) scrim.onclick = () => openCardSheet(false);
+  if (scrim) scrim.onclick = () => slideCardOut();
   addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !sheet.hidden) openCardSheet(false);
+    if (e.key === 'Escape' && !sheet.hidden) slideCardOut();
   });
   show();
 })();
