@@ -4420,7 +4420,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
     <ol class="a2hs__steps" id="a2hsSteps"></ol>
   </div>
   <div class="a2hs-card__foot">
-    <button class="a2hs-card__done" id="a2hsNo" type="button">Got it</button>
+    <button class="a2hs-card__done" id="a2hsNo" type="button">Close</button>
   </div>
 </div>
 
@@ -4676,9 +4676,12 @@ const Store = (() => {
     /* The site's language. Kept here rather than on the page so a planner
        opened from this one can read the same answer. */
     lang:  {values: ['en', 'fi', 'sv'], def: 'en'},
-    /* Whether the add-to-home-screen offer has been answered — taken or
-       waved off. Either way it is not asked again. */
-    a2hs:  {values: ['0', '1'], def: '0'},
+    /* Whether this is on the home screen already. Only the browser's own
+       `appinstalled` writes it, so it says what happened rather than what
+       someone tapped — an earlier version put a 1 here when the instructions
+       were closed, which took the offer away from readers who had merely read
+       it, so the name is new and those values are left behind with it. */
+    installed: {values: ['0', '1'], def: '0'},
     /* The festivals someone has put in their plan, as a comma-separated list
        of ids. Ids the current data does not know are dropped on read, so a
        renamed or retired festival cannot linger in the list. */
@@ -6387,14 +6390,14 @@ document.addEventListener('click', e => {
     : '') + '</li>';
 
   const show = () => {
-    bar.hidden = installed() || Store.get('a2hs') === '1';
+    bar.hidden = installed() || Store.get('installed') === '1';
     /* Two short lines. It said the same thing twice over three, and the
        longer it ran the more it read as an advertisement to scroll past. */
     $('#a2hsSub').textContent = 'Keeps your plans';
   };
 
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; show(); });
-  addEventListener('appinstalled', () => { deferred = null; Store.set('a2hs', '1'); show(); });
+  addEventListener('appinstalled', () => { deferred = null; Store.set('installed', '1'); show(); });
 
   bar.onclick = async (e) => {
     /* The page closes any open sheet on a bubbling click, and every trigger it
@@ -6407,8 +6410,9 @@ document.addEventListener('click', e => {
       p.prompt();
       /* Declined counts as answered: the browser will not replay the event,
          and asking again every visit is what makes these hated. */
+      /* Whether they took it is the browser's business to report, through
+         `appinstalled`; this only stops holding a prompt that has been spent. */
       try { await p.userChoice; } catch (err) {}
-      Store.set('a2hs', '1');
       show();
       return;
     }
@@ -6424,11 +6428,15 @@ document.addEventListener('click', e => {
     document.body.style.overflow = on ? 'hidden' : '';
     if (on) sheet.focus && sheet.setAttribute('tabindex', '-1'), on && sheet.focus();
   };
+  /* Closing the instructions closes the instructions. It used to also put the
+     offer away for good, which is the wrong reading of the button: someone who
+     has read three steps has not necessarily carried them out, and taking the
+     way back away from them is how a reader ends up stuck. The band goes when
+     the app is actually on the home screen — `appinstalled`, or the page being
+     opened from it — and not before. */
   $('#a2hsNo').onclick = (e) => {
     e.stopPropagation();
-    Store.set('a2hs', '1');
     openCardSheet(false);
-    show();
   };
   if (scrim) scrim.onclick = () => openCardSheet(false);
   addEventListener('keydown', (e) => {
