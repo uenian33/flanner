@@ -1406,10 +1406,7 @@ dialog.setdlg::backdrop{background:rgba(4,6,9,.55);
 dialog.setdlg.in::backdrop{opacity:1}
 /* On a phone it stands on the bottom edge and is pushed back down with a
    thumb — M3's modal bottom sheet, and the shape an act's card already uses
-   for "here is one thing, in detail". It replaces the side menu, which was a
-   panel that slid in from the edge of the screen and held the same three
-   destinations the dock already carries plus two settings pretending to be
-   navigation. A setting is not a place.
+   for "here is one thing, in detail".
 
    Its measurements are the act card's: the extra-large corner on the two top
    corners only, as tall as its own content up to 88% of the screen, and the
@@ -1419,8 +1416,7 @@ dialog.setdlg.in::backdrop{opacity:1}
   max-height:min(88svh,760px);display:flex;flex-direction:column;
   overflow:hidden;overscroll-behavior:contain;
   background:var(--md-sys-color-surface-container-low);
-  border:0;border-radius:28px 28px 0 0;
-  padding:0 clamp(16px,2.4vw,22px) calc(20px + var(--safe-b,0px));
+  border:0;border-radius:28px 28px 0 0;padding:0;
   box-shadow:0 -8px 40px rgb(0 0 0 / .28);
   transition:transform .42s cubic-bezier(.05,.7,.1,1)}
 dialog.setdlg.in .setbox{transform:translate(-50%,0)}
@@ -1430,13 +1426,14 @@ dialog.setdlg.in .setbox{transform:translate(-50%,0)}
   transform:translate(-50%,var(--setdrag,0px))}
 /* The handle: 32 by 4 on a 28px band, which is the act card's own. */
 .setgrip{flex:none;display:grid;place-items:center;block-size:28px;
-  touch-action:none;cursor:grab}
+  padding-block-start:8px;touch-action:none;cursor:grab}
 .setgrip:active{cursor:grabbing}
 .setgrip i{inline-size:32px;block-size:4px;border-radius:2px;
   background:color-mix(in srgb,var(--md-sys-color-on-surface) 24%,transparent)}
 /* Everything under the head scrolls; the head and the handle stay. */
 .setscroll{flex:1 1 auto;min-block-size:0;overflow-y:auto;
-  overscroll-behavior:contain;
+  overscroll-behavior:contain;touch-action:pan-y;
+  padding:0 16px calc(24px + var(--safe-b,0px));
   /* No track down the side of a sheet: the handle above already says this
      moves, and a scrollbar inside a 28px corner reads as a seam. */
   scrollbar-width:none;-ms-overflow-style:none}
@@ -1445,7 +1442,7 @@ dialog.setdlg.in .setbox{transform:translate(-50%,0)}
   /* Above the phone there is no bottom edge a page is reaching for, so it is a
      dialog in the middle — the same answer the add-to-home-screen card gives. */
   .setbox{bottom:auto;top:50%;width:min(460px,calc(100vw - 24px));
-    border:1px solid var(--md-sys-color-outline);
+    border:1px solid var(--md-sys-color-outline-variant);
     border-radius:var(--md-sys-shape-corner-large-increased);
     box-shadow:var(--md-sys-elevation-3);
     opacity:0;transform:translate(-50%,calc(-50% + 16px));
@@ -1457,41 +1454,160 @@ dialog.setdlg.in .setbox{transform:translate(-50%,0)}
 @media(prefers-reduced-motion:reduce){
   .setbox{transition:none}
 }
-/* Not sticky any more: the scroller under it is what moves, so the head and
-   the handle simply stay where they are. */
-.sethead{flex:none;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;padding:4px 0 12px}
-.sethead h2{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--md-sys-typescale-title-medium-size);
-  letter-spacing:.02em;text-transform:uppercase}
-.setclose{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);
-  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
-.setclose:hover{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
-.setrow{display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:15px 0;border-top:1px solid var(--md-sys-color-outline-variant);flex-wrap:wrap}
-.setrow b{display:block;font-size:var(--md-sys-typescale-label-medium-size);font-weight:var(--md-sys-typescale-emphasized-label-weight)}
-.setrow i{display:block;font-style:normal;font-size:var(--md-sys-typescale-label-small-size);color:var(--md-sys-color-on-surface-variant);margin-top:3px;
-  max-width:42ch}
-/* An outlined button at the small size: 40dp tall, label-large. It was 38dp
-   with a label-small label, which is neither a size on the ladder nor the role
-   a button label takes. Shared with the planners' settings card. */
-.setbtn{min-height:40px;padding:0 16px;border-radius:var(--md-sys-shape-corner-full);border:1px solid var(--md-sys-color-outline);
-  font-size:var(--md-sys-typescale-label-large-size);font-weight:var(--md-sys-typescale-title-weight);color:var(--md-sys-color-on-surface);transition:var(--md-sys-motion-spring-fast-effects)}
-.setbtn:hover:not(:disabled){background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
-.setbtn:disabled{opacity:.5}
-.fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
-  border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px;flex:none}
-.fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-title-weight);padding:0 16px;min-height:34px;
-  border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
-.fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
-.setnote{margin:15px 0 0;font-size:var(--md-sys-typescale-label-small-size);line-height:1.6;color:var(--md-sys-color-on-surface-variant)}
+.sethead{flex:none;display:flex;align-items:center;gap:8px;
+  padding:6px 8px 12px 24px}
+.sethead h2{margin:0;font-family:var(--title);
+  font-size:var(--md-sys-typescale-headline-small-size);font-weight:700;
+  letter-spacing:-.02em}
+.setclose{margin-inline-start:auto;flex:none;
+  width:48px;height:48px;border:0;border-radius:50%;background:none;
+  display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);
+  cursor:pointer;transition:background var(--md-sys-motion-spring-fast-effects)}
+.setclose:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}
+.setclose:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:2px}
+.setclose .i{width:22px;height:22px;fill:currentColor}
+
+/* ── groups ─────────────────────────────────────────────
+   A heading names a group, the group is a card, and a row inside it is one
+   setting. Rules across the whole sheet said less and drew more: with the
+   settings in cards, what separates two of them is the gap between the cards
+   rather than a line, and the only lines left are between rows that genuinely
+   belong together. */
+.seteyebrow{margin:20px 0 8px;padding-inline:8px;
+  font-size:var(--md-sys-typescale-label-small-size);font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--md-sys-color-on-surface-variant)}
+.setgroup{border-radius:24px;overflow:hidden;
+  background:var(--md-sys-color-surface-container-lowest)}
+.setgroup + .seteyebrow{margin-block-start:24px}
+
+.setrow{display:flex;align-items:center;gap:16px;padding:16px;
+  min-block-size:72px}
+.setrow--stack{display:block}
+.setrow + .setrow,
+.setreveal + .setrow{border-block-start:1px solid var(--md-sys-color-outline-variant)}
+.setrow__text{flex:1 1 auto;min-inline-size:0}
+.setrow__title{display:block;margin:0;
+  font-size:var(--md-sys-typescale-title-small-size);font-weight:600;
+  letter-spacing:-.005em}
+.setrow__sub{display:block;margin:4px 0 0;font-size:13.5px;line-height:1.45;
+  color:var(--md-sys-color-on-surface-variant)}
+.setrow__val{flex:none;display:inline-flex;align-items:center;gap:6px;
+  font-size:var(--md-sys-typescale-label-large-size);font-weight:550;
+  color:var(--md-sys-color-on-surface-variant)}
+.setrow__val .i{width:20px;height:20px;fill:currentColor;
+  transition:transform var(--md-sys-motion-spring-fast-spatial)}
+/* A row that is itself the control. */
+.setrow--act{inline-size:100%;border:0;background:none;color:inherit;
+  font-family:inherit;text-align:start;cursor:pointer;
+  transition:background var(--md-sys-motion-spring-fast-effects)}
+.setrow--act:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 5.5%,transparent)}
+.setrow--act:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:-3px}
+.setrow--act[aria-expanded=true] .setrow__val .i{transform:rotate(180deg)}
+
+/* ── the connected button group ─────────────────────────
+   Filled segments and no strokes, the selected one filling and rounding —
+   M3's own, and the shape the list's view switcher already uses. */
+.fseg{display:flex;gap:4px;margin-block-start:14px;background:none;
+  border:0;padding:0}
+.fseg button{flex:1 1 0;min-inline-size:0;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  block-size:48px;padding:0 8px;border:0;border-radius:10px;
+  background:color-mix(in srgb,var(--md-sys-color-on-surface) 5.5%,transparent);
+  color:var(--md-sys-color-on-surface-variant);
+  font-family:inherit;font-size:var(--md-sys-typescale-label-large-size);
+  font-weight:600;white-space:nowrap;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background var(--md-sys-motion-spring-fast-effects),
+    color var(--md-sys-motion-spring-fast-effects),
+    border-radius var(--md-sys-motion-spring-fast-spatial)}
+.fseg button:first-child{border-start-start-radius:24px;border-end-start-radius:24px}
+.fseg button:last-child{border-start-end-radius:24px;border-end-end-radius:24px}
+.fseg button .i{flex:none;width:18px;height:18px;fill:currentColor}
+.fseg button:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}
+.fseg button:focus-visible{outline:2px solid var(--md-sys-color-on-surface);
+  outline-offset:2px;z-index:1}
+.fseg button[aria-pressed=true]{border-radius:24px;
+  background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface)}
+
+/* ── the switch ─────────────────────────────────────────
+   On and off is a switch, not two buttons pretending to be one. */
+.setsw{flex:none;position:relative;inline-size:52px;block-size:32px}
+.setsw input{position:absolute;inset:0;inline-size:100%;block-size:100%;
+  margin:0;opacity:0;cursor:pointer}
+.setsw__track{position:absolute;inset:0;border-radius:16px;
+  background:var(--md-sys-color-surface-container-high);
+  border:2px solid var(--md-sys-color-outline);pointer-events:none;
+  transition:background var(--md-sys-motion-spring-fast-effects),
+    border-color var(--md-sys-motion-spring-fast-effects)}
+.setsw__thumb{position:absolute;inset-block-start:50%;inset-inline-start:6px;
+  inline-size:16px;block-size:16px;margin-block-start:-8px;border-radius:50%;
+  display:grid;place-items:center;pointer-events:none;
+  background:var(--md-sys-color-outline);
+  transition:inline-size var(--md-sys-motion-spring-fast-spatial),
+    block-size var(--md-sys-motion-spring-fast-spatial),
+    margin var(--md-sys-motion-spring-fast-spatial),
+    inset-inline-start var(--md-sys-motion-spring-fast-spatial),
+    background var(--md-sys-motion-spring-fast-effects)}
+.setsw__thumb .i{width:14px;height:14px;fill:var(--md-sys-color-on-surface);
+  opacity:0;transition:opacity var(--md-sys-motion-spring-fast-effects)}
+.setsw input:checked ~ .setsw__track{background:var(--md-sys-color-on-surface);
+  border-color:var(--md-sys-color-on-surface)}
+.setsw input:checked ~ .setsw__thumb{inline-size:24px;block-size:24px;
+  margin-block-start:-12px;inset-inline-start:24px;
+  background:var(--md-sys-color-surface)}
+.setsw input:checked ~ .setsw__thumb .i{opacity:1}
+.setsw input:focus-visible ~ .setsw__track{outline:2px solid var(--md-sys-color-on-surface);
+  outline-offset:3px}
+
+/* ── a row that opens into its own choices ──────────────
+   Grid rows from 0fr to 1fr: it animates without anything having to measure
+   the list first, and a list that grows by a city still opens correctly. */
+.setreveal{display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows var(--md-sys-motion-spring-default-spatial)}
+.setreveal.is-open{grid-template-rows:1fr}
+.setreveal > div{overflow:hidden}
+.setopts{margin:0;padding:0 8px 8px;list-style:none}
+.setopt{display:flex;align-items:center;gap:14px;inline-size:100%;
+  padding:12px;min-block-size:48px;border:0;border-radius:16px;
+  background:none;color:inherit;font-family:inherit;
+  font-size:var(--md-sys-typescale-label-large-size);cursor:pointer;
+  text-align:start;transition:background var(--md-sys-motion-spring-fast-effects)}
+.setopt:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 5.5%,transparent)}
+.setopt:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:-3px}
+.setopt i{flex:none;position:relative;inline-size:20px;block-size:20px;
+  border-radius:50%;border:2px solid var(--md-sys-color-outline);
+  transition:border-color var(--md-sys-motion-spring-fast-effects)}
+.setopt i::after{content:"";position:absolute;inset:50% auto auto 50%;
+  inline-size:10px;block-size:10px;margin:-5px 0 0 -5px;border-radius:50%;
+  background:var(--md-sys-color-on-surface);transform:scale(0);
+  transition:transform var(--md-sys-motion-spring-fast-spatial)}
+.setopt[aria-checked=true] i{border-color:var(--md-sys-color-on-surface)}
+.setopt[aria-checked=true] i::after{transform:scale(1)}
+.setopt .ct{margin-inline-start:auto;
+  font-size:var(--md-sys-typescale-label-medium-size);
+  color:var(--md-sys-color-on-surface-variant)}
+
+/* An outlined button at the small size: 40dp tall, label-large. */
+.setbtn{min-height:40px;padding:0 16px;border-radius:var(--md-sys-shape-corner-full);
+  border:1px solid var(--md-sys-color-outline);background:none;
+  font-family:inherit;font-size:var(--md-sys-typescale-label-large-size);
+  font-weight:var(--md-sys-typescale-title-weight);
+  color:var(--md-sys-color-on-surface);cursor:pointer;
+  transition:var(--md-sys-motion-spring-fast-effects)}
+.setbtn:hover:not(:disabled){background:var(--md-sys-color-on-surface);
+  color:var(--md-sys-color-surface)}
+.setbtn:disabled{opacity:.5;cursor:default}
+
+.setnote{margin:16px 8px 0;font-size:12.5px;line-height:1.5;
+  color:var(--md-sys-color-on-surface-variant)}
 .setnote a{color:var(--md-sys-color-on-surface-variant)}
-@media(max-width:520px){.setrow .fseg{flex:1 1 100%}}
 
 /* The footer lives at the end of the page on a pointer device and at the
    bottom of this card on a phone — never both. */
 .setfoot{display:none}
-.setfoot footer{display:block;border-top:1px solid var(--md-sys-color-outline-variant);margin-top:16px;
-  padding:16px 0 0}
+.setfoot footer{display:block;border-top:1px solid var(--md-sys-color-outline-variant);
+  margin-top:16px;padding:16px 8px 0}
 .setfoot .fgrid{grid-template-columns:minmax(0,1fr);gap:20px}
 .setfoot .fbrand{grid-column:auto}
 @media(max-width:839px){
@@ -4159,6 +4275,8 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <symbol id="h-i-prev" viewBox="0 0 24 24"><path d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4-4.6-4.6z"/></symbol>
 <symbol id="h-i-next" viewBox="0 0 24 24"><path d="M8.6 16.6 10 18l6-6-6-6-1.4 1.4 4.6 4.6z"/></symbol>
 <symbol id="h-i-cal-down" viewBox="0 0 24 24"><path d="m12 15-5-5 1.4-1.4L12 12.2l3.6-3.6L17 10z"/></symbol>
+<symbol id="h-i-auto" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2v16a8 8 0 0 1 0-16z"/></symbol>
+<symbol id="h-i-chev" viewBox="0 0 24 24"><path d="M12 15.6 5.4 9l1.7-1.7 4.9 4.9 4.9-4.9L18.6 9z"/></symbol>
 <symbol id="h-i-check" viewBox="0 0 24 24"><path d="M9.6 16.2 4.8 11.4l1.4-1.4 3.4 3.4 8-8L19 6.8z"/></symbol>
 
 <symbol id="h-art-base" viewBox="0 0 400 250">
@@ -4532,58 +4650,102 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
   <div class="setbox" id="setBox">
     <!-- The handle an act's card has, and for the same reason: on a phone this
          is a sheet standing on the bottom edge, and a sheet says it can be
-         pushed back down by showing the thing you push. It is also the drag
-         surface — see the pointer handlers in home.html. -->
+         pushed back down by showing the thing you push. The whole sheet is the
+         drag surface while its body is at the top — see home.html. -->
     <div class="setgrip" id="setGrip" aria-hidden="true"><i></i></div>
     <div class="sethead">
       <h2 id="setTitle">Settings</h2>
       <button class="setclose" id="setClose" aria-label="Close settings">
         <svg class="i"><use href="#h-i-close"/></svg></button>
     </div>
+
+    <!-- Grouped by containment rather than by a rule across the sheet: a
+         heading names a group, the group is a card, and a row inside it is one
+         setting. Every control is the M3 component for its job — a button
+         group for a short exclusive choice, radios for a longer list, a switch
+         for on and off, and a row that only reports where there is nothing to
+         choose. -->
     <div class="setscroll">
-    <div class="setrow">
-      <div><b>Appearance</b><i>Applies to every Flanner page on this device.</i></div>
-      <div class="fseg" id="themeSeg" role="group" aria-label="Colour theme">
-        <button data-theme-set="light" aria-pressed="false">Light</button>
-        <button data-theme-set="dark" aria-pressed="false">Dark</button>
+
+      <p class="seteyebrow">Display</p>
+      <div class="setgroup">
+        <div class="setrow setrow--stack">
+          <p class="setrow__title">Theme</p>
+          <p class="setrow__sub">Applies to every Flanner page on this device.</p>
+          <div class="fseg" id="themeSeg" role="group" aria-label="Colour theme">
+            <button data-theme-set="light" aria-pressed="false">
+              <svg class="i"><use href="#h-i-sun"/></svg>Light</button>
+            <button data-theme-set="dark" aria-pressed="false">
+              <svg class="i"><use href="#h-i-moon"/></svg>Dark</button>
+            <button data-theme-set="system" aria-pressed="false">
+              <svg class="i"><use href="#h-i-auto"/></svg>System</button>
+          </div>
+        </div>
+
+        <div class="setrow setrow--stack">
+          <p class="setrow__title">Language</p>
+          <p class="setrow__sub" id="langState">Names the categories, and tells a screen
+            reader and the browser's own translator which language this is.</p>
+          <div class="fseg" id="langSeg" role="group" aria-label="Language">
+            <button data-lang-set="en" aria-pressed="false">English</button>
+            <button data-lang-set="fi" aria-pressed="false">Suomi</button>
+            <button data-lang-set="sv" aria-pressed="false">Svenska</button>
+          </div>
+        </div>
       </div>
-    </div>
-    <!-- The two the rail used to carry as glyphs at its foot. A setting is a
-         setting: it belongs with the others rather than in a menu of its own. -->
-    <div class="setrow">
-      <div><b>Language</b><i id="langState">Names the categories, and tells a
-        screen reader and the browser's own translator which language this is.</i></div>
-      <div class="fseg" id="langSeg" role="group" aria-label="Language">
-        <button data-lang-set="en" aria-pressed="false">EN</button>
-        <button data-lang-set="fi" aria-pressed="false">FI</button>
-        <button data-lang-set="sv" aria-pressed="false">SV</button>
+
+      <p class="seteyebrow">Content</p>
+      <div class="setgroup">
+        <!-- The row opens into its own choices rather than into a second
+             sheet: a list of four cities is not worth another surface, and a
+             sheet over a sheet is a place a reader has to find their way back
+             from. -->
+        <button class="setrow setrow--act" type="button" id="setPlaceBtn"
+                aria-expanded="false" aria-controls="setPlaceOpts">
+          <span class="setrow__text">
+            <span class="setrow__title">Place</span>
+            <span class="setrow__sub">Which city's festivals the list shows.</span>
+          </span>
+          <span class="setrow__val"><span id="setPlaceState">Everywhere</span>
+            <svg class="i"><use href="#h-i-chev"/></svg></span>
+        </button>
+        <div class="setreveal" id="setPlaceOpts"><div>
+          <ul class="setopts" id="setPlaceList" role="radiogroup" aria-label="Place"></ul>
+        </div></div>
       </div>
-    </div>
-    <div class="setrow">
-      <div><b>Place</b><i id="setPlaceState">Which city's festivals the list
-        shows.</i></div>
-      <button class="setbtn" id="setPlaceBtn" aria-haspopup="dialog">Everywhere</button>
-    </div>
-    <div class="setrow">
-      <div><b>Cookies</b><i id="cookieState">—</i></div>
-      <div class="fseg" id="cookieSeg" role="group" aria-label="Cookie storage">
-        <button data-consent="1" aria-pressed="false">Allow</button>
-        <button data-consent="0" aria-pressed="false">Off</button>
+
+      <p class="seteyebrow">On this device</p>
+      <div class="setgroup">
+        <div class="setrow">
+          <div class="setrow__text">
+            <p class="setrow__title">Remember my choices</p>
+            <p class="setrow__sub" id="cookieState">Your plan, the day you were looking at,
+              and this theme. Kept here, sent nowhere.</p>
+          </div>
+          <label class="setsw">
+            <input type="checkbox" id="cookieSw" aria-label="Remember my choices">
+            <span class="setsw__track"></span>
+            <span class="setsw__thumb"><svg class="i"><use href="#h-i-check"/></svg></span>
+          </label>
+        </div>
+        <div class="setrow">
+          <div class="setrow__text">
+            <p class="setrow__title">Offline pages</p>
+            <p class="setrow__sub" id="offlineState">—</p>
+          </div>
+          <button class="setbtn" id="offlineBtn" disabled>Save</button>
+        </div>
       </div>
-    </div>
-    <div class="setrow">
-      <div><b>Offline</b><i id="offlineState">—</i></div>
-      <button class="setbtn" id="offlineBtn" disabled>Save</button>
-    </div>
-    <p class="setnote">Cookies here only remember your own choices — the plan you build, the
-      day you were looking at, and this theme. Nothing is sent anywhere and no analytics run.
-      <a href="./privacy/">EU data policy</a> ·
-      <a href="./terms/">Terms</a> ·
-      <a href="./about/">About</a></p>
-    <!-- On a phone the page footer is hidden so the app reads as an app, so
-         everything it carries — sources, map credits, the disclaimer, contact —
-         appears here instead. Same markup, one source. -->
-    <div class="setfoot"><footer>
+
+      <p class="setnote">No analytics, no advertising, no third parties. Clearing your
+        browser data resets everything above.
+        <a href="./privacy/">EU data policy</a> ·
+        <a href="./terms/">Terms</a> ·
+        <a href="./about/">About</a></p>
+      <!-- On a phone the page footer is hidden so the app reads as an app, so
+           everything it carries — sources, map credits, the disclaimer,
+           contact — appears here instead. Same markup, one source. -->
+      <div class="setfoot"><footer>
   <!-- Inside the footer, not above it. As a sibling it was orphaned by
        every rule that hides the footer — and on a phone one does: the
        footer moves into the settings card so the page reads as an app.
@@ -4626,7 +4788,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
       </ul>
     </div>
   </div>
-  <div class="fnote"><p>Unofficial planners, not affiliated with any of these festivals. Timetables come from each organiser's own published schedule; artwork and links from their own sites.</p><p>Each planner is a single page that keeps working offline once loaded, stores your picks on your own device, and collects nothing.</p></div>
+  <div class="fnote"><p>Unofficial planners, not affiliated with any of these festivals. Timetables come from each organiser's own published schedule; artwork and links from their own sites. Photographs are each festival's own; those credited to a photographer are by Jonathan Melartin, Petri Anttila and Roosa Maria Kauppila.</p><p>Each planner is a single page that keeps working offline once loaded, stores your picks on your own device, and collects nothing.</p></div>
 </footer>
 </div>
     </div>
@@ -4677,7 +4839,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
       </ul>
     </div>
   </div>
-  <div class="fnote"><p>Unofficial planners, not affiliated with any of these festivals. Timetables come from each organiser's own published schedule; artwork and links from their own sites.</p><p>Each planner is a single page that keeps working offline once loaded, stores your picks on your own device, and collects nothing.</p></div>
+  <div class="fnote"><p>Unofficial planners, not affiliated with any of these festivals. Timetables come from each organiser's own published schedule; artwork and links from their own sites. Photographs are each festival's own; those credited to a photographer are by Jonathan Melartin, Petri Anttila and Roosa Maria Kauppila.</p><p>Each planner is a single page that keeps working offline once loaded, stores your picks on your own device, and collects nothing.</p></div>
 </footer>
 
 </div>
@@ -4700,7 +4862,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <section class="page shell-page" id="pTamperejazz" hidden></section>
 
 <script>
-const DATA = {"site":{"name":"Festival Planner","tagline":"Timetables you can actually plan with. One page per festival, works offline once loaded.","contact":"flanner47@gmail.com"},"festivals":[{"id":"biennial","name":"Helsinki Biennial","year":"","start":"2026-06-12","end":"2026-09-27","city":"Vallisaari, Helsinki","type":"Contemporary art","tags":["Ferry included","Guided tours","Uneven terrain"],"accent":"#855318","ink":"#4a2a02","description":"Site-specific commissions spread across an old garrison island, shown alongside the fortifications and meadows they were made for.","facts":{"time":"Open daily 11:00–18:00","place":"Ferry from Market Square, 20 min","price":"€22 · free under 18"},"official":"https://helsinkibiennaali.fi/en/","tickets":"https://helsinkibiennaali.fi/en/","free":false,"highlight":false,"category":"art","stats":{"days":108},"month":"2026-06","dates":"12 June – 27 September 2026"},{"id":"kbp","name":"Kallio Block Party","year":"2026","planner":"kallio/","logoInvert":false,"start":"2026-08-01","end":"2026-08-01","dates":"1 August 2026","month":"2026-08","city":"Alppila, Helsinki","type":"Street festival","tags":["Techno","Rap","House","Indie"],"accent":"#b6fc46","ink":"#0a1400","description":"One free day across the streets of Alppila. Nine independently run stages, from a live band stage by Linnanmäki to hard techno on Kirstinkatu.","stats":{"acts":98,"stages":9,"days":1},"stars":["Julma-Henri","Rony Rex","Nukkuvat Linnut","Stepa & Polarsoul"],"official":"https://www.kallioblockparty.org/","tickets":null,"free":true,"highlight":true,"category":"music","promoSrc":"./assets/home/kbp-promo.jpg","logoSrc":"./assets/logo.png"},{"id":"flow","name":"Flow Festival","year":"2026","planner":"flow/","logoInvert":false,"cardArt":"photo","start":"2026-08-14","end":"2026-08-16","dates":"14–16 August 2026","month":"2026-08","city":"Suvilahti, Helsinki","type":"City festival","tags":["Pop","Electronic","Indie","Jazz"],"accent":"#fff203","ink":"#000000","description":"Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.","stats":{"acts":156,"stages":10,"days":3},"stars":["Florence + The Machine","Nick Cave & the Bad Seeds","Turnstile","Zara Larsson","Lykke Li"],"official":"https://www.flowfestival.com/en/","tickets":"https://www.flowfestival.com/en/tickets/","free":false,"highlight":true,"category":"music","promoSrc":"./assets/home/flow-promo.jpg","logoSrc":"./assets/flow-logo.svg"},{"id":"juhlaviikot","name":"Helsinki Festival","year":"2026","start":"2026-08-18","end":"2026-09-05","city":"Helsinki","type":"Arts festival","tags":["Opera","Classical","Theatre","World music"],"accent":"#009ea6","ink":"#00373a","description":"The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.","official":"https://helsinkifestival.fi/en/","tickets":"https://helsinkifestival.fi/en/programme/","free":false,"highlight":false,"category":"culture","planner":"juhlaviikot/","previewNote":"Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet.","stats":{"days":19},"month":"2026-08","dates":"18 August – 5 September 2026"},{"id":"blockfest","name":"Blockfest","year":"2026","start":"2026-08-21","end":"2026-08-22","city":"Ratinanniemi, Tampere","type":"Hip-hop festival","tags":["Hip-hop","Two days","Stadium"],"accent":"#f83697","ink":"#5c1236","description":"The Nordics' largest hip-hop festival, two days at the Ratina stadium and the event park beside it.","official":"https://www.blockfest.fi/en/","tickets":"https://www.blockfest.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"blockfest/","previewNote":"Blockfest has published its line-up and the names of its three stages, not its running order. Set times appear on blockfest.fi closer to the weekend.","stats":{"days":2},"month":"2026-08","dates":"21–22 August 2026"},{"id":"espoocine","name":"Espoo Ciné","year":"2026","start":"2026-08-21","end":"2026-08-30","city":"Kino Tapiola, Espoo","type":"Film festival","tags":["New releases","International","Ten days"],"accent":"#a94259","ink":"#ffffff","description":"Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.","official":"https://espoocine.fi/en/","tickets":"https://espoocine.fi/en/shop/tickets/","free":false,"highlight":false,"category":"film","planner":"espoocine/","previewNote":"Espoo Ciné publishes screening times per film rather than as a grid. The programme is on espoocine.fi; none of it is transcribed here yet.","stats":{"days":10},"month":"2026-08","dates":"21–30 August 2026"},{"id":"anarchy","name":"Love & Anarchy","year":"","start":"2026-09-17","end":"2026-09-27","city":"Five cinemas, Helsinki","type":"Film festival","tags":["Indoors","Subtitled","Director talks"],"accent":"#6750a4","ink":"#341e73","description":"Around 200 features and shorts from the year's festival circuit, with director talks and a late-night strand that runs past midnight.","facts":{"time":"Screenings from 12:00 daily","place":"Bio Rex, Kinopalatsi, Orion and two more","price":"Single film €14 · festival pass €120"},"linkLabel":"Programme","official":"https://hiff.fi/en/","tickets":"https://hiff.fi/en/","free":false,"highlight":false,"category":"film","stats":{"days":11},"month":"2026-09","dates":"17–27 September 2026"},{"id":"lostinmusic","name":"Lost In Music","year":"2026","start":"2026-10-01","end":"2026-10-02","city":"Tampere","type":"Club festival","tags":["Club venues","Two nights","Wristband"],"accent":"#fcf764","ink":"#333200","description":"Two evenings across Tampere's own venues — Tavara-asema, Telakka, G Livelab, Olympia and more — on one wristband.","facts":{"price":"2 days €69 · 1 day €49"},"official":"https://lostinmusic.fi/fi/","tickets":"https://lostinmusic.fi/fi/liput/","free":false,"highlight":false,"category":"music","planner":"lostinmusic/","previewNote":"Lost In Music has published which artists play which venue, but not when — the festival says the detailed timetable comes closer to the event.","stats":{"days":2},"month":"2026-10","dates":"1–2 October 2026"},{"id":"tamperejazz","name":"Tampere Jazz Happening","year":"2026","start":"2026-10-29","end":"2026-11-01","city":"Tampere","type":"Jazz festival","tags":["Contemporary jazz","Four days"],"accent":"#c83e36","ink":"#ffffff","description":"Four days of contemporary jazz, long known for its warm room and its broad idea of what the music can be.","facts":{"price":"€10–25"},"official":"https://www.tamperejazz.fi/en/","tickets":"https://www.tamperejazz.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"tamperejazz/","previewNote":"Tampere Jazz Happening publishes its running order closer to the weekend. The venues are here; the clock is not.","stats":{"days":4},"month":"2026-10","dates":"29 October – 1 November 2026"}],"categories":[{"id":"music","label":"Music","labelFi":"Musiikki","color":"#FFD8E8","ink":"#441B2F","blurb":"Concerts, club nights and music festivals."},{"id":"film","label":"Film","labelFi":"Elokuva","color":"#b69df8","ink":"#101010","blurb":"Screenings, film festivals and cinema events."},{"id":"art","label":"Art","labelFi":"Taide","color":"#ff9ec4","ink":"#101010","blurb":"Exhibitions, installations and gallery weekends."},{"id":"culture","label":"Culture","labelFi":"Kulttuuri","color":"#ffc861","ink":"#101010","blurb":"Street festivals, city events, food and heritage."},{"id":"others","label":"Others","labelFi":"Muut","color":"#d9d9d9","ink":"#101010","blurb":"Anything the four above do not describe."}],"categoryFallback":"others","places":[{"name":"Helsinki","count":5,"lat":60.1699,"lon":24.9384},{"name":"Tampere","count":3,"lat":61.4978,"lon":23.761},{"name":"Espoo","count":1,"lat":60.2055,"lon":24.6559}]};
+const DATA = {"site":{"name":"Festival Planner","tagline":"Timetables you can actually plan with. One page per festival, works offline once loaded.","contact":"flanner47@gmail.com"},"festivals":[{"id":"biennial","name":"Helsinki Biennial","year":"","start":"2026-06-12","end":"2026-09-27","city":"Vallisaari, Helsinki","type":"Contemporary art","tags":["Ferry included","Guided tours","Uneven terrain"],"accent":"#855318","ink":"#4a2a02","description":"Site-specific commissions spread across an old garrison island, shown alongside the fortifications and meadows they were made for.","facts":{"time":"Open daily 11:00–18:00","place":"Ferry from Market Square, 20 min","price":"€22 · free under 18"},"official":"https://helsinkibiennaali.fi/en/","tickets":"https://helsinkibiennaali.fi/en/","free":false,"highlight":false,"category":"art","stats":{"days":108},"month":"2026-06","dates":"12 June – 27 September 2026"},{"id":"kbp","name":"Kallio Block Party","year":"2026","planner":"kallio/","logoInvert":false,"start":"2026-08-01","end":"2026-08-01","dates":"1 August 2026","month":"2026-08","city":"Alppila, Helsinki","type":"Street festival","tags":["Techno","Rap","House","Indie"],"accent":"#b6fc46","ink":"#0a1400","description":"One free day across the streets of Alppila. Nine independently run stages, from a live band stage by Linnanmäki to hard techno on Kirstinkatu.","stats":{"acts":98,"stages":9,"days":1},"stars":["Julma-Henri","Rony Rex","Nukkuvat Linnut","Stepa & Polarsoul"],"official":"https://www.kallioblockparty.org/","tickets":null,"free":true,"highlight":true,"category":"music","cardArt":"photo","promoSrc":"./assets/home/kbp-promo.jpg","logoSrc":"./assets/logo.png"},{"id":"flow","name":"Flow Festival","year":"2026","planner":"flow/","logoInvert":false,"cardArt":"photo","start":"2026-08-14","end":"2026-08-16","dates":"14–16 August 2026","month":"2026-08","city":"Suvilahti, Helsinki","type":"City festival","tags":["Pop","Electronic","Indie","Jazz"],"accent":"#fff203","ink":"#000000","description":"Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.","stats":{"acts":156,"stages":10,"days":3},"stars":["Florence + The Machine","Nick Cave & the Bad Seeds","Turnstile","Zara Larsson","Lykke Li"],"official":"https://www.flowfestival.com/en/","tickets":"https://www.flowfestival.com/en/tickets/","free":false,"highlight":true,"category":"music","promoSrc":"./assets/home/flow-promo.jpg","logoSrc":"./assets/flow-logo.svg"},{"id":"juhlaviikot","name":"Helsinki Festival","year":"2026","start":"2026-08-18","end":"2026-09-05","city":"Helsinki","type":"Arts festival","tags":["Opera","Classical","Theatre","World music"],"accent":"#009ea6","ink":"#00373a","description":"The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.","official":"https://helsinkifestival.fi/en/","tickets":"https://helsinkifestival.fi/en/programme/","free":false,"highlight":false,"category":"culture","planner":"juhlaviikot/","previewNote":"Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet.","cardArt":"photo","promoFrom":"https://helsinkifestival.fi/app/uploads/sites/8/2023/06/HJV_Vesta__Arppa_2022_c_Petri_Anttila__E3A5225_WEB.jpg","promoCredit":"Petri Anttila","stats":{"days":19},"month":"2026-08","dates":"18 August – 5 September 2026","promoSrc":"./assets/home/juhlaviikot-promo.jpg"},{"id":"blockfest","name":"Blockfest","year":"2026","start":"2026-08-21","end":"2026-08-22","city":"Ratinanniemi, Tampere","type":"Hip-hop festival","tags":["Hip-hop","Two days","Stadium"],"accent":"#f83697","ink":"#5c1236","description":"The Nordics' largest hip-hop festival, two days at the Ratina stadium and the event park beside it.","official":"https://www.blockfest.fi/en/","tickets":"https://www.blockfest.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"blockfest/","previewNote":"Blockfest has published its line-up and the names of its three stages, not its running order. Set times appear on blockfest.fi closer to the weekend.","cardArt":"photo","promoFrom":"https://www.blockfest.fi/wp-content/uploads/2024/12/BLOCKFEST24_Day2_233049_JonathanMelartin4258.jpg","promoCredit":"Jonathan Melartin","stats":{"days":2},"month":"2026-08","dates":"21–22 August 2026","promoSrc":"./assets/home/blockfest-promo.jpg"},{"id":"espoocine","name":"Espoo Ciné","year":"2026","start":"2026-08-21","end":"2026-08-30","city":"Kino Tapiola, Espoo","type":"Film festival","tags":["New releases","International","Ten days"],"accent":"#a94259","ink":"#ffffff","description":"Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.","official":"https://espoocine.fi/en/","tickets":"https://espoocine.fi/en/shop/tickets/","free":false,"highlight":false,"category":"film","planner":"espoocine/","previewNote":"Espoo Ciné publishes screening times per film rather than as a grid. The programme is on espoocine.fi; none of it is transcribed here yet.","stats":{"days":10},"month":"2026-08","dates":"21–30 August 2026"},{"id":"anarchy","name":"Love & Anarchy","year":"","start":"2026-09-17","end":"2026-09-27","city":"Five cinemas, Helsinki","type":"Film festival","tags":["Indoors","Subtitled","Director talks"],"accent":"#6750a4","ink":"#341e73","description":"Around 200 features and shorts from the year's festival circuit, with director talks and a late-night strand that runs past midnight.","facts":{"time":"Screenings from 12:00 daily","place":"Bio Rex, Kinopalatsi, Orion and two more","price":"Single film €14 · festival pass €120"},"linkLabel":"Programme","official":"https://hiff.fi/en/","tickets":"https://hiff.fi/en/","free":false,"highlight":false,"category":"film","cardArt":"photo","promoFrom":"https://hiff.fi/wp-content/uploads/2025/09/180925_Rakkautta_ja_anarkiaa_2025_marimur_47.jpg","stats":{"days":11},"month":"2026-09","dates":"17–27 September 2026","promoSrc":"./assets/home/anarchy-promo.jpg"},{"id":"lostinmusic","name":"Lost In Music","year":"2026","start":"2026-10-01","end":"2026-10-02","city":"Tampere","type":"Club festival","tags":["Club venues","Two nights","Wristband"],"accent":"#fcf764","ink":"#333200","description":"Two evenings across Tampere's own venues — Tavara-asema, Telakka, G Livelab, Olympia and more — on one wristband.","facts":{"price":"2 days €69 · 1 day €49"},"official":"https://lostinmusic.fi/fi/","tickets":"https://lostinmusic.fi/fi/liput/","free":false,"highlight":false,"category":"music","planner":"lostinmusic/","previewNote":"Lost In Music has published which artists play which venue, but not when — the festival says the detailed timetable comes closer to the event.","cardArt":"photo","promoFrom":"https://lostinmusic.fi/wp-content/uploads/2025/08/LIM23_tullikamari_roosamariakauppila_015-scaled.jpg","promoCredit":"Roosa Maria Kauppila","stats":{"days":2},"month":"2026-10","dates":"1–2 October 2026","promoSrc":"./assets/home/lostinmusic-promo.jpg"},{"id":"tamperejazz","name":"Tampere Jazz Happening","year":"2026","start":"2026-10-29","end":"2026-11-01","city":"Tampere","type":"Jazz festival","tags":["Contemporary jazz","Four days"],"accent":"#c83e36","ink":"#ffffff","description":"Four days of contemporary jazz, long known for its warm room and its broad idea of what the music can be.","facts":{"price":"€10–25"},"official":"https://www.tamperejazz.fi/en/","tickets":"https://www.tamperejazz.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"tamperejazz/","previewNote":"Tampere Jazz Happening publishes its running order closer to the weekend. The venues are here; the clock is not.","stats":{"days":4},"month":"2026-10","dates":"29 October – 1 November 2026"}],"categories":[{"id":"music","label":"Music","labelFi":"Musiikki","color":"#FFD8E8","ink":"#441B2F","blurb":"Concerts, club nights and music festivals."},{"id":"film","label":"Film","labelFi":"Elokuva","color":"#b69df8","ink":"#101010","blurb":"Screenings, film festivals and cinema events."},{"id":"art","label":"Art","labelFi":"Taide","color":"#ff9ec4","ink":"#101010","blurb":"Exhibitions, installations and gallery weekends."},{"id":"culture","label":"Culture","labelFi":"Kulttuuri","color":"#ffc861","ink":"#101010","blurb":"Street festivals, city events, food and heritage."},{"id":"others","label":"Others","labelFi":"Muut","color":"#d9d9d9","ink":"#101010","blurb":"Anything the four above do not describe."}],"categoryFallback":"others","places":[{"name":"Helsinki","count":5,"lat":60.1699,"lon":24.9384},{"name":"Tampere","count":3,"lat":61.4978,"lon":23.761},{"name":"Espoo","count":1,"lat":60.2055,"lon":24.6559}]};
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ico = n => `<svg class="i"><use href="#h-i-${n}"/></svg>`;
@@ -7254,19 +7416,21 @@ applyTheme(Store.get('theme'));
    from memory. It is the next visit that starts blank, which is the whole
    point. */
 (() => {
-  const seg = document.getElementById('cookieSeg');
+  const sw = document.getElementById('cookieSw');
   const state = document.getElementById('cookieState');
-  if (!seg || !state) return;
+  if (!sw || !state) return;
   const paint = () => {
     const on = Store.get('consent') !== '0';
-    seg.querySelectorAll('button').forEach(b =>
-      b.setAttribute('aria-pressed', String((b.dataset.consent === '1') === on)));
+    sw.checked = on;
     state.textContent = on
-      ? 'Your choices are kept on this device, and nowhere else.'
+      ? 'Your plan, the day you were looking at, and this theme. Kept here, sent nowhere.'
       : 'Nothing is kept. Every visit starts fresh.';
   };
-  seg.querySelectorAll('button').forEach(b => b.onclick = () => {
-    const on = b.dataset.consent === '1';
+  /* One control with two states rather than two buttons standing in for one:
+     M3's switch is what an on-and-off setting is, and it says which it is
+     without having to read both labels. */
+  sw.onchange = () => {
+    const on = sw.checked;
     if (on) {
       Store.set('consent', '1');
       /* Put back what the page already knows, so saying yes keeps the state

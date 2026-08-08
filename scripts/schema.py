@@ -48,7 +48,13 @@ REQUIRED = {
 # these: no planner directory, no poster, no wordmark. It shows as a card with
 # the category's own artwork and a link to the festival's own site.
 OPTIONAL = {"planner": str, "logo": str, "promo": str, "linkLabel": str,
-            "previewNote": str}
+            "previewNote": str, "cardArt": str,
+            # Where a photograph came from, kept beside the file so the
+            # provenance of every picture on the site is answerable from
+            # the data rather than from a build log.
+            "promoFrom": str,
+            # The photographer, where the festival names one.
+            "promoCredit": str}
 DERIVED = ("month", "dates", "stats.days")
 
 # Where a festival's picks are kept on the reader's device. Two documents write
@@ -178,11 +184,15 @@ def normalise(f: dict, cats: dict, problems: list[str]) -> dict:
         problems.append(f"{where}: a ticketed festival needs a tickets URL")
     if f.get("planner") and not str(f["planner"]).endswith("/"):
         problems.append(f"{where}: planner should be a directory path ending in /")
-    # A planner page is built from a poster and a wordmark where the festival
-    # has published them; where it has not, the planner draws the category's
-    # own artwork, exactly as its card on the list does.
-    if f.get("planner") and f.get("promo") and not f.get("logo"):
-        problems.append(f"{where}: a festival with a poster needs its wordmark too")
+    # A planner page is built from the festival's own photograph where it has
+    # published one, and from the category's own drawn artwork where it has
+    # not — exactly as its card on the list is.
+    #
+    # A wordmark used to be required alongside the photograph. It is not: the
+    # hero prints the festival's name as type over the picture, and the `logo`
+    # the rule was protecting is read into a variable in build_planner.py that
+    # nothing then uses. Requiring a file nobody draws kept a festival's own
+    # photograph off its page for want of a logo that would not have appeared.
 
     ids = {c["id"] for c in cats["categories"]}
     # Accepts the label people actually type ("Music") as well as the id.

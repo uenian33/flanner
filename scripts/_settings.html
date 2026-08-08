@@ -2,58 +2,102 @@
   <div class="setbox" id="setBox">
     <!-- The handle an act's card has, and for the same reason: on a phone this
          is a sheet standing on the bottom edge, and a sheet says it can be
-         pushed back down by showing the thing you push. It is also the drag
-         surface — see the pointer handlers in home.html. -->
+         pushed back down by showing the thing you push. The whole sheet is the
+         drag surface while its body is at the top — see home.html. -->
     <div class="setgrip" id="setGrip" aria-hidden="true"><i></i></div>
     <div class="sethead">
       <h2 id="setTitle">Settings</h2>
       <button class="setclose" id="setClose" aria-label="Close settings">
         <svg class="i"><use href="#i-close"/></svg></button>
     </div>
+
+    <!-- Grouped by containment rather than by a rule across the sheet: a
+         heading names a group, the group is a card, and a row inside it is one
+         setting. Every control is the M3 component for its job — a button
+         group for a short exclusive choice, radios for a longer list, a switch
+         for on and off, and a row that only reports where there is nothing to
+         choose. -->
     <div class="setscroll">
-    <div class="setrow">
-      <div><b>Appearance</b><i>Applies to every Flanner page on this device.</i></div>
-      <div class="fseg" id="themeSeg" role="group" aria-label="Colour theme">
-        <button data-theme-set="light" aria-pressed="false">Light</button>
-        <button data-theme-set="dark" aria-pressed="false">Dark</button>
+
+      <p class="seteyebrow">Display</p>
+      <div class="setgroup">
+        <div class="setrow setrow--stack">
+          <p class="setrow__title">Theme</p>
+          <p class="setrow__sub">Applies to every Flanner page on this device.</p>
+          <div class="fseg" id="themeSeg" role="group" aria-label="Colour theme">
+            <button data-theme-set="light" aria-pressed="false">
+              <svg class="i"><use href="#i-sun"/></svg>Light</button>
+            <button data-theme-set="dark" aria-pressed="false">
+              <svg class="i"><use href="#i-moon"/></svg>Dark</button>
+            <button data-theme-set="system" aria-pressed="false">
+              <svg class="i"><use href="#i-auto"/></svg>System</button>
+          </div>
+        </div>
+
+        <div class="setrow setrow--stack">
+          <p class="setrow__title">Language</p>
+          <p class="setrow__sub" id="langState">Names the categories, and tells a screen
+            reader and the browser's own translator which language this is.</p>
+          <div class="fseg" id="langSeg" role="group" aria-label="Language">
+            <button data-lang-set="en" aria-pressed="false">English</button>
+            <button data-lang-set="fi" aria-pressed="false">Suomi</button>
+            <button data-lang-set="sv" aria-pressed="false">Svenska</button>
+          </div>
+        </div>
       </div>
-    </div>
-    <!-- The two the rail used to carry as glyphs at its foot. A setting is a
-         setting: it belongs with the others rather than in a menu of its own. -->
-    <div class="setrow">
-      <div><b>Language</b><i id="langState">Names the categories, and tells a
-        screen reader and the browser's own translator which language this is.</i></div>
-      <div class="fseg" id="langSeg" role="group" aria-label="Language">
-        <button data-lang-set="en" aria-pressed="false">EN</button>
-        <button data-lang-set="fi" aria-pressed="false">FI</button>
-        <button data-lang-set="sv" aria-pressed="false">SV</button>
+
+      <p class="seteyebrow">Content</p>
+      <div class="setgroup">
+        <!-- The row opens into its own choices rather than into a second
+             sheet: a list of four cities is not worth another surface, and a
+             sheet over a sheet is a place a reader has to find their way back
+             from. -->
+        <button class="setrow setrow--act" type="button" id="setPlaceBtn"
+                aria-expanded="false" aria-controls="setPlaceOpts">
+          <span class="setrow__text">
+            <span class="setrow__title">Place</span>
+            <span class="setrow__sub">Which city's festivals the list shows.</span>
+          </span>
+          <span class="setrow__val"><span id="setPlaceState">Everywhere</span>
+            <svg class="i"><use href="#i-chev"/></svg></span>
+        </button>
+        <div class="setreveal" id="setPlaceOpts"><div>
+          <ul class="setopts" id="setPlaceList" role="radiogroup" aria-label="Place"></ul>
+        </div></div>
       </div>
-    </div>
-    <div class="setrow">
-      <div><b>Place</b><i id="setPlaceState">Which city's festivals the list
-        shows.</i></div>
-      <button class="setbtn" id="setPlaceBtn" aria-haspopup="dialog">Everywhere</button>
-    </div>
-    <div class="setrow">
-      <div><b>Cookies</b><i id="cookieState">—</i></div>
-      <div class="fseg" id="cookieSeg" role="group" aria-label="Cookie storage">
-        <button data-consent="1" aria-pressed="false">Allow</button>
-        <button data-consent="0" aria-pressed="false">Off</button>
+
+      <p class="seteyebrow">On this device</p>
+      <div class="setgroup">
+        <div class="setrow">
+          <div class="setrow__text">
+            <p class="setrow__title">Remember my choices</p>
+            <p class="setrow__sub" id="cookieState">Your plan, the day you were looking at,
+              and this theme. Kept here, sent nowhere.</p>
+          </div>
+          <label class="setsw">
+            <input type="checkbox" id="cookieSw" aria-label="Remember my choices">
+            <span class="setsw__track"></span>
+            <span class="setsw__thumb"><svg class="i"><use href="#i-check"/></svg></span>
+          </label>
+        </div>
+        <div class="setrow">
+          <div class="setrow__text">
+            <p class="setrow__title">Offline pages</p>
+            <p class="setrow__sub" id="offlineState">—</p>
+          </div>
+          <button class="setbtn" id="offlineBtn" disabled>Save</button>
+        </div>
       </div>
-    </div>
-    <div class="setrow">
-      <div><b>Offline</b><i id="offlineState">—</i></div>
-      <button class="setbtn" id="offlineBtn" disabled>Save</button>
-    </div>
-    <p class="setnote">Cookies here only remember your own choices — the plan you build, the
-      day you were looking at, and this theme. Nothing is sent anywhere and no analytics run.
-      <a href="__ROOT__privacy/">EU data policy</a> ·
-      <a href="__ROOT__terms/">Terms</a> ·
-      <a href="__ROOT__about/">About</a></p>
-    <!-- On a phone the page footer is hidden so the app reads as an app, so
-         everything it carries — sources, map credits, the disclaimer, contact —
-         appears here instead. Same markup, one source. -->
-    <div class="setfoot">__FOOTER__</div>
+
+      <p class="setnote">No analytics, no advertising, no third parties. Clearing your
+        browser data resets everything above.
+        <a href="__ROOT__privacy/">EU data policy</a> ·
+        <a href="__ROOT__terms/">Terms</a> ·
+        <a href="__ROOT__about/">About</a></p>
+      <!-- On a phone the page footer is hidden so the app reads as an app, so
+           everything it carries — sources, map credits, the disclaimer,
+           contact — appears here instead. Same markup, one source. -->
+      <div class="setfoot">__FOOTER__</div>
     </div>
   </div>
 </dialog>

@@ -15,12 +15,27 @@ import a2hs
 import schema
 import seo
 
-NOTE = (
-    "<p>Unofficial planners, not affiliated with any of these festivals. Timetables come from "
-    "each organiser's own published schedule; artwork and links from their own sites.</p>"
-    "<p>Each planner is a single page that keeps working offline once loaded, stores your picks "
-    "on your own device, and collects nothing.</p>"
-)
+def note(cfg: dict) -> str:
+    """The paragraph under the list, and the one inside the settings card.
+
+    The photographs are the festivals' own, taken off their own sites, and
+    several of them are by named photographers — so the names are printed
+    rather than folded into "from their own sites". They come out of the
+    records, so a picture added later cannot be credited to nobody.
+    """
+    credits = sorted({f["promoCredit"] for f in cfg["festivals"] if f.get("promoCredit")})
+    line = (" Photographs are each festival's own; those credited to a "
+            "photographer are by " + ", ".join(credits[:-1]) + " and " + credits[-1]
+            + ".") if len(credits) > 1 else (
+           " Photographs are each festival's own; the credited one is by "
+           + credits[0] + "." if credits else "")
+    return (
+        "<p>Unofficial planners, not affiliated with any of these festivals. Timetables come from "
+        "each organiser's own published schedule; artwork and links from their own sites."
+        + line + "</p>"
+        "<p>Each planner is a single page that keeps working offline once loaded, stores your picks "
+        "on your own device, and collects nothing.</p>"
+    )
 
 OUT = ROOT / "index.html"
 H = ROOT / "assets" / "home"
@@ -129,7 +144,7 @@ def main():
         ("__SETTINGS__", sprite((ROOT / "scripts" / "_settings.html").read_text())),
         ("__FOOTER__", sprite(schema.footer())),
         ("__ROOT__", "./"),
-        ("__NOTE__", NOTE),
+        ("__NOTE__", note(cfg)),
         ("__CUR_PRIVACY__", ""), ("__CUR_TERMS__", ""), ("__CUR_ABOUT__", ""),
         ("__CUR_FAQ__", ""),
         ("__OFFLINE__", (ROOT / "scripts" / "_offline.html").read_text()),

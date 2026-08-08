@@ -2918,6 +2918,8 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <symbol id="h-i-prev" viewBox="0 0 24 24"><path d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4-4.6-4.6z"/></symbol>
 <symbol id="h-i-next" viewBox="0 0 24 24"><path d="M8.6 16.6 10 18l6-6-6-6-1.4 1.4 4.6 4.6z"/></symbol>
 <symbol id="h-i-cal-down" viewBox="0 0 24 24"><path d="m12 15-5-5 1.4-1.4L12 12.2l3.6-3.6L17 10z"/></symbol>
+<symbol id="h-i-auto" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2v16a8 8 0 0 1 0-16z"/></symbol>
+<symbol id="h-i-chev" viewBox="0 0 24 24"><path d="M12 15.6 5.4 9l1.7-1.7 4.9 4.9 4.9-4.9L18.6 9z"/></symbol>
 <symbol id="h-i-check" viewBox="0 0 24 24"><path d="M9.6 16.2 4.8 11.4l1.4-1.4 3.4 3.4 8-8L19 6.8z"/></symbol>
 
 <symbol id="h-art-base" viewBox="0 0 400 250">
@@ -4797,8 +4799,10 @@ function paintPlace() {
   /* Named in the settings card too, which is where a reader who has not found
      the toolbar goes looking. Pressing it opens the same picker rather than
      growing a second list of cities to keep in step. */
-  const sp = document.getElementById('setPlaceBtn');
+  const sp = document.getElementById('setPlaceState');
   if (sp) sp.textContent = place || 'Everywhere';
+  document.querySelectorAll('#setPlaceList .setopt').forEach(o =>
+    o.setAttribute('aria-checked', String((o.dataset.place || '') === place)));
   $('#placeTrig').classList.toggle('is-set', !!place);
   $('#placeOpts').querySelectorAll('.opt').forEach(o =>
     o.setAttribute('aria-checked', (o.dataset.place || '') === place));
@@ -4807,6 +4811,30 @@ $('#placeOpts').innerHTML =
   `<button class="opt st" role="radio" data-place="" aria-checked="true">Everywhere</button>`
   + PLACES.map(p => `<button class="opt st" role="radio" data-place="${esc(p.name)}"
        aria-checked="false">${esc(p.name)} <span class="ct">${p.count}</span></button>`).join('');
+/* The same cities in the settings card, from the same list — the row opens
+   into them rather than into a second sheet, since a sheet over a sheet is a
+   place a reader has to find their way back from. */
+if ($('#setPlaceList')) {
+  $('#setPlaceList').innerHTML =
+    `<li><button class="setopt" type="button" role="radio" data-place=""
+       aria-checked="true"><i></i>Everywhere</button></li>`
+    + PLACES.map(p => `<li><button class="setopt" type="button" role="radio"
+       data-place="${esc(p.name)}" aria-checked="false"><i></i>${esc(p.name)}
+       <span class="ct">${p.count}</span></button></li>`).join('');
+  const reveal = $('#setPlaceOpts'), row = $('#setPlaceBtn');
+  row.onclick = () => {
+    const open = !reveal.classList.contains('is-open');
+    reveal.classList.toggle('is-open', open);
+    row.setAttribute('aria-expanded', String(open));
+  };
+  $('#setPlaceList').querySelectorAll('.setopt').forEach(o => o.onclick = () => {
+    place = o.dataset.place || '';
+    paintPlace();
+    apply();
+    reveal.classList.remove('is-open');
+    row.setAttribute('aria-expanded', 'false');
+  });
+}
 $('#placeOpts').querySelectorAll('.opt').forEach(o => o.onclick = () => {
   place = o.dataset.place || '';
   paintPlace();
@@ -5858,19 +5886,21 @@ applyTheme(Store.get('theme'));
    from memory. It is the next visit that starts blank, which is the whole
    point. */
 (() => {
-  const seg = document.getElementById('cookieSeg');
+  const sw = document.getElementById('cookieSw');
   const state = document.getElementById('cookieState');
-  if (!seg || !state) return;
+  if (!sw || !state) return;
   const paint = () => {
     const on = Store.get('consent') !== '0';
-    seg.querySelectorAll('button').forEach(b =>
-      b.setAttribute('aria-pressed', String((b.dataset.consent === '1') === on)));
+    sw.checked = on;
     state.textContent = on
-      ? 'Your choices are kept on this device, and nowhere else.'
+      ? 'Your plan, the day you were looking at, and this theme. Kept here, sent nowhere.'
       : 'Nothing is kept. Every visit starts fresh.';
   };
-  seg.querySelectorAll('button').forEach(b => b.onclick = () => {
-    const on = b.dataset.consent === '1';
+  /* One control with two states rather than two buttons standing in for one:
+     M3's switch is what an on-and-off setting is, and it says which it is
+     without having to read both labels. */
+  sw.onchange = () => {
+    const on = sw.checked;
     if (on) {
       Store.set('consent', '1');
       /* Put back what the page already knows, so saying yes keeps the state
@@ -5883,7 +5913,7 @@ applyTheme(Store.get('theme'));
       Store.forget();
     }
     paint();
-  });
+  };
   paint();
 })();
 

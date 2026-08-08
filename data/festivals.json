@@ -85,7 +85,8 @@
    "tickets": null,
    "free": true,
    "highlight": true,
-   "category": "Music"
+   "category": "Music",
+   "cardArt": "photo"
   },
   {
    "id": "biennial",
@@ -140,7 +141,10 @@
    "tickets": "https://hiff.fi/en/",
    "free": false,
    "highlight": false,
-   "category": "Film"
+   "category": "Film",
+   "promo": "anarchy-promo.jpg",
+   "cardArt": "photo",
+   "promoFrom": "https://hiff.fi/wp-content/uploads/2025/09/180925_Rakkautta_ja_anarkiaa_2025_marimur_47.jpg"
   },
   {
    "id": "blockfest",
@@ -164,7 +168,11 @@
    "highlight": false,
    "category": "music",
    "planner": "blockfest/",
-   "previewNote": "Blockfest has published its line-up and the names of its three stages, not its running order. Set times appear on blockfest.fi closer to the weekend."
+   "previewNote": "Blockfest has published its line-up and the names of its three stages, not its running order. Set times appear on blockfest.fi closer to the weekend.",
+   "promo": "blockfest-promo.jpg",
+   "cardArt": "photo",
+   "promoFrom": "https://www.blockfest.fi/wp-content/uploads/2024/12/BLOCKFEST24_Day2_233049_JonathanMelartin4258.jpg",
+   "promoCredit": "Jonathan Melartin"
   },
   {
    "id": "juhlaviikot",
@@ -189,7 +197,11 @@
    "highlight": false,
    "category": "culture",
    "planner": "juhlaviikot/",
-   "previewNote": "Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet."
+   "previewNote": "Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet.",
+   "promo": "juhlaviikot-promo.jpg",
+   "cardArt": "photo",
+   "promoFrom": "https://helsinkifestival.fi/app/uploads/sites/8/2023/06/HJV_Vesta__Arppa_2022_c_Petri_Anttila__E3A5225_WEB.jpg",
+   "promoCredit": "Petri Anttila"
   },
   {
    "id": "espoocine",
@@ -240,7 +252,11 @@
    "highlight": false,
    "category": "music",
    "planner": "lostinmusic/",
-   "previewNote": "Lost In Music has published which artists play which venue, but not when — the festival says the detailed timetable comes closer to the event."
+   "previewNote": "Lost In Music has published which artists play which venue, but not when — the festival says the detailed timetable comes closer to the event.",
+   "promo": "lostinmusic-promo.jpg",
+   "cardArt": "photo",
+   "promoFrom": "https://lostinmusic.fi/wp-content/uploads/2025/08/LIM23_tullikamari_roosamariakauppila_015-scaled.jpg",
+   "promoCredit": "Roosa Maria Kauppila"
   },
   {
    "id": "tamperejazz",
