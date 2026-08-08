@@ -14,6 +14,9 @@ dialog.setdlg.in::backdrop{opacity:1}
    Its measurements are the act card's: the extra-large corner on the two top
    corners only, as tall as its own content up to 88% of the screen, and the
    emphasised-decelerate rise. */
+/* It is focusable only so that the opening focus has somewhere to land that is
+   not a control; a container holding focus is not a state to draw. */
+.setbox:focus,.setbox:focus-visible{outline:none}
 .setbox{position:fixed;left:50%;bottom:0;
   transform:translate(-50%,100%);width:min(560px,100vw);
   max-height:min(88svh,760px);display:flex;flex-direction:column;
@@ -65,8 +68,11 @@ dialog.setdlg.in .setbox{transform:translate(-50%,0)}
 .setclose{margin-inline-start:auto;flex:none;
   width:48px;height:48px;border:0;border-radius:50%;background:none;
   display:grid;place-items:center;color:var(--md-sys-color-on-surface-variant);
-  cursor:pointer;transition:background var(--md-sys-motion-spring-fast-effects)}
-.setclose:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}
+  cursor:pointer;transition:background var(--md-sys-motion-spring-fast-effects);
+  /* iOS paints its own highlight over a tapped control, and it follows the
+     border-radius — on a 48px round button that is a grey disc appearing
+     around the cross, which is not a state this button has. */
+  -webkit-tap-highlight-color:transparent}
 .setclose:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:2px}
 .setclose .i{width:22px;height:22px;fill:currentColor}
 
@@ -103,8 +109,20 @@ dialog.setdlg.in .setbox{transform:translate(-50%,0)}
 /* A row that is itself the control. */
 .setrow--act{inline-size:100%;border:0;background:none;color:inherit;
   font-family:inherit;text-align:start;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
   transition:background var(--md-sys-motion-spring-fast-effects)}
-.setrow--act:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 5.5%,transparent)}
+/* Hover is a pointer's state. A touch screen has no pointer to leave, so it
+   keeps the last one it was given: without this the control a reader tapped
+   stays lit for as long as the card is open, which reads as selected. */
+@media(hover:hover) and (pointer:fine){
+  .setclose:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}
+  .setrow--act:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 5.5%,transparent)}
+  .fseg button:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}
+  .setopt:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 5.5%,transparent)}
+  .setbtn:hover:not(:disabled){background:var(--md-sys-color-on-surface);
+    color:var(--md-sys-color-surface)}
+}
+
 .setrow--act:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:-3px}
 .setrow--act[aria-expanded=true] .setrow__val .i{transform:rotate(180deg)}
 
@@ -127,7 +145,6 @@ dialog.setdlg.in .setbox{transform:translate(-50%,0)}
 .fseg button:first-child{border-start-start-radius:24px;border-end-start-radius:24px}
 .fseg button:last-child{border-start-end-radius:24px;border-end-end-radius:24px}
 .fseg button .i{flex:none;width:18px;height:18px;fill:currentColor}
-.fseg button:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}
 .fseg button:focus-visible{outline:2px solid var(--md-sys-color-on-surface);
   outline-offset:2px;z-index:1}
 .fseg button[aria-pressed=true]{border-radius:24px;
@@ -172,11 +189,11 @@ dialog.setdlg.in .setbox{transform:translate(-50%,0)}
 .setreveal > div{overflow:hidden}
 .setopts{margin:0;padding:0 8px 8px;list-style:none}
 .setopt{display:flex;align-items:center;gap:14px;inline-size:100%;
+  -webkit-tap-highlight-color:transparent;
   padding:12px;min-block-size:48px;border:0;border-radius:16px;
   background:none;color:inherit;font-family:inherit;
   font-size:var(--md-sys-typescale-label-large-size);cursor:pointer;
   text-align:start;transition:background var(--md-sys-motion-spring-fast-effects)}
-.setopt:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 5.5%,transparent)}
 .setopt:focus-visible{outline:2px solid var(--md-sys-color-on-surface);outline-offset:-3px}
 .setopt i{flex:none;position:relative;inline-size:20px;block-size:20px;
   border-radius:50%;border:2px solid var(--md-sys-color-outline);
@@ -193,13 +210,12 @@ dialog.setdlg.in .setbox{transform:translate(-50%,0)}
 
 /* An outlined button at the small size: 40dp tall, label-large. */
 .setbtn{min-height:40px;padding:0 16px;border-radius:var(--md-sys-shape-corner-full);
+  -webkit-tap-highlight-color:transparent;
   border:1px solid var(--md-sys-color-outline);background:none;
   font-family:inherit;font-size:var(--md-sys-typescale-label-large-size);
   font-weight:var(--md-sys-typescale-title-weight);
   color:var(--md-sys-color-on-surface);cursor:pointer;
   transition:var(--md-sys-motion-spring-fast-effects)}
-.setbtn:hover:not(:disabled){background:var(--md-sys-color-on-surface);
-  color:var(--md-sys-color-surface)}
 .setbtn:disabled{opacity:.5;cursor:default}
 
 .setnote{margin:16px 8px 0;font-size:12.5px;line-height:1.5;

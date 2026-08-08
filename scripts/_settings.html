@@ -1,5 +1,12 @@
 <dialog class="setdlg" id="setDlg" aria-labelledby="setTitle">
-  <div class="setbox" id="setBox">
+  <!-- The sheet itself takes the opening focus, not the first control in it.
+       A modal dialog focuses its first focusable descendant, which here is the
+       close button, and WebKit counts that as keyboard focus — so on a phone
+       the card opened with a focus ring drawn round the cross, which reads as
+       a circle nobody asked for. Focus belongs on the surface that just
+       appeared anyway: a screen reader then reads the sheet from its title,
+       and Tab still reaches the close button and still rings it. -->
+  <div class="setbox" id="setBox" tabindex="-1" autofocus>
     <!-- The handle an act's card has, and for the same reason: on a phone this
          is a sheet standing on the bottom edge, and a sheet says it can be
          pushed back down by showing the thing you push. The whole sheet is the
