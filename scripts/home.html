@@ -1863,6 +1863,14 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
      filled button is for. */
   --sel-bg: var(--md-sys-color-primary);
   --sel-fg: var(--md-sys-color-on-primary);
+  /* The star is the quieter of the two: a filled *tonal* icon button, whose
+     fill is the container and whose icon is the accent on it. A list of
+     festivals with a saturated disc against every starred one reads as a
+     colour chart; the star is what should be bright, and the disc behind it
+     the festival's colour gone quiet — which is how a planner's own page
+     already treats it. */
+  --pick-bg: var(--md-sys-color-primary-container);
+  --pick-fg: var(--md-sys-color-primary);
 }
 __ARTCSS__
 /* ── the plan, as a filter ──────────────────────────────
@@ -2055,8 +2063,8 @@ body.plan-only .section-headline{position:absolute;width:1px;height:1px;
 .plan-toggle {
   --plan-bg: var(--chip);
   --plan-fg: var(--on-chip);
-  --plan-bg-on: var(--sel-bg);
-  --plan-fg-on: var(--sel-fg);
+  --plan-bg-on: var(--pick-bg);
+  --plan-fg-on: var(--pick-fg);
 }
 
 /* ── the component, shared between compact and detailed ── */
