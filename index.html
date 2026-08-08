@@ -2190,7 +2190,7 @@ dialog.setdlg.in .setbox{transform:translate(-50%,0)}
    not scanning a whole month, and the list underneath is where a month is
    read. The fold handle opens the full grid. */
 .calview[hidden]{display:none}
-.calview{
+.calview{display:contents;
   --surface:        var(--md-sys-color-surface);
   --surface-dim:    var(--md-sys-color-surface-container-low);
   --surface-card:   var(--md-sys-color-surface-container);
@@ -4501,7 +4501,15 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 </div>
 
 <div class="active" id="activeTags"></div>
-<section class="calview" id="calView" hidden aria-label="Festival calendar">
+<!-- No box of its own. `position: sticky` sticks only within its own
+     containing block, and this section ends a screen after the month
+     header — so the header rode up and off the moment the grid had gone
+     past, while the list it belongs to went on for another thousand
+     pixels. With the section out of the layout the header's containing
+     block is the page, and it stays where it is put. The landmark moves
+     to the grid, which is what "Festival calendar" names; the header is
+     the toolbar over it. -->
+<section class="calview" id="calView" hidden>
   <div class="cal-header">
     <!-- The month opens a picker rather than folding the grid: folding is what
          the control at the foot of the calendar does, and a title with a
@@ -4529,7 +4537,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
     </div>
   </div>
 
-  <div class="calendar">
+  <div class="calendar" role="region" aria-label="Festival calendar">
     <div class="weekdays" aria-hidden="true">
       <span><span class="long">Mon</span><span class="short">M</span></span>
       <span><span class="long">Tue</span><span class="short">T</span></span>
