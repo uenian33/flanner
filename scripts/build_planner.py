@@ -346,6 +346,26 @@ def _aspect(path: pathlib.Path) -> float:
     return 1.0
 
 
+def hero_scrim(promo: pathlib.Path) -> float:
+    """How much black the title needs over this particular picture.
+
+    The design's 52% is right over a photograph of a night crowd and nowhere
+    near enough over a key visual printed on cream paper — white type on a pale
+    poster at that strength is unreadable. The picture is desaturated before
+    the scrim goes on, so what matters is its luminance, and the top half of it
+    is what the title actually lands on.
+
+    The floor is the design's own value, so no photograph is dimmed more than
+    it was; the ceiling is 0.78, past which the picture stops being a picture.
+    """
+    from PIL import Image, ImageStat
+    im = Image.open(promo).convert("L")
+    top = im.crop((0, 0, im.width, max(1, im.height // 2)))
+    mean = ImageStat.Stat(top).mean[0] / 255.0
+    # Linear from the design's own 0.52 at mid-grey up to 0.78 at pure white.
+    return round(min(0.78, max(0.52, 0.52 + (mean - 0.5) * 0.62)), 3)
+
+
 def data_uri(path: pathlib.Path) -> str:
     import base64
     mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
@@ -5175,8 +5195,8 @@ def patch_template(tpl: str, fest: Festival) -> str:
         hero_art = ('          <img class="hero__photo" src="../%s" alt=""'
                     ' fetchpriority="high" decoding="async">\n'
                     '          <span class="hero__duo"></span>\n'
-                    '          <span class="hero__scrim"></span>\n'
-                    % promo.relative_to(ROOT).as_posix())
+                    '          <span class="hero__scrim" style="--hero-scrim:%s"></span>\n'
+                    % (promo.relative_to(ROOT).as_posix(), hero_scrim(promo)))
     else:
         hero_art = ('          <svg class="hero__art" sc-camel-view-box="0 0 400 250"'
                     ' sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img"'
@@ -6606,7 +6626,13 @@ a[x-apple-data-detectors] {
    else, and a scrim over all of it would read as a dimmed photograph
    rather than as a surface something is written on. */
 .fest .hero__scrim {
-  position: absolute; inset: 0; pointer-events: none; background: rgb(0 0 0 / .52);
+  position: absolute; inset: 0; pointer-events: none;
+  /* Measured, not assumed. 52% is right over a photograph of a night crowd and
+     nowhere near enough over a key visual printed on cream paper: white type on
+     a pale poster at that strength is unreadable, which is what Lost In Music's
+     hero was. The build measures each picture and asks for as much black as its
+     own brightness needs — see `hero_scrim` in build_planner.py. */
+  background: rgb(0 0 0 / var(--hero-scrim,.52));
 }
 /* the card system's notch, cutting into the page rather than a card */
 .fest .notch {

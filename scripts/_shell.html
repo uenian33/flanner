@@ -313,7 +313,10 @@ body.shell-busy .shell-page{pointer-events:none}
     home: '<svg viewBox="0 0 96 96" aria-hidden="true"><use href="#h-i-logo"/></svg>',
     fest: '<svg class="i" aria-hidden="true"><use href="#h-i-ticket"/></svg>',
     plan: '<svg class="i" aria-hidden="true"><use href="#h-i-star-sq"/></svg>',
-    more: '<svg class="i" aria-hidden="true"><use href="#h-i-more"/></svg>',
+    /* The cell opens the settings card, so it is named and drawn as that.
+       It said More and showed three dots, which is a menu of things —
+       and the menu it used to open is gone. */
+    more: '<svg class="i" aria-hidden="true"><use href="#h-i-gear"/></svg>',
   };
 
   /* The list's own four, wired to the buttons the page already had —
@@ -326,7 +329,7 @@ body.shell-busy .shell-page{pointer-events:none}
       {html: ICONS.fest, label: 'Festivals', run: relay('nFest')},
       /* Keyed, so a page can find this cell to hang a count on it. */
       {html: ICONS.plan, label: 'My plan', key: 'plan', run: relay('nPlan')},
-      {html: ICONS.more, label: 'More', run: relay('nMore')},
+      {html: ICONS.more, label: 'Settings', run: relay('nMore')},
     ],
   });
   const homeIndex = () => {

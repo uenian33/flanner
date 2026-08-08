@@ -1542,7 +1542,13 @@ a[x-apple-data-detectors] {
    else, and a scrim over all of it would read as a dimmed photograph
    rather than as a surface something is written on. */
 .fest .hero__scrim {
-  position: absolute; inset: 0; pointer-events: none; background: rgb(0 0 0 / .52);
+  position: absolute; inset: 0; pointer-events: none;
+  /* Measured, not assumed. 52% is right over a photograph of a night crowd and
+     nowhere near enough over a key visual printed on cream paper: white type on
+     a pale poster at that strength is unreadable, which is what Lost In Music's
+     hero was. The build measures each picture and asks for as much black as its
+     own brightness needs — see `hero_scrim` in build_planner.py. */
+  background: rgb(0 0 0 / var(--hero-scrim,.52));
 }
 /* the card system's notch, cutting into the page rather than a card */
 .fest .notch {
@@ -2333,7 +2339,7 @@ body{overscroll-behavior:none}
         <div class="hero">
           <img class="hero__photo" src="../assets/home/juhlaviikot-promo.jpg" alt="" fetchpriority="high" decoding="async">
           <span class="hero__duo"></span>
-          <span class="hero__scrim"></span>
+          <span class="hero__scrim" style="--hero-scrim:0.532"></span>
           <div class="hero__overlay">
             <p class="hero__eyebrow">18 AUGUST – 5 SEPTEMBER 2026</p>
             <h1 class="hero__title">Helsinki Festival 2026</h1>

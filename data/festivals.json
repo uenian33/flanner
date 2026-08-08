@@ -144,7 +144,7 @@
    "category": "Film",
    "promo": "anarchy-promo.jpg",
    "cardArt": "photo",
-   "promoFrom": "https://hiff.fi/wp-content/uploads/2025/09/180925_Rakkautta_ja_anarkiaa_2025_marimur_47.jpg"
+   "promoFrom": "https://hiff.fi/en/"
   },
   {
    "id": "blockfest",
@@ -200,8 +200,7 @@
    "previewNote": "Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet.",
    "promo": "juhlaviikot-promo.jpg",
    "cardArt": "photo",
-   "promoFrom": "https://helsinkifestival.fi/app/uploads/sites/8/2023/06/HJV_Vesta__Arppa_2022_c_Petri_Anttila__E3A5225_WEB.jpg",
-   "promoCredit": "Petri Anttila"
+   "promoFrom": "https://helsinkifestival.fi/en/"
   },
   {
    "id": "espoocine",
@@ -255,8 +254,7 @@
    "previewNote": "Lost In Music has published which artists play which venue, but not when — the festival says the detailed timetable comes closer to the event.",
    "promo": "lostinmusic-promo.jpg",
    "cardArt": "photo",
-   "promoFrom": "https://lostinmusic.fi/wp-content/uploads/2025/08/LIM23_tullikamari_roosamariakauppila_015-scaled.jpg",
-   "promoCredit": "Roosa Maria Kauppila"
+   "promoFrom": "https://lostinmusic.fi/fi/"
   },
   {
    "id": "tamperejazz",

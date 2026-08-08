@@ -7,6 +7,7 @@ name printed over it — the card and the hero draw the category's own artwork
 instead, and that is the right answer rather than a gap.
 
     python3 scripts/promo.py blockfest https://…/crowd.jpg
+    python3 scripts/promo.py blockfest ~/Downloads/blockfest.png
     python3 scripts/promo.py --list
 
 What arrives is whatever a CMS had on the day: a 2048px original, sometimes
@@ -45,8 +46,17 @@ QUALITY = 82
 UA = {"User-Agent": "Flanner/1.0 (personal festival planner; contact via the site)"}
 
 
-def fetch(url: str) -> bytes:
-    req = urllib.request.Request(url, headers=UA)
+def fetch(src: str) -> bytes:
+    """A URL, or a file already on the disk.
+
+    Some of these arrive as a link on the festival's own site and some arrive
+    as a file, because what a festival publishes as its key visual is not
+    always reachable at an address — several of these sites compose theirs out
+    of CSS and a logo, and the picture only exists once a browser has drawn it.
+    """
+    if "://" not in src:
+        return pathlib.Path(src).expanduser().read_bytes()
+    req = urllib.request.Request(src, headers=UA)
     with urllib.request.urlopen(req, timeout=45) as r:
         return r.read()
 
@@ -56,7 +66,17 @@ def fit(raw: bytes) -> Image.Image:
     # A photograph off a phone carries its orientation in EXIF rather than in
     # its pixels; every reader honours that and Pillow does not, so it is
     # applied here before anything is measured.
-    im = ImageOps.exif_transpose(im).convert("RGB")
+    # Flattened onto white before anything else: a PNG key visual carries an
+    # alpha channel, and a JPEG has none — left to Pillow the transparent parts
+    # come out black, which on a cream poster is the whole background.
+    im = ImageOps.exif_transpose(im)
+    if im.mode in ("RGBA", "LA", "P"):
+        im = im.convert("RGBA")
+        flat = Image.new("RGB", im.size, (255, 255, 255))
+        flat.paste(im, mask=im.split()[-1])
+        im = flat
+    else:
+        im = im.convert("RGB")
     w, h = im.size
     if h > w / MAX_RATIO:
         keep = int(round(w / MAX_RATIO))
@@ -87,10 +107,10 @@ def main(argv: list[str]) -> None:
     if not argv or argv[0] == "--list":
         listing()
         if not argv:
-            raise SystemExit("\nusage: promo.py <festival-id> <image-url>  |  --list")
+            raise SystemExit("\nusage: promo.py <festival-id> <image-url-or-path>  |  --list")
         return
     if len(argv) != 2:
-        raise SystemExit("usage: promo.py <festival-id> <image-url>")
+        raise SystemExit("usage: promo.py <festival-id> <image-url-or-path>")
     fid, url = argv
     cfg = json.loads((ROOT / "data" / "festivals.json").read_text())
     if not any(f["id"] == fid for f in cfg["festivals"]):
