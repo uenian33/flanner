@@ -2042,8 +2042,8 @@ body.plan-only .section-headline{position:absolute;width:1px;height:1px;
    given its own shape back, so it reads as a picture of a screen rather than
    as part of this one. The aspect ratio is the source's, published by the
    build, so the card does not jump as the pictures arrive. */
-.a2hs__shot{display:block;inline-size:100%;max-inline-size:320px;
-  margin:10px 0 0 34px;border-radius:14px;
+.a2hs__shot{display:block;inline-size:100%;max-inline-size:200px;
+  block-size:auto;margin:10px 0 0 34px;border-radius:14px;
   border:1px solid var(--md-sys-color-outline-variant);
   background:var(--md-sys-color-surface-container-high)}
 .a2hs-card__foot{flex:none;padding:8px 24px calc(20px + var(--safe-b,0px));
@@ -5109,7 +5109,7 @@ document.addEventListener('click', e => {
      reserved so the card does not jump as they load. */
   const stepHTML = (s) => '<li><p>' + esc(s.text) + '</p>' + (s.webp
     ? '<picture><source type="image/webp" srcset="' + esc(s.webp) +
-      '" sizes="(max-width:600px) 100vw, 320px">' +
+      '" sizes="200px">' +
       '<img class="a2hs__shot" src="' + esc(s.fallback) + '" alt="' + esc(s.alt || '') +
       '" width="' + s.w + '" height="' + s.h + '" loading="lazy" decoding="async">' +
       '</picture>'

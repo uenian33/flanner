@@ -11,3 +11,6 @@ the source's own shape so the card does not jump as they load. A file that is
 not here is a step with words and no picture; nothing breaks.
 
 The sources stay out of the built site — only the resized copies are served.
+
+The three that are here came off an iPhone in Downloads/guidance and were
+renamed for the step each shows: menu, share, home.

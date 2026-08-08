@@ -24,24 +24,26 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "assets" / "home" / "a2hs-src"
 OUT = ROOT / "assets" / "home"
 
-# Drawn at 320 CSS px at most, so 640 covers a 2x screen and 960 a 3x one.
-# Beyond that a screenshot of a phone is being shown larger than the phone.
-WIDTHS = (640, 960)
+# Drawn at 200 CSS px, so 400 covers a 2x screen and 600 a 3x one. Beyond that
+# a screenshot of a phone is being carried at a size no phone can show. The
+# sources are portrait, and 200 is what keeps three of them and their words
+# inside a card someone can take in — the UI in them is large enough to read
+# at that width, being a menu rather than a page of text.
+WIDTHS = (400, 600)
 
 # The steps, in order. `src` is the stem of the file to look for in a2hs-src;
 # a step with no file is still a step.
 STEPS = [
-    {"src": "share",
-     "text": "Open the Share menu — the square with an arrow coming out of it.",
-     "alt": "Safari's share sheet, with Copy, Add to Bookmarks and Add to "
-            "Reading List along the bottom row"},
-    {"src": "more",
-     "text": "Scroll that list down, past the bookmarks.",
-     "alt": "The rest of the share sheet: Add Bookmark to, Add to Favourites, "
-            "Add to Quick Note, Find on Page, and Add to Home Screen"},
     {"src": "menu",
+     "text": "Open Safari's page menu and choose Share.",
+     "alt": "Safari's page menu, with Share at the top above Add to Bookmarks"},
+    {"src": "share",
+     "text": "At the end of the bottom row, press View More.",
+     "alt": "The share sheet's bottom row: Copy, Add to Bookmarks, Add to "
+            "Reading List, and View More"},
+    {"src": "home",
      "text": "Choose Add to Home Screen, then press Add.",
-     "alt": "Add to Home Screen at the foot of the list"},
+     "alt": "The rest of the list, ending in Add to Home Screen"},
 ]
 
 
