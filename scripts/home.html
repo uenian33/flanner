@@ -2055,13 +2055,24 @@ body.plan-only .section-headline{position:absolute;width:1px;height:1px;
   block-size:auto;margin:10px 0 0 34px;border-radius:14px;
   border:1px solid var(--md-sys-color-outline-variant);
   background:var(--md-sys-color-surface-container-high)}
-.a2hs-card__foot{flex:none;padding:8px 24px calc(20px + var(--safe-b,0px));
-  border-block-start:1px solid var(--md-sys-color-outline-variant)}
+/* No rule over the foot. The button is already a shape on the card's surface,
+   and a line above it was drawing a second edge across a card that has one. */
+.a2hs-card__foot{flex:none;padding:12px 24px calc(20px + var(--safe-b,0px))}
+/* M3's filled tonal button, which is what a dismiss is: the way out of a card
+   nobody has to take. Filled with primary it was ink on paper — the emphasis
+   of the one action a screen is for — and closing the instructions is not
+   that. Tonal is the step below, present without asking. */
 .a2hs-card__done{inline-size:100%;min-block-size:48px;border:0;
   border-radius:var(--md-sys-shape-corner-full);
-  background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);
+  background:var(--md-sys-color-secondary-container);
+  color:var(--md-sys-color-on-secondary-container);
   font-family:inherit;font-size:var(--md-sys-typescale-label-large-size);
-  font-weight:var(--md-sys-typescale-emphasized-label-weight);cursor:pointer}
+  font-weight:var(--md-sys-typescale-emphasized-label-weight);cursor:pointer;
+  transition:filter .18s cubic-bezier(.2,0,0,1)}
+.a2hs-card__done:hover{filter:brightness(.97)}
+.a2hs-card__done:active{filter:brightness(.94)}
+.a2hs-card__done:focus-visible{outline:3px solid var(--md-sys-color-on-surface);
+  outline-offset:2px}
 @media(prefers-reduced-motion:reduce){
   .a2hs-card,.a2hs-scrim{animation:none}
 }
