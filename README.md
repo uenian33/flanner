@@ -214,9 +214,9 @@ fresh arrow rebuilt on every render, a block lifted into the wrong file. Each
 time it went unnoticed until someone opened a planner on a phone.
 
 Prose here did not survive contact with the next edit, so the rule is enforced
-by the build. `CARD_GESTURE_MARKS` in `build_planner.py` lists the four pieces
-the behaviour is made of, and `check_card_gestures` refuses to write a page
-without them:
+by the build. `CARD_GESTURE_MARKS` in `build_planner.py` lists the pieces the
+behaviour is made of, and `check_card_gestures` refuses to write a page without
+them:
 
 | | |
 |---|---|
@@ -224,6 +224,9 @@ without them:
 | `translateY(100%)` → `none` in `playSheetOpen` | The rise, on M3's emphasised decelerate. |
 | `if (this.sheetIsBottom()) { this.sheetDragOnBottom(); return; }` | A phone's drag goes to the bottom-sheet handler rather than to the throw-in-any-direction one a wide screen gets. |
 | `sheetDragOnBottom()` | That handler. |
+| `touchmove` … `{ passive: false }` | The finger's drag, taken back from the scroller. |
+| `if (e.cancelable) e.preventDefault();` on the first move | What takes it. |
+| `if (e.pointerType === 'touch') return;` | The mouse path standing aside, so the two never write the same transform at once. |
 
 And `setSheetEl` may not call `setState`. React calls a ref while it is still
 committing; a `setState` from inside one throws error #185 and stops the whole
@@ -231,8 +234,35 @@ component rendering — which on a phone looks like a card that will not open, o
 one that shudders under the finger. What a new card needs set is set in
 `openCard`, which is an event handler and may. The build checks for that too.
 
+The last three are there because the first four were all present, the build was
+green, and the card still could not be dragged on a real phone — which is the
+one thing the check exists to make impossible.
+
+The card is `touch-action: pan-y` so its own words can scroll, and only
+`.ac__grip` and `.ac__hero` say `touch-action: none`. `pan-y` hands a vertical
+drag to the scroller before a `pointermove` ever arrives: the scroller, sitting
+at its top, does nothing with it, and the browser then cancels our pointer. So a
+pointer-only implementation is a live gesture on the handle and the picture and
+a dead one everywhere else — and since a reader pushes a card down by putting a
+thumb on it, mostly the dead one. It read as the drag having been switched off.
+
+Touch events, and not passive, are the only way to take it back: `preventDefault`
+on the first move of a drag that belongs to the card, and from there every move
+is one transform — no threshold to make up, nothing between the finger and the
+card. Released, it either carries on out past 150px (or 28% of its own height,
+whichever is smaller) or a flick over 550px a second that has travelled 24, or
+it springs back on the standard curve; a dismissal continues from wherever the
+finger left it, so a drag that becomes a close is one movement rather than two.
+An upward drag is never taken, so the card still scrolls. The pointer handlers
+stay for a mouse, which has no `touch-action` to fight and never fires these,
+and each stream now turns the other's events away — both used to write the same
+transform, and two of them racing is a jitter this card has had before.
+
+This is the same fix, and the same reasoning, as the home page's own cards in
+`scripts/home.html`. The planner was simply never given it.
+
 If you are changing anything near the sheet, the check is the contract: break
-one of the five and no page is written, and the message says which.
+one of the seven and no page is written, and the message says which.
 
 ## Going between pages
 

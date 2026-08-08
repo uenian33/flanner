@@ -1808,41 +1808,24 @@ SHEET_JS = """
        the sheet, wherever the sheet happens to be scrolled to. Anywhere else
        the old rule holds — a drag from the top of the content dismisses, one
        from the middle of it scrolls. */
-    /* The handle first, because it is the one that is always there: the
-       picture scrolls away and it does not. */
-    this.onSheetDown = (e) => {
-      if (e.button != null && e.button !== 0) return;
-      const t = e.target;
-      const grip = !!(t && t.closest && (t.closest('.ac__grip') || t.closest('.ac__hero')));
-      this.drag = { y: e.clientY, t: performance.now(), on: false,
-                    top: grip || atTop(), grip: grip, dy: 0 };
-    };
-    this.onSheetMove = (e) => {
-      const d = this.drag;
-      if (!d) return;
-      const dy = e.clientY - d.y;
-      if (!d.on) {
-        if (dy < 6) { if (dy < -4) this.drag = null; return; }
-        /* The card may have been scrolled between the press and the move —
-           unless the grip is what was pressed, which is always the sheet's. */
-        if (!d.top || (!d.grip && !atTop())) { this.drag = null; return; }
-        d.on = true;
-        el.style.transition = 'none';
-        if (el.setPointerCapture && e.pointerId != null) {
-          try { el.setPointerCapture(e.pointerId); } catch (err) { /* not ours */ }
-        }
-      }
-      if (e.cancelable) e.preventDefault();
+    /* Whose the gesture is, decided where it starts. The handle first,
+       because it is the one that is always there: the picture scrolls away
+       and it does not. */
+    const mine = (t) => !!(t && t.closest
+      && (t.closest('.ac__grip') || t.closest('.ac__hero')));
+    /* The three things a drag does, written once, because a finger and a
+       mouse arrive by different events and must do the same thing. */
+    const start = (y, grip) => ({ y: y, t: performance.now(), on: false,
+                                  top: grip || atTop(), grip: grip, dy: 0 });
+    const take = (d) => { d.on = true; el.style.transition = 'none'; };
+    const moveTo = (d, dy) => {
       d.dy = Math.max(0, dy);
       const h = el.getBoundingClientRect().height || 1;
       el.style.transform = 'translateY(' + d.dy + 'px)';
       if (scrim) scrim.style.opacity = String(Math.max(0, 1 - (d.dy / h) * .9));
     };
-    this.onSheetUp = (e) => {
-      const d = this.drag;
-      this.drag = null;
-      if (!d || !d.on) return;
-      const dy = Math.max(0, e.clientY - d.y);
+    const release = (d) => {
+      const dy = d.dy;
       const speed = dy / Math.max(1, performance.now() - d.t);
       const h = el.getBoundingClientRect().height || 1;
       if (dy > Math.min(150, h * .28) || (dy > 24 && speed > .55)) {
@@ -1856,6 +1839,77 @@ SHEET_JS = """
         scrim.style.opacity = '1';
       }
     };
+
+    /* ---- a finger ----
+       Touch events, and not passive, because that is the only way to take the
+       gesture back. The card is `touch-action: pan-y` so that its own words
+       can scroll, and that hands a vertical drag to the scroller before a
+       pointermove ever arrives: the scroller, sitting at its top, does nothing
+       with it and the browser then cancels our pointer. So on a phone the drag
+       worked from the handle and the picture, which say `touch-action: none`,
+       and nowhere else — a card that mostly could not be pushed back down, and
+       one that did not follow the finger when it could. preventDefault on the
+       first move of a drag that belongs to the card stops that happening, and
+       from there every move is one transform: no threshold to make up, and
+       nothing between the finger and the card.
+
+       This is the fix the home page's own cards were given; the planner's was
+       never given it. See CARD_GESTURE_MARKS, which now checks for it. */
+    this.onSheetTouchStart = (e) => {
+      if (!e.touches || e.touches.length !== 1) { this.drag = null; return; }
+      this.drag = start(e.touches[0].clientY, mine(e.target));
+    };
+    this.onSheetTouchMove = (e) => {
+      const d = this.drag;
+      if (!d || !d.top || !e.touches || !e.touches.length) return;
+      const dy = e.touches[0].clientY - d.y;
+      if (!d.on) {
+        if (dy < 6) { if (dy < -4) this.drag = null; return; }
+        /* The card may have been scrolled between the touch and the move —
+           unless the grip is what was touched, which is always the sheet's. */
+        if (!d.grip && !atTop()) { this.drag = null; return; }
+        take(d);
+      }
+      if (e.cancelable) e.preventDefault();
+      moveTo(d, dy);
+    };
+    this.onSheetTouchEnd = () => {
+      const d = this.drag;
+      this.drag = null;
+      if (d && d.on) release(d);
+    };
+
+    /* ---- a mouse, which never fires the above ----
+       And which has no touch-action to fight, so it keeps the pointer path it
+       always had. A finger is turned away here rather than handled twice:
+       both streams write the same transform, and two of them racing is the
+       jitter this card had once before. */
+    this.onSheetDown = (e) => {
+      if (e.pointerType === 'touch') return;
+      if (e.button != null && e.button !== 0) return;
+      this.drag = start(e.clientY, mine(e.target));
+    };
+    this.onSheetMove = (e) => {
+      const d = this.drag;
+      if (!d || e.pointerType === 'touch') return;
+      const dy = e.clientY - d.y;
+      if (!d.on) {
+        if (dy < 6) { if (dy < -4) this.drag = null; return; }
+        if (!d.top || (!d.grip && !atTop())) { this.drag = null; return; }
+        take(d);
+        if (el.setPointerCapture && e.pointerId != null) {
+          try { el.setPointerCapture(e.pointerId); } catch (err) { /* not ours */ }
+        }
+      }
+      if (e.cancelable) e.preventDefault();
+      moveTo(d, dy);
+    };
+    this.onSheetUp = (e) => {
+      const d = this.drag;
+      if (e && e.pointerType === 'touch') return;
+      this.drag = null;
+      if (d && d.on) release(d);
+    };
     /* Whether the handle is over the picture or over the paper, which is
        what decides its colour. Passive and coalesced into a frame: it writes
        one class, and it must not be in the way of the scroll it is watching. */
@@ -1867,6 +1921,10 @@ SHEET_JS = """
       });
     };
     el.addEventListener('scroll', this.onSheetScroll, { passive: true });
+    el.addEventListener('touchstart', this.onSheetTouchStart, { passive: true });
+    el.addEventListener('touchmove', this.onSheetTouchMove, { passive: false });
+    el.addEventListener('touchend', this.onSheetTouchEnd);
+    el.addEventListener('touchcancel', this.onSheetTouchEnd);
     el.addEventListener('pointerdown', this.onSheetDown);
     el.addEventListener('pointermove', this.onSheetMove, { passive: false });
     el.addEventListener('pointerup', this.onSheetUp);
@@ -2145,6 +2203,12 @@ SHEET_JS = """
     el.removeEventListener('pointermove', this.onSheetMove);
     el.removeEventListener('pointerup', this.onSheetUp);
     el.removeEventListener('pointercancel', this.onSheetUp);
+    /* The finger's, which only the bottom sheet has — removing a listener
+       that was never added is a no-op, so this needs no condition of its own. */
+    el.removeEventListener('touchstart', this.onSheetTouchStart);
+    el.removeEventListener('touchmove', this.onSheetTouchMove);
+    el.removeEventListener('touchend', this.onSheetTouchEnd);
+    el.removeEventListener('touchcancel', this.onSheetTouchEnd);
     if (this.onSheetScroll) el.removeEventListener('scroll', this.onSheetScroll);
     this.drag = null;
   }
@@ -7096,6 +7160,22 @@ CARD_GESTURE_MARKS = (
     ("a phone's drag is routed to the bottom-sheet handler",
      "if (this.sheetIsBottom()) { this.sheetDragOnBottom(); return; }"),
     ("that handler exists", "sheetDragOnBottom()"),
+    # The four marks above were all present while the card could not be
+    # dragged at all on a real phone, which is what a guard is supposed to
+    # make impossible. The card is `touch-action: pan-y` so its words can
+    # scroll; that hands a vertical drag to the scroller before a pointermove
+    # arrives and the browser then cancels our pointer, so a pointer-only
+    # implementation is a dead gesture everywhere except the two elements that
+    # say `touch-action: none`. Only a non-passive touchmove that calls
+    # preventDefault takes it back — so the guard checks for that, and for the
+    # preventDefault itself, and for the mouse path standing aside rather than
+    # writing the same transform twice.
+    ("the finger's drag is taken from the scroller",
+     "el.addEventListener('touchmove', this.onSheetTouchMove, { passive: false });"),
+    ("and the first move of it is preventDefaulted",
+     "if (e.cancelable) e.preventDefault();\n      moveTo(d, dy);"),
+    ("the pointer path stands aside for a finger",
+     "if (e.pointerType === 'touch') return;"),
 )
 
 
