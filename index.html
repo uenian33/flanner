@@ -35,7 +35,16 @@
     return null;
   };
   var t = read('flanner1.theme') || read('fp-theme');
-  document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+  var dark = t === 'dark';
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  /* The colour the browser paints its own chrome with. It is a meta further
+     down this same head, so it does not exist yet — hence the wait. Left
+     alone, a dark page kept a light title bar and a light status bar above it,
+     which on a phone is the part of the theme a reader sees first. */
+  document.addEventListener('DOMContentLoaded', function () {
+    var m = document.querySelector('meta[name=theme-color]');
+    if (m) m.content = dark ? '#131313' : '#ffffff';
+  });
 })();
 </script>
 <!-- The union of this page's policy and a planner's, because on a phone a
@@ -7564,7 +7573,17 @@ body.shell-busy .shell-page{pointer-events:none}
   body.shell-deep .wrap{display:none}
   /* The dot grid is the list's weave. A planner brings its own ground. */
   body.shell-deep::before{opacity:0}
-  .shell-page[data-planner]{background:var(--pl-wash,var(--md-sys-color-surface))}
+  /* The planner's own paper and ink, named rather than copied. This used to
+     read `--pl-wash`, an inline custom property the mount wrote by resolving
+     `--wash` once — and a literal in an inline property cannot re-resolve, so
+     the screen kept the ground of whichever theme it was first mounted under.
+     Switching dark to light afterwards then gave the worst of both: the shell
+     put the list's near-black ink on the body while the screen kept its
+     near-black ground, and the planner was black on black. The scoped blocks
+     already declare both tokens on the screen element in each theme, so
+     reading them here follows the switch. */
+  .shell-page[data-planner]{background:var(--wash,var(--md-sys-color-surface));
+    color:var(--on,var(--md-sys-color-on-surface))}
 }
 
 /* ---------- what the list says to the whole document ----------
@@ -7889,9 +7908,6 @@ body.shell-busy .shell-page{pointer-events:none}
           /^html,body\{height:100%;margin:0\}/.test(s.textContent)) s.remove();
     }
     reassertShell();
-    /* The screen takes the planner's own paper, so nothing of the list shows
-       through it while the two are crossing. */
-    el.style.setProperty('--pl-wash', getComputedStyle(el).getPropertyValue('--wash') || '');
     el.dataset.mounted = '1';
     const t = doc.querySelector('title');
     if (screens[key] && t) screens[key].title = t.textContent;

@@ -739,6 +739,7 @@ def patch_script(src: str, fest: Festival) -> str:
                    "'Nothing starred for ' + %s + ' yet'" % day_short, "empty stars")
 
     src = patch_picks(src)
+    src = patch_theme(src)
 
     # The day the planner opens on. Normally the one being held today, else the
     # first — but a planner opened at someone's picks opens on a day they have
@@ -760,6 +761,50 @@ def patch_script(src: str, fest: Festival) -> str:
 
     return patch_nav(patch_card(patch_sheet(patch_rows(patch_cards(patch_grid(patch_viewport(
         patch_stage_colours(patch_weather(patch_map(src, fest), fest), fest))))))))
+
+
+def patch_theme(src: str) -> str:
+    """Make the planner's own theme control agree with the rest of the site.
+
+    The design opens `dark: false` and nothing seeded it, so a planner booted
+    into the dark theme — which every page now is, before its first paint —
+    showed a control offering to turn dark ON while the page was already dark,
+    and pressing it turned the page light while the state said dark. And the
+    choice went nowhere: it set the attribute on this document and no other, so
+    walking back to the list undid it.
+
+    One setting, four places, the same four the list writes: cookie and local
+    storage under `flanner1.theme` and the legacy `fp-theme`. The cookie is
+    written at `path=/` deliberately — a planner lives under /flow/, and a
+    cookie scoped to that path would give the device two different answers on
+    two pages of one site.
+    """
+    src = sub_once(
+        src,
+        r"    splitRatio: \.62, dragging: false, dark: false, heroW: 0,",
+        "    splitRatio: .62, dragging: false,\n"
+        "    dark: document.documentElement.dataset.theme === 'dark', heroW: 0,",
+        "the theme the page booted into")
+    src = sub_once(
+        src,
+        r"      const dark = !s\.dark;\n"
+        r"      document\.documentElement\.dataset\.theme = dark \? 'dark' : 'light';\n",
+        "      const dark = !s.dark;\n"
+        "      const t = dark ? 'dark' : 'light';\n"
+        "      document.documentElement.dataset.theme = t;\n"
+        "      const meta = document.querySelector('meta[name=theme-color]');\n"
+        "      if (meta) meta.content = dark ? '#131313' : '#ffffff';\n"
+        "      /* Both names, cookie and storage, the way the list writes them,\n"
+        "         so the choice survives leaving this page. */\n"
+        "      ['flanner1.theme', 'fp-theme'].forEach((k) => {\n"
+        "        try {\n"
+        "          document.cookie = k + '=' + t + ';path=/;Max-Age=34560000;SameSite=Lax'\n"
+        "            + (location.protocol === 'https:' ? ';Secure' : '');\n"
+        "        } catch (e) {}\n"
+        "        try { localStorage.setItem(k, t); } catch (e) {}\n"
+        "      });\n",
+        "the planner's theme is the site's")
+    return src
 
 
 def patch_picks(src: str) -> str:
@@ -4037,7 +4082,14 @@ POSTER_JS = r"""
   POSTER = { w: 1080, h: 1350, s: 2, m: 48 };
 
   posterInk() {
-    const cs = getComputedStyle(document.documentElement);
+    /* Off the component's own host, not the document. On a phone the list
+       mounts a planner into its own document and re-points every `:root` block
+       at that screen, so `documentElement` carries none of these names and
+       every one of them fell through to the design's own default — a light
+       poster in the design's green, whatever the festival and whatever the
+       theme. The host is inside the screen, so it inherits them. */
+    const cs = getComputedStyle(
+      document.getElementById('dc-root') || document.documentElement);
     const tok = (n, f) => (cs.getPropertyValue(n).trim() || f);
     return {
       wash: tok('--wash', '#FFFFFF'), low: tok('--low', '#F8F7F3'),

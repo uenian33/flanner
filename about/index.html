@@ -34,7 +34,16 @@
     return null;
   };
   var t = read('flanner1.theme') || read('fp-theme');
-  document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+  var dark = t === 'dark';
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  /* The colour the browser paints its own chrome with. It is a meta further
+     down this same head, so it does not exist yet — hence the wait. Left
+     alone, a dark page kept a light title bar and a light status bar above it,
+     which on a phone is the part of the theme a reader sees first. */
+  document.addEventListener('DOMContentLoaded', function () {
+    var m = document.querySelector('meta[name=theme-color]');
+    if (m) m.content = dark ? '#131313' : '#ffffff';
+  });
 })();
 </script>
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'">

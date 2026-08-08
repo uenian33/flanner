@@ -217,7 +217,17 @@ body.shell-busy .shell-page{pointer-events:none}
   body.shell-deep .wrap{display:none}
   /* The dot grid is the list's weave. A planner brings its own ground. */
   body.shell-deep::before{opacity:0}
-  .shell-page[data-planner]{background:var(--pl-wash,var(--md-sys-color-surface))}
+  /* The planner's own paper and ink, named rather than copied. This used to
+     read `--pl-wash`, an inline custom property the mount wrote by resolving
+     `--wash` once — and a literal in an inline property cannot re-resolve, so
+     the screen kept the ground of whichever theme it was first mounted under.
+     Switching dark to light afterwards then gave the worst of both: the shell
+     put the list's near-black ink on the body while the screen kept its
+     near-black ground, and the planner was black on black. The scoped blocks
+     already declare both tokens on the screen element in each theme, so
+     reading them here follows the switch. */
+  .shell-page[data-planner]{background:var(--wash,var(--md-sys-color-surface));
+    color:var(--on,var(--md-sys-color-on-surface))}
 }
 
 /* ---------- what the list says to the whole document ----------
@@ -542,9 +552,6 @@ body.shell-busy .shell-page{pointer-events:none}
           /^html,body\{height:100%;margin:0\}/.test(s.textContent)) s.remove();
     }
     reassertShell();
-    /* The screen takes the planner's own paper, so nothing of the list shows
-       through it while the two are crossing. */
-    el.style.setProperty('--pl-wash', getComputedStyle(el).getPropertyValue('--wash') || '');
     el.dataset.mounted = '1';
     const t = doc.querySelector('title');
     if (screens[key] && t) screens[key].title = t.textContent;

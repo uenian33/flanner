@@ -43,7 +43,16 @@
     return null;
   };
   var t = read('flanner1.theme') || read('fp-theme');
-  document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+  var dark = t === 'dark';
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  /* The colour the browser paints its own chrome with. It is a meta further
+     down this same head, so it does not exist yet — hence the wait. Left
+     alone, a dark page kept a light title bar and a light status bar above it,
+     which on a phone is the part of the theme a reader sees first. */
+  document.addEventListener('DOMContentLoaded', function () {
+    var m = document.querySelector('meta[name=theme-color]');
+    if (m) m.content = dark ? '#131313' : '#ffffff';
+  });
 })();
 </script>
 <!-- Two departures from the policy the rest of the site runs under, both
@@ -2954,7 +2963,7 @@ body{overscroll-behavior:none}
      stopped existing the day the component moved out of the page — and a
      shell that cannot find it showed a reader an empty screen. -->
 <script id="fp-data" src="../data/tamperejazz/planner.js"></script>
-<script id="fp-code" src="../assets/js/planner-d8e5a61307.js"></script>
+<script id="fp-code" src="../assets/js/planner-c3c9872943.js"></script>
 <script>
 (() => {
   const s = document.createElement('script');
