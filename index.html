@@ -6606,23 +6606,11 @@ function openSheet(which) {
     $(sh).hidden = !on;
   });
 }
-/* The card's Place row is a shortcut to the toolbar's own picker: it closes
-   the card, scrolls the toolbar into view and opens the sheet that is already
-   there. Two lists of cities kept in step is one list too many. */
-(() => {
-  const b = document.getElementById('setPlaceBtn');
-  if (!b) return;
-  b.onclick = () => {
-    const dlg = document.getElementById('setDlg');
-    if (dlg && dlg.open) { dlg.classList.remove('in'); setTimeout(() => dlg.close(), 260); }
-    setTimeout(() => {
-      const trig = document.getElementById('placeTrig');
-      if (!trig) return;
-      trig.scrollIntoView({block: 'center', behavior: 'smooth'});
-      openSheet('#placeSheet');
-    }, 300);
-  };
-})();
+/* The card's Place row used to be a shortcut to the toolbar's picker: it shut
+   the card, scrolled the toolbar into view and opened the sheet down there.
+   That is a long way to go to answer a question the card had already asked,
+   and it took the card away to do it. The row opens into its own choices
+   instead — the same cities, from the same list, built where the row is. */
 sheets.forEach(([t, sh]) => $(t).onclick = e => {
   e.stopPropagation();
   openSheet($(sh).hidden ? sh : null);
