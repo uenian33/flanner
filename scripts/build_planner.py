@@ -361,15 +361,26 @@ def hero_scrim(promo: pathlib.Path) -> float:
     the scrim goes on, so what matters is its luminance, and the top half of it
     is what the title actually lands on.
 
-    The floor is the design's own value, so no photograph is dimmed more than
-    it was; the ceiling is 0.78, past which the picture stops being a picture.
+    It runs both ways. The floor used to be the design's own 52%, which meant a
+    picture darker than mid-grey was dimmed exactly as hard as one at it, for
+    contrast nobody needed: Blockfest's key visual is a night city, and 52%
+    black over it put white type at 18.6:1 where 4.5 is the bar — a picture
+    spent on nothing. The same line simply carries on below mid-grey now, and
+    the floor is where a dark picture is still a picture. Blockfest lands at
+    28% and 17.6:1; no planner's title falls below 4.2:1 against the mean, and
+    the two dark pictures come out safer at the ninetieth percentile than the
+    bright ones have always been.
+
+    The ceiling is 0.78, past which the picture stops being a picture, and the
+    floor is 0.20 for the same reason at the other end.
     """
     from PIL import Image, ImageStat
     im = Image.open(promo).convert("L")
     top = im.crop((0, 0, im.width, max(1, im.height // 2)))
     mean = ImageStat.Stat(top).mean[0] / 255.0
-    # Linear from the design's own 0.52 at mid-grey up to 0.78 at pure white.
-    return round(min(0.78, max(0.52, 0.52 + (mean - 0.5) * 0.62)), 3)
+    # Linear through the design's own 0.52 at mid-grey: up to 0.78 at pure
+    # white, down to 0.20 at black.
+    return round(min(0.78, max(0.20, 0.52 + (mean - 0.5) * 0.62)), 3)
 
 
 def data_uri(path: pathlib.Path) -> str:

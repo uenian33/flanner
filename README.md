@@ -101,6 +101,42 @@ change of subject. A festival we have not built a planner for has no colour of
 its own to borrow, so it takes its category's, the one already on the chip in
 the corner: art, music, film, culture, others, from `categories.json`.
 
+### Where an accent comes from
+
+`scripts/promocolor.py` reads it off the picture the festival publishes of
+itself, so a card, its highlight, its bar in the calendar and every surface of
+its planner are the colour of the photograph sitting on them. It is a tool, not
+a build step: it prints, somebody looks, and the value goes into the record —
+a festival that publishes a new poster should not silently re-theme the site on
+the next build.
+
+It reports a hue *family*, not a pixel. A poster is rarely flat — the Helsinki
+Festival's is a gradient running orange to magenta, and median-cut splits that
+into a dozen entries which then lose a vote to one flat patch of teal covering
+a fifth of the area, which is how that festival came to be themed in a colour
+covering a fifth of its own picture. Binning by hue puts the gradient back
+together. Within a family the hue is the circular mean and the lightness the
+median, but the chroma is the 85th percentile: averaging colour vectors that
+point slightly apart cancels some of their length, and since Material's ramp
+never claims more chroma than its source, a source flattened by its own
+averaging makes a theme duller than the picture it came from — vermilion was
+reporting as terracotta.
+
+And an accent has to be a colour a card could be *painted* in. Blockfest's key
+visual is three quarters night sky, a violet at tone 21 — the picture's ink
+rather than its colour, and painted at the tones Material asks for it would
+arrive as the same violet the two film festivals already carry. So the accent
+is the fullest family inside tones 25–85; the darker and paler ones are still
+reported, because they are really in the picture. Blockfest takes the magenta
+of its own logo, at 19% of the poster. `ink` is that hue at tone 20 with half
+the chroma, which is how every record already stated it.
+
+| | |
+|---|---|
+| Helsinki Festival | `#009ea6` → `#cd4d3a`. The teal was 21% of its poster; the warm red is 53%. |
+| Blockfest | `#f83697` → `#e42ea1`, off the 2026 key visual that replaced the photograph — very nearly the pink it already had, because that pink is the festival's own logo. |
+| The scrim goes both ways | `hero_scrim` floored at the design's 52%, so a picture darker than mid-grey was dimmed exactly as hard as one sitting at it. Blockfest's night city came out at 18.6:1 against white type where 4.5 is the bar — a picture spent on nothing. The same line carries on below mid-grey now, down to a floor of 20%: Blockfest lands at 28% and 17.6:1, no planner's title drops below 4.2:1 against the mean, and the two dark pictures are safer at the ninetieth percentile than the bright ones have always been. |
+
 Only the hue travels, which is the rule the planners follow too. The ramp keeps
 the five tones it already resolves to as a grey — the page mixes its own ink
 into its own paper at 8, 16, 24 and 70 per cent — and takes its chroma from the

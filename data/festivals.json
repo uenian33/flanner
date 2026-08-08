@@ -159,8 +159,8 @@
     "Two days",
     "Stadium"
    ],
-   "accent": "#f83697",
-   "ink": "#5c1236",
+   "accent": "#e42ea1",
+   "ink": "#5c103f",
    "description": "The Nordics' largest hip-hop festival, two days at the Ratina stadium and the event park beside it.",
    "official": "https://www.blockfest.fi/en/",
    "tickets": "https://www.blockfest.fi/en/tickets/",
@@ -171,8 +171,7 @@
    "previewNote": "Blockfest has published its line-up and the names of its three stages, not its running order. Set times appear on blockfest.fi closer to the weekend.",
    "promo": "blockfest-promo.jpg",
    "cardArt": "photo",
-   "promoFrom": "https://www.blockfest.fi/wp-content/uploads/2024/12/BLOCKFEST24_Day2_233049_JonathanMelartin4258.jpg",
-   "promoCredit": "Jonathan Melartin"
+   "promoFrom": "https://www.blockfest.fi/en/"
   },
   {
    "id": "juhlaviikot",
@@ -188,8 +187,8 @@
     "Theatre",
     "World music"
    ],
-   "accent": "#009ea6",
-   "ink": "#00373a",
+   "accent": "#cd4d3a",
+   "ink": "#561f16",
    "description": "The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.",
    "official": "https://helsinkifestival.fi/en/",
    "tickets": "https://helsinkifestival.fi/en/programme/",
