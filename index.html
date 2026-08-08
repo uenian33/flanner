@@ -6727,8 +6727,17 @@ document.addEventListener('click', e => {
   const IOS_STEPS = [{"text":"Open Safari's page menu and choose Share.","alt":"Safari's page menu, with Share at the top above Add to Bookmarks","webp":"./assets/home/a2hs-menu-400.webp 400w, ./assets/home/a2hs-menu-600.webp 600w","fallback":"./assets/home/a2hs-menu-400.jpg","w":1125,"h":1246},{"text":"At the end of the bottom row, press View More.","alt":"The share sheet's bottom row: Copy, Add to Bookmarks, Add to Reading List, and View More","webp":"./assets/home/a2hs-share-400.webp 400w, ./assets/home/a2hs-share-600.webp 600w","fallback":"./assets/home/a2hs-share-400.jpg","w":1125,"h":861},{"text":"Choose Add to Home Screen, then press Add.","alt":"The rest of the list, ending in Add to Home Screen","webp":"./assets/home/a2hs-home-400.webp 400w, ./assets/home/a2hs-home-600.webp 600w","fallback":"./assets/home/a2hs-home-400.jpg","w":1125,"h":848}];
   const how = () => {
     const ua = navigator.userAgent;
-    const ios = /iPad|iPhone|iPod/.test(ua) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    /* `?a2hs=ios` forces the illustrated steps, `?a2hs=other` the worded ones.
+       The pictures are of Safari's share sheet, so they are shown only where
+       they are the right instructions — which means that on any desktop
+       browser, at the narrow width this card appears at, there is no way to
+       look at them. That is a card nobody working on this site can check
+       without a phone in their hand, and the pictures went unnoticed as
+       missing for exactly that reason. This is how you look at either one. */
+    const forced = new URLSearchParams(location.search).get('a2hs');
+    if (forced === 'ios') return IOS_STEPS;
+    const ios = forced !== 'other' && (/iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
     if (ios) return IOS_STEPS;
     if (/Firefox|FxiOS/.test(ua)) return [
       {text: 'Open the browser menu.'},
