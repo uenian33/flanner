@@ -3150,11 +3150,15 @@ body.plan-only .section-headline{position:absolute;width:1px;height:1px;
   @keyframes a2hspop{from{opacity:0;transform:translate(-50%,-46%) scale(.97)}
     to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 }
-.a2hs-card__grip{flex:none;display:grid;place-items:center;block-size:28px}
+/* The handle is the card's, always: a drag from it moves the card whatever
+   the words under it have been scrolled to, so the browser must not take the
+   gesture first. */
+.a2hs-card__grip{flex:none;display:grid;place-items:center;block-size:28px;
+  touch-action:none}
 .a2hs-card__grip i{inline-size:32px;block-size:4px;border-radius:2px;
   background:color-mix(in srgb,var(--md-sys-color-on-surface) 24%,transparent)}
 .a2hs-card__body{flex:1 1 auto;min-block-size:0;overflow-y:auto;
-  overscroll-behavior:contain;padding:4px 24px 8px}
+  overscroll-behavior:contain;padding:4px 24px 8px;touch-action:pan-y}
 .a2hs-card__body h2{margin:0;font-family:var(--title);
   font-size:var(--md-sys-typescale-headline-small-size);font-weight:650;
   line-height:1.2;letter-spacing:-.01em}
@@ -6458,12 +6462,82 @@ document.addEventListener('click', e => {
   /* Its own scrim and its own element, so it is a card over the page rather
      than a panel hanging off a control. */
   const scrim = $('#a2hsScrim');
+  const cardBody = sheet.querySelector('.a2hs-card__body');
   const openCardSheet = (on) => {
     sheet.hidden = !on;
     if (scrim) scrim.hidden = !on;
     document.body.style.overflow = on ? 'hidden' : '';
-    if (on) sheet.focus && sheet.setAttribute('tabindex', '-1'), on && sheet.focus();
+    /* Whatever a drag left behind, cleared on the way in and on the way out —
+       a card reopened still wearing the transform it was thrown out with is a
+       card that never appears again. */
+    sheet.style.transition = '';
+    sheet.style.transform = '';
+    if (scrim) scrim.style.opacity = '';
+    if (cardBody) cardBody.scrollTop = 0;
+    if (on) { sheet.setAttribute('tabindex', '-1'); sheet.focus(); }
   };
+
+  /* ---- dragged down to close ----
+     The same gesture the act's card takes, and the same rule for when it is
+     the card's rather than the scroll's: from the handle it is always the
+     card's, and from the words it is the card's only while they are already
+     at their top. Otherwise a downward drag through three screenshots would
+     throw the card away instead of scrolling it.
+
+     The phone's alone. Above that width this is a dialog in the middle of the
+     screen — there is no edge it would be dragged back to. */
+  const phoneSheet = matchMedia('(max-width:599.98px)');
+  let sd = null;
+  const cardH = () => sheet.getBoundingClientRect().height || 400;
+  const restCard = () => {
+    sheet.style.transition = 'transform .32s cubic-bezier(.2,0,0,1)';
+    sheet.style.transform = '';
+    if (scrim) { scrim.style.transition = 'opacity .32s'; scrim.style.opacity = ''; }
+  };
+  const throwCard = () => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { openCardSheet(false); return; }
+    sheet.style.transition = 'transform .28s cubic-bezier(.3,0,.8,.15)';
+    sheet.style.transform = 'translateY(100%)';
+    if (scrim) { scrim.style.transition = 'opacity .28s'; scrim.style.opacity = '0'; }
+    setTimeout(() => openCardSheet(false), 280);
+  };
+  sheet.addEventListener('pointerdown', (e) => {
+    if (!phoneSheet.matches) return;
+    if (e.button != null && e.button !== 0) return;
+    if (e.target.closest && e.target.closest('#a2hsNo')) return;
+    const onGrip = !!(e.target.closest && e.target.closest('.a2hs-card__grip'));
+    sd = {y: e.clientY, t: performance.now(), on: false, grip: onGrip, dy: 0};
+  });
+  sheet.addEventListener('pointermove', (e) => {
+    if (!sd) return;
+    const dy = e.clientY - sd.y;
+    if (!sd.on) {
+      if (dy < 6) { if (dy < -4) sd = null; return; }
+      /* The card may have been scrolled between the press and the move —
+         unless the handle is what was pressed, which is always the card's. */
+      if (!sd.grip && cardBody && cardBody.scrollTop > 0) { sd = null; return; }
+      sd.on = true;
+      sheet.style.transition = 'none';
+      if (scrim) scrim.style.transition = 'none';
+      if (sheet.setPointerCapture) { try { sheet.setPointerCapture(e.pointerId); } catch (err) {} }
+    }
+    sd.dy = dy;
+    const down = Math.max(0, dy);
+    sheet.style.transform = 'translateY(' + down.toFixed(1) + 'px)';
+    if (scrim) scrim.style.opacity = (.32 * (1 - Math.min(1, down / cardH()))).toFixed(3);
+  });
+  const letGo = (cancelled) => {
+    if (!sd) return;
+    const {dy, t, on} = sd;
+    sd = null;
+    if (!on) return;
+    const speed = dy / Math.max(1, performance.now() - t);
+    /* Far enough, or thrown hard enough to mean it. */
+    if (!cancelled && (dy > cardH() * .28 || speed > .6)) throwCard();
+    else restCard();
+  };
+  sheet.addEventListener('pointerup', () => letGo(false));
+  sheet.addEventListener('pointercancel', () => letGo(true));
   /* Closing the instructions closes the instructions. It used to also put the
      offer away for good, which is the wrong reading of the button: someone who
      has read three steps has not necessarily carried them out, and taking the
