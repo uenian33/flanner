@@ -105,6 +105,46 @@ def clashes(chosen: list[tuple[str, float]]) -> list[tuple[str, str, float]]:
     return sorted(out, key=lambda t: t[2])
 
 
+# Two colours this close, in both axes at once, are the same colour to a reader.
+# Hue alone is not the test: Blockfest and Tampere Jazz sit 1.4° apart and are
+# never confused, because one is chroma 88 and the other 22.
+SAME_HUE = 20.0
+SAME_CHROMA = 12.0
+
+
+def collisions(festivals: list[dict]) -> list[tuple[str, str, float, float]]:
+    """Festivals whose *generated* primary is the same colour.
+
+    Measured on what the page paints, not on what the record says, because a
+    tonal palette throws away the one thing that told two of these records
+    apart. Love & Anarchy is #6750a4 at tone 40 and Espoo Ciné is #b69df8 at
+    tone 70 — thirty tones apart, and obviously two colours when you read the
+    file. But both are hue 299 chroma 48, and `primary` is defined as *palette
+    tone 40*, so the tone is discarded and the two festivals generate #6750a4
+    and #6451a4: 2.2° and half a unit of chroma apart. Flow and Lost In Music
+    collide the same way at 4.3°.
+
+    That is not a defect in the ramp — it is what a tonal palette is — which is
+    why it has to be checked rather than assumed away, and why the check has to
+    run on the output.
+    """
+    import m3color
+    made = []
+    for f in festivals:
+        if not f.get("accent"):
+            continue
+        h, c, _t = hct.from_hex(m3color.scheme(f["accent"])[0]["primary"])
+        made.append((f["id"], h, c))
+    out = []
+    for i in range(len(made)):
+        for j in range(i + 1, len(made)):
+            dh = hct.difference_degrees(made[i][1], made[j][1])
+            dc = abs(made[i][2] - made[j][2])
+            if dh < SAME_HUE and dc < SAME_CHROMA:
+                out.append((made[i][0], made[j][0], dh, dc))
+    return sorted(out, key=lambda t: t[2] + t[3])
+
+
 def tertiary_of(cands: list[dict], primary: dict) -> dict | None:
     """A second colour from the same picture, for the tertiary palette.
 
@@ -189,15 +229,16 @@ def main() -> None:
             print(f"  {a} and {b} are {d:.0f}° apart — one of them has to keep "
                   f"the colour its festival publishes instead")
 
-        # The same question of the values actually shipping, which is the one
-        # that matters: the record is what a reader sees.
-        rec = [(f["id"], hct.from_hex(f["accent"])[0]) for f, _c, _p, _t in rows]
-        bad = clashes(rec)
-        print("and the record as it stands?")
+        # And the question that actually matters, asked of what the page paints
+        # rather than of what the record says. Every festival, not only the ones
+        # with a picture — a festival with no photograph still has a card.
+        print("\nand the colours the site generates today?")
+        bad = collisions(_load())
         if not bad:
-            print("  every festival on the site is already its own colour")
-        for a, b, d in bad:
-            print(f"  {a} and {b} are {d:.0f}° apart")
+            print("  every festival generates its own primary")
+        for a, b, dh, dc in bad:
+            print(f"  {a} and {b} generate the same primary — {dh:.1f}° of hue "
+                  f"and {dc:.1f} of chroma apart")
 
 
 if __name__ == "__main__":
