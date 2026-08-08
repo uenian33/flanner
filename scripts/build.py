@@ -185,7 +185,7 @@ def main():
         ("__FAQHTML__", seo.faq_html(schema.festival("kbp"))),
         ("__OFFLINE__", (ROOT / "scripts" / "_offline.html").read_text()),
         ("__SETTINGS__", (ROOT / "scripts" / "_settings.html").read_text()),
-        ("__FOOTER__", (ROOT / "scripts" / "_footer.html").read_text()),
+        ("__FOOTER__", schema.footer()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
         ("__ROOT__", "../"),
         ("__NOTE__", '<p>Timetable transcribed from the organiser\'s official “Full Schedule in One Picture” and cross-checked against <a href="https://www.klangi.fi/uutiset/kallio-block-party-2026-ohjelma-aikataulu/" target="_blank" rel="noopener">klangi.fi</a>; where they disagreed the official image won.</p><p>Stage pins are the organiser\'s map badges snapped to the real street junctions they sit on. Street map © OpenStreetMap contributors, tiles © CARTO; satellite imagery © Esri. The “Official” layer is the organiser\'s own map.</p><p>An unofficial planner, not affiliated with the organisers. Also here: the <a href="../flow/">Flow Festival 2026 planner</a>, same engine.</p>'),

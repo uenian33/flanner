@@ -81,6 +81,19 @@ def theme_boot() -> str:
     return (ROOT / "scripts" / "_theme-boot.html").read_text().rstrip("\n")
 
 
+def footer(root: str = "__ROOT__") -> str:
+    """The shared footer, with one link per planner rather than the two it was
+    written with. `root` is how a page reaches the site root — the info pages
+    and the planners sit a directory down.
+    """
+    links = "\n".join(
+        f'        <li><a href="{root}{f["planner"]}">{f["name"]}</a></li>'
+        for f in sorted((x for x in load()["festivals"] if x.get("planner")),
+                        key=lambda x: x["start"]))
+    return (ROOT / "scripts" / "_footer.html").read_text().replace(
+        "__FOOTER_PLANNERS__", links)
+
+
 def pagefx() -> str:
     """The page-to-page layer, with the list of planners written into it.
 

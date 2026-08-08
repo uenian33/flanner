@@ -7,19 +7,63 @@ dialog.setdlg::backdrop{background:rgba(4,6,9,.55);
   -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
   opacity:0;transition:opacity var(--md-sys-motion-spring-default-effects)}
 dialog.setdlg.in::backdrop{opacity:1}
-.setbox{position:fixed;left:50%;bottom:calc(14px + var(--safe-b));
-  transform:translate(-50%,16px);opacity:0;width:min(460px,calc(100vw - 24px));
-  max-height:min(84svh,720px);overflow:auto;overscroll-behavior:contain;
-  background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-large-increased);
-  padding:0 clamp(16px,2.4vw,22px) 20px;box-shadow:var(--md-sys-elevation-3);
-  transition:opacity var(--md-sys-motion-spring-default-effects),transform var(--md-sys-motion-spring-default-spatial)}
-dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,0)}
+/* On a phone it stands on the bottom edge and is pushed back down with a
+   thumb — M3's modal bottom sheet, and the shape an act's card already uses
+   for "here is one thing, in detail". It replaces the side menu, which was a
+   panel that slid in from the edge of the screen and held the same three
+   destinations the dock already carries plus two settings pretending to be
+   navigation. A setting is not a place.
+
+   Its measurements are the act card's: the extra-large corner on the two top
+   corners only, as tall as its own content up to 88% of the screen, and the
+   emphasised-decelerate rise. */
+.setbox{position:fixed;left:50%;bottom:0;
+  transform:translate(-50%,100%);width:min(560px,100vw);
+  max-height:min(88svh,760px);display:flex;flex-direction:column;
+  overflow:hidden;overscroll-behavior:contain;
+  background:var(--md-sys-color-surface-container-low);
+  border:0;border-radius:28px 28px 0 0;
+  padding:0 clamp(16px,2.4vw,22px) calc(20px + var(--safe-b,0px));
+  box-shadow:0 -8px 40px rgb(0 0 0 / .28);
+  transition:transform .42s cubic-bezier(.05,.7,.1,1)}
+dialog.setdlg.in .setbox{transform:translate(-50%,0)}
+/* While a finger is on it the sheet follows the finger exactly, so the
+   transition has to be out of the way — see `--setdrag` in home.html. */
+.setbox.is-dragging{transition:none;
+  transform:translate(-50%,var(--setdrag,0px))}
+/* The handle: 32 by 4 on a 28px band, which is the act card's own. */
+.setgrip{flex:none;display:grid;place-items:center;block-size:28px;
+  touch-action:none;cursor:grab}
+.setgrip:active{cursor:grabbing}
+.setgrip i{inline-size:32px;block-size:4px;border-radius:2px;
+  background:color-mix(in srgb,var(--md-sys-color-on-surface) 24%,transparent)}
+/* Everything under the head scrolls; the head and the handle stay. */
+.setscroll{flex:1 1 auto;min-block-size:0;overflow-y:auto;
+  overscroll-behavior:contain;
+  /* No track down the side of a sheet: the handle above already says this
+     moves, and a scrollbar inside a 28px corner reads as a seam. */
+  scrollbar-width:none;-ms-overflow-style:none}
+.setscroll::-webkit-scrollbar{width:0;height:0}
 @media(min-width:600px){
-  .setbox{bottom:auto;top:50%;transform:translate(-50%,calc(-50% + 16px))}
-  dialog.setdlg.in .setbox{transform:translate(-50%,-50%)}
+  /* Above the phone there is no bottom edge a page is reaching for, so it is a
+     dialog in the middle — the same answer the add-to-home-screen card gives. */
+  .setbox{bottom:auto;top:50%;width:min(460px,calc(100vw - 24px));
+    border:1px solid var(--md-sys-color-outline);
+    border-radius:var(--md-sys-shape-corner-large-increased);
+    box-shadow:var(--md-sys-elevation-3);
+    opacity:0;transform:translate(-50%,calc(-50% + 16px));
+    transition:opacity var(--md-sys-motion-spring-default-effects),
+      transform var(--md-sys-motion-spring-default-spatial)}
+  dialog.setdlg.in .setbox{opacity:1;transform:translate(-50%,-50%)}
+  .setgrip{display:none}
 }
-.sethead{position:sticky;top:0;z-index:2;display:flex;align-items:center;
-  justify-content:space-between;gap:12px;padding:16px 0 12px;background:var(--md-sys-color-surface-container-lowest)}
+@media(prefers-reduced-motion:reduce){
+  .setbox{transition:none}
+}
+/* Not sticky any more: the scroller under it is what moves, so the head and
+   the handle simply stay where they are. */
+.sethead{flex:none;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;padding:4px 0 12px}
 .sethead h2{margin:0;font-family:var(--title);font-weight:var(--md-sys-typescale-title-weight);font-size:var(--md-sys-typescale-title-medium-size);
   letter-spacing:.02em;text-transform:uppercase}
 .setclose{width:40px;height:40px;flex:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-full);

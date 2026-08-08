@@ -1,16 +1,38 @@
 <dialog class="setdlg" id="setDlg" aria-labelledby="setTitle">
-  <div class="setbox">
+  <div class="setbox" id="setBox">
+    <!-- The handle an act's card has, and for the same reason: on a phone this
+         is a sheet standing on the bottom edge, and a sheet says it can be
+         pushed back down by showing the thing you push. It is also the drag
+         surface — see the pointer handlers in home.html. -->
+    <div class="setgrip" id="setGrip" aria-hidden="true"><i></i></div>
     <div class="sethead">
       <h2 id="setTitle">Settings</h2>
       <button class="setclose" id="setClose" aria-label="Close settings">
         <svg class="i"><use href="#i-close"/></svg></button>
     </div>
+    <div class="setscroll">
     <div class="setrow">
       <div><b>Appearance</b><i>Applies to every Flanner page on this device.</i></div>
       <div class="fseg" id="themeSeg" role="group" aria-label="Colour theme">
         <button data-theme-set="light" aria-pressed="false">Light</button>
         <button data-theme-set="dark" aria-pressed="false">Dark</button>
       </div>
+    </div>
+    <!-- The two the rail used to carry as glyphs at its foot. A setting is a
+         setting: it belongs with the others rather than in a menu of its own. -->
+    <div class="setrow">
+      <div><b>Language</b><i id="langState">Names the categories, and tells a
+        screen reader and the browser's own translator which language this is.</i></div>
+      <div class="fseg" id="langSeg" role="group" aria-label="Language">
+        <button data-lang-set="en" aria-pressed="false">EN</button>
+        <button data-lang-set="fi" aria-pressed="false">FI</button>
+        <button data-lang-set="sv" aria-pressed="false">SV</button>
+      </div>
+    </div>
+    <div class="setrow">
+      <div><b>Place</b><i id="setPlaceState">Which city's festivals the list
+        shows.</i></div>
+      <button class="setbtn" id="setPlaceBtn" aria-haspopup="dialog">Everywhere</button>
     </div>
     <div class="setrow">
       <div><b>Cookies</b><i id="cookieState">—</i></div>
@@ -32,5 +54,6 @@
          everything it carries — sources, map credits, the disclaimer, contact —
          appears here instead. Same markup, one source. -->
     <div class="setfoot">__FOOTER__</div>
+    </div>
   </div>
 </dialog>

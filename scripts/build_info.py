@@ -41,7 +41,7 @@ def main() -> None:
     cfg = json.loads((ROOT / "data" / "festivals.json").read_text())
     site = cfg["site"]
     template = (ROOT / "scripts" / "info.html").read_text()
-    footer = (ROOT / "scripts" / "_footer.html").read_text()
+    footer = schema.footer()
     footer_css = (ROOT / "scripts" / "_footer.css").read_text()
     fontcss = (ROOT / "scripts" / "_font.css").read_text()
 

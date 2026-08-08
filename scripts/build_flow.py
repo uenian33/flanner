@@ -175,7 +175,7 @@ def build():
         ("__FAQHTML__", seo.faq_html(next(x for x in json.loads((ROOT / "data" / "festivals.json").read_text())["festivals"] if x["id"] == "flow"))),
         ("__OFFLINE__", (ROOT / "scripts" / "_offline.html").read_text()),
         ("__SETTINGS__", (ROOT / "scripts" / "_settings.html").read_text()),
-        ("__FOOTER__", (ROOT / "scripts" / "_footer.html").read_text()),
+        ("__FOOTER__", schema.footer()),
         ("__FOOTER_CSS__", (ROOT / "scripts" / "_footer.css").read_text()),
         ("__ROOT__", "../"),
         ("__NOTE__", '<p>Set times transcribed from Flow Festival\'s own published timetable; where a listing and the official schedule disagreed, the official schedule won.</p><p>Stage pins are placed from the organiser\'s site plan against the real Suvilahti geometry. Street map © OpenStreetMap contributors, tiles © CARTO; satellite imagery © Esri.</p><p>An unofficial planner, not affiliated with the organisers. Also here: the <a href="../kallio/">Kallio Block Party 2026 planner</a>, same engine.</p>'),

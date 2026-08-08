@@ -63,10 +63,9 @@ body.shell-busy .shell-page{pointer-events:none}
 }
 
 @media(max-width:599.98px){
-  /* The old bar steps aside for the dock; it stays as the drawer,
-     which is the one job the dock does not do. */
+  /* The old bar steps aside for the dock, and stays aside: the drawer it used
+     to become is gone, and the fourth cell opens the settings card instead. */
   .mnav{display:none}
-  body.nav-drawer .mnav{display:flex}
 
   /* ---------- the dock ----------
      Back button and bar share one grid. Animating the grid's first

@@ -127,7 +127,7 @@ def main():
         # planner and an id is document-wide — so their references are moved
         # with them, here rather than in the partials the other pages share.
         ("__SETTINGS__", sprite((ROOT / "scripts" / "_settings.html").read_text())),
-        ("__FOOTER__", sprite((ROOT / "scripts" / "_footer.html").read_text())),
+        ("__FOOTER__", sprite(schema.footer())),
         ("__ROOT__", "./"),
         ("__NOTE__", NOTE),
         ("__CUR_PRIVACY__", ""), ("__CUR_TERMS__", ""), ("__CUR_ABOUT__", ""),
