@@ -6521,15 +6521,16 @@ const onCal = f => matches(f) && !status(f).past;
 
 /* Where a card goes, which is not the same question in both lists.
 
-   In My plan it goes to what you picked: the planner opens on its schedule
-   with the picks filter already on, which is the view this list is a list of.
-   In the festivals list it opens the planner the ordinary way — that list is a
-   list of festivals, and arriving at one already filtered would hide the
-   programme somebody came to read.
+   In My plan it goes to the festival's programme — the list of what is on,
+   which is the thing somebody in their own plan is going to read. Every card,
+   every time: whether the running order is out and whether anything has been
+   starred are answers the planner gives once you are there, not reasons to
+   land you somewhere else. A reader who presses the same card twice and gets
+   two different screens has learned nothing except not to trust it.
 
-   Only where the device has something stored for that festival, so the filter
-   always has something to show; a planner opened at an empty plan is a blank
-   grid, which is a worse answer than the ordinary one.
+   In the festivals list it opens the planner the ordinary way — that list is a
+   list of festivals, and arriving at one already narrowed would hide the
+   programme somebody came to read.
 
    Set here rather than written into the card, because narrowing the list hides
    cards rather than building them again — a destination decided at build time
@@ -6538,7 +6539,7 @@ const onCal = f => matches(f) && !status(f).past;
    card is a press the page answers by assignment. */
 function planDest(el, f) {
   if (!f.planner) return;
-  const dest = f.planner + (planOnly && hasPicks(f.id) ? '#picks' : '');
+  const dest = f.planner + (planOnly ? '#plan' : '');
   if (el.dataset.planner === dest) return;
   el.dataset.planner = dest;
   const a = el.querySelector('.card__link');
@@ -8382,7 +8383,7 @@ body.shell-busy .shell-page{pointer-events:none}
       /* A planner mounts once and is kept, so the second visit to the same
          festival is a screen that has already decided what it is showing. The
          address has changed under it — a link out of My plan asks for the
-         picks — and `pushState` fires nothing, so it is told. Harmless on a
+         programme — and `pushState` fires nothing, so it is told. Harmless on a
          first mount, which read the same address itself. */
       dispatchEvent(new CustomEvent('fp:open', {detail: {key: key}}));
       document.body.classList.add('shell-deep');

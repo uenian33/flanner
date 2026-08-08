@@ -966,7 +966,7 @@ def patch_picks(src: str) -> str:
         "     so this cannot land anyone on an empty screen — and if it somehow\n"
         "     did, the filter's own `Nothing starred yet` says so and offers the\n"
         "     way back to the full programme. */\n"
-        "  DEEP_PICKS = location.hash === '#picks';\n"
+        "  DEEP_PICKS = location.hash === '#plan';\n"
         "\n"
         "  state = {\n",
         "the pick store")
@@ -1016,12 +1016,13 @@ def patch_picks(src: str) -> str:
     src = sub_once(
         src,
         r"    view: null, prog: 'timetable', ",
-        "    view: this.DEEP_PICKS ? 'timetable' : null, prog: 'timetable', ",
-        "opened at the schedule")
+        "    view: this.DEEP_PICKS ? 'list' : null, prog: 'timetable', ",
+        "opened at the programme")
     src = sub_once(
         src,
         r"chromeHidden: false, onlyPicks: false, ",
-        "chromeHidden: false, onlyPicks: this.DEEP_PICKS, ",
+        "chromeHidden: false,\n"
+        "    onlyPicks: this.DEEP_PICKS && Object.keys(this.PICKS).length > 0, ",
         "opened on the picks filter")
 
     # Reading the address at boot answers for the first arrival and no other.
@@ -1039,12 +1040,12 @@ def patch_picks(src: str) -> str:
         "        .map(e => e.d));\n"
         "      const d = this.DAYS.find(x => on.has(x.id));\n"
         "      this.setState(Object.assign(\n"
-        "        { view: 'timetable', onlyPicks: true, navOpen: false, sheet: null },\n"
+        "        { view: 'list', onlyPicks: !!d, navOpen: false, sheet: null },\n"
         "        d ? { day: d.id } : null));\n"
         "    };\n"
         "    this.onDeep = (e) => {\n"
         "      if (e && e.detail && e.detail.key && e.detail.key !== FP.slug) return;\n"
-        "      if (location.hash === '#picks') this.openPicks();\n"
+        "      if (location.hash === '#plan') this.openPicks();\n"
         "    };\n"
         "    window.addEventListener('hashchange', this.onDeep);\n"
         "    window.addEventListener('fp:open', this.onDeep);\n",

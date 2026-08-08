@@ -616,7 +616,7 @@ body.shell-busy .shell-page{pointer-events:none}
       /* A planner mounts once and is kept, so the second visit to the same
          festival is a screen that has already decided what it is showing. The
          address has changed under it — a link out of My plan asks for the
-         picks — and `pushState` fires nothing, so it is told. Harmless on a
+         programme — and `pushState` fires nothing, so it is told. Harmless on a
          first mount, which read the same address itself. */
       dispatchEvent(new CustomEvent('fp:open', {detail: {key: key}}));
       document.body.classList.add('shell-deep');
