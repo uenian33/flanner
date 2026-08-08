@@ -214,8 +214,8 @@
     "International",
     "Ten days"
    ],
-   "accent": "#b69df8",
-   "ink": "#101010",
+   "accent": "#78acff",
+   "ink": "#183152",
    "description": "Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.",
    "official": "https://espoocine.fi/en/",
    "tickets": "https://espoocine.fi/en/shop/tickets/",
@@ -238,8 +238,8 @@
     "Two nights",
     "Wristband"
    ],
-   "accent": "#fcf764",
-   "ink": "#333200",
+   "accent": "#c5ffd3",
+   "ink": "#1f3525",
    "description": "Two evenings across Tampere's own venues — Tavara-asema, Telakka, G Livelab, Olympia and more — on one wristband.",
    "facts": {
     "price": "2 days €69 · 1 day €49"
