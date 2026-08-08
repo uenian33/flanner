@@ -3464,10 +3464,14 @@ document.addEventListener('change', e => {
   if (box.checked) {
     const btn = box.parentElement && box.parentElement.querySelector('label');
     if (btn) favBurst(btn.getBoundingClientRect(), btn);
-    /* The list's cards only. The highlight is one card filling most of the
-       screen, and a copy of it flying is the page itself leaving rather than
-       a festival being put away — it reads as the view changing. */
+    /* The list's cards send themselves. The highlight sends its heart — see
+       flyHeartToPlan for why the card itself stays where it is. */
     flyToPlan(box.closest('.card'));
+    const banner = box.closest('.banner-card');
+    if (banner) {
+      flyHeartToPlan(banner.querySelector('.plan-toggle__icons svg[data-state="on"]')
+        || banner.querySelector('.plan-toggle__icons svg'));
+    }
   }
   syncPlanBadge(box.checked);
 });
@@ -3655,6 +3659,70 @@ function flyToPlan(host) {
       {transform: 'scale(1.28)', offset: .45},
       {transform: 'scale(1)'}
     ], {duration: 340, easing: 'cubic-bezier(.2,0,0,1)', delay: 380});
+  }
+}
+
+/* ── the mark goes, where the card cannot ───────────────
+   The highlight is one card filling most of the screen, and a copy of it
+   flying to the bar reads as the page leaving rather than a festival being
+   put away — which is why it does not throw. The heart that was just pressed
+   is another matter: it is small, and a small thing can cross a screen
+   without the page seeming to move with it.
+
+   It keeps its size the whole way. Everything else that travels here shrinks,
+   because a card has to become small enough to go into a 54px cell; a 22px
+   heart is already the size of the thing it is going into, and shrinking it
+   would only make it harder to follow. So this is the path and the speed and
+   nothing else: the same eased arc up and over, the same eased travel along
+   it, and a fade at the end where it arrives. */
+function flyHeartToPlan(mark) {
+  if (!mark || !mark.animate) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cell = planCell();
+  const target = planMark(cell);
+  /* A phone's, like the card's own throw: above that width the plan is a
+     column that never left view, and the count going up says it. */
+  if (!target || !cell.closest('.dock')) return;
+  const from = mark.getBoundingClientRect(), to = target.getBoundingClientRect();
+  if (!from.width || !to.width) return;
+
+  const ghost = mark.cloneNode(true);
+  ghost.setAttribute('aria-hidden', 'true');
+  ghost.style.cssText = 'position:fixed;margin:0;z-index:94;pointer-events:none;'
+    + 'left:' + from.left.toFixed(1) + 'px;top:' + from.top.toFixed(1) + 'px;'
+    + 'width:' + from.width.toFixed(1) + 'px;height:' + from.height.toFixed(1) + 'px;'
+    + 'color:' + getComputedStyle(mark).color + ';'
+    + 'will-change:transform,opacity';
+  document.body.appendChild(ghost);
+
+  const dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+  const dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+  const dist = Math.hypot(dx, dy);
+  const lift = Math.max(70, Math.min(200, dist * .42));
+  const cx = dx * .58, cy = -lift;
+  const move = bez(.2, 0, 0, 1);
+  const N = 24, frames = [];
+  for (let i = 0; i <= N; i++) {
+    const t = i / N, p = move(t), q = 1 - p;
+    const x = 2 * q * p * cx + p * p * dx;
+    const y = 2 * q * p * cy + p * p * dy;
+    frames.push({
+      offset: t, easing: 'linear',
+      opacity: t < .82 ? 1 : Math.max(0, 1 - (t - .82) / .18),
+      transform: 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)'
+    });
+  }
+  ghost.animate(frames, {duration: 460, fill: 'forwards'});
+  setTimeout(() => ghost.remove(), 520);
+
+  /* And the cell takes it in, the same beat a thrown card gets. */
+  const glyph = target.querySelector('svg') || target;
+  if (glyph.animate) {
+    glyph.animate([
+      {transform: 'scale(1)'},
+      {transform: 'scale(1.28)', offset: .45},
+      {transform: 'scale(1)'}
+    ], {duration: 340, easing: 'cubic-bezier(.2,0,0,1)', delay: 340});
   }
 }
 

@@ -782,8 +782,15 @@ footer{border-top:0;margin-top:clamp(24px,3vw,36px);
   <p>These terms are governed by Finnish law. If any provision is found unenforceable, the rest continues to apply.</p>
 </article>
 
-<hr class="wave" aria-hidden="true">
 <footer>
+  <!-- Inside the footer, not above it. As a sibling it was orphaned by
+       every rule that hides the footer — and on a phone one does: the
+       footer moves into the settings card so the page reads as an app.
+       The rule stayed behind at the end of a column that collapses to
+       nothing the moment the list screen is hidden, which is what opening
+       a planner does, so it sprang to the top of the screen and drew a
+       wave straight across whatever was crossing under it. -->
+  <hr class="wave" aria-hidden="true">
   <div class="fgrid">
     <div class="fbrand">
       <div class="fmark"><svg class="dot" aria-hidden="true"><use href="#i-logo"/></svg><span>Flanner</span></div>
