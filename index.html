@@ -7152,6 +7152,104 @@ applyTheme(Store.get('theme'));
 
 window.applyFilters = apply;
 apply();
+
+/* ── where you were ─────────────────────────────────────
+   Opening a festival and coming back put a reader at the top of the list: the
+   browser restores a scroll position before this script has drawn the cards it
+   belongs to, so there is nothing that tall to scroll to yet. The phone's shell
+   already keeps the place, because it never leaves the document — this is the
+   same promise for every other way in and out.
+
+   Session storage, one entry, per tab: it is where the reader was a moment ago,
+   not a setting, and it should not outlive the tab or reach another one. Taken
+   on the way out rather than on every scroll event, and `pagehide` is the one
+   event that covers leaving, closing and going into the back/forward cache —
+   `beforeunload` does not fire on iOS at all.
+
+   What comes back is driven through the page's own controls rather than its
+   variables: the shape by pressing the shape, My plan by pressing My plan. A
+   restore that reached inside would set a value and leave the chip above it
+   saying something else the first time either moved.
+
+   Restored only when this really is a return — a back or forward navigation,
+   or an arrival from a page of this site's own. Landing on the list fresh, from
+   a search result or a bookmark, is a first visit and belongs at the top. */
+(() => {
+  const KEY = 'flanner1.where';
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  const write = () => {
+    try {
+      sessionStorage.setItem(KEY, JSON.stringify({
+        y: Math.round(window.scrollY || 0),
+        plan: !!document.body.classList.contains('plan-only'),
+        view: document.body.dataset.view || '',
+      }));
+    } catch (e) { /* private mode: the page simply does not remember */ }
+  };
+  addEventListener('pagehide', write);
+  /* Coming back can mean two different things. A fresh document runs this
+     script again and is handled below. A restore from the back/forward cache
+     does not: the page is handed back whole, with its listeners and its scroll
+     — except that `manual` has just told the browser not to put the scroll
+     back, and nothing else was going to. So that case is answered here, where
+     the only thing missing is the position. */
+  addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    try {
+      const w = JSON.parse(sessionStorage.getItem(KEY) || 'null');
+      if (w) window.scrollTo(0, w.y || 0);
+    } catch (err) {}
+  });
+
+  const nav = performance.getEntriesByType('navigation')[0];
+  const back = nav && nav.type === 'back_forward';
+  const from = document.referrer || '';
+  const inside = from.indexOf(location.origin) === 0 &&
+    from.replace(/[?#].*$/, '') !== location.href.replace(/[?#].*$/, '');
+  if (!back && !inside) { try { sessionStorage.removeItem(KEY); } catch (e) {} return; }
+
+  let was = null;
+  try { was = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) {}
+  if (!was) return;
+
+  /* The shape and the list first: a position only means something once the
+     column is the height it was. */
+  if (was.view && was.view !== document.body.dataset.view) {
+    const shape = document.querySelector('#viewSeg button[data-view="' + was.view + '"]');
+    if (shape) shape.click();
+  }
+  if (was.plan && !document.body.classList.contains('plan-only')) {
+    const plan = document.getElementById('nPlan');
+    if (plan) plan.click();
+  }
+  /* And then held there. One `scrollTo` after a frame or two is not enough:
+     the column is still growing while the card photographs arrive and the font
+     swaps, and a position set against a page that is 800px tall is clamped to
+     the bottom of it and stays there. So it is re-asserted every frame for a
+     second, which is longer than any of that takes, and abandoned the instant
+     the reader touches the page — being put back where you were is a courtesy,
+     and a page that fights your thumb is not. */
+  const target = Math.max(0, was.y || 0);
+  let mine = true;
+  const theirs = () => { mine = false; };
+  addEventListener('wheel', theirs, {passive: true, once: true});
+  addEventListener('touchstart', theirs, {passive: true, once: true});
+  addEventListener('keydown', theirs, {once: true});
+  const until = performance.now() + 1000;
+  const put = () => {
+    if (!mine || performance.now() > until) return false;
+    if (Math.round(window.scrollY) !== target) window.scrollTo(0, target);
+    return true;
+  };
+  const hold = () => { if (put()) requestAnimationFrame(hold); };
+  requestAnimationFrame(hold);
+  /* And on a ladder of timers as well, because a tab that is not visible is
+     never given a frame — restored into the background, the whole loop above
+     simply does not run, and the reader comes back to the top of the page.
+     Timers are throttled there rather than stopped. */
+  [0, 60, 160, 320, 640, 1000].forEach((ms) => setTimeout(put, ms));
+})();
 </script>
 <script>
 /* Installable, and every page stays readable once it has been opened — which
