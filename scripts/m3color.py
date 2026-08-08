@@ -21,8 +21,8 @@ from __future__ import annotations
 
 import math
 
-TONES = [0, 4, 6, 10, 12, 17, 20, 22, 25, 30, 40, 49, 50, 60, 70, 80, 85, 90, 92, 94, 95, 96,
-         98, 99, 100]
+TONES = [0, 4, 6, 10, 12, 17, 20, 22, 24, 25, 30, 40, 49, 50, 60, 70, 80, 85, 87, 90, 92, 94,
+         95, 96, 98, 99, 100]
 
 # ── sRGB ↔ CIELAB ──────────────────────────────────────
 def _srgb_to_linear(c: float) -> float:
@@ -124,24 +124,34 @@ def palettes(source: str, mono: bool = False) -> dict[str, dict[int, str]]:
     }
 
 
+# The light-theme tone for the four `on-*-container` roles is 30, not the 10
+# it was when this table was written. Material changed it in August 2024 —
+# "More colorful text and icons. The following color roles are updated in light
+# theme to be more colorful while still having accessible color contrast: On
+# primary container, On secondary container, On tertiary container, On error
+# container" — and material-color-utilities' color_spec_2021 returns
+# `s.isDark ? 90 : 30` for all four. (material-web's v0.192 SCSS still says 10;
+# it predates the change and is not the authority.) Tone 30 keeps 4.5:1 against
+# a tone-90 container, which the audit below proves rather than assumes.
+#
 # role -> (palette, light tone, dark tone)
 ROLES = [
     ("primary", "primary", 40, 80),
     ("on-primary", "primary", 100, 20),
     ("primary-container", "primary", 90, 30),
-    ("on-primary-container", "primary", 10, 90),
+    ("on-primary-container", "primary", 30, 90),
     ("secondary", "secondary", 40, 80),
     ("on-secondary", "secondary", 100, 20),
     ("secondary-container", "secondary", 90, 30),
-    ("on-secondary-container", "secondary", 10, 90),
+    ("on-secondary-container", "secondary", 30, 90),
     ("tertiary", "tertiary", 40, 80),
     ("on-tertiary", "tertiary", 100, 20),
     ("tertiary-container", "tertiary", 90, 30),
-    ("on-tertiary-container", "tertiary", 10, 90),
+    ("on-tertiary-container", "tertiary", 30, 90),
     ("error", "error", 40, 80),
     ("on-error", "error", 100, 20),
     ("error-container", "error", 90, 30),
-    ("on-error-container", "error", 10, 90),
+    ("on-error-container", "error", 30, 90),
     # The page itself is paper, not the 98 tone: white, with the dot grid and
     # the containers above it doing the separating.
     ("surface", "neutral", 100, 6),
@@ -153,6 +163,13 @@ ROLES = [
     ("surface-container", "neutral", 94, 12),
     ("surface-container-high", "neutral", 92, 17),
     ("surface-container-highest", "neutral", 90, 22),
+    # The two the contrast rule is written against. Material checks every accent
+    # and outline role not against `surface` but against `highestSurface` —
+    # surface-dim in light, surface-bright in dark — because that is the
+    # lightest paper the role can actually land on, and therefore the worst
+    # case. Checking against `surface` flatters the result.
+    ("surface-dim", "neutral", 87, 6),
+    ("surface-bright", "neutral", 98, 24),
     ("inverse-surface", "neutral", 20, 90),
     ("inverse-on-surface", "neutral", 95, 20),
     ("inverse-primary", "primary", 80, 40),
@@ -206,8 +223,13 @@ PAIRS = [
     ("on-surface", "surface-container", 4.5),
     ("on-surface", "surface-container-high", 4.5),
     ("on-surface", "surface-container-highest", 4.5),
-    ("outline", "surface", 3.0),
-    ("primary", "surface", 3.0),
+    # Against the worst-case surface, per highestSurface(), not the nominal one.
+    ("outline", "surface-dim", 3.0),
+    ("primary", "surface-dim", 3.0),
+    ("secondary", "surface-dim", 3.0),
+    ("tertiary", "surface-dim", 3.0),
+    ("on-surface", "surface-bright", 4.5),
+    ("on-surface-variant", "surface-bright", 4.5),
     ("inverse-on-surface", "inverse-surface", 4.5),
 ]
 
