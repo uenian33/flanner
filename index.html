@@ -6494,20 +6494,34 @@ document.addEventListener('click', e => {
   const phoneSheet = matchMedia('(max-width:599.98px)');
   let sd = null;
   const cardH = () => sheet.getBoundingClientRect().height || 400;
+  const atCardTop = () => !cardBody || cardBody.scrollTop <= 0;
   const restCard = () => {
     sheet.style.transition = 'transform .32s cubic-bezier(.2,0,0,1)';
     sheet.style.transform = '';
     if (scrim) { scrim.style.transition = 'opacity .32s'; scrim.style.opacity = ''; }
   };
+  const dragTo = (dy) => {
+    const down = Math.max(0, dy);
+    sheet.style.transform = 'translateY(' + down.toFixed(1) + 'px)';
+    if (scrim) scrim.style.opacity = (.32 * (1 - Math.min(1, down / cardH()))).toFixed(3);
+  };
+  const beginDrag = () => {
+    sheet.style.transition = 'none';
+    if (scrim) scrim.style.transition = 'none';
+  };
   /* It leaves the way it arrived, back down to the edge it rose from — M3's
      rule for a bottom sheet, and quicker on the way out than in: 280ms on the
      accelerate against 420 on the emphasised decelerate. Every way of closing
-     it goes through here, the drag included, so a card thrown out and a card
-     dismissed by its own button do the same thing. From wherever the card has
-     been dragged to, since that is where a transition starts from. */
+     goes through here, the drag included, so a card thrown out and a card
+     dismissed by its own button do the same thing, and the slide starts from
+     wherever a drag had taken it.
+
+     Above the phone's width there is no edge to slide back to — it is a dialog
+     in the middle of the screen — so there it fades and settles instead, and
+     its own centring transform is left alone rather than fought. */
   const slideCardOut = () => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { openCardSheet(false); return; }
     if (sheet.hidden) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { openCardSheet(false); return; }
     if (!phoneSheet.matches) {
       sheet.classList.add('is-going');
       if (scrim) { scrim.style.transition = 'opacity .2s'; scrim.style.opacity = '0'; }
@@ -6519,40 +6533,89 @@ document.addEventListener('click', e => {
     if (scrim) { scrim.style.transition = 'opacity .28s'; scrim.style.opacity = '0'; }
     setTimeout(() => openCardSheet(false), 280);
   };
+  const endDrag = (dy, ms, cancelled) => {
+    const speed = dy / Math.max(1, ms);
+    if (!cancelled && (dy > cardH() * .28 || speed > .6)) slideCardOut();
+    else restCard();
+  };
+
+  /* ---- dragged down to close ----
+     While the words are at their top there is nothing below to scroll to, so
+     a downward drag anywhere on the card is the card's — which is the whole
+     gesture, and what a reader expects after they have read to the top again.
+     Once the words are scrolled, the same drag is theirs to scroll back with.
+
+     Touch events rather than pointer events, and not passive, because that is
+     the only way to take the gesture back. `touch-action: pan-y` hands a
+     vertical drag to the scroller before a pointermove ever arrives; the
+     scroller, being at its top, does nothing with it and the browser then
+     cancels our pointer. Calling preventDefault on the first touchmove of a
+     drag that belongs to the card stops that happening, and from there the
+     card follows the finger exactly — every touchmove is one transform, with
+     no threshold to make up and nothing between the finger and the card.
+
+     The pointer handlers stay for a mouse, which has no touch-action to fight
+     and never fires these. */
+  let td = null;
+  sheet.addEventListener('touchstart', (e) => {
+    if (!phoneSheet.matches || e.touches.length !== 1) { td = null; return; }
+    if (e.target.closest && e.target.closest('#a2hsNo')) { td = null; return; }
+    td = {y: e.touches[0].clientY, t: performance.now(), on: false, dy: 0,
+          /* Whose the gesture is, decided where it starts: the handle is
+             always the card's, and the words are while they are at their top. */
+          mine: !!(e.target.closest && e.target.closest('.a2hs-card__grip')) || atCardTop()};
+  }, {passive: true});
+  sheet.addEventListener('touchmove', (e) => {
+    if (!td || !td.mine) return;
+    const dy = e.touches[0].clientY - td.y;
+    if (!td.on) {
+      if (dy <= 0) { if (dy < -4) td = null; return; }
+      /* It may have been scrolled between the touch and the move. */
+      if (!atCardTop()) { td = null; return; }
+      td.on = true;
+      beginDrag();
+    }
+    td.dy = dy;
+    if (e.cancelable) e.preventDefault();
+    dragTo(dy);
+  }, {passive: false});
+  const touchDone = (cancelled) => {
+    if (!td) return;
+    const {dy, t, on} = td;
+    td = null;
+    if (!on) return;
+    endDrag(dy, performance.now() - t, cancelled);
+  };
+  sheet.addEventListener('touchend', () => touchDone(false));
+  sheet.addEventListener('touchcancel', () => touchDone(true));
+
+  /* A mouse, which the above never sees. */
   sheet.addEventListener('pointerdown', (e) => {
-    if (!phoneSheet.matches) return;
+    if (!phoneSheet.matches || e.pointerType === 'touch') return;
     if (e.button != null && e.button !== 0) return;
     if (e.target.closest && e.target.closest('#a2hsNo')) return;
-    const onGrip = !!(e.target.closest && e.target.closest('.a2hs-card__grip'));
-    sd = {y: e.clientY, t: performance.now(), on: false, grip: onGrip, dy: 0};
+    sd = {y: e.clientY, t: performance.now(), on: false, dy: 0,
+          mine: !!(e.target.closest && e.target.closest('.a2hs-card__grip')) || atCardTop()};
   });
   sheet.addEventListener('pointermove', (e) => {
-    if (!sd) return;
+    if (!sd || !sd.mine || e.pointerType === 'touch') return;
     const dy = e.clientY - sd.y;
     if (!sd.on) {
-      if (dy < 6) { if (dy < -4) sd = null; return; }
-      /* The card may have been scrolled between the press and the move —
-         unless the handle is what was pressed, which is always the card's. */
-      if (!sd.grip && cardBody && cardBody.scrollTop > 0) { sd = null; return; }
+      if (dy <= 0) { if (dy < -4) sd = null; return; }
+      if (!atCardTop()) { sd = null; return; }
       sd.on = true;
-      sheet.style.transition = 'none';
-      if (scrim) scrim.style.transition = 'none';
+      beginDrag();
       if (sheet.setPointerCapture) { try { sheet.setPointerCapture(e.pointerId); } catch (err) {} }
     }
     sd.dy = dy;
-    const down = Math.max(0, dy);
-    sheet.style.transform = 'translateY(' + down.toFixed(1) + 'px)';
-    if (scrim) scrim.style.opacity = (.32 * (1 - Math.min(1, down / cardH()))).toFixed(3);
+    dragTo(dy);
   });
   const letGo = (cancelled) => {
     if (!sd) return;
     const {dy, t, on} = sd;
     sd = null;
     if (!on) return;
-    const speed = dy / Math.max(1, performance.now() - t);
-    /* Far enough, or thrown hard enough to mean it. */
-    if (!cancelled && (dy > cardH() * .28 || speed > .6)) slideCardOut();
-    else restCard();
+    endDrag(dy, performance.now() - t, cancelled);
   };
   sheet.addEventListener('pointerup', () => letGo(false));
   sheet.addEventListener('pointercancel', () => letGo(true));
