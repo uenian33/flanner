@@ -155,8 +155,8 @@
     "Two days",
     "Stadium"
    ],
-   "accent": "#FFD8E8",
-   "ink": "#441B2F",
+   "accent": "#f83697",
+   "ink": "#5c1236",
    "description": "The Nordics' largest hip-hop festival, two days at the Ratina stadium and the event park beside it.",
    "official": "https://www.blockfest.fi/en/",
    "tickets": "https://www.blockfest.fi/en/tickets/",
@@ -180,8 +180,8 @@
     "Theatre",
     "World music"
    ],
-   "accent": "#ffc861",
-   "ink": "#101010",
+   "accent": "#009ea6",
+   "ink": "#00373a",
    "description": "The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.",
    "official": "https://helsinkifestival.fi/en/",
    "tickets": "https://helsinkifestival.fi/en/programme/",
@@ -204,8 +204,8 @@
     "International",
     "Ten days"
    ],
-   "accent": "#b69df8",
-   "ink": "#101010",
+   "accent": "#a94259",
+   "ink": "#ffffff",
    "description": "Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.",
    "official": "https://espoocine.fi/en/",
    "tickets": "https://espoocine.fi/en/shop/tickets/",
@@ -228,8 +228,8 @@
     "Two nights",
     "Wristband"
    ],
-   "accent": "#FFD8E8",
-   "ink": "#441B2F",
+   "accent": "#fcf764",
+   "ink": "#333200",
    "description": "Two evenings across Tampere's own venues — Tavara-asema, Telakka, G Livelab, Olympia and more — on one wristband.",
    "facts": {
     "price": "2 days €69 · 1 day €49"
@@ -254,8 +254,8 @@
     "Contemporary jazz",
     "Four days"
    ],
-   "accent": "#FFD8E8",
-   "ink": "#441B2F",
+   "accent": "#c83e36",
+   "ink": "#ffffff",
    "description": "Four days of contemporary jazz, long known for its warm room and its broad idea of what the music can be.",
    "facts": {
     "price": "€10–25"

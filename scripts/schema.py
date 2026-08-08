@@ -324,16 +324,24 @@ HL_ROLES = (
 def _sources(cfg: dict) -> list[tuple[str, str]]:
     """What each card is drawn in, as (attribute selector, source colour).
 
-    A festival with a planner of ours takes the colour that planner is themed
-    from — the same `accent` it turns its whole page to — so the card here and
-    the page it opens are one colour. A festival we have not built a planner
-    for has no colour of its own to borrow, so it takes its category's, the one
-    the chip beside it already wears. Categories first: a festival's own rule
-    is written after the category's and wins on order, not on weight.
+    Every festival is drawn in its own `accent` — the same value its planner
+    turns its whole page to — so a card here and the page it opens are one
+    colour. The category's is the ground under them, for the parts of a card
+    that are not a festival: the chip, and any festival whose record has not
+    named a colour.
+
+    It used to be the festival's own only where we had built a planner, which
+    made `accent` a field two of the nine records carried and nothing read —
+    the Biennial's brown and Anarchy's violet were validated on every build and
+    then drawn over in their category's pink. A festival has one colour, and it
+    is the one in its record.
+
+    Categories first: a festival's own rule is written after the category's and
+    wins on order, not on weight.
     """
     return ([(f'[data-cat="{c["id"]}"]', c["color"]) for c in cfg["categories"]]
             + [(f'[data-id="{f["id"]}"]', f["accent"]) for f in cfg["festivals"]
-               if f.get("planner") and f.get("accent")])
+               if f.get("accent")])
 
 
 def _themed(cfg: dict, rule) -> str:
