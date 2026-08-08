@@ -5433,10 +5433,20 @@ function favBurst(rect, host) {
   if (!rect || !rect.width) return;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   /* The festival's own five, read off the element rather than written down:
-     whatever its card is themed in is what the sparks are. */
+     whatever its card is themed in is what the sparks are.
+
+     They have to be five a *card* carries. `--accent` and `--chip` are the
+     highlight's, declared on `#hero` and `.banner-card`, and a list card has
+     neither — so on the list those two fell through to the page's own
+     monochrome and two of every five sparks came out black and grey. These
+     five are all declared by `artwork_css` on the bare `[data-id]`, which
+     every themed surface matches, so the blast is the festival's wherever it
+     is thrown from. Their shape is the planner's: its sparks are the stage's
+     dot, its ground, and its plan pair, and these are the same four steps of
+     the festival's own ramp. */
   const cs = getComputedStyle(host.closest('[data-id]') || host);
   const pick = n => cs.getPropertyValue(n).trim();
-  const pal = ['--accent', '--art-2', '--chip', '--art-ink', '--accent']
+  const pal = ['--sel-bg', '--art-3', '--pick-bg', '--art-2', '--sel-bg']
     .map(pick).filter(Boolean);
   const layer = document.createElement('div');
   layer.setAttribute('aria-hidden', 'true');
