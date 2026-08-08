@@ -24,6 +24,7 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import planner as art_mod
+import artwork_gen
 import schema
 import seo
 from planner import MissingAnchor, sub_once
@@ -224,6 +225,11 @@ class Festival:
                     "type": TYPE_LABEL.get(a["type"], "Live"),
                     "genres": [title_case(g) for g in a.get("genres", [])],
                     "mark": "",
+                    # Which symbol in the page's sprite is this act's own
+                    # drawing. Numbered rather than named: a name has to be a
+                    # legal id and unique, and "Nick Cave & the Bad Seeds" is
+                    # neither on its own.
+                    "art": "#a%d" % i,
                     "a": mins(a["s"]), "b": mins(a["e"]),
                 }
                 # The sheet has a paragraph and four link buttons; the record
@@ -760,6 +766,7 @@ def patch_script(src: str, fest: Festival) -> str:
 
     src = patch_picks(src)
     src = patch_theme(src)
+    src = patch_artwork(src)
 
     # The day the planner opens on. Normally the one being held today, else the
     # first — but a planner opened at someone's picks opens on a day they have
@@ -781,6 +788,73 @@ def patch_script(src: str, fest: Festival) -> str:
 
     return patch_nav(patch_card(patch_sheet(patch_rows(patch_cards(patch_grid(patch_viewport(
         patch_stage_colours(patch_weather(patch_map(src, fest), fest), fest))))))))
+
+
+def patch_artwork_tpl(tpl: str, fest: "Festival") -> str:
+    """The list row's picture, and the drawings themselves into the sprite.
+
+    One symbol per act, referenced by the id the event carries. They go in the
+    page rather than in the festival's data because a `<use href="#id">` can
+    only reach a symbol in the same document — and because a custom property
+    set on the element that carries the `<use>` inherits into what it draws,
+    which is what keeps every act's picture in its stage's colours without the
+    drawing knowing which stage it is on.
+    """
+    tpl = sub_once(
+        tpl,
+        r'<use href="#i-art"></use><use href="\{\{ r\.motif \}\}"></use>',
+        '<use href="{{ r.art }}"></use>',
+        "the row's own drawing")
+    events = fest.events
+    if not events:
+        return tpl
+    ids = {}
+    for ev in events:
+        ids.setdefault(ev["title"], ev["art"].lstrip("#"))
+    art = artwork_gen.draw(list(ids))
+    # An act that shares a name with another shares its drawing, which is
+    # right: the drawing is the name's.
+    symbols = artwork_gen.sprite(art, ids)
+    for ev in events:
+        ev["art"] = "#" + ids[ev["title"]]
+    return sub_once(
+        tpl,
+        r'<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">',
+        '<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">\n'
+        + symbols.replace("\\", "\\\\"),
+        "the acts' own drawings")
+
+
+def patch_artwork(src: str) -> str:
+    """Give every act its own drawing instead of the one they all shared.
+
+    The shape is the act's; the colour stays the stage's. `mediaParts` already
+    hands each row and the card the five `--art-*` names filled from the
+    stage's own palette, so pointing the `<use>` at the act's symbol changes
+    what is drawn and nothing about what it is drawn in.
+
+    `#i-art` remains the fallback: an act whose artwork somehow did not get
+    baked shows the design's own, which is what every act showed before.
+    """
+    src = sub_once(
+        src,
+        r"  mediaParts\(cat, size\) \{",
+        "  mediaParts(cat, size, art) {",
+        "media parts take an artwork")
+    src = sub_once(
+        src,
+        r"      motif: A\.motif,\n",
+        "      motif: A.motif,\n"
+        "      art: art || '#i-art',\n",
+        "the act's own drawing")
+    # the two callers, which know the event
+    src = sub_once(
+        src,
+        r"\}, this\.mediaParts\(sev\.cat, 'lg'\), this\.starParts\(sev\.id, starred\)\);",
+        "}, this.mediaParts(sev.cat, 'lg', sev.art), this.starParts(sev.id, starred));",
+        "the card passes its act")
+    # and the Lineup face, which builds its own view object
+    return src
 
 
 def patch_theme(src: str) -> str:
@@ -2379,7 +2453,7 @@ def patch_rows(src: str) -> str:
     src = sub_once(
         src,
         r"      \}, this\.mediaParts\(ev\.cat\), this\.starParts\(ev\.id, starred\)\)\);",
-        "      }, this.mediaParts(ev.cat), mob ? {\n"
+        "      }, this.mediaParts(ev.cat, null, ev.art), mob ? {\n"
         "        /* The stage's palette rather than the category's, so the\n"
         "           thumbnail, the cell and the card's hero are one colour.\n"
         "           Which tones of it depends on whether the act is in the\n"
@@ -2831,7 +2905,7 @@ def patch_nav(src: str) -> str:
         "          ? (this.DAYS.find(d => d.id === ev.d) || {}).short + ' ' : '';\n"
         "        return {\n"
         "          name: ev.title, when: day + ev.from, planned: planned,\n"
-        "          motif: A.motif,\n"
+        "          motif: A.motif, art: ev.art || '#i-art',\n"
         "          aria: ev.title + ', ' + day + ev.from + ' at ' + st.name\n"
         "            + (planned ? ', in your plan' : ''),\n"
         "          avatarClass: planned ? 'avatar avatar--on' : 'avatar',\n"
@@ -5096,6 +5170,7 @@ def patch_map(src: str, fest: Festival) -> str:
 
 
 def patch_template(tpl: str, fest: Festival) -> str:
+    tpl = patch_artwork_tpl(tpl, fest)
     f = fest.f
     name = "%s %s" % (f["name"], f["year"])
     tpl = sub_once(tpl, r">Flow Festival 2026</h1>",
@@ -5283,7 +5358,7 @@ def patch_template(tpl: str, fest: Festival) -> str:
         '                  <svg class="who__art" sc-camel-view-box="0 0 400 250"'
         ' sc-camel-preserve-aspect-ratio="xMidYMid slice" aria-hidden="true"'
         ' style="{{ a.artStyle }}">\n'
-        '                    <use href="#i-art"></use><use href="{{ a.motif }}"></use>\n'
+        '                    <use href="{{ a.art }}"></use>\n'
         '                  </svg>\n'
         '                  <sc-if value="{{ a.planned }}"><b aria-hidden="true">'
         '<svg sc-camel-view-box="0 0 24 24"><use href="#i-star-fill"></use></svg>'
@@ -5724,7 +5799,7 @@ CARD_HTML = """    <div class="ac-host" style="{{ sheetHostStyle }}">
       <div class="ac__grip" aria-hidden="true"><div class="ac__grab"></div></div>
       <div class="ac__hero">
         <svg class="ac__art" sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img" aria-label="{{ sheet.artLabel }}">
-          <use href="#i-art"></use><use class="motif" href="{{ sheet.motif }}"></use>
+          <use href="{{ sheet.art }}"></use>
         </svg>
         <div class="ac__scrim" aria-hidden="true"></div>
         <div class="ac__tools">

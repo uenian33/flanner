@@ -2390,7 +2390,7 @@ body{overscroll-behavior:none}
               <button class="who" type="button" sc-camel-on-click="{{ a.onOpen }}" aria-label="{{ a.aria }}">
                 <span class="{{ a.avatarClass }}" style="{{ a.avatarStyle }}">
                   <svg class="who__art" sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" aria-hidden="true" style="{{ a.artStyle }}">
-                    <use href="#i-art"></use><use href="{{ a.motif }}"></use>
+                    <use href="{{ a.art }}"></use>
                   </svg>
                   <sc-if value="{{ a.planned }}"><b aria-hidden="true"><svg sc-camel-view-box="0 0 24 24"><use href="#i-star-fill"></use></svg></b></sc-if>
                 </span>
@@ -2694,7 +2694,7 @@ body{overscroll-behavior:none}
                 <div sc-camel-on-click="{{ r.onOpen }}" sc-camel-on-key-down="{{ r.onKey }}" role="button" sc-camel-tab-index="0" aria-label="{{ r.aria }}" style="{{ r.style }}" style-hover="box-shadow:inset 0 0 0 999px var(--state5,rgba(25,29,19,.05))" style-active="box-shadow:inset 0 0 0 999px var(--state9,rgba(25,29,19,.09))">
                   <div style="{{ r.mediaStyle }}">
                     <svg sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" aria-hidden="true" style="{{ r.artStyle }}">
-                      <use href="#i-art"></use><use href="{{ r.motif }}"></use>
+                      <use href="{{ r.art }}"></use>
                     </svg>
                     <sc-if value="{{ r.showChip }}" hint-placeholder-val="{{ true }}">
                       <div style="{{ r.notchStyle }}">
@@ -2863,7 +2863,7 @@ body{overscroll-behavior:none}
       <div class="ac__grip" aria-hidden="true"><div class="ac__grab"></div></div>
       <div class="ac__hero">
         <svg class="ac__art" sc-camel-view-box="0 0 400 250" sc-camel-preserve-aspect-ratio="xMidYMid slice" role="img" aria-label="{{ sheet.artLabel }}">
-          <use href="#i-art"></use><use class="motif" href="{{ sheet.motif }}"></use>
+          <use href="{{ sheet.art }}"></use>
         </svg>
         <div class="ac__scrim" aria-hidden="true"></div>
         <div class="ac__tools">
@@ -2975,7 +2975,7 @@ body{overscroll-behavior:none}
      stopped existing the day the component moved out of the page — and a
      shell that cannot find it showed a reader an empty screen. -->
 <script id="fp-data" src="../data/blockfest/planner.js"></script>
-<script id="fp-code" src="../assets/js/planner-c3c9872943.js"></script>
+<script id="fp-code" src="../assets/js/planner-ac03c796aa.js"></script>
 <script>
 (() => {
   const s = document.createElement('script');
