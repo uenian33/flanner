@@ -3332,7 +3332,10 @@ const Store = (() => {
   const NS = 'flanner1.';
   const YEAR = 60 * 60 * 24 * 400;          /* the cap most browsers apply */
   const FIELDS = {
-    theme: {values: ['light', 'dark'], def: 'light', legacy: 'fp-theme'},
+    /* `system` follows the device and is resolved where it is applied, so
+       what is stored is what was asked for rather than what it happened to
+       mean at the time. */
+    theme: {values: ['light', 'dark', 'system'], def: 'light', legacy: 'fp-theme'},
     view:  {values: ['cal', 'tile', 'full'], def: null, legacy: 'fp-view'},
     /* The site's language. Kept here rather than on the page so a planner
        opened from this one can read the same answer. */
@@ -5631,54 +5634,95 @@ document.addEventListener('keydown', e => {
   window.openSettings = open;
 
   /* ── pushing it back down ──────────────────────────────
-     The act card's gesture, on the act card's numbers: the sheet follows the
-     finger down and never up, and on release it either carries on out of the
-     screen or springs back — a third of its own height, or a flick faster than
-     500px a second. Anything less is a change of mind, and a sheet that closed
-     on a five-pixel twitch would be a sheet nobody trusts to stay open.
+     The add-to-home-screen card's gesture, which is the act card's: while the
+     body is at its top there is nothing below to scroll to, so a downward drag
+     anywhere on the sheet is the sheet's; once it is scrolled, the same drag
+     is the body's to scroll back with. It follows the finger exactly and, on
+     release, either carries on out of the screen or springs back — a third of
+     its own height, or a flick faster than 500px a second that has travelled
+     24, since speed alone would let a twitch close it.
 
-     Only from the handle and the head. The body scrolls, and a drag that
-     started there has to be a scroll or a settings card long enough to scroll
-     could never be read on a phone. */
+     Touch events, and not passive, because that is the only way to take the
+     gesture back: `touch-action: pan-y` on the body hands a vertical drag to
+     the scroller before a pointermove arrives, the scroller at its top does
+     nothing with it, and the browser then cancels our pointer. The pointer
+     handlers stay for a mouse, which never fires these. */
   (() => {
-    const grip = $('#setGrip'), head = document.querySelector('#setBox .sethead');
-    if (!grip || !box) return;
-    let y0 = 0, t0 = 0, dy = 0, on = false;
-    const move = (e) => {
-      if (!on) return;
-      dy = Math.max(0, e.clientY - y0);
-      box.style.setProperty('--setdrag', dy + 'px');
-    };
-    const up = (e) => {
-      if (!on) return;
-      on = false;
+    const scroller = document.querySelector('#setBox .setscroll');
+    if (!box) return;
+    const atTop = () => !scroller || scroller.scrollTop <= 0;
+    const isPhone = () => innerWidth < 600;
+    const begin = () => { box.classList.add('is-dragging');
+      box.style.setProperty('--setdrag', '0px'); };
+    const to = (dy) => box.style.setProperty('--setdrag', Math.max(0, dy) + 'px');
+    const finish = (dy, ms) => {
       box.classList.remove('is-dragging');
       box.style.removeProperty('--setdrag');
-      const dt = Math.max(1, e.timeStamp - t0);
       const far = dy > box.getBoundingClientRect().height / 3;
-      const fast = dy / dt > 0.5 && dy > 24;
+      const fast = dy / Math.max(1, ms) > 0.5 && dy > 24;
       if (far || fast) close();
-      removeEventListener('pointermove', move);
-      removeEventListener('pointerup', up);
-      removeEventListener('pointercancel', up);
     };
-    const down = (e) => {
-      if (e.button) return;
-      /* The gesture is the phone's; above it the sheet is a dialog in the
-         middle of the screen with no edge to push it towards. */
-      if (innerWidth >= 600) return;
-      on = true; y0 = e.clientY; t0 = e.timeStamp; dy = 0;
-      box.classList.add('is-dragging');
-      box.style.setProperty('--setdrag', '0px');
-      addEventListener('pointermove', move);
-      addEventListener('pointerup', up);
-      addEventListener('pointercancel', up);
+
+    let td = null;
+    box.addEventListener('touchstart', (e) => {
+      if (!isPhone() || e.touches.length !== 1) { td = null; return; }
+      if (e.target.closest && e.target.closest('button,input,a,label')) { td = null; return; }
+      td = {y: e.touches[0].clientY, t: performance.now(), on: false, dy: 0,
+            mine: !!(e.target.closest && e.target.closest('.setgrip')) || atTop()};
+    }, {passive: true});
+    box.addEventListener('touchmove', (e) => {
+      if (!td || !td.mine) return;
+      const dy = e.touches[0].clientY - td.y;
+      if (!td.on) {
+        if (dy <= 0) { if (dy < -4) td = null; return; }
+        if (!atTop()) { td = null; return; }
+        td.on = true;
+        begin();
+      }
+      td.dy = dy;
+      if (e.cancelable) e.preventDefault();
+      to(dy);
+    }, {passive: false});
+    const touchDone = (cancelled) => {
+      if (!td) return;
+      const {dy, t, on} = td;
+      td = null;
+      if (!on) return;
+      if (cancelled) { box.classList.remove('is-dragging');
+        box.style.removeProperty('--setdrag'); return; }
+      finish(dy, performance.now() - t);
     };
-    grip.addEventListener('pointerdown', down);
-    if (head) head.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('button')) return;   /* the close button is a button */
-      down(e);
+    box.addEventListener('touchend', () => touchDone(false));
+    box.addEventListener('touchcancel', () => touchDone(true));
+
+    let md = null;
+    box.addEventListener('pointerdown', (e) => {
+      if (!isPhone() || e.pointerType === 'touch' || e.button) return;
+      if (e.target.closest && e.target.closest('button,input,a,label')) return;
+      md = {y: e.clientY, t: performance.now(), on: false, dy: 0,
+            mine: !!(e.target.closest && e.target.closest('.setgrip')) || atTop()};
     });
+    box.addEventListener('pointermove', (e) => {
+      if (!md || !md.mine || e.pointerType === 'touch') return;
+      const dy = e.clientY - md.y;
+      if (!md.on) {
+        if (dy <= 0) { if (dy < -4) md = null; return; }
+        if (!atTop()) { md = null; return; }
+        md.on = true; begin();
+        if (box.setPointerCapture) { try { box.setPointerCapture(e.pointerId); } catch (err) {} }
+      }
+      md.dy = dy;
+      to(dy);
+    });
+    const mouseDone = () => {
+      if (!md) return;
+      const {dy, t, on} = md;
+      md = null;
+      if (!on) return;
+      finish(dy, performance.now() - t);
+    };
+    box.addEventListener('pointerup', mouseDone);
+    box.addEventListener('pointercancel', mouseDone);
   })();
   /* The floating mark sits above the rail and the rail beside the content
      column, both derived from the rail's measured box — the same sync the
@@ -5842,22 +5886,27 @@ document.addEventListener('keydown', e => {
 /* ── theme ─────────────────────────────────────────────── */
 /* Persisted by Store, alongside the view and the place — see its notes. */
 const root = document.documentElement;
+/* What the reader asked for, and what that means right now: `system` is a
+   standing instruction rather than a colour, so the choice and the resolved
+   theme are two different things and only one of them goes on the document. */
+const darkNow = (t) => t === 'dark' ||
+  (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
 function applyTheme(t) {
-  root.dataset.theme = t;
+  root.dataset.theme = darkNow(t) ? 'dark' : 'light';
   document.querySelectorAll('#themeSeg button').forEach(b =>
     b.setAttribute('aria-pressed', b.dataset.themeSet === t));
   const rt = document.querySelector('#railTheme');
   if (rt) {
-    const next = t === 'dark' ? 'light' : 'dark';
+    const next = darkNow(t) ? 'light' : 'dark';
     rt.setAttribute('aria-label', `Switch to ${next} theme`);
-    rt.querySelector('use').setAttribute('href', t === 'dark' ? '#i-sun' : '#i-moon');
+    rt.querySelector('use').setAttribute('href', darkNow(t) ? '#h-i-sun' : '#h-i-moon');
     /* The drawer names the theme it would give you, as the planners' row
        does — the circle in the rail says the same thing with its glyph. */
     const lbl = rt.querySelector('.lbl');
     if (lbl) lbl.textContent = next === 'dark' ? 'Dark theme' : 'Light theme';
   }
   const meta = document.querySelector('meta[name=theme-color]');
-  if (meta) meta.content = t === 'dark' ? '#131313' : '#ffffff';
+  if (meta) meta.content = darkNow(t) ? '#131313' : '#ffffff';
   Store.set('theme', t);
 }
 document.querySelectorAll('#themeSeg button').forEach(b =>
@@ -5868,6 +5917,11 @@ const railTheme = $('#railTheme');
 if (railTheme) railTheme.onclick = () =>
   applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
 applyTheme(Store.get('theme'));
+/* A standing instruction has to be honoured when the answer changes, which is
+   the one thing `system` can do that the other two cannot. */
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (Store.get('theme') === 'system') applyTheme('system');
+});
 
 /* ── More opens the rail as a drawer ───────────────────
    One element: the bar becomes the panel, so the destinations and the

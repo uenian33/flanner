@@ -28,11 +28,15 @@ footer{border-top:0;margin-top:clamp(24px,3vw,36px);
 .fset{display:flex;align-items:center;gap:10px;margin:0 0 18px;flex-wrap:wrap}
 .fsetlab{font-size:var(--md-sys-typescale-label-small-size);letter-spacing:.1em;text-transform:uppercase;
   color:color-mix(in srgb,var(--md-sys-color-on-surface) 58%,var(--md-sys-color-surface))}
-.fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
+/* The footer's own small switcher. Scoped to it: the settings card uses the
+   same class for M3's connected button group, this file is included after
+   that one, and an outline meant for a 32dp control in a footer was being
+   drawn around the 48dp ones in the card. */
+.fset .fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px}
-.fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);padding:0 14px;min-height:32px;
+.fset .fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);padding:0 14px;min-height:32px;
   border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
-.fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
+.fset .fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .fcopy{margin:0;font-size:var(--md-sys-typescale-label-small-size);line-height:16.8px;color:var(--md-sys-color-on-surface-variant)}
 
 .fcol h5{margin:0 0 10px;font-size:var(--md-sys-typescale-label-small-size);line-height:12.8px;font-weight:var(--md-sys-typescale-title-weight);letter-spacing:.05em;

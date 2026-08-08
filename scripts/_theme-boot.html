@@ -29,7 +29,13 @@
     return null;
   };
   var t = read('flanner1.theme') || read('fp-theme');
-  var dark = t === 'dark';
+  /* `system` follows the device, which is the third thing a reader can ask
+     for and the only one that can change while the page is open. The default
+     is still light rather than the device's preference: that is what the list
+     page's Store has always answered for an unset value, and changing it here
+     would change what an untouched device sees. */
+  var dark = t === 'dark' || (t === 'system' && window.matchMedia
+    && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   /* The colour the browser paints its own chrome with. It is a meta further
      down this same head, so it does not exist yet — hence the wait. Left

@@ -35,7 +35,13 @@
     return null;
   };
   var t = read('flanner1.theme') || read('fp-theme');
-  var dark = t === 'dark';
+  /* `system` follows the device, which is the third thing a reader can ask
+     for and the only one that can change while the page is open. The default
+     is still light rather than the device's preference: that is what the list
+     page's Store has always answered for an unset value, and changing it here
+     would change what an untouched device sees. */
+  var dark = t === 'dark' || (t === 'system' && window.matchMedia
+    && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   /* The colour the browser paints its own chrome with. It is a meta further
      down this same head, so it does not exist yet — hence the wait. Left
@@ -2888,10 +2894,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 [data-id="flow"]{--art-bg:#f3edd6;--art-1:#e6dca6;--art-3:#d5ca7f;--art-2:#676022;--art-ink:#4d4900;--sel-bg:#666000;--sel-fg:#ffffff}
 [data-id="juhlaviikot"]{--art-bg:#d0f4f6;--art-1:#8feaf0;--art-3:#62d9e1;--art-2:#006a6f;--art-ink:#005054;--sel-bg:#00696f;--sel-fg:#ffffff}
 [data-id="blockfest"]{--art-bg:#ffe7ef;--art-1:#ffcedf;--art-3:#ffb2ce;--art-2:#924665;--art-ink:#7c284e;--sel-bg:#b8006a;--sel-fg:#ffffff}
-[data-id="espoocine"]{--art-bg:#ffe7ea;--art-1:#ffcfd5;--art-3:#ffb4bf;--art-2:#964555;--art-ink:#7f283d;--sel-bg:#a13b52;--sel-fg:#ffffff}
+[data-id="espoocine"]{--art-bg:#f1eaff;--art-1:#e2d5ff;--art-3:#d2beff;--art-2:#655690;--art-ink:#4c3d7b;--sel-bg:#6451a4;--sel-fg:#ffffff}
 [data-id="anarchy"]{--art-bg:#f1eaff;--art-1:#e3d4ff;--art-3:#d4bdff;--art-2:#67558f;--art-ink:#4e3d7b;--sel-bg:#6750a4;--sel-fg:#ffffff}
 [data-id="lostinmusic"]{--art-bg:#f1eed6;--art-1:#e3dda7;--art-3:#d1cb80;--art-2:#646123;--art-ink:#4a4a00;--sel-bg:#626200;--sel-fg:#ffffff}
-[data-id="tamperejazz"]{--art-bg:#ffe8e4;--art-1:#ffd1c9;--art-3:#ffb6aa;--art-2:#934a40;--art-ink:#7b2e26;--sel-bg:#b22927;--sel-fg:#ffffff}
+[data-id="tamperejazz"]{--art-bg:#ffe7f0;--art-1:#f8d1e1;--art-3:#e4bece;--art-2:#775664;--art-ink:#5d3e4c;--sel-bg:#765563;--sel-fg:#ffffff}
 :root[data-theme=dark] [data-cat="music"]{--art-bg:#351d28;--art-1:#492b38;--art-3:#5b3c4a;--art-2:#bf9aaa;--art-ink:#e2bccc;--sel-bg:#e2bccc;--sel-fg:#452735}
 :root[data-theme=dark] [data-cat="film"]{--art-bg:#272134;--art-1:#382e54;--art-3:#4a3f65;--art-2:#ac9cd1;--art-ink:#cfbef5;--sel-bg:#d0bcff;--sel-fg:#2f236f}
 :root[data-theme=dark] [data-cat="art"]{--art-bg:#351c26;--art-1:#552339;--art-3:#67354a;--art-2:#d590aa;--art-ink:#fab2cd;--sel-bg:#ffb0ce;--sel-fg:#610737}
@@ -2902,10 +2908,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 :root[data-theme=dark] [data-id="flow"]{--art-bg:#272410;--art-1:#39350b;--art-3:#4b461e;--art-2:#aea56e;--art-ink:#d1c78f;--sel-bg:#d5ca00;--sel-fg:#353100}
 :root[data-theme=dark] [data-id="juhlaviikot"]{--art-bg:#00292c;--art-1:#003b3e;--art-3:#004d52;--art-2:#4db3b9;--art-ink:#72d5dc;--sel-bg:#60d7df;--sel-fg:#00373a}
 :root[data-theme=dark] [data-id="blockfest"]{--art-bg:#361c26;--art-1:#552338;--art-3:#673549;--art-2:#d690aa;--art-ink:#fab2cc;--sel-bg:#ffb0cd;--sel-fg:#640037}
-:root[data-theme=dark] [data-id="espoocine"]{--art-bg:#371c21;--art-1:#57232e;--art-3:#6a353f;--art-2:#da909b;--art-ink:#feb2bd;--sel-bg:#ffb2bd;--sel-fg:#660026}
+:root[data-theme=dark] [data-id="espoocine"]{--art-bg:#272134;--art-1:#382e54;--art-3:#4a3f65;--art-2:#ac9cd1;--art-ink:#cfbef5;--sel-bg:#d0bcff;--sel-fg:#2f236f}
 :root[data-theme=dark] [data-id="anarchy"]{--art-bg:#272134;--art-1:#392e54;--art-3:#4b3f65;--art-2:#ae9cd0;--art-ink:#d0bdf4;--sel-bg:#d2bbff;--sel-fg:#32226f}
 :root[data-theme=dark] [data-id="lostinmusic"]{--art-bg:#262510;--art-1:#37360c;--art-3:#49471e;--art-2:#aba66f;--art-ink:#cec88f;--sel-bg:#cecc38;--sel-fg:#333200}
-:root[data-theme=dark] [data-id="tamperejazz"]{--art-bg:#361d1a;--art-1:#562620;--art-3:#683831;--art-2:#d89387;--art-ink:#fdb4a8;--sel-bg:#ffb4a8;--sel-fg:#690007}
+:root[data-theme=dark] [data-id="tamperejazz"]{--art-bg:#351d28;--art-1:#492b38;--art-3:#5b3c4a;--art-2:#bf9aaa;--art-ink:#e2bccc;--sel-bg:#e2bccc;--sel-fg:#452735}
 @media(prefers-color-scheme:dark){
   :root:not([data-theme=light]) [data-cat="music"]{--art-bg:#351d28;--art-1:#492b38;--art-3:#5b3c4a;--art-2:#bf9aaa;--art-ink:#e2bccc;--sel-bg:#e2bccc;--sel-fg:#452735}
   :root:not([data-theme=light]) [data-cat="film"]{--art-bg:#272134;--art-1:#382e54;--art-3:#4a3f65;--art-2:#ac9cd1;--art-ink:#cfbef5;--sel-bg:#d0bcff;--sel-fg:#2f236f}
@@ -2917,10 +2923,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   :root:not([data-theme=light]) [data-id="flow"]{--art-bg:#272410;--art-1:#39350b;--art-3:#4b461e;--art-2:#aea56e;--art-ink:#d1c78f;--sel-bg:#d5ca00;--sel-fg:#353100}
   :root:not([data-theme=light]) [data-id="juhlaviikot"]{--art-bg:#00292c;--art-1:#003b3e;--art-3:#004d52;--art-2:#4db3b9;--art-ink:#72d5dc;--sel-bg:#60d7df;--sel-fg:#00373a}
   :root:not([data-theme=light]) [data-id="blockfest"]{--art-bg:#361c26;--art-1:#552338;--art-3:#673549;--art-2:#d690aa;--art-ink:#fab2cc;--sel-bg:#ffb0cd;--sel-fg:#640037}
-  :root:not([data-theme=light]) [data-id="espoocine"]{--art-bg:#371c21;--art-1:#57232e;--art-3:#6a353f;--art-2:#da909b;--art-ink:#feb2bd;--sel-bg:#ffb2bd;--sel-fg:#660026}
+  :root:not([data-theme=light]) [data-id="espoocine"]{--art-bg:#272134;--art-1:#382e54;--art-3:#4a3f65;--art-2:#ac9cd1;--art-ink:#cfbef5;--sel-bg:#d0bcff;--sel-fg:#2f236f}
   :root:not([data-theme=light]) [data-id="anarchy"]{--art-bg:#272134;--art-1:#392e54;--art-3:#4b3f65;--art-2:#ae9cd0;--art-ink:#d0bdf4;--sel-bg:#d2bbff;--sel-fg:#32226f}
   :root:not([data-theme=light]) [data-id="lostinmusic"]{--art-bg:#262510;--art-1:#37360c;--art-3:#49471e;--art-2:#aba66f;--art-ink:#cec88f;--sel-bg:#cecc38;--sel-fg:#333200}
-  :root:not([data-theme=light]) [data-id="tamperejazz"]{--art-bg:#361d1a;--art-1:#562620;--art-3:#683831;--art-2:#d89387;--art-ink:#fdb4a8;--sel-bg:#ffb4a8;--sel-fg:#690007}
+  :root:not([data-theme=light]) [data-id="tamperejazz"]{--art-bg:#351d28;--art-1:#492b38;--art-3:#5b3c4a;--art-2:#bf9aaa;--art-ink:#e2bccc;--sel-bg:#e2bccc;--sel-fg:#452735}
 }
 /* The highlight's scheme, generated by schema.py from the same source
    colour as the cover above it — nine Material roles at Material's own
@@ -2935,10 +2941,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 #hero[data-id="flow"],.banner-card[data-id="flow"]{--accent:#666000;--surface:#f6f4ec;--on-surface:#1d1c16;--on-surface-var:#4a473a;--outline-var:#cac7b8;--chip:#efe3a8;--on-chip:#201c00;--sel-bg:#666000;--sel-fg:#ffffff}
 #hero[data-id="juhlaviikot"],.banner-card[data-id="juhlaviikot"]{--accent:#00696f;--surface:#eaf6f6;--on-surface:#151d1e;--on-surface-var:#374a4c;--outline-var:#b4cbcc;--chip:#c7e9eb;--on-chip:#011f22;--sel-bg:#00696f;--sel-fg:#ffffff}
 #hero[data-id="blockfest"],.banner-card[data-id="blockfest"]{--accent:#b8006a;--surface:#fbf1f4;--on-surface:#211a1c;--on-surface-var:#534248;--outline-var:#d5c2c8;--chip:#ffd8e5;--on-chip:#38081f;--sel-bg:#b8006a;--sel-fg:#ffffff}
-#hero[data-id="espoocine"],.banner-card[data-id="espoocine"]{--accent:#a13b52;--surface:#fcf1f2;--on-surface:#211a1b;--on-surface-var:#544245;--outline-var:#d7c1c4;--chip:#ffd9de;--on-chip:#2f1318;--sel-bg:#a13b52;--sel-fg:#ffffff}
+#hero[data-id="espoocine"],.banner-card[data-id="espoocine"]{--accent:#6451a4;--surface:#f5f2fa;--on-surface:#1c1b20;--on-surface-var:#494551;--outline-var:#c9c4d3;--chip:#e8defd;--on-chip:#1e182e;--sel-bg:#6451a4;--sel-fg:#ffffff}
 #hero[data-id="anarchy"],.banner-card[data-id="anarchy"]{--accent:#6750a4;--surface:#f5f2fa;--on-surface:#1d1b20;--on-surface-var:#494551;--outline-var:#c9c4d3;--chip:#e9ddfd;--on-chip:#1f182f;--sel-bg:#6750a4;--sel-fg:#ffffff}
 #hero[data-id="lostinmusic"],.banner-card[data-id="lostinmusic"]{--accent:#626200;--surface:#f5f4ec;--on-surface:#1c1c16;--on-surface-var:#49473b;--outline-var:#c9c7b8;--chip:#eae4b6;--on-chip:#1f1c00;--sel-bg:#626200;--sel-fg:#ffffff}
-#hero[data-id="tamperejazz"],.banner-card[data-id="tamperejazz"]{--accent:#b22927;--surface:#fcf1ef;--on-surface:#211a19;--on-surface-var:#544340;--outline-var:#d7c2be;--chip:#ffdad4;--on-chip:#351008;--sel-bg:#b22927;--sel-fg:#ffffff}
+#hero[data-id="tamperejazz"],.banner-card[data-id="tamperejazz"]{--accent:#765563;--surface:#fbf1f5;--on-surface:#201a1c;--on-surface-var:#524349;--outline-var:#d4c2c9;--chip:#ecdfe4;--on-chip:#22191d;--sel-bg:#765563;--sel-fg:#ffffff}
 :root[data-theme=dark] #hero[data-cat="music"],:root[data-theme=dark] .banner-card[data-cat="music"]{--accent:#e2bccc;--surface:#201a1c;--on-surface:#eae0e4;--on-surface-var:#d4c2c9;--outline-var:#524349;--chip:#4f4448;--on-chip:#ecdfe4;--sel-bg:#e2bccc;--sel-fg:#452735}
 :root[data-theme=dark] #hero[data-cat="film"],:root[data-theme=dark] .banner-card[data-cat="film"]{--accent:#d0bcff;--surface:#1c1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b435c;--on-chip:#e8defd;--sel-bg:#d0bcff;--sel-fg:#2f236f}
 :root[data-theme=dark] #hero[data-cat="art"],:root[data-theme=dark] .banner-card[data-cat="art"]{--accent:#ffb0ce;--surface:#211a1c;--on-surface:#eae0e3;--on-surface-var:#d5c2c8;--outline-var:#524248;--chip:#5a3f49;--on-chip:#fcdae5;--sel-bg:#ffb0ce;--sel-fg:#610737}
@@ -2949,10 +2955,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 :root[data-theme=dark] #hero[data-id="flow"],:root[data-theme=dark] .banner-card[data-id="flow"]{--accent:#d5ca00;--surface:#1d1c16;--on-surface:#e4e2db;--on-surface-var:#cac7b8;--outline-var:#4a473a;--chip:#4d4814;--on-chip:#efe3a8;--sel-bg:#d5ca00;--sel-fg:#353100}
 :root[data-theme=dark] #hero[data-id="juhlaviikot"],:root[data-theme=dark] .banner-card[data-id="juhlaviikot"]{--accent:#60d7df;--surface:#151d1e;--on-surface:#d9e5e5;--on-surface-var:#b4cbcc;--outline-var:#374a4c;--chip:#2e4c4e;--on-chip:#c7e9eb;--sel-bg:#60d7df;--sel-fg:#00373a}
 :root[data-theme=dark] #hero[data-id="blockfest"],:root[data-theme=dark] .banner-card[data-id="blockfest"]{--accent:#ffb0cd;--surface:#211a1c;--on-surface:#eae0e3;--on-surface-var:#d5c2c8;--outline-var:#534248;--chip:#6a364b;--on-chip:#ffd8e5;--sel-bg:#ffb0cd;--sel-fg:#640037}
-:root[data-theme=dark] #hero[data-id="espoocine"],:root[data-theme=dark] .banner-card[data-id="espoocine"]{--accent:#ffb2bd;--surface:#211a1b;--on-surface:#ebe0e1;--on-surface-var:#d7c1c4;--outline-var:#544245;--chip:#5e3e43;--on-chip:#ffd9de;--sel-bg:#ffb2bd;--sel-fg:#660026}
+:root[data-theme=dark] #hero[data-id="espoocine"],:root[data-theme=dark] .banner-card[data-id="espoocine"]{--accent:#d0bcff;--surface:#1c1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b435c;--on-chip:#e8defd;--sel-bg:#d0bcff;--sel-fg:#2f236f}
 :root[data-theme=dark] #hero[data-id="anarchy"],:root[data-theme=dark] .banner-card[data-id="anarchy"]{--accent:#d2bbff;--surface:#1d1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b425d;--on-chip:#e9ddfd;--sel-bg:#d2bbff;--sel-fg:#32226f}
 :root[data-theme=dark] #hero[data-id="lostinmusic"],:root[data-theme=dark] .banner-card[data-id="lostinmusic"]{--accent:#cecc38;--surface:#1c1c16;--on-surface:#e4e3db;--on-surface-var:#c9c7b8;--outline-var:#49473b;--chip:#4a4822;--on-chip:#eae4b6;--sel-bg:#cecc38;--sel-fg:#333200}
-:root[data-theme=dark] #hero[data-id="tamperejazz"],:root[data-theme=dark] .banner-card[data-id="tamperejazz"]{--accent:#ffb4a8;--surface:#211a19;--on-surface:#ebe0de;--on-surface-var:#d7c2be;--outline-var:#544340;--chip:#663b35;--on-chip:#ffdad4;--sel-bg:#ffb4a8;--sel-fg:#690007}
+:root[data-theme=dark] #hero[data-id="tamperejazz"],:root[data-theme=dark] .banner-card[data-id="tamperejazz"]{--accent:#e2bccc;--surface:#201a1c;--on-surface:#eae0e4;--on-surface-var:#d4c2c9;--outline-var:#524349;--chip:#4f4448;--on-chip:#ecdfe4;--sel-bg:#e2bccc;--sel-fg:#452735}
 @media(prefers-color-scheme:dark){
   :root:not([data-theme=light]) #hero[data-cat="music"],:root:not([data-theme=light]) .banner-card[data-cat="music"]{--accent:#e2bccc;--surface:#201a1c;--on-surface:#eae0e4;--on-surface-var:#d4c2c9;--outline-var:#524349;--chip:#4f4448;--on-chip:#ecdfe4;--sel-bg:#e2bccc;--sel-fg:#452735}
   :root:not([data-theme=light]) #hero[data-cat="film"],:root:not([data-theme=light]) .banner-card[data-cat="film"]{--accent:#d0bcff;--surface:#1c1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b435c;--on-chip:#e8defd;--sel-bg:#d0bcff;--sel-fg:#2f236f}
@@ -2964,10 +2970,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   :root:not([data-theme=light]) #hero[data-id="flow"],:root:not([data-theme=light]) .banner-card[data-id="flow"]{--accent:#d5ca00;--surface:#1d1c16;--on-surface:#e4e2db;--on-surface-var:#cac7b8;--outline-var:#4a473a;--chip:#4d4814;--on-chip:#efe3a8;--sel-bg:#d5ca00;--sel-fg:#353100}
   :root:not([data-theme=light]) #hero[data-id="juhlaviikot"],:root:not([data-theme=light]) .banner-card[data-id="juhlaviikot"]{--accent:#60d7df;--surface:#151d1e;--on-surface:#d9e5e5;--on-surface-var:#b4cbcc;--outline-var:#374a4c;--chip:#2e4c4e;--on-chip:#c7e9eb;--sel-bg:#60d7df;--sel-fg:#00373a}
   :root:not([data-theme=light]) #hero[data-id="blockfest"],:root:not([data-theme=light]) .banner-card[data-id="blockfest"]{--accent:#ffb0cd;--surface:#211a1c;--on-surface:#eae0e3;--on-surface-var:#d5c2c8;--outline-var:#534248;--chip:#6a364b;--on-chip:#ffd8e5;--sel-bg:#ffb0cd;--sel-fg:#640037}
-  :root:not([data-theme=light]) #hero[data-id="espoocine"],:root:not([data-theme=light]) .banner-card[data-id="espoocine"]{--accent:#ffb2bd;--surface:#211a1b;--on-surface:#ebe0e1;--on-surface-var:#d7c1c4;--outline-var:#544245;--chip:#5e3e43;--on-chip:#ffd9de;--sel-bg:#ffb2bd;--sel-fg:#660026}
+  :root:not([data-theme=light]) #hero[data-id="espoocine"],:root:not([data-theme=light]) .banner-card[data-id="espoocine"]{--accent:#d0bcff;--surface:#1c1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b435c;--on-chip:#e8defd;--sel-bg:#d0bcff;--sel-fg:#2f236f}
   :root:not([data-theme=light]) #hero[data-id="anarchy"],:root:not([data-theme=light]) .banner-card[data-id="anarchy"]{--accent:#d2bbff;--surface:#1d1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b425d;--on-chip:#e9ddfd;--sel-bg:#d2bbff;--sel-fg:#32226f}
   :root:not([data-theme=light]) #hero[data-id="lostinmusic"],:root:not([data-theme=light]) .banner-card[data-id="lostinmusic"]{--accent:#cecc38;--surface:#1c1c16;--on-surface:#e4e3db;--on-surface-var:#c9c7b8;--outline-var:#49473b;--chip:#4a4822;--on-chip:#eae4b6;--sel-bg:#cecc38;--sel-fg:#333200}
-  :root:not([data-theme=light]) #hero[data-id="tamperejazz"],:root:not([data-theme=light]) .banner-card[data-id="tamperejazz"]{--accent:#ffb4a8;--surface:#211a19;--on-surface:#ebe0de;--on-surface-var:#d7c2be;--outline-var:#544340;--chip:#663b35;--on-chip:#ffdad4;--sel-bg:#ffb4a8;--sel-fg:#690007}
+  :root:not([data-theme=light]) #hero[data-id="tamperejazz"],:root:not([data-theme=light]) .banner-card[data-id="tamperejazz"]{--accent:#e2bccc;--surface:#201a1c;--on-surface:#eae0e4;--on-surface-var:#d4c2c9;--outline-var:#524349;--chip:#4f4448;--on-chip:#ecdfe4;--sel-bg:#e2bccc;--sel-fg:#452735}
 }
 /* The calendar's bars, generated by schema.py from the same source
    colour as that festival's card. Resting and in-your-plan. */
@@ -2981,10 +2987,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 .event[data-id="flow"]{--cat-bar:#efe3a8;--on-cat-bar:#201c00;--plan-bar:#666000;--on-plan-bar:#ffffff}
 .event[data-id="juhlaviikot"]{--cat-bar:#c7e9eb;--on-cat-bar:#011f22;--plan-bar:#00696f;--on-plan-bar:#ffffff}
 .event[data-id="blockfest"]{--cat-bar:#ffd8e5;--on-cat-bar:#38081f;--plan-bar:#b8006a;--on-plan-bar:#ffffff}
-.event[data-id="espoocine"]{--cat-bar:#ffd9de;--on-cat-bar:#2f1318;--plan-bar:#a13b52;--on-plan-bar:#ffffff}
+.event[data-id="espoocine"]{--cat-bar:#e8defd;--on-cat-bar:#1e182e;--plan-bar:#6451a4;--on-plan-bar:#ffffff}
 .event[data-id="anarchy"]{--cat-bar:#e9ddfd;--on-cat-bar:#1f182f;--plan-bar:#6750a4;--on-plan-bar:#ffffff}
 .event[data-id="lostinmusic"]{--cat-bar:#eae4b6;--on-cat-bar:#1f1c00;--plan-bar:#626200;--on-plan-bar:#ffffff}
-.event[data-id="tamperejazz"]{--cat-bar:#ffdad4;--on-cat-bar:#351008;--plan-bar:#b22927;--on-plan-bar:#ffffff}
+.event[data-id="tamperejazz"]{--cat-bar:#ecdfe4;--on-cat-bar:#22191d;--plan-bar:#765563;--on-plan-bar:#ffffff}
 :root[data-theme=dark] .event[data-cat="music"]{--cat-bar:#4f4448;--on-cat-bar:#ecdfe4;--plan-bar:#e2bccc;--on-plan-bar:#452735}
 :root[data-theme=dark] .event[data-cat="film"]{--cat-bar:#4b435c;--on-cat-bar:#e8defd;--plan-bar:#d0bcff;--on-plan-bar:#2f236f}
 :root[data-theme=dark] .event[data-cat="art"]{--cat-bar:#5a3f49;--on-cat-bar:#fcdae5;--plan-bar:#ffb0ce;--on-plan-bar:#610737}
@@ -2995,10 +3001,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 :root[data-theme=dark] .event[data-id="flow"]{--cat-bar:#4d4814;--on-cat-bar:#efe3a8;--plan-bar:#d5ca00;--on-plan-bar:#353100}
 :root[data-theme=dark] .event[data-id="juhlaviikot"]{--cat-bar:#2e4c4e;--on-cat-bar:#c7e9eb;--plan-bar:#60d7df;--on-plan-bar:#00373a}
 :root[data-theme=dark] .event[data-id="blockfest"]{--cat-bar:#6a364b;--on-cat-bar:#ffd8e5;--plan-bar:#ffb0cd;--on-plan-bar:#640037}
-:root[data-theme=dark] .event[data-id="espoocine"]{--cat-bar:#5e3e43;--on-cat-bar:#ffd9de;--plan-bar:#ffb2bd;--on-plan-bar:#660026}
+:root[data-theme=dark] .event[data-id="espoocine"]{--cat-bar:#4b435c;--on-cat-bar:#e8defd;--plan-bar:#d0bcff;--on-plan-bar:#2f236f}
 :root[data-theme=dark] .event[data-id="anarchy"]{--cat-bar:#4b425d;--on-cat-bar:#e9ddfd;--plan-bar:#d2bbff;--on-plan-bar:#32226f}
 :root[data-theme=dark] .event[data-id="lostinmusic"]{--cat-bar:#4a4822;--on-cat-bar:#eae4b6;--plan-bar:#cecc38;--on-plan-bar:#333200}
-:root[data-theme=dark] .event[data-id="tamperejazz"]{--cat-bar:#663b35;--on-cat-bar:#ffdad4;--plan-bar:#ffb4a8;--on-plan-bar:#690007}
+:root[data-theme=dark] .event[data-id="tamperejazz"]{--cat-bar:#4f4448;--on-cat-bar:#ecdfe4;--plan-bar:#e2bccc;--on-plan-bar:#452735}
 @media(prefers-color-scheme:dark){
   :root:not([data-theme=light]) .event[data-cat="music"]{--cat-bar:#4f4448;--on-cat-bar:#ecdfe4;--plan-bar:#e2bccc;--on-plan-bar:#452735}
   :root:not([data-theme=light]) .event[data-cat="film"]{--cat-bar:#4b435c;--on-cat-bar:#e8defd;--plan-bar:#d0bcff;--on-plan-bar:#2f236f}
@@ -3010,10 +3016,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   :root:not([data-theme=light]) .event[data-id="flow"]{--cat-bar:#4d4814;--on-cat-bar:#efe3a8;--plan-bar:#d5ca00;--on-plan-bar:#353100}
   :root:not([data-theme=light]) .event[data-id="juhlaviikot"]{--cat-bar:#2e4c4e;--on-cat-bar:#c7e9eb;--plan-bar:#60d7df;--on-plan-bar:#00373a}
   :root:not([data-theme=light]) .event[data-id="blockfest"]{--cat-bar:#6a364b;--on-cat-bar:#ffd8e5;--plan-bar:#ffb0cd;--on-plan-bar:#640037}
-  :root:not([data-theme=light]) .event[data-id="espoocine"]{--cat-bar:#5e3e43;--on-cat-bar:#ffd9de;--plan-bar:#ffb2bd;--on-plan-bar:#660026}
+  :root:not([data-theme=light]) .event[data-id="espoocine"]{--cat-bar:#4b435c;--on-cat-bar:#e8defd;--plan-bar:#d0bcff;--on-plan-bar:#2f236f}
   :root:not([data-theme=light]) .event[data-id="anarchy"]{--cat-bar:#4b425d;--on-cat-bar:#e9ddfd;--plan-bar:#d2bbff;--on-plan-bar:#32226f}
   :root:not([data-theme=light]) .event[data-id="lostinmusic"]{--cat-bar:#4a4822;--on-cat-bar:#eae4b6;--plan-bar:#cecc38;--on-plan-bar:#333200}
-  :root:not([data-theme=light]) .event[data-id="tamperejazz"]{--cat-bar:#663b35;--on-cat-bar:#ffdad4;--plan-bar:#ffb4a8;--on-plan-bar:#690007}
+  :root:not([data-theme=light]) .event[data-id="tamperejazz"]{--cat-bar:#4f4448;--on-cat-bar:#ecdfe4;--plan-bar:#e2bccc;--on-plan-bar:#452735}
 } below — and anything drawn outside a card keeps these. */
   --art-bg:  color-mix(in srgb,var(--md-sys-color-on-surface) 8%,var(--md-sys-color-surface));
   --art-1:   color-mix(in srgb,var(--md-sys-color-on-surface) 16%,var(--md-sys-color-surface));
@@ -3039,10 +3045,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 [data-id="flow"]{--art-bg:#f3edd6;--art-1:#e6dca6;--art-3:#d5ca7f;--art-2:#676022;--art-ink:#4d4900;--sel-bg:#666000;--sel-fg:#ffffff}
 [data-id="juhlaviikot"]{--art-bg:#d0f4f6;--art-1:#8feaf0;--art-3:#62d9e1;--art-2:#006a6f;--art-ink:#005054;--sel-bg:#00696f;--sel-fg:#ffffff}
 [data-id="blockfest"]{--art-bg:#ffe7ef;--art-1:#ffcedf;--art-3:#ffb2ce;--art-2:#924665;--art-ink:#7c284e;--sel-bg:#b8006a;--sel-fg:#ffffff}
-[data-id="espoocine"]{--art-bg:#ffe7ea;--art-1:#ffcfd5;--art-3:#ffb4bf;--art-2:#964555;--art-ink:#7f283d;--sel-bg:#a13b52;--sel-fg:#ffffff}
+[data-id="espoocine"]{--art-bg:#f1eaff;--art-1:#e2d5ff;--art-3:#d2beff;--art-2:#655690;--art-ink:#4c3d7b;--sel-bg:#6451a4;--sel-fg:#ffffff}
 [data-id="anarchy"]{--art-bg:#f1eaff;--art-1:#e3d4ff;--art-3:#d4bdff;--art-2:#67558f;--art-ink:#4e3d7b;--sel-bg:#6750a4;--sel-fg:#ffffff}
 [data-id="lostinmusic"]{--art-bg:#f1eed6;--art-1:#e3dda7;--art-3:#d1cb80;--art-2:#646123;--art-ink:#4a4a00;--sel-bg:#626200;--sel-fg:#ffffff}
-[data-id="tamperejazz"]{--art-bg:#ffe8e4;--art-1:#ffd1c9;--art-3:#ffb6aa;--art-2:#934a40;--art-ink:#7b2e26;--sel-bg:#b22927;--sel-fg:#ffffff}
+[data-id="tamperejazz"]{--art-bg:#ffe7f0;--art-1:#f8d1e1;--art-3:#e4bece;--art-2:#775664;--art-ink:#5d3e4c;--sel-bg:#765563;--sel-fg:#ffffff}
 :root[data-theme=dark] [data-cat="music"]{--art-bg:#351d28;--art-1:#492b38;--art-3:#5b3c4a;--art-2:#bf9aaa;--art-ink:#e2bccc;--sel-bg:#e2bccc;--sel-fg:#452735}
 :root[data-theme=dark] [data-cat="film"]{--art-bg:#272134;--art-1:#382e54;--art-3:#4a3f65;--art-2:#ac9cd1;--art-ink:#cfbef5;--sel-bg:#d0bcff;--sel-fg:#2f236f}
 :root[data-theme=dark] [data-cat="art"]{--art-bg:#351c26;--art-1:#552339;--art-3:#67354a;--art-2:#d590aa;--art-ink:#fab2cd;--sel-bg:#ffb0ce;--sel-fg:#610737}
@@ -3053,10 +3059,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 :root[data-theme=dark] [data-id="flow"]{--art-bg:#272410;--art-1:#39350b;--art-3:#4b461e;--art-2:#aea56e;--art-ink:#d1c78f;--sel-bg:#d5ca00;--sel-fg:#353100}
 :root[data-theme=dark] [data-id="juhlaviikot"]{--art-bg:#00292c;--art-1:#003b3e;--art-3:#004d52;--art-2:#4db3b9;--art-ink:#72d5dc;--sel-bg:#60d7df;--sel-fg:#00373a}
 :root[data-theme=dark] [data-id="blockfest"]{--art-bg:#361c26;--art-1:#552338;--art-3:#673549;--art-2:#d690aa;--art-ink:#fab2cc;--sel-bg:#ffb0cd;--sel-fg:#640037}
-:root[data-theme=dark] [data-id="espoocine"]{--art-bg:#371c21;--art-1:#57232e;--art-3:#6a353f;--art-2:#da909b;--art-ink:#feb2bd;--sel-bg:#ffb2bd;--sel-fg:#660026}
+:root[data-theme=dark] [data-id="espoocine"]{--art-bg:#272134;--art-1:#382e54;--art-3:#4a3f65;--art-2:#ac9cd1;--art-ink:#cfbef5;--sel-bg:#d0bcff;--sel-fg:#2f236f}
 :root[data-theme=dark] [data-id="anarchy"]{--art-bg:#272134;--art-1:#392e54;--art-3:#4b3f65;--art-2:#ae9cd0;--art-ink:#d0bdf4;--sel-bg:#d2bbff;--sel-fg:#32226f}
 :root[data-theme=dark] [data-id="lostinmusic"]{--art-bg:#262510;--art-1:#37360c;--art-3:#49471e;--art-2:#aba66f;--art-ink:#cec88f;--sel-bg:#cecc38;--sel-fg:#333200}
-:root[data-theme=dark] [data-id="tamperejazz"]{--art-bg:#361d1a;--art-1:#562620;--art-3:#683831;--art-2:#d89387;--art-ink:#fdb4a8;--sel-bg:#ffb4a8;--sel-fg:#690007}
+:root[data-theme=dark] [data-id="tamperejazz"]{--art-bg:#351d28;--art-1:#492b38;--art-3:#5b3c4a;--art-2:#bf9aaa;--art-ink:#e2bccc;--sel-bg:#e2bccc;--sel-fg:#452735}
 @media(prefers-color-scheme:dark){
   :root:not([data-theme=light]) [data-cat="music"]{--art-bg:#351d28;--art-1:#492b38;--art-3:#5b3c4a;--art-2:#bf9aaa;--art-ink:#e2bccc;--sel-bg:#e2bccc;--sel-fg:#452735}
   :root:not([data-theme=light]) [data-cat="film"]{--art-bg:#272134;--art-1:#382e54;--art-3:#4a3f65;--art-2:#ac9cd1;--art-ink:#cfbef5;--sel-bg:#d0bcff;--sel-fg:#2f236f}
@@ -3068,10 +3074,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   :root:not([data-theme=light]) [data-id="flow"]{--art-bg:#272410;--art-1:#39350b;--art-3:#4b461e;--art-2:#aea56e;--art-ink:#d1c78f;--sel-bg:#d5ca00;--sel-fg:#353100}
   :root:not([data-theme=light]) [data-id="juhlaviikot"]{--art-bg:#00292c;--art-1:#003b3e;--art-3:#004d52;--art-2:#4db3b9;--art-ink:#72d5dc;--sel-bg:#60d7df;--sel-fg:#00373a}
   :root:not([data-theme=light]) [data-id="blockfest"]{--art-bg:#361c26;--art-1:#552338;--art-3:#673549;--art-2:#d690aa;--art-ink:#fab2cc;--sel-bg:#ffb0cd;--sel-fg:#640037}
-  :root:not([data-theme=light]) [data-id="espoocine"]{--art-bg:#371c21;--art-1:#57232e;--art-3:#6a353f;--art-2:#da909b;--art-ink:#feb2bd;--sel-bg:#ffb2bd;--sel-fg:#660026}
+  :root:not([data-theme=light]) [data-id="espoocine"]{--art-bg:#272134;--art-1:#382e54;--art-3:#4a3f65;--art-2:#ac9cd1;--art-ink:#cfbef5;--sel-bg:#d0bcff;--sel-fg:#2f236f}
   :root:not([data-theme=light]) [data-id="anarchy"]{--art-bg:#272134;--art-1:#392e54;--art-3:#4b3f65;--art-2:#ae9cd0;--art-ink:#d0bdf4;--sel-bg:#d2bbff;--sel-fg:#32226f}
   :root:not([data-theme=light]) [data-id="lostinmusic"]{--art-bg:#262510;--art-1:#37360c;--art-3:#49471e;--art-2:#aba66f;--art-ink:#cec88f;--sel-bg:#cecc38;--sel-fg:#333200}
-  :root:not([data-theme=light]) [data-id="tamperejazz"]{--art-bg:#361d1a;--art-1:#562620;--art-3:#683831;--art-2:#d89387;--art-ink:#fdb4a8;--sel-bg:#ffb4a8;--sel-fg:#690007}
+  :root:not([data-theme=light]) [data-id="tamperejazz"]{--art-bg:#351d28;--art-1:#492b38;--art-3:#5b3c4a;--art-2:#bf9aaa;--art-ink:#e2bccc;--sel-bg:#e2bccc;--sel-fg:#452735}
 }
 /* The highlight's scheme, generated by schema.py from the same source
    colour as the cover above it — nine Material roles at Material's own
@@ -3086,10 +3092,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 #hero[data-id="flow"],.banner-card[data-id="flow"]{--accent:#666000;--surface:#f6f4ec;--on-surface:#1d1c16;--on-surface-var:#4a473a;--outline-var:#cac7b8;--chip:#efe3a8;--on-chip:#201c00;--sel-bg:#666000;--sel-fg:#ffffff}
 #hero[data-id="juhlaviikot"],.banner-card[data-id="juhlaviikot"]{--accent:#00696f;--surface:#eaf6f6;--on-surface:#151d1e;--on-surface-var:#374a4c;--outline-var:#b4cbcc;--chip:#c7e9eb;--on-chip:#011f22;--sel-bg:#00696f;--sel-fg:#ffffff}
 #hero[data-id="blockfest"],.banner-card[data-id="blockfest"]{--accent:#b8006a;--surface:#fbf1f4;--on-surface:#211a1c;--on-surface-var:#534248;--outline-var:#d5c2c8;--chip:#ffd8e5;--on-chip:#38081f;--sel-bg:#b8006a;--sel-fg:#ffffff}
-#hero[data-id="espoocine"],.banner-card[data-id="espoocine"]{--accent:#a13b52;--surface:#fcf1f2;--on-surface:#211a1b;--on-surface-var:#544245;--outline-var:#d7c1c4;--chip:#ffd9de;--on-chip:#2f1318;--sel-bg:#a13b52;--sel-fg:#ffffff}
+#hero[data-id="espoocine"],.banner-card[data-id="espoocine"]{--accent:#6451a4;--surface:#f5f2fa;--on-surface:#1c1b20;--on-surface-var:#494551;--outline-var:#c9c4d3;--chip:#e8defd;--on-chip:#1e182e;--sel-bg:#6451a4;--sel-fg:#ffffff}
 #hero[data-id="anarchy"],.banner-card[data-id="anarchy"]{--accent:#6750a4;--surface:#f5f2fa;--on-surface:#1d1b20;--on-surface-var:#494551;--outline-var:#c9c4d3;--chip:#e9ddfd;--on-chip:#1f182f;--sel-bg:#6750a4;--sel-fg:#ffffff}
 #hero[data-id="lostinmusic"],.banner-card[data-id="lostinmusic"]{--accent:#626200;--surface:#f5f4ec;--on-surface:#1c1c16;--on-surface-var:#49473b;--outline-var:#c9c7b8;--chip:#eae4b6;--on-chip:#1f1c00;--sel-bg:#626200;--sel-fg:#ffffff}
-#hero[data-id="tamperejazz"],.banner-card[data-id="tamperejazz"]{--accent:#b22927;--surface:#fcf1ef;--on-surface:#211a19;--on-surface-var:#544340;--outline-var:#d7c2be;--chip:#ffdad4;--on-chip:#351008;--sel-bg:#b22927;--sel-fg:#ffffff}
+#hero[data-id="tamperejazz"],.banner-card[data-id="tamperejazz"]{--accent:#765563;--surface:#fbf1f5;--on-surface:#201a1c;--on-surface-var:#524349;--outline-var:#d4c2c9;--chip:#ecdfe4;--on-chip:#22191d;--sel-bg:#765563;--sel-fg:#ffffff}
 :root[data-theme=dark] #hero[data-cat="music"],:root[data-theme=dark] .banner-card[data-cat="music"]{--accent:#e2bccc;--surface:#201a1c;--on-surface:#eae0e4;--on-surface-var:#d4c2c9;--outline-var:#524349;--chip:#4f4448;--on-chip:#ecdfe4;--sel-bg:#e2bccc;--sel-fg:#452735}
 :root[data-theme=dark] #hero[data-cat="film"],:root[data-theme=dark] .banner-card[data-cat="film"]{--accent:#d0bcff;--surface:#1c1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b435c;--on-chip:#e8defd;--sel-bg:#d0bcff;--sel-fg:#2f236f}
 :root[data-theme=dark] #hero[data-cat="art"],:root[data-theme=dark] .banner-card[data-cat="art"]{--accent:#ffb0ce;--surface:#211a1c;--on-surface:#eae0e3;--on-surface-var:#d5c2c8;--outline-var:#524248;--chip:#5a3f49;--on-chip:#fcdae5;--sel-bg:#ffb0ce;--sel-fg:#610737}
@@ -3100,10 +3106,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 :root[data-theme=dark] #hero[data-id="flow"],:root[data-theme=dark] .banner-card[data-id="flow"]{--accent:#d5ca00;--surface:#1d1c16;--on-surface:#e4e2db;--on-surface-var:#cac7b8;--outline-var:#4a473a;--chip:#4d4814;--on-chip:#efe3a8;--sel-bg:#d5ca00;--sel-fg:#353100}
 :root[data-theme=dark] #hero[data-id="juhlaviikot"],:root[data-theme=dark] .banner-card[data-id="juhlaviikot"]{--accent:#60d7df;--surface:#151d1e;--on-surface:#d9e5e5;--on-surface-var:#b4cbcc;--outline-var:#374a4c;--chip:#2e4c4e;--on-chip:#c7e9eb;--sel-bg:#60d7df;--sel-fg:#00373a}
 :root[data-theme=dark] #hero[data-id="blockfest"],:root[data-theme=dark] .banner-card[data-id="blockfest"]{--accent:#ffb0cd;--surface:#211a1c;--on-surface:#eae0e3;--on-surface-var:#d5c2c8;--outline-var:#534248;--chip:#6a364b;--on-chip:#ffd8e5;--sel-bg:#ffb0cd;--sel-fg:#640037}
-:root[data-theme=dark] #hero[data-id="espoocine"],:root[data-theme=dark] .banner-card[data-id="espoocine"]{--accent:#ffb2bd;--surface:#211a1b;--on-surface:#ebe0e1;--on-surface-var:#d7c1c4;--outline-var:#544245;--chip:#5e3e43;--on-chip:#ffd9de;--sel-bg:#ffb2bd;--sel-fg:#660026}
+:root[data-theme=dark] #hero[data-id="espoocine"],:root[data-theme=dark] .banner-card[data-id="espoocine"]{--accent:#d0bcff;--surface:#1c1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b435c;--on-chip:#e8defd;--sel-bg:#d0bcff;--sel-fg:#2f236f}
 :root[data-theme=dark] #hero[data-id="anarchy"],:root[data-theme=dark] .banner-card[data-id="anarchy"]{--accent:#d2bbff;--surface:#1d1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b425d;--on-chip:#e9ddfd;--sel-bg:#d2bbff;--sel-fg:#32226f}
 :root[data-theme=dark] #hero[data-id="lostinmusic"],:root[data-theme=dark] .banner-card[data-id="lostinmusic"]{--accent:#cecc38;--surface:#1c1c16;--on-surface:#e4e3db;--on-surface-var:#c9c7b8;--outline-var:#49473b;--chip:#4a4822;--on-chip:#eae4b6;--sel-bg:#cecc38;--sel-fg:#333200}
-:root[data-theme=dark] #hero[data-id="tamperejazz"],:root[data-theme=dark] .banner-card[data-id="tamperejazz"]{--accent:#ffb4a8;--surface:#211a19;--on-surface:#ebe0de;--on-surface-var:#d7c2be;--outline-var:#544340;--chip:#663b35;--on-chip:#ffdad4;--sel-bg:#ffb4a8;--sel-fg:#690007}
+:root[data-theme=dark] #hero[data-id="tamperejazz"],:root[data-theme=dark] .banner-card[data-id="tamperejazz"]{--accent:#e2bccc;--surface:#201a1c;--on-surface:#eae0e4;--on-surface-var:#d4c2c9;--outline-var:#524349;--chip:#4f4448;--on-chip:#ecdfe4;--sel-bg:#e2bccc;--sel-fg:#452735}
 @media(prefers-color-scheme:dark){
   :root:not([data-theme=light]) #hero[data-cat="music"],:root:not([data-theme=light]) .banner-card[data-cat="music"]{--accent:#e2bccc;--surface:#201a1c;--on-surface:#eae0e4;--on-surface-var:#d4c2c9;--outline-var:#524349;--chip:#4f4448;--on-chip:#ecdfe4;--sel-bg:#e2bccc;--sel-fg:#452735}
   :root:not([data-theme=light]) #hero[data-cat="film"],:root:not([data-theme=light]) .banner-card[data-cat="film"]{--accent:#d0bcff;--surface:#1c1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b435c;--on-chip:#e8defd;--sel-bg:#d0bcff;--sel-fg:#2f236f}
@@ -3115,10 +3121,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   :root:not([data-theme=light]) #hero[data-id="flow"],:root:not([data-theme=light]) .banner-card[data-id="flow"]{--accent:#d5ca00;--surface:#1d1c16;--on-surface:#e4e2db;--on-surface-var:#cac7b8;--outline-var:#4a473a;--chip:#4d4814;--on-chip:#efe3a8;--sel-bg:#d5ca00;--sel-fg:#353100}
   :root:not([data-theme=light]) #hero[data-id="juhlaviikot"],:root:not([data-theme=light]) .banner-card[data-id="juhlaviikot"]{--accent:#60d7df;--surface:#151d1e;--on-surface:#d9e5e5;--on-surface-var:#b4cbcc;--outline-var:#374a4c;--chip:#2e4c4e;--on-chip:#c7e9eb;--sel-bg:#60d7df;--sel-fg:#00373a}
   :root:not([data-theme=light]) #hero[data-id="blockfest"],:root:not([data-theme=light]) .banner-card[data-id="blockfest"]{--accent:#ffb0cd;--surface:#211a1c;--on-surface:#eae0e3;--on-surface-var:#d5c2c8;--outline-var:#534248;--chip:#6a364b;--on-chip:#ffd8e5;--sel-bg:#ffb0cd;--sel-fg:#640037}
-  :root:not([data-theme=light]) #hero[data-id="espoocine"],:root:not([data-theme=light]) .banner-card[data-id="espoocine"]{--accent:#ffb2bd;--surface:#211a1b;--on-surface:#ebe0e1;--on-surface-var:#d7c1c4;--outline-var:#544245;--chip:#5e3e43;--on-chip:#ffd9de;--sel-bg:#ffb2bd;--sel-fg:#660026}
+  :root:not([data-theme=light]) #hero[data-id="espoocine"],:root:not([data-theme=light]) .banner-card[data-id="espoocine"]{--accent:#d0bcff;--surface:#1c1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b435c;--on-chip:#e8defd;--sel-bg:#d0bcff;--sel-fg:#2f236f}
   :root:not([data-theme=light]) #hero[data-id="anarchy"],:root:not([data-theme=light]) .banner-card[data-id="anarchy"]{--accent:#d2bbff;--surface:#1d1b20;--on-surface:#e4e1e9;--on-surface-var:#c9c4d3;--outline-var:#494551;--chip:#4b425d;--on-chip:#e9ddfd;--sel-bg:#d2bbff;--sel-fg:#32226f}
   :root:not([data-theme=light]) #hero[data-id="lostinmusic"],:root:not([data-theme=light]) .banner-card[data-id="lostinmusic"]{--accent:#cecc38;--surface:#1c1c16;--on-surface:#e4e3db;--on-surface-var:#c9c7b8;--outline-var:#49473b;--chip:#4a4822;--on-chip:#eae4b6;--sel-bg:#cecc38;--sel-fg:#333200}
-  :root:not([data-theme=light]) #hero[data-id="tamperejazz"],:root:not([data-theme=light]) .banner-card[data-id="tamperejazz"]{--accent:#ffb4a8;--surface:#211a19;--on-surface:#ebe0de;--on-surface-var:#d7c2be;--outline-var:#544340;--chip:#663b35;--on-chip:#ffdad4;--sel-bg:#ffb4a8;--sel-fg:#690007}
+  :root:not([data-theme=light]) #hero[data-id="tamperejazz"],:root:not([data-theme=light]) .banner-card[data-id="tamperejazz"]{--accent:#e2bccc;--surface:#201a1c;--on-surface:#eae0e4;--on-surface-var:#d4c2c9;--outline-var:#524349;--chip:#4f4448;--on-chip:#ecdfe4;--sel-bg:#e2bccc;--sel-fg:#452735}
 }
 /* The calendar's bars, generated by schema.py from the same source
    colour as that festival's card. Resting and in-your-plan. */
@@ -3132,10 +3138,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 .event[data-id="flow"]{--cat-bar:#efe3a8;--on-cat-bar:#201c00;--plan-bar:#666000;--on-plan-bar:#ffffff}
 .event[data-id="juhlaviikot"]{--cat-bar:#c7e9eb;--on-cat-bar:#011f22;--plan-bar:#00696f;--on-plan-bar:#ffffff}
 .event[data-id="blockfest"]{--cat-bar:#ffd8e5;--on-cat-bar:#38081f;--plan-bar:#b8006a;--on-plan-bar:#ffffff}
-.event[data-id="espoocine"]{--cat-bar:#ffd9de;--on-cat-bar:#2f1318;--plan-bar:#a13b52;--on-plan-bar:#ffffff}
+.event[data-id="espoocine"]{--cat-bar:#e8defd;--on-cat-bar:#1e182e;--plan-bar:#6451a4;--on-plan-bar:#ffffff}
 .event[data-id="anarchy"]{--cat-bar:#e9ddfd;--on-cat-bar:#1f182f;--plan-bar:#6750a4;--on-plan-bar:#ffffff}
 .event[data-id="lostinmusic"]{--cat-bar:#eae4b6;--on-cat-bar:#1f1c00;--plan-bar:#626200;--on-plan-bar:#ffffff}
-.event[data-id="tamperejazz"]{--cat-bar:#ffdad4;--on-cat-bar:#351008;--plan-bar:#b22927;--on-plan-bar:#ffffff}
+.event[data-id="tamperejazz"]{--cat-bar:#ecdfe4;--on-cat-bar:#22191d;--plan-bar:#765563;--on-plan-bar:#ffffff}
 :root[data-theme=dark] .event[data-cat="music"]{--cat-bar:#4f4448;--on-cat-bar:#ecdfe4;--plan-bar:#e2bccc;--on-plan-bar:#452735}
 :root[data-theme=dark] .event[data-cat="film"]{--cat-bar:#4b435c;--on-cat-bar:#e8defd;--plan-bar:#d0bcff;--on-plan-bar:#2f236f}
 :root[data-theme=dark] .event[data-cat="art"]{--cat-bar:#5a3f49;--on-cat-bar:#fcdae5;--plan-bar:#ffb0ce;--on-plan-bar:#610737}
@@ -3146,10 +3152,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
 :root[data-theme=dark] .event[data-id="flow"]{--cat-bar:#4d4814;--on-cat-bar:#efe3a8;--plan-bar:#d5ca00;--on-plan-bar:#353100}
 :root[data-theme=dark] .event[data-id="juhlaviikot"]{--cat-bar:#2e4c4e;--on-cat-bar:#c7e9eb;--plan-bar:#60d7df;--on-plan-bar:#00373a}
 :root[data-theme=dark] .event[data-id="blockfest"]{--cat-bar:#6a364b;--on-cat-bar:#ffd8e5;--plan-bar:#ffb0cd;--on-plan-bar:#640037}
-:root[data-theme=dark] .event[data-id="espoocine"]{--cat-bar:#5e3e43;--on-cat-bar:#ffd9de;--plan-bar:#ffb2bd;--on-plan-bar:#660026}
+:root[data-theme=dark] .event[data-id="espoocine"]{--cat-bar:#4b435c;--on-cat-bar:#e8defd;--plan-bar:#d0bcff;--on-plan-bar:#2f236f}
 :root[data-theme=dark] .event[data-id="anarchy"]{--cat-bar:#4b425d;--on-cat-bar:#e9ddfd;--plan-bar:#d2bbff;--on-plan-bar:#32226f}
 :root[data-theme=dark] .event[data-id="lostinmusic"]{--cat-bar:#4a4822;--on-cat-bar:#eae4b6;--plan-bar:#cecc38;--on-plan-bar:#333200}
-:root[data-theme=dark] .event[data-id="tamperejazz"]{--cat-bar:#663b35;--on-cat-bar:#ffdad4;--plan-bar:#ffb4a8;--on-plan-bar:#690007}
+:root[data-theme=dark] .event[data-id="tamperejazz"]{--cat-bar:#4f4448;--on-cat-bar:#ecdfe4;--plan-bar:#e2bccc;--on-plan-bar:#452735}
 @media(prefers-color-scheme:dark){
   :root:not([data-theme=light]) .event[data-cat="music"]{--cat-bar:#4f4448;--on-cat-bar:#ecdfe4;--plan-bar:#e2bccc;--on-plan-bar:#452735}
   :root:not([data-theme=light]) .event[data-cat="film"]{--cat-bar:#4b435c;--on-cat-bar:#e8defd;--plan-bar:#d0bcff;--on-plan-bar:#2f236f}
@@ -3161,10 +3167,10 @@ body[data-view=tile] .mhead, body[data-view=full] .mhead{display:none}
   :root:not([data-theme=light]) .event[data-id="flow"]{--cat-bar:#4d4814;--on-cat-bar:#efe3a8;--plan-bar:#d5ca00;--on-plan-bar:#353100}
   :root:not([data-theme=light]) .event[data-id="juhlaviikot"]{--cat-bar:#2e4c4e;--on-cat-bar:#c7e9eb;--plan-bar:#60d7df;--on-plan-bar:#00373a}
   :root:not([data-theme=light]) .event[data-id="blockfest"]{--cat-bar:#6a364b;--on-cat-bar:#ffd8e5;--plan-bar:#ffb0cd;--on-plan-bar:#640037}
-  :root:not([data-theme=light]) .event[data-id="espoocine"]{--cat-bar:#5e3e43;--on-cat-bar:#ffd9de;--plan-bar:#ffb2bd;--on-plan-bar:#660026}
+  :root:not([data-theme=light]) .event[data-id="espoocine"]{--cat-bar:#4b435c;--on-cat-bar:#e8defd;--plan-bar:#d0bcff;--on-plan-bar:#2f236f}
   :root:not([data-theme=light]) .event[data-id="anarchy"]{--cat-bar:#4b425d;--on-cat-bar:#e9ddfd;--plan-bar:#d2bbff;--on-plan-bar:#32226f}
   :root:not([data-theme=light]) .event[data-id="lostinmusic"]{--cat-bar:#4a4822;--on-cat-bar:#eae4b6;--plan-bar:#cecc38;--on-plan-bar:#333200}
-  :root:not([data-theme=light]) .event[data-id="tamperejazz"]{--cat-bar:#663b35;--on-cat-bar:#ffdad4;--plan-bar:#ffb4a8;--on-plan-bar:#690007}
+  :root:not([data-theme=light]) .event[data-id="tamperejazz"]{--cat-bar:#4f4448;--on-cat-bar:#ecdfe4;--plan-bar:#e2bccc;--on-plan-bar:#452735}
 }
 /* ── the plan, as a filter ──────────────────────────────
    The highlight is a rail of what is coming up rather than of what you chose,
@@ -3990,11 +3996,15 @@ footer{border-top:0;margin-top:clamp(24px,3vw,36px);
 .fset{display:flex;align-items:center;gap:10px;margin:0 0 18px;flex-wrap:wrap}
 .fsetlab{font-size:var(--md-sys-typescale-label-small-size);letter-spacing:.1em;text-transform:uppercase;
   color:color-mix(in srgb,var(--md-sys-color-on-surface) 58%,var(--md-sys-color-surface))}
-.fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
+/* The footer's own small switcher. Scoped to it: the settings card uses the
+   same class for M3's connected button group, this file is included after
+   that one, and an outline meant for a 32dp control in a footer was being
+   drawn around the 48dp ones in the card. */
+.fset .fseg{display:flex;background:var(--md-sys-color-surface-container-lowest);border:1px solid var(--md-sys-color-outline);
   border-radius:var(--md-sys-shape-corner-full);padding:2px;gap:3px}
-.fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);padding:0 14px;min-height:32px;
+.fset .fseg button{font-size:var(--md-sys-typescale-label-small-size);font-weight:var(--md-sys-typescale-emphasized-label-weight);padding:0 14px;min-height:32px;
   border-radius:var(--md-sys-shape-corner-full);color:var(--md-sys-color-on-surface-variant);transition:var(--md-sys-motion-spring-fast-effects)}
-.fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
+.fset .fseg button[aria-pressed=true]{background:var(--md-sys-color-on-surface);color:var(--md-sys-color-surface-container-lowest)}
 .fcopy{margin:0;font-size:var(--md-sys-typescale-label-small-size);line-height:16.8px;color:var(--md-sys-color-on-surface-variant)}
 
 .fcol h5{margin:0 0 10px;font-size:var(--md-sys-typescale-label-small-size);line-height:12.8px;font-weight:var(--md-sys-typescale-title-weight);letter-spacing:.05em;
@@ -4862,7 +4872,7 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
 <section class="page shell-page" id="pTamperejazz" hidden></section>
 
 <script>
-const DATA = {"site":{"name":"Festival Planner","tagline":"Timetables you can actually plan with. One page per festival, works offline once loaded.","contact":"flanner47@gmail.com"},"festivals":[{"id":"biennial","name":"Helsinki Biennial","year":"","start":"2026-06-12","end":"2026-09-27","city":"Vallisaari, Helsinki","type":"Contemporary art","tags":["Ferry included","Guided tours","Uneven terrain"],"accent":"#855318","ink":"#4a2a02","description":"Site-specific commissions spread across an old garrison island, shown alongside the fortifications and meadows they were made for.","facts":{"time":"Open daily 11:00–18:00","place":"Ferry from Market Square, 20 min","price":"€22 · free under 18"},"official":"https://helsinkibiennaali.fi/en/","tickets":"https://helsinkibiennaali.fi/en/","free":false,"highlight":false,"category":"art","stats":{"days":108},"month":"2026-06","dates":"12 June – 27 September 2026"},{"id":"kbp","name":"Kallio Block Party","year":"2026","planner":"kallio/","logoInvert":false,"start":"2026-08-01","end":"2026-08-01","dates":"1 August 2026","month":"2026-08","city":"Alppila, Helsinki","type":"Street festival","tags":["Techno","Rap","House","Indie"],"accent":"#b6fc46","ink":"#0a1400","description":"One free day across the streets of Alppila. Nine independently run stages, from a live band stage by Linnanmäki to hard techno on Kirstinkatu.","stats":{"acts":98,"stages":9,"days":1},"stars":["Julma-Henri","Rony Rex","Nukkuvat Linnut","Stepa & Polarsoul"],"official":"https://www.kallioblockparty.org/","tickets":null,"free":true,"highlight":true,"category":"music","cardArt":"photo","promoSrc":"./assets/home/kbp-promo.jpg","logoSrc":"./assets/logo.png"},{"id":"flow","name":"Flow Festival","year":"2026","planner":"flow/","logoInvert":false,"cardArt":"photo","start":"2026-08-14","end":"2026-08-16","dates":"14–16 August 2026","month":"2026-08","city":"Suvilahti, Helsinki","type":"City festival","tags":["Pop","Electronic","Indie","Jazz"],"accent":"#fff203","ink":"#000000","description":"Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.","stats":{"acts":156,"stages":10,"days":3},"stars":["Florence + The Machine","Nick Cave & the Bad Seeds","Turnstile","Zara Larsson","Lykke Li"],"official":"https://www.flowfestival.com/en/","tickets":"https://www.flowfestival.com/en/tickets/","free":false,"highlight":true,"category":"music","promoSrc":"./assets/home/flow-promo.jpg","logoSrc":"./assets/flow-logo.svg"},{"id":"juhlaviikot","name":"Helsinki Festival","year":"2026","start":"2026-08-18","end":"2026-09-05","city":"Helsinki","type":"Arts festival","tags":["Opera","Classical","Theatre","World music"],"accent":"#009ea6","ink":"#00373a","description":"The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.","official":"https://helsinkifestival.fi/en/","tickets":"https://helsinkifestival.fi/en/programme/","free":false,"highlight":false,"category":"culture","planner":"juhlaviikot/","previewNote":"Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet.","cardArt":"photo","promoFrom":"https://helsinkifestival.fi/app/uploads/sites/8/2023/06/HJV_Vesta__Arppa_2022_c_Petri_Anttila__E3A5225_WEB.jpg","promoCredit":"Petri Anttila","stats":{"days":19},"month":"2026-08","dates":"18 August – 5 September 2026","promoSrc":"./assets/home/juhlaviikot-promo.jpg"},{"id":"blockfest","name":"Blockfest","year":"2026","start":"2026-08-21","end":"2026-08-22","city":"Ratinanniemi, Tampere","type":"Hip-hop festival","tags":["Hip-hop","Two days","Stadium"],"accent":"#f83697","ink":"#5c1236","description":"The Nordics' largest hip-hop festival, two days at the Ratina stadium and the event park beside it.","official":"https://www.blockfest.fi/en/","tickets":"https://www.blockfest.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"blockfest/","previewNote":"Blockfest has published its line-up and the names of its three stages, not its running order. Set times appear on blockfest.fi closer to the weekend.","cardArt":"photo","promoFrom":"https://www.blockfest.fi/wp-content/uploads/2024/12/BLOCKFEST24_Day2_233049_JonathanMelartin4258.jpg","promoCredit":"Jonathan Melartin","stats":{"days":2},"month":"2026-08","dates":"21–22 August 2026","promoSrc":"./assets/home/blockfest-promo.jpg"},{"id":"espoocine","name":"Espoo Ciné","year":"2026","start":"2026-08-21","end":"2026-08-30","city":"Kino Tapiola, Espoo","type":"Film festival","tags":["New releases","International","Ten days"],"accent":"#a94259","ink":"#ffffff","description":"Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.","official":"https://espoocine.fi/en/","tickets":"https://espoocine.fi/en/shop/tickets/","free":false,"highlight":false,"category":"film","planner":"espoocine/","previewNote":"Espoo Ciné publishes screening times per film rather than as a grid. The programme is on espoocine.fi; none of it is transcribed here yet.","stats":{"days":10},"month":"2026-08","dates":"21–30 August 2026"},{"id":"anarchy","name":"Love & Anarchy","year":"","start":"2026-09-17","end":"2026-09-27","city":"Five cinemas, Helsinki","type":"Film festival","tags":["Indoors","Subtitled","Director talks"],"accent":"#6750a4","ink":"#341e73","description":"Around 200 features and shorts from the year's festival circuit, with director talks and a late-night strand that runs past midnight.","facts":{"time":"Screenings from 12:00 daily","place":"Bio Rex, Kinopalatsi, Orion and two more","price":"Single film €14 · festival pass €120"},"linkLabel":"Programme","official":"https://hiff.fi/en/","tickets":"https://hiff.fi/en/","free":false,"highlight":false,"category":"film","cardArt":"photo","promoFrom":"https://hiff.fi/wp-content/uploads/2025/09/180925_Rakkautta_ja_anarkiaa_2025_marimur_47.jpg","stats":{"days":11},"month":"2026-09","dates":"17–27 September 2026","promoSrc":"./assets/home/anarchy-promo.jpg"},{"id":"lostinmusic","name":"Lost In Music","year":"2026","start":"2026-10-01","end":"2026-10-02","city":"Tampere","type":"Club festival","tags":["Club venues","Two nights","Wristband"],"accent":"#fcf764","ink":"#333200","description":"Two evenings across Tampere's own venues — Tavara-asema, Telakka, G Livelab, Olympia and more — on one wristband.","facts":{"price":"2 days €69 · 1 day €49"},"official":"https://lostinmusic.fi/fi/","tickets":"https://lostinmusic.fi/fi/liput/","free":false,"highlight":false,"category":"music","planner":"lostinmusic/","previewNote":"Lost In Music has published which artists play which venue, but not when — the festival says the detailed timetable comes closer to the event.","cardArt":"photo","promoFrom":"https://lostinmusic.fi/wp-content/uploads/2025/08/LIM23_tullikamari_roosamariakauppila_015-scaled.jpg","promoCredit":"Roosa Maria Kauppila","stats":{"days":2},"month":"2026-10","dates":"1–2 October 2026","promoSrc":"./assets/home/lostinmusic-promo.jpg"},{"id":"tamperejazz","name":"Tampere Jazz Happening","year":"2026","start":"2026-10-29","end":"2026-11-01","city":"Tampere","type":"Jazz festival","tags":["Contemporary jazz","Four days"],"accent":"#c83e36","ink":"#ffffff","description":"Four days of contemporary jazz, long known for its warm room and its broad idea of what the music can be.","facts":{"price":"€10–25"},"official":"https://www.tamperejazz.fi/en/","tickets":"https://www.tamperejazz.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"tamperejazz/","previewNote":"Tampere Jazz Happening publishes its running order closer to the weekend. The venues are here; the clock is not.","stats":{"days":4},"month":"2026-10","dates":"29 October – 1 November 2026"}],"categories":[{"id":"music","label":"Music","labelFi":"Musiikki","color":"#FFD8E8","ink":"#441B2F","blurb":"Concerts, club nights and music festivals."},{"id":"film","label":"Film","labelFi":"Elokuva","color":"#b69df8","ink":"#101010","blurb":"Screenings, film festivals and cinema events."},{"id":"art","label":"Art","labelFi":"Taide","color":"#ff9ec4","ink":"#101010","blurb":"Exhibitions, installations and gallery weekends."},{"id":"culture","label":"Culture","labelFi":"Kulttuuri","color":"#ffc861","ink":"#101010","blurb":"Street festivals, city events, food and heritage."},{"id":"others","label":"Others","labelFi":"Muut","color":"#d9d9d9","ink":"#101010","blurb":"Anything the four above do not describe."}],"categoryFallback":"others","places":[{"name":"Helsinki","count":5,"lat":60.1699,"lon":24.9384},{"name":"Tampere","count":3,"lat":61.4978,"lon":23.761},{"name":"Espoo","count":1,"lat":60.2055,"lon":24.6559}]};
+const DATA = {"site":{"name":"Festival Planner","tagline":"Timetables you can actually plan with. One page per festival, works offline once loaded.","contact":"flanner47@gmail.com"},"festivals":[{"id":"biennial","name":"Helsinki Biennial","year":"","start":"2026-06-12","end":"2026-09-27","city":"Vallisaari, Helsinki","type":"Contemporary art","tags":["Ferry included","Guided tours","Uneven terrain"],"accent":"#855318","ink":"#4a2a02","description":"Site-specific commissions spread across an old garrison island, shown alongside the fortifications and meadows they were made for.","facts":{"time":"Open daily 11:00–18:00","place":"Ferry from Market Square, 20 min","price":"€22 · free under 18"},"official":"https://helsinkibiennaali.fi/en/","tickets":"https://helsinkibiennaali.fi/en/","free":false,"highlight":false,"category":"art","stats":{"days":108},"month":"2026-06","dates":"12 June – 27 September 2026"},{"id":"kbp","name":"Kallio Block Party","year":"2026","planner":"kallio/","logoInvert":false,"start":"2026-08-01","end":"2026-08-01","dates":"1 August 2026","month":"2026-08","city":"Alppila, Helsinki","type":"Street festival","tags":["Techno","Rap","House","Indie"],"accent":"#b6fc46","ink":"#0a1400","description":"One free day across the streets of Alppila. Nine independently run stages, from a live band stage by Linnanmäki to hard techno on Kirstinkatu.","stats":{"acts":98,"stages":9,"days":1},"stars":["Julma-Henri","Rony Rex","Nukkuvat Linnut","Stepa & Polarsoul"],"official":"https://www.kallioblockparty.org/","tickets":null,"free":true,"highlight":true,"category":"music","cardArt":"photo","promoSrc":"./assets/home/kbp-promo.jpg","logoSrc":"./assets/logo.png"},{"id":"flow","name":"Flow Festival","year":"2026","planner":"flow/","logoInvert":false,"cardArt":"photo","start":"2026-08-14","end":"2026-08-16","dates":"14–16 August 2026","month":"2026-08","city":"Suvilahti, Helsinki","type":"City festival","tags":["Pop","Electronic","Indie","Jazz"],"accent":"#fff203","ink":"#000000","description":"Three days in a former power plant by the sea. Ten stages, from the Main Stage under the gasholders to all-night dance floors in the yards.","stats":{"acts":156,"stages":10,"days":3},"stars":["Florence + The Machine","Nick Cave & the Bad Seeds","Turnstile","Zara Larsson","Lykke Li"],"official":"https://www.flowfestival.com/en/","tickets":"https://www.flowfestival.com/en/tickets/","free":false,"highlight":true,"category":"music","promoSrc":"./assets/home/flow-promo.jpg","logoSrc":"./assets/flow-logo.svg"},{"id":"juhlaviikot","name":"Helsinki Festival","year":"2026","start":"2026-08-18","end":"2026-09-05","city":"Helsinki","type":"Arts festival","tags":["Opera","Classical","Theatre","World music"],"accent":"#009ea6","ink":"#00373a","description":"The largest arts festival in the Nordic countries: opera, orchestral music, theatre and world music across the city for nineteen days.","official":"https://helsinkifestival.fi/en/","tickets":"https://helsinkifestival.fi/en/programme/","free":false,"highlight":false,"category":"culture","planner":"juhlaviikot/","previewNote":"Helsinki Festival runs several hundred events across the city over two and a half weeks. Its programme is on helsinkifestival.fi; none of it is transcribed here yet.","cardArt":"photo","promoFrom":"https://helsinkifestival.fi/app/uploads/sites/8/2023/06/HJV_Vesta__Arppa_2022_c_Petri_Anttila__E3A5225_WEB.jpg","promoCredit":"Petri Anttila","stats":{"days":19},"month":"2026-08","dates":"18 August – 5 September 2026","promoSrc":"./assets/home/juhlaviikot-promo.jpg"},{"id":"blockfest","name":"Blockfest","year":"2026","start":"2026-08-21","end":"2026-08-22","city":"Ratinanniemi, Tampere","type":"Hip-hop festival","tags":["Hip-hop","Two days","Stadium"],"accent":"#f83697","ink":"#5c1236","description":"The Nordics' largest hip-hop festival, two days at the Ratina stadium and the event park beside it.","official":"https://www.blockfest.fi/en/","tickets":"https://www.blockfest.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"blockfest/","previewNote":"Blockfest has published its line-up and the names of its three stages, not its running order. Set times appear on blockfest.fi closer to the weekend.","cardArt":"photo","promoFrom":"https://www.blockfest.fi/wp-content/uploads/2024/12/BLOCKFEST24_Day2_233049_JonathanMelartin4258.jpg","promoCredit":"Jonathan Melartin","stats":{"days":2},"month":"2026-08","dates":"21–22 August 2026","promoSrc":"./assets/home/blockfest-promo.jpg"},{"id":"espoocine","name":"Espoo Ciné","year":"2026","start":"2026-08-21","end":"2026-08-30","city":"Kino Tapiola, Espoo","type":"Film festival","tags":["New releases","International","Ten days"],"accent":"#b69df8","ink":"#101010","description":"Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.","official":"https://espoocine.fi/en/","tickets":"https://espoocine.fi/en/shop/tickets/","free":false,"highlight":false,"category":"film","planner":"espoocine/","previewNote":"Espoo Ciné publishes screening times per film rather than as a grid. The programme is on espoocine.fi; none of it is transcribed here yet.","stats":{"days":10},"month":"2026-08","dates":"21–30 August 2026"},{"id":"anarchy","name":"Love & Anarchy","year":"","start":"2026-09-17","end":"2026-09-27","city":"Five cinemas, Helsinki","type":"Film festival","tags":["Indoors","Subtitled","Director talks"],"accent":"#6750a4","ink":"#341e73","description":"Around 200 features and shorts from the year's festival circuit, with director talks and a late-night strand that runs past midnight.","facts":{"time":"Screenings from 12:00 daily","place":"Bio Rex, Kinopalatsi, Orion and two more","price":"Single film €14 · festival pass €120"},"linkLabel":"Programme","official":"https://hiff.fi/en/","tickets":"https://hiff.fi/en/","free":false,"highlight":false,"category":"film","cardArt":"photo","promoFrom":"https://hiff.fi/wp-content/uploads/2025/09/180925_Rakkautta_ja_anarkiaa_2025_marimur_47.jpg","stats":{"days":11},"month":"2026-09","dates":"17–27 September 2026","promoSrc":"./assets/home/anarchy-promo.jpg"},{"id":"lostinmusic","name":"Lost In Music","year":"2026","start":"2026-10-01","end":"2026-10-02","city":"Tampere","type":"Club festival","tags":["Club venues","Two nights","Wristband"],"accent":"#fcf764","ink":"#333200","description":"Two evenings across Tampere's own venues — Tavara-asema, Telakka, G Livelab, Olympia and more — on one wristband.","facts":{"price":"2 days €69 · 1 day €49"},"official":"https://lostinmusic.fi/fi/","tickets":"https://lostinmusic.fi/fi/liput/","free":false,"highlight":false,"category":"music","planner":"lostinmusic/","previewNote":"Lost In Music has published which artists play which venue, but not when — the festival says the detailed timetable comes closer to the event.","cardArt":"photo","promoFrom":"https://lostinmusic.fi/wp-content/uploads/2025/08/LIM23_tullikamari_roosamariakauppila_015-scaled.jpg","promoCredit":"Roosa Maria Kauppila","stats":{"days":2},"month":"2026-10","dates":"1–2 October 2026","promoSrc":"./assets/home/lostinmusic-promo.jpg"},{"id":"tamperejazz","name":"Tampere Jazz Happening","year":"2026","start":"2026-10-29","end":"2026-11-01","city":"Tampere","type":"Jazz festival","tags":["Contemporary jazz","Four days"],"accent":"#FFD8E8","ink":"#441B2F","description":"Four days of contemporary jazz, long known for its warm room and its broad idea of what the music can be.","facts":{"price":"€10–25"},"official":"https://www.tamperejazz.fi/en/","tickets":"https://www.tamperejazz.fi/en/tickets/","free":false,"highlight":false,"category":"music","planner":"tamperejazz/","previewNote":"Tampere Jazz Happening publishes its running order closer to the weekend. The venues are here; the clock is not.","stats":{"days":4},"month":"2026-10","dates":"29 October – 1 November 2026"}],"categories":[{"id":"music","label":"Music","labelFi":"Musiikki","color":"#FFD8E8","ink":"#441B2F","blurb":"Concerts, club nights and music festivals."},{"id":"film","label":"Film","labelFi":"Elokuva","color":"#b69df8","ink":"#101010","blurb":"Screenings, film festivals and cinema events."},{"id":"art","label":"Art","labelFi":"Taide","color":"#ff9ec4","ink":"#101010","blurb":"Exhibitions, installations and gallery weekends."},{"id":"culture","label":"Culture","labelFi":"Kulttuuri","color":"#ffc861","ink":"#101010","blurb":"Street festivals, city events, food and heritage."},{"id":"others","label":"Others","labelFi":"Muut","color":"#d9d9d9","ink":"#101010","blurb":"Anything the four above do not describe."}],"categoryFallback":"others","places":[{"name":"Helsinki","count":5,"lat":60.1699,"lon":24.9384},{"name":"Tampere","count":3,"lat":61.4978,"lon":23.761},{"name":"Espoo","count":1,"lat":60.2055,"lon":24.6559}]};
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const ico = n => `<svg class="i"><use href="#h-i-${n}"/></svg>`;
@@ -4888,7 +4898,10 @@ const Store = (() => {
   const NS = 'flanner1.';
   const YEAR = 60 * 60 * 24 * 400;          /* the cap most browsers apply */
   const FIELDS = {
-    theme: {values: ['light', 'dark'], def: 'light', legacy: 'fp-theme'},
+    /* `system` follows the device and is resolved where it is applied, so
+       what is stored is what was asked for rather than what it happened to
+       mean at the time. */
+    theme: {values: ['light', 'dark', 'system'], def: 'light', legacy: 'fp-theme'},
     view:  {values: ['cal', 'tile', 'full'], def: null, legacy: 'fp-view'},
     /* The site's language. Kept here rather than on the page so a planner
        opened from this one can read the same answer. */
@@ -6355,8 +6368,10 @@ function paintPlace() {
   /* Named in the settings card too, which is where a reader who has not found
      the toolbar goes looking. Pressing it opens the same picker rather than
      growing a second list of cities to keep in step. */
-  const sp = document.getElementById('setPlaceBtn');
+  const sp = document.getElementById('setPlaceState');
   if (sp) sp.textContent = place || 'Everywhere';
+  document.querySelectorAll('#setPlaceList .setopt').forEach(o =>
+    o.setAttribute('aria-checked', String((o.dataset.place || '') === place)));
   $('#placeTrig').classList.toggle('is-set', !!place);
   $('#placeOpts').querySelectorAll('.opt').forEach(o =>
     o.setAttribute('aria-checked', (o.dataset.place || '') === place));
@@ -6365,6 +6380,30 @@ $('#placeOpts').innerHTML =
   `<button class="opt st" role="radio" data-place="" aria-checked="true">Everywhere</button>`
   + PLACES.map(p => `<button class="opt st" role="radio" data-place="${esc(p.name)}"
        aria-checked="false">${esc(p.name)} <span class="ct">${p.count}</span></button>`).join('');
+/* The same cities in the settings card, from the same list — the row opens
+   into them rather than into a second sheet, since a sheet over a sheet is a
+   place a reader has to find their way back from. */
+if ($('#setPlaceList')) {
+  $('#setPlaceList').innerHTML =
+    `<li><button class="setopt" type="button" role="radio" data-place=""
+       aria-checked="true"><i></i>Everywhere</button></li>`
+    + PLACES.map(p => `<li><button class="setopt" type="button" role="radio"
+       data-place="${esc(p.name)}" aria-checked="false"><i></i>${esc(p.name)}
+       <span class="ct">${p.count}</span></button></li>`).join('');
+  const reveal = $('#setPlaceOpts'), row = $('#setPlaceBtn');
+  row.onclick = () => {
+    const open = !reveal.classList.contains('is-open');
+    reveal.classList.toggle('is-open', open);
+    row.setAttribute('aria-expanded', String(open));
+  };
+  $('#setPlaceList').querySelectorAll('.setopt').forEach(o => o.onclick = () => {
+    place = o.dataset.place || '';
+    paintPlace();
+    apply();
+    reveal.classList.remove('is-open');
+    row.setAttribute('aria-expanded', 'false');
+  });
+}
 $('#placeOpts').querySelectorAll('.opt').forEach(o => o.onclick = () => {
   place = o.dataset.place || '';
   paintPlace();
@@ -7161,54 +7200,95 @@ document.addEventListener('keydown', e => {
   window.openSettings = open;
 
   /* ── pushing it back down ──────────────────────────────
-     The act card's gesture, on the act card's numbers: the sheet follows the
-     finger down and never up, and on release it either carries on out of the
-     screen or springs back — a third of its own height, or a flick faster than
-     500px a second. Anything less is a change of mind, and a sheet that closed
-     on a five-pixel twitch would be a sheet nobody trusts to stay open.
+     The add-to-home-screen card's gesture, which is the act card's: while the
+     body is at its top there is nothing below to scroll to, so a downward drag
+     anywhere on the sheet is the sheet's; once it is scrolled, the same drag
+     is the body's to scroll back with. It follows the finger exactly and, on
+     release, either carries on out of the screen or springs back — a third of
+     its own height, or a flick faster than 500px a second that has travelled
+     24, since speed alone would let a twitch close it.
 
-     Only from the handle and the head. The body scrolls, and a drag that
-     started there has to be a scroll or a settings card long enough to scroll
-     could never be read on a phone. */
+     Touch events, and not passive, because that is the only way to take the
+     gesture back: `touch-action: pan-y` on the body hands a vertical drag to
+     the scroller before a pointermove arrives, the scroller at its top does
+     nothing with it, and the browser then cancels our pointer. The pointer
+     handlers stay for a mouse, which never fires these. */
   (() => {
-    const grip = $('#setGrip'), head = document.querySelector('#setBox .sethead');
-    if (!grip || !box) return;
-    let y0 = 0, t0 = 0, dy = 0, on = false;
-    const move = (e) => {
-      if (!on) return;
-      dy = Math.max(0, e.clientY - y0);
-      box.style.setProperty('--setdrag', dy + 'px');
-    };
-    const up = (e) => {
-      if (!on) return;
-      on = false;
+    const scroller = document.querySelector('#setBox .setscroll');
+    if (!box) return;
+    const atTop = () => !scroller || scroller.scrollTop <= 0;
+    const isPhone = () => innerWidth < 600;
+    const begin = () => { box.classList.add('is-dragging');
+      box.style.setProperty('--setdrag', '0px'); };
+    const to = (dy) => box.style.setProperty('--setdrag', Math.max(0, dy) + 'px');
+    const finish = (dy, ms) => {
       box.classList.remove('is-dragging');
       box.style.removeProperty('--setdrag');
-      const dt = Math.max(1, e.timeStamp - t0);
       const far = dy > box.getBoundingClientRect().height / 3;
-      const fast = dy / dt > 0.5 && dy > 24;
+      const fast = dy / Math.max(1, ms) > 0.5 && dy > 24;
       if (far || fast) close();
-      removeEventListener('pointermove', move);
-      removeEventListener('pointerup', up);
-      removeEventListener('pointercancel', up);
     };
-    const down = (e) => {
-      if (e.button) return;
-      /* The gesture is the phone's; above it the sheet is a dialog in the
-         middle of the screen with no edge to push it towards. */
-      if (innerWidth >= 600) return;
-      on = true; y0 = e.clientY; t0 = e.timeStamp; dy = 0;
-      box.classList.add('is-dragging');
-      box.style.setProperty('--setdrag', '0px');
-      addEventListener('pointermove', move);
-      addEventListener('pointerup', up);
-      addEventListener('pointercancel', up);
+
+    let td = null;
+    box.addEventListener('touchstart', (e) => {
+      if (!isPhone() || e.touches.length !== 1) { td = null; return; }
+      if (e.target.closest && e.target.closest('button,input,a,label')) { td = null; return; }
+      td = {y: e.touches[0].clientY, t: performance.now(), on: false, dy: 0,
+            mine: !!(e.target.closest && e.target.closest('.setgrip')) || atTop()};
+    }, {passive: true});
+    box.addEventListener('touchmove', (e) => {
+      if (!td || !td.mine) return;
+      const dy = e.touches[0].clientY - td.y;
+      if (!td.on) {
+        if (dy <= 0) { if (dy < -4) td = null; return; }
+        if (!atTop()) { td = null; return; }
+        td.on = true;
+        begin();
+      }
+      td.dy = dy;
+      if (e.cancelable) e.preventDefault();
+      to(dy);
+    }, {passive: false});
+    const touchDone = (cancelled) => {
+      if (!td) return;
+      const {dy, t, on} = td;
+      td = null;
+      if (!on) return;
+      if (cancelled) { box.classList.remove('is-dragging');
+        box.style.removeProperty('--setdrag'); return; }
+      finish(dy, performance.now() - t);
     };
-    grip.addEventListener('pointerdown', down);
-    if (head) head.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('button')) return;   /* the close button is a button */
-      down(e);
+    box.addEventListener('touchend', () => touchDone(false));
+    box.addEventListener('touchcancel', () => touchDone(true));
+
+    let md = null;
+    box.addEventListener('pointerdown', (e) => {
+      if (!isPhone() || e.pointerType === 'touch' || e.button) return;
+      if (e.target.closest && e.target.closest('button,input,a,label')) return;
+      md = {y: e.clientY, t: performance.now(), on: false, dy: 0,
+            mine: !!(e.target.closest && e.target.closest('.setgrip')) || atTop()};
     });
+    box.addEventListener('pointermove', (e) => {
+      if (!md || !md.mine || e.pointerType === 'touch') return;
+      const dy = e.clientY - md.y;
+      if (!md.on) {
+        if (dy <= 0) { if (dy < -4) md = null; return; }
+        if (!atTop()) { md = null; return; }
+        md.on = true; begin();
+        if (box.setPointerCapture) { try { box.setPointerCapture(e.pointerId); } catch (err) {} }
+      }
+      md.dy = dy;
+      to(dy);
+    });
+    const mouseDone = () => {
+      if (!md) return;
+      const {dy, t, on} = md;
+      md = null;
+      if (!on) return;
+      finish(dy, performance.now() - t);
+    };
+    box.addEventListener('pointerup', mouseDone);
+    box.addEventListener('pointercancel', mouseDone);
   })();
   /* The floating mark sits above the rail and the rail beside the content
      column, both derived from the rail's measured box — the same sync the
@@ -7372,22 +7452,27 @@ document.addEventListener('keydown', e => {
 /* ── theme ─────────────────────────────────────────────── */
 /* Persisted by Store, alongside the view and the place — see its notes. */
 const root = document.documentElement;
+/* What the reader asked for, and what that means right now: `system` is a
+   standing instruction rather than a colour, so the choice and the resolved
+   theme are two different things and only one of them goes on the document. */
+const darkNow = (t) => t === 'dark' ||
+  (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
 function applyTheme(t) {
-  root.dataset.theme = t;
+  root.dataset.theme = darkNow(t) ? 'dark' : 'light';
   document.querySelectorAll('#themeSeg button').forEach(b =>
     b.setAttribute('aria-pressed', b.dataset.themeSet === t));
   const rt = document.querySelector('#railTheme');
   if (rt) {
-    const next = t === 'dark' ? 'light' : 'dark';
+    const next = darkNow(t) ? 'light' : 'dark';
     rt.setAttribute('aria-label', `Switch to ${next} theme`);
-    rt.querySelector('use').setAttribute('href', t === 'dark' ? '#i-sun' : '#i-moon');
+    rt.querySelector('use').setAttribute('href', darkNow(t) ? '#h-i-sun' : '#h-i-moon');
     /* The drawer names the theme it would give you, as the planners' row
        does — the circle in the rail says the same thing with its glyph. */
     const lbl = rt.querySelector('.lbl');
     if (lbl) lbl.textContent = next === 'dark' ? 'Dark theme' : 'Light theme';
   }
   const meta = document.querySelector('meta[name=theme-color]');
-  if (meta) meta.content = t === 'dark' ? '#131313' : '#ffffff';
+  if (meta) meta.content = darkNow(t) ? '#131313' : '#ffffff';
   Store.set('theme', t);
 }
 document.querySelectorAll('#themeSeg button').forEach(b =>
@@ -7398,6 +7483,11 @@ const railTheme = $('#railTheme');
 if (railTheme) railTheme.onclick = () =>
   applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
 applyTheme(Store.get('theme'));
+/* A standing instruction has to be honoured when the answer changes, which is
+   the one thing `system` can do that the other two cannot. */
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (Store.get('theme') === 'system') applyTheme('system');
+});
 
 /* ── More opens the rail as a drawer ───────────────────
    One element: the bar becomes the panel, so the destinations and the
@@ -7443,7 +7533,7 @@ applyTheme(Store.get('theme'));
       Store.forget();
     }
     paint();
-  });
+  };
   paint();
 })();
 

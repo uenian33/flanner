@@ -216,8 +216,8 @@
     "International",
     "Ten days"
    ],
-   "accent": "#a94259",
-   "ink": "#ffffff",
+   "accent": "#b69df8",
+   "ink": "#101010",
    "description": "Ten days of new Finnish and international cinema, centred on Kino Tapiola and screening across Espoo and Helsinki.",
    "official": "https://espoocine.fi/en/",
    "tickets": "https://espoocine.fi/en/shop/tickets/",
@@ -270,8 +270,8 @@
     "Contemporary jazz",
     "Four days"
    ],
-   "accent": "#c83e36",
-   "ink": "#ffffff",
+   "accent": "#FFD8E8",
+   "ink": "#441B2F",
    "description": "Four days of contemporary jazz, long known for its warm room and its broad idea of what the music can be.",
    "facts": {
     "price": "€10–25"
