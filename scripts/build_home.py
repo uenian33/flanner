@@ -11,6 +11,7 @@ from assets import ROOT
 import fontsub
 import m3color
 import mwc
+import a2hs
 import schema
 import seo
 
@@ -90,6 +91,15 @@ def main():
             jsonld=seo.site_jsonld(planned)
                    + [seo.festival_event(f) for f in planned]
         )),
+        # First thing in the head, before a stylesheet is fetched, so the
+        # first paint is already the reader's theme rather than a white
+        # flash on the way to a black page.
+        ("__THEMEBOOT__", schema.theme_boot()),
+        # The illustrated steps for putting this on a home screen. The
+        # pictures are real screenshots, optimised on the way in; a step
+        # whose screenshot has not been dropped in yet is words alone.
+        ("__A2HS__", json.dumps(a2hs.build(), ensure_ascii=False,
+                                separators=(",", ":"))),
         ("__CATCSS__", schema.category_css(cfg)),
         # The namespace a planner writes its picks under. Stated once in
         # schema.py, because a page that asks under the wrong key finds nothing

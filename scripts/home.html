@@ -2,6 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
+__THEMEBOOT__
 <!-- The union of this page's policy and a planner's, because on a phone a
      planner is mounted into this document rather than fetched as one: the
      runtime compiles its logic class with new Function, its map fetches
@@ -1989,10 +1990,72 @@ body.plan-only .section-headline{position:absolute;width:1px;height:1px;
   color:var(--md-sys-color-on-surface-variant)}
 .a2hs__go{flex:none;opacity:.7}
 .a2hs__go svg{inline-size:20px;block-size:20px;fill:currentColor}
-.a2hs__steps{margin:0 0 12px;padding-inline-start:20px;
-  font-size:13.5px;line-height:1.5;color:var(--md-sys-color-on-surface)}
-.a2hs__steps li{margin:0 0 6px}
-.a2hssheet{max-width:min(92vw,340px)}
+/* ── the instructions, as a card ────────────────────────
+   An act's card is the shape this page uses for "here is one thing, in
+   detail": a modal sheet standing on the bottom edge, as tall as what is in
+   it, with a handle at the top and the page behind it darkened. Three steps
+   with a screenshot each is that kind of thing, and a dropdown panel is not
+   big enough to hold it. */
+.a2hs-scrim{position:fixed;inset:0;z-index:70;background:var(--md-sys-color-scrim);
+  opacity:.32;animation:a2hsfade .18s cubic-bezier(.2,0,0,1)}
+.a2hs-scrim[hidden]{display:none}
+@keyframes a2hsfade{from{opacity:0}to{opacity:.32}}
+.a2hs-card{position:fixed;inset-inline:0;inset-block-end:0;z-index:71;
+  display:flex;flex-direction:column;
+  max-block-size:min(88dvh,760px);
+  background:var(--md-sys-color-surface-container-low);
+  color:var(--md-sys-color-on-surface);
+  border-radius:28px 28px 0 0;box-shadow:0 -8px 40px rgb(0 0 0 / .28);
+  animation:a2hsrise .42s cubic-bezier(.05,.7,.1,1)}
+.a2hs-card[hidden]{display:none}
+@keyframes a2hsrise{from{transform:translateY(100%)}to{transform:none}}
+/* Above the phone it is a dialog in the middle of the screen rather than a
+   sheet on its edge — there is no bottom edge a wide page is reaching for. */
+@media(min-width:600px){
+  .a2hs-card{inset:50% auto auto 50%;transform:translate(-50%,-50%);
+    inline-size:min(440px,92vw);border-radius:28px;
+    animation:a2hspop .3s cubic-bezier(.2,0,0,1)}
+  @keyframes a2hspop{from{opacity:0;transform:translate(-50%,-46%) scale(.97)}
+    to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+}
+.a2hs-card__grip{flex:none;display:grid;place-items:center;block-size:28px}
+.a2hs-card__grip i{inline-size:32px;block-size:4px;border-radius:2px;
+  background:color-mix(in srgb,var(--md-sys-color-on-surface) 24%,transparent)}
+.a2hs-card__body{flex:1 1 auto;min-block-size:0;overflow-y:auto;
+  overscroll-behavior:contain;padding:4px 24px 8px}
+.a2hs-card__body h2{margin:0;font-family:var(--title);
+  font-size:var(--md-sys-typescale-headline-small-size);font-weight:650;
+  line-height:1.2;letter-spacing:-.01em}
+.a2hs-card__why{margin:8px 0 0;font-size:13px;line-height:1.45;
+  color:var(--md-sys-color-on-surface-variant)}
+.a2hs__steps{margin:18px 0 0;padding:0;list-style:none;counter-reset:step}
+.a2hs__steps li{counter-increment:step;margin:0 0 20px}
+/* The number and the words on one line, the picture under both. */
+.a2hs__steps p{display:flex;gap:12px;align-items:flex-start;margin:0;
+  font-size:14px;line-height:1.45}
+.a2hs__steps p::before{content:counter(step);flex:none;
+  inline-size:22px;block-size:22px;border-radius:var(--md-sys-shape-corner-full);
+  background:var(--md-sys-color-secondary-container);
+  color:var(--md-sys-color-on-secondary-container);
+  font-size:12px;font-weight:700;display:grid;place-items:center}
+/* A screenshot of a phone, shown on a phone: held to a readable width and
+   given its own shape back, so it reads as a picture of a screen rather than
+   as part of this one. The aspect ratio is the source's, published by the
+   build, so the card does not jump as the pictures arrive. */
+.a2hs__shot{display:block;inline-size:100%;max-inline-size:320px;
+  margin:10px 0 0 34px;border-radius:14px;
+  border:1px solid var(--md-sys-color-outline-variant);
+  background:var(--md-sys-color-surface-container-high)}
+.a2hs-card__foot{flex:none;padding:8px 24px calc(20px + var(--safe-b,0px));
+  border-block-start:1px solid var(--md-sys-color-outline-variant)}
+.a2hs-card__done{inline-size:100%;min-block-size:48px;border:0;
+  border-radius:var(--md-sys-shape-corner-full);
+  background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary);
+  font-family:inherit;font-size:var(--md-sys-typescale-label-large-size);
+  font-weight:var(--md-sys-typescale-emphasized-label-weight);cursor:pointer}
+@media(prefers-reduced-motion:reduce){
+  .a2hs-card,.a2hs-scrim{animation:none}
+}
 @media(prefers-reduced-motion:reduce){.a2hs{transition:none}}
 /* The line that closes the list stays in the plan — it is the same invitation
    said the other way round, and the air under it is what tells a short plan it
@@ -3191,10 +3254,22 @@ html.motion-off *{animation-iteration-count:1!important;animation-duration:.01ms
     <i id="a2hsSub">Keeps your plans</i></span>
   <span class="a2hs__go"><svg class="i" aria-hidden="true"><use href="#h-i-next"/></svg></span>
 </button>
-<div class="sheet a2hssheet" id="a2hsSheet" hidden role="dialog" aria-label="Add to home screen">
-  <h4>Add Flanner to your home screen</h4>
-  <ol class="a2hs__steps" id="a2hsSteps"></ol>
-  <button class="opt st" id="a2hsNo">Not now</button>
+<!-- Not a dropdown: the same modal bottom sheet an act's card is, because
+     what it holds is three steps with pictures rather than two lines of text.
+     The scrim and the sheet are siblings so a press outside closes it. -->
+<div class="a2hs-scrim" id="a2hsScrim" hidden></div>
+<div class="a2hs-card" id="a2hsSheet" hidden role="dialog" aria-modal="true"
+     aria-labelledby="a2hsTitle">
+  <div class="a2hs-card__grip" aria-hidden="true"><i></i></div>
+  <div class="a2hs-card__body">
+    <h2 id="a2hsTitle">Add Flanner to your home screen</h2>
+    <p class="a2hs-card__why">It opens like an app, and the plan you build stays
+      on this phone.</p>
+    <ol class="a2hs__steps" id="a2hsSteps"></ol>
+  </div>
+  <div class="a2hs-card__foot">
+    <button class="a2hs-card__done" id="a2hsNo" type="button">Got it</button>
+  </div>
 </div>
 
 <section class="months" id="months"></section>
@@ -4948,8 +5023,7 @@ function apply() {
    sets the same filter — but nothing opens it any more: its trigger shows the
    calendar instead. */
 const sheets = [['#catTrig', '#catSheet'], ['#langTrig', '#langSheet'],
-                ['#placeTrig', '#placeSheet'],
-                ['#a2hs', '#a2hsSheet']];
+                ['#placeTrig', '#placeSheet']];
 function openSheet(which) {
   sheets.forEach(([t, sh]) => {
     const on = sh === which;
@@ -5011,17 +5085,32 @@ document.addEventListener('click', e => {
     matchMedia('(display-mode: window-controls-overlay)').matches ||
     navigator.standalone === true;
 
+  /* iOS is the case worth illustrating: it is the one with no button, the one
+     where the item is three levels down a share sheet, and the one most of
+     this site's readers are on. Its steps come from the build with real
+     screenshots attached — see scripts/a2hs.py. Everywhere else the menu item
+     is one level down and named on the tin, so words are enough. */
+  const IOS_STEPS = __A2HS__;
   const how = () => {
     const ua = navigator.userAgent;
     const ios = /iPad|iPhone|iPod/.test(ua) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    if (ios) return ['Open the Share menu \u2014 the square with an arrow out of it.',
-                     'Choose \u201cAdd to Home Screen\u201d.', 'Press Add.'];
-    if (/Firefox|FxiOS/.test(ua)) return ['Open the browser menu.',
-                                          'Choose \u201cInstall\u201d or \u201cAdd to Home screen\u201d.'];
-    return ['Open the browser menu.',
-            'Choose \u201cAdd to Home screen\u201d or \u201cInstall app\u201d.'];
+    if (ios) return IOS_STEPS;
+    if (/Firefox|FxiOS/.test(ua)) return [
+      {text: 'Open the browser menu.'},
+      {text: 'Choose \u201cInstall\u201d or \u201cAdd to Home screen\u201d.'}];
+    return [{text: 'Open the browser menu.'},
+            {text: 'Choose \u201cAdd to Home screen\u201d or \u201cInstall app\u201d.'}];
   };
+  /* A picture only where the build found one, and with the shape it will be
+     reserved so the card does not jump as they load. */
+  const stepHTML = (s) => '<li><p>' + esc(s.text) + '</p>' + (s.webp
+    ? '<picture><source type="image/webp" srcset="' + esc(s.webp) +
+      '" sizes="(max-width:600px) 100vw, 320px">' +
+      '<img class="a2hs__shot" src="' + esc(s.fallback) + '" alt="' + esc(s.alt || '') +
+      '" width="' + s.w + '" height="' + s.h + '" loading="lazy" decoding="async">' +
+      '</picture>'
+    : '') + '</li>';
 
   const show = () => {
     bar.hidden = installed() || Store.get('a2hs') === '1';
@@ -5049,15 +5138,28 @@ document.addEventListener('click', e => {
       show();
       return;
     }
-    steps.innerHTML = how().map(t => '<li>' + esc(t) + '</li>').join('');
-    openSheet('#a2hsSheet');
+    steps.innerHTML = how().map(stepHTML).join('');
+    openCardSheet(true);
+  };
+  /* Its own scrim and its own element, so it is a card over the page rather
+     than a panel hanging off a control. */
+  const scrim = $('#a2hsScrim');
+  const openCardSheet = (on) => {
+    sheet.hidden = !on;
+    if (scrim) scrim.hidden = !on;
+    document.body.style.overflow = on ? 'hidden' : '';
+    if (on) sheet.focus && sheet.setAttribute('tabindex', '-1'), on && sheet.focus();
   };
   $('#a2hsNo').onclick = (e) => {
     e.stopPropagation();
     Store.set('a2hs', '1');
-    openSheet(null);
+    openCardSheet(false);
     show();
   };
+  if (scrim) scrim.onclick = () => openCardSheet(false);
+  addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !sheet.hidden) openCardSheet(false);
+  });
   show();
 })();
 
